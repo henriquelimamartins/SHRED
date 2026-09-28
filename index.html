@@ -28,7 +28,8 @@ h1,h2,h3,h4{font-family:'Oswald',sans-serif;font-weight:700;text-transform:upper
 p{margin:0;line-height:1.45;color:var(--muted);font-size:13.5px;}
 button{font-family:inherit;cursor:pointer;}
 a{color:inherit;}
-#root{max-width:520px;margin:0 auto;padding-bottom:78px;min-height:100vh;}
+/* Increased padding to account for timer bar */
+#root{max-width:520px;margin:0 auto;padding-bottom:135px;min-height:100vh;}
 #splash{position:fixed;inset:0;background:#000;display:flex;align-items:center;justify-content:center;z-index:100;}
 .splashinner{display:flex;flex-direction:column;align-items:center;}
 .splashtitle{font-family:'Oswald';font-weight:700;font-size:26px;letter-spacing:2px;text-align:center;line-height:1.15;color:#fff;margin-top:16px;}
@@ -44,7 +45,7 @@ a{color:inherit;}
 .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 15px;margin-bottom:12px;}
 .card h3{font-size:13.5px;margin-bottom:8px;color:#fff;}
 .tag{color:var(--muted);font-size:10.5px;text-transform:none;letter-spacing:0;font-weight:500;}
-/* progress bar (sticky, always visible) */
+/* progress bar */
 .phasebar{display:flex;gap:4px;margin-bottom:3px;}
 .pseg{flex:1;height:8px;border-radius:5px;background:var(--card2);border:1px solid var(--border);overflow:hidden;}
 .pseg i{display:block;height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent));border-radius:5px;}
@@ -55,7 +56,7 @@ a{color:inherit;}
 .statrow{display:flex;gap:10px;margin-bottom:12px;}
 .stat{flex:1;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center;}
 .stat .lbl{font-size:9.5px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:2px;}
-/* nav buttons (home menu) */
+/* nav buttons */
 .navbtn{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:10px;width:100%;text-align:left;color:var(--text);}
 .navbtn .ic{font-size:22px;}
 .navbtn b{display:block;font-family:'Oswald';font-size:15px;text-transform:uppercase;letter-spacing:.5px;}
@@ -109,6 +110,27 @@ li.mrow:last-child{border-bottom:none;}
 .dchip2.on{background:var(--accent);border-color:var(--accent);color:#fff;}
 .dchip2.istoday:after{content:'\2022';margin-left:2px;}
 .dchip2.isactive{border-color:var(--accent);}
+/* timer bar */
+#timer-bar {
+  position: fixed; bottom: calc(58px + env(safe-area-inset-bottom,0px)); left: 50%; transform: translateX(-50%);
+  width: 92%; max-width: 480px; background: rgba(27, 30, 39, 0.95); backdrop-filter: blur(8px);
+  border: 1px solid var(--border); border-radius: 18px; padding: 10px 16px; 
+  display: flex; justify-content: space-between; align-items: center;
+  z-index: 9; box-shadow: 0 4px 15px rgba(0,0,0,0.6); transition: border-color 0.2s;
+}
+#timer-bar.active { border-color: var(--accent); }
+.t-left { font-family: 'Oswald'; font-size: 20px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 8px;}
+.t-left .pulse { display:inline-block; width:8px; height:8px; border-radius:4px; background:var(--muted); }
+.t-left .pulse.active { background:var(--accent); animation: blink 1.5s infinite; }
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+.t-right { display: flex; gap: 6px; }
+.t-right button { background: var(--card2); border: 1px solid var(--border); color: var(--text); padding: 5px 12px; border-radius: 10px; font-weight: 600; font-size: 11.5px; }
+.t-right button.play { background: var(--accent); border-color: var(--accent); color: #fff; }
+/* streak calendar */
+.streak-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 8px; }
+.s-day { aspect-ratio: 1; background: #23262f; border-radius: 4px; }
+.s-day.hit { background: var(--green); box-shadow: 0 0 6px rgba(99, 214, 154, 0.2); }
+.s-day.today { border: 1.5px solid var(--text); }
 /* bottom nav */
 .botnav{position:fixed;bottom:0;left:0;right:0;background:#15171e;border-top:1px solid var(--border);display:flex;padding:6px 4px calc(6px + env(safe-area-inset-bottom,0px));z-index:10;}
 .botnav button{flex:1;background:none;border:none;color:var(--muted);font-size:9px;text-transform:uppercase;letter-spacing:.3px;padding:6px 1px;display:flex;flex-direction:column;align-items:center;gap:3px;font-weight:600;border-radius:8px;}
@@ -119,7 +141,7 @@ li.mrow:last-child{border-bottom:none;}
 .tbtn{background:var(--card2);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:10px 16px;font-size:13.5px;font-weight:600;}
 .tbtn.primary{background:var(--accent);border-color:var(--accent);color:#fff;}
 .tbtn.danger{background:#2a1214;border-color:#5c1f22;color:#ff8a80;}
-.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--accent);color:#fff;padding:10px 18px;border-radius:30px;font-size:12.5px;font-weight:600;z-index:20;box-shadow:0 6px 20px rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .25s, transform .25s;max-width:88%;text-align:center;}
+.toast{position:fixed;left:50%;bottom:120px;transform:translateX(-50%);background:var(--accent);color:#fff;padding:10px 18px;border-radius:30px;font-size:12.5px;font-weight:600;z-index:20;box-shadow:0 6px 20px rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .25s, transform .25s;max-width:88%;text-align:center;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(-6px);}
 .acc{margin-bottom:10px;}
 .acchead{display:flex;justify-content:space-between;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;}
@@ -136,7 +158,6 @@ table.info td.day{font-weight:700;white-space:nowrap;color:var(--accent2);}
 .infolist li{font-size:12px;color:var(--text);padding:6px 0;border-bottom:1px solid #23262f;}
 .infolist li:last-child{border-bottom:none;}
 </style>
-<!-- Guaranteed splash screen fallback safety script -->
 <script>
   window.addEventListener('DOMContentLoaded', function() {
     setTimeout(function() {
@@ -276,6 +297,59 @@ function saveState(){
 let state=loadState();
 let ui={view:"home",lib:{},dayOverride:null,surprise:null,resetConfirm:false,phaseJumpPending:null};
 
+/* --- Timer Logic --- */
+let timerRemaining = 3600; // default 60 min
+let timerTarget = null;
+let timerActive = false;
+let timerInterval = null;
+
+function toggleTimer() {
+  if(timerActive) {
+    clearInterval(timerInterval);
+    timerActive = false;
+  } else {
+    timerTarget = Date.now() + timerRemaining * 1000;
+    timerActive = true;
+    timerInterval = setInterval(() => {
+      timerRemaining = Math.max(0, Math.round((timerTarget - Date.now()) / 1000));
+      if(timerRemaining <= 0) {
+        clearInterval(timerInterval);
+        timerActive = false;
+        showToast("Session complete! Great job.");
+      }
+      renderTimer();
+    }, 1000);
+  }
+  renderTimer();
+}
+function resetTimer() {
+  timerRemaining = 3600;
+  if(timerActive) timerTarget = Date.now() + 3600 * 1000;
+  renderTimer();
+}
+function adjustTimer(secs) {
+  if(timerActive) return; // Only allow adjustments while paused
+  timerRemaining = Math.max(300, timerRemaining + secs); // Floor at 5 mins
+  renderTimer();
+}
+function renderTimer() {
+  var el = document.getElementById("timer-bar");
+  if(!el) return;
+  var m = Math.floor(timerRemaining/60).toString().padStart(2,'0');
+  var s = (timerRemaining%60).toString().padStart(2,'0');
+  
+  var leftHtml = '<div class="pulse'+(timerActive?' active':'')+'"></div>' + m + ':' + s;
+  var rightHtml = '';
+  if(!timerActive) {
+    rightHtml += '<button data-action="t-adj" data-d="-300">-5m</button><button data-action="t-adj" data-d="300">+5m</button>';
+  }
+  rightHtml += '<button class="play" data-action="t-toggle">'+(timerActive?'⏸ Pause':'▶ Play')+'</button>';
+  rightHtml += '<button data-action="t-reset">🔄</button>';
+
+  el.innerHTML = '<div class="t-left">'+leftHtml+'</div><div class="t-right">'+rightHtml+'</div>';
+  el.className = timerActive ? 'active' : '';
+}
+
 function k(){return Array.prototype.slice.call(arguments).join(".");}
 function todayISO(){return new Date().toISOString().slice(0,10);}
 function todayName(){return DAYS[new Date().getDay()];}
@@ -309,11 +383,10 @@ function phasePercent(idx){
   if(info.testReq) done+=TESTCATS.filter(function(c){return state.testLevel[c.key]>=info.testReq;}).length;
   return total?Math.round(done/total*100):0;
 }
-function nextUnchecked(list,prefix){for(var i=0;i<list.length;i++){if(!state.checks[prefix+"."+i]) return i;}return -1;}
 function totalStreak(){return (state.streakDates||[]).length;}
 function logToday(){var t=todayISO();if(state.streakDates.indexOf(t)===-1) state.streakDates.push(t);}
 
-/* ---- block-level "Practiced" flags, keyed per weekday ---- */
+/* ---- block-level flags ---- */
 function blockPKey(name,day){ return name+"."+day; }
 function isBlockPracticed(name,day){ return !!state.practiced[blockPKey(name,day)]; }
 function toggleBlockPracticed(name,day){ ensureDailyReset(); var kk=blockPKey(name,day); state.practiced[kk]=!state.practiced[kk]; applyStateChange(); }
@@ -360,7 +433,6 @@ function applyStateChange(skipAuto){
   saveState(); render();
 }
 function toggleCheck(key){ 
-  // Store today's date instead of 'true' so we know exactly when it was checked
   state.checks[key] = state.checks[key] ? false : todayISO(); 
   applyStateChange(); 
 }
@@ -396,7 +468,6 @@ function confirmPhaseJumpBack(){
   showToast("Now on "+PHASES[newIdx].label+" \u2014 later phases reset");
 }
 function cancelPhaseJumpBack(){ ui.phaseJumpPending=null; render(); }
-
 function showToast(msg){var t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");clearTimeout(showToast._h);showToast._h=setTimeout(function(){t.classList.remove("show");},2600);}
 
 /* ---------- backup / reset ---------- */
@@ -504,16 +575,56 @@ function blk(name,day,title,minText,bodyHtml,editable){
   return '<div class="blk'+(done?" done-today":"")+'"><div class="top"><div class="nm">'+title+'</div><div class="topright">'+(minText?'<div class="min">'+minText+'</div>':'')+check+'</div></div>'+bodyHtml+'</div>';
 }
 
+function getDailyActiveSequence(list, prefix, editable){
+  var html="";
+  for(var i=0; i<list.length; i++){
+    var val = state.checks[prefix+"."+i];
+    if(val){
+      if(val === todayISO()) html += checkItem(list[i].t, prefix+"."+i, list[i].url, editable);
+    } else {
+      html += checkItem(list[i].t, prefix+"."+i, list[i].url, editable);
+      break; 
+    }
+  }
+  return html;
+}
+
+function renderStreakCalendar(){
+  var html='<div class="streak-grid">';
+  var todayDate = new Date();
+  var start = new Date(todayDate.getTime());
+  start.setDate(todayDate.getDate() - 27); // Last 28 days
+
+  for(var i=0; i<28; i++){
+    var d = new Date(start.getTime());
+    d.setDate(start.getDate() + i);
+    var iso = d.toISOString().slice(0,10);
+    var isHit = state.streakDates.indexOf(iso) !== -1;
+    var isToday = iso === todayISO();
+    var c = "s-day" + (isHit?" hit":"") + (isToday?" today":"");
+    html += '<div class="'+c+'" title="'+iso+'"></div>';
+  }
+  return html + '</div>';
+}
+
 /* ---------- views ---------- */
 function renderHome(){
   var cur=PHASES[state.phaseIndex],pct=phasePercent(state.phaseIndex);
   var req=cur.testReq||null;
   var html='<div class="eyebrow">Daily Practice System</div>';
+  
   html+='<div class="statrow"><div class="stat"><div class="bignum">'+pct+'%</div><div class="lbl">'+cur.label+'</div></div>'+
     '<div class="stat"><div class="bignum">\ud83d\udd25'+totalStreak()+'</div><div class="lbl">Days Logged</div></div></div>';
+    
+  html+='<div class="card"><h3>28-Day Consistency</h3>';
+  html+='<p style="margin-bottom:4px; font-size:12px;">Your recent practice history. Green means you logged a session.</p>';
+  html+=renderStreakCalendar();
+  html+='</div>';
+
   html+='<div class="card"><h3>\ud83e\uddea Phase Transition Test <span class="tag">1-Minute Workout</span></h3>'+
     (req?'<p style="margin-bottom:8px;">Reach Level '+req+' on all five to unlock '+(PHASES[state.phaseIndex+1]?PHASES[state.phaseIndex+1].label:"the next phase")+'.</p>':'<p style="margin-bottom:8px;">Track your baseline here \u2014 informational at this stage.</p>')+
     testRow(req)+'</div>';
+    
   html+='<button class="navbtn accent" data-action="go" data-view="daily"><div class="ic">\ud83c\udfaf</div><div><b>Daily Practice</b><span>Structured session, any day you pick</span></div></button>';
   html+='<button class="navbtn blue" data-action="go" data-view="free"><div class="ic">\ud83c\udfb8</div><div><b>Free Practice</b><span>Bonus content, essential skills, surprise me</span></div></button>';
   html+='<button class="navbtn" data-action="go" data-view="library"><div class="ic">\ud83d\udcda</div><div><b>All Phases</b><span>Browse &amp; check off any tier</span></div></button>';
@@ -559,7 +670,11 @@ function renderDaily(){
   }
 
   if(p.kind==="setup"){
-    var preBody='<ul class="check">'+PREREQ.map(function(pr,i){return pr.doc?docItem(pr.t,pr.url):prereqItem(pr.t,k("p0","pre",i),pr.url,editable);}).join("")+'</ul>';
+    var preBody='<ul class="check">'+PREREQ.map(function(pr,i){
+      var kk = k("p0","pre",i);
+      if(state.checks[kk] && state.checks[kk] !== todayISO()) return ""; // hide docs mastered before today
+      return pr.doc?docItem(pr.t,pr.url):prereqItem(pr.t,kk,pr.url,editable);
+    }).join("")+'</ul>';
     html+=blk("prereq",day,"Prerequisites",null,preBody,editable);
     html+=blk("warmup",day,"Warm-Up",null,'<p>'+linked("Ultimate 5-Minute Warm-Up",WARMUP_URL)+'</p>',editable);
     html+='<div class="note">Run the Phase Transition Test on Home for your baseline \u2014 it\'s informational here, not required to advance.</div>';
@@ -567,11 +682,10 @@ function renderDaily(){
   }
 
   if(wknd){
-    var nsi=nextUnchecked(p.songs.map(function(s){return s.t;}),p.id+".s");
     html+=blk("warmup",day,"Warm-Up","15 min",'<p>Extended warm-up + weak-spot review.</p>',editable);
     if(day==="Sat"){
-      var body='<p>Deep-dive: polish next solo toward full tempo.</p>'+
-        (nsi>=0?'<ul class="check">'+checkItem(p.songs[nsi].t,k(p.id,"s",nsi),p.songs[nsi].url,editable)+'</ul>':'');
+      var songHtml = getDailyActiveSequence(p.songs||[], p.id+".s", editable);
+      var body='<p>Deep-dive: polish next solo toward full tempo.</p>' + (songHtml ? '<ul class="check">'+songHtml+'</ul>' : '');
       html+=blk("casual",day,"Creative","45 min",body,editable);
     } else {
       html+=blk("casual",day,"Creative","45 min",'<p>Improv over a backing track, or pick a bonus drill.</p><button class="tbtn" data-action="go" data-view="free" style="margin-top:8px;">Open Free Practice \u2192</button>',editable);
@@ -579,7 +693,6 @@ function renderDaily(){
     return html;
   }
 
-  var ci=nextUnchecked((p.concept||[]).map(function(c){return c.t;}),p.id+".c");
   var essential=ESSENTIAL[day]||"Reinforce Weakest";
   var essUrl=ESSENTIAL_URL[essential];
 
@@ -587,11 +700,13 @@ function renderDaily(){
 
   var focusBody='';
   if(day==="Mon"){
-    if(p.concept&&p.concept.length){ focusBody+= ci>=0 ? '<ul class="check">'+checkItem("Watch: "+p.concept[ci].t,k(p.id,"c",ci),p.concept[ci].url,editable)+'</ul>' : '<p>All concept videos done.</p>'; }
+    if(p.concept && p.concept.length){
+      var conceptHtml = getDailyActiveSequence(p.concept, p.id+".c", editable);
+      focusBody += conceptHtml ? '<ul class="check">'+conceptHtml+'</ul>' : '<p>All concept videos completed.</p>';
+    }
     
     var monExHtml = p.exercises.map(function(t,i){
       var kk = k(p.id,"e",i);
-      // Hide ONLY if checked on a previous day
       if (state.checks[kk] && state.checks[kk] !== todayISO()) return "";
       return checkItem(t.t,kk,t.url,editable);
     }).join("");
@@ -601,7 +716,6 @@ function renderDaily(){
   } else if(day==="Tue"){
     var tueExHtml = p.exercises.map(function(t,i){
       var kk = k(p.id,"e",i);
-      // Hide ONLY if checked on a previous day
       if (state.checks[kk] && state.checks[kk] !== todayISO()) return "";
       return checkItem(t.t,kk,t.url,editable);
     }).join("");
@@ -610,7 +724,22 @@ function renderDaily(){
     
     focusBody+='<p style="margin:6px 0;">Chop-builders (picking) \u2014 protect ~15 min:</p>'+chopRow(p.target,["alt","sweep"]);
   } else if(day==="Wed"){
-    focusBody+='<p style="margin-bottom:6px;">Theory in rotation:</p><ul class="check">'+THEORY.map(function(t,i){return t.doc?docItem(t.t,t.url):checkItem(t.t,"theory."+i,t.url,editable);}).join("")+'</ul>';
+    var theoryHtml = "";
+    for(var i=0; i<THEORY.length; i++){
+      var t = THEORY[i];
+      if(t.doc){ theoryHtml += docItem(t.t, t.url); } 
+      else {
+        var kk = "theory."+i;
+        var val = state.checks[kk];
+        if(val){
+          if(val === todayISO()) theoryHtml += checkItem(t.t, kk, t.url, editable);
+        } else {
+          theoryHtml += checkItem(t.t, kk, t.url, editable);
+          break; // Stop showing further theory lessons until this one is checked
+        }
+      }
+    }
+    focusBody+='<p style="margin-bottom:6px;">Theory in rotation:</p><ul class="check">'+theoryHtml+'</ul>';
   } else if(day==="Thu"){
     focusBody+='<p style="margin-bottom:6px;">Chop-builders (legato/economy/tapping):</p>'+chopRow(p.target,["legato","econ","tap"]);
   } else if(day==="Fri"){
@@ -623,9 +752,11 @@ function renderDaily(){
   if(day!=="Fri") focusBody+='<p style="margin-top:8px;">+ 5 min: '+linked(essential+" micro-dose",essUrl)+'</p>';
   html+=blk("focused",day,"Focused","30 + 5 min",focusBody,editable);
 
-  var si=nextUnchecked(p.songs.map(function(s){return s.t;}),p.id+".s");
   var casualBody='';
-  if(day==="Mon"||day==="Thu"){ casualBody += si>=0 ? '<ul class="check">'+checkItem(p.songs[si].t,k(p.id,"s",si),p.songs[si].url,editable)+'</ul>' : '<p>All this tier\'s solos learned. \ud83c\udfb8</p>'; }
+  if(day==="Mon"||day==="Thu"){ 
+    var songHtml = getDailyActiveSequence(p.songs||[], p.id+".s", editable);
+    casualBody += songHtml ? '<ul class="check">'+songHtml+'</ul>' : '<p>All this tier\'s solos learned. \ud83c\udfb8</p>';
+  }
   else if(day==="Tue"){ casualBody+='<p>Riff writing / improv over a backing track.</p>'; }
   else if(day==="Wed"){ casualBody+='<p>Apply today\'s theory concept on the fretboard.</p>'; }
   else if(day==="Fri"){ casualBody+='<p>Free jam using everything from the week.</p>'; }
@@ -729,9 +860,12 @@ function render(){
     else if(ui.view==="library") body+=renderLibrary();
     else if(ui.view==="free") body+=renderFree();
     else if(ui.view==="info") body+=renderInfo();
-    body+='</div><div class="botnav">'+navBtn("home","\ud83c\udfe0","Home")+navBtn("daily","\ud83c\udfaf","Daily")+navBtn("library","\ud83d\udcda","Library")+navBtn("free","\ud83c\udfb8","Free")+navBtn("info","\u2139\ufe0f","Info")+'</div>';
+    
+    body+='</div><div id="timer-bar"></div><div class="botnav">'+navBtn("home","\ud83c\udfe0","Home")+navBtn("daily","\ud83c\udfaf","Daily")+navBtn("library","\ud83d\udcda","Library")+navBtn("free","\ud83c\udfb8","Free")+navBtn("info","\u2139\ufe0f","Info")+'</div>';
     
     root.innerHTML=body;
+    renderTimer(); // re-initialize timer HTML after body replaces it
+    
     var fi=document.getElementById("importFile");
     if(fi) fi.addEventListener("change",function(e){ if(e.target.files[0]) handleImportFile(e.target.files[0]); });
   } catch(err) {
@@ -785,6 +919,11 @@ document.addEventListener("click",function(e){
   else if(a==="confirmreset"){ confirmReset(); }
   else if(a==="canceljump"){ cancelPhaseJumpBack(); }
   else if(a==="confirmjump"){ confirmPhaseJumpBack(); }
+  
+  // Timer Actions
+  else if(a==="t-toggle"){ toggleTimer(); }
+  else if(a==="t-reset"){ resetTimer(); }
+  else if(a==="t-adj"){ adjustTimer(parseInt(t.dataset.d,10)); }
 });
 document.addEventListener("change",function(e){
   if(e.target.dataset.action==="setphase") handlePhaseSelect(parseInt(e.target.value,10));
