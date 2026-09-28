@@ -689,27 +689,35 @@ function renderInfo(){
 }
 
 function render(){
-  ensureDailyReset();
-  var root=document.getElementById("root");
-  
-  // Aligned to the TOP of the title using align-items: flex-start
-  var topbarHTML = '<div class="topbar"><div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;"><div class="brand" style="margin-bottom:0;">THE <span>SHRED</span> ROADMAP</div><div class="topsubtitle" style="text-align:right;">Bradley Hall\'s Guitar School</div></div>';
-  if(hasFirebase){
-    topbarHTML += '<div style="margin-bottom:8px;"><button id="authBtn" class="dchip2" style="padding:5px 10px; flex:0 0 auto; color:var(--text); border-color:var(--border);">'+(currentUser ? "Logout" : "Login with Google")+'</button></div>';
-  }
-  topbarHTML += progressBar()+'</div>';
+  try {
+    ensureDailyReset();
+    var root=document.getElementById("root");
+    if(!root) return;
+    
+    var topbarHTML = '<div class="topbar"><div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;"><div class="brand" style="margin-bottom:0;">THE <span>SHRED</span> ROADMAP</div><div class="topsubtitle" style="text-align:right;">Bradley Hall\'s Guitar School</div></div>';
+    if(hasFirebase){
+      topbarHTML += '<div style="margin-bottom:8px;"><button id="authBtn" class="dchip2" style="padding:5px 10px; flex:0 0 auto; color:var(--text); border-color:var(--border);">'+(currentUser ? "Logout" : "Login with Google")+'</button></div>';
+    }
+    topbarHTML += progressBar()+'</div>';
 
-  var body = topbarHTML + '<div class="page">';
-  if(ui.view==="home") body+=renderHome();
-  else if(ui.view==="daily") body+=renderDaily();
-  else if(ui.view==="library") body+=renderLibrary();
-  else if(ui.view==="free") body+=renderFree();
-  else if(ui.view==="info") body+=renderInfo();
-  body+='</div><div class="botnav">'+navBtn("home","\ud83c\udfe0","Home")+navBtn("daily","\ud83c\udfaf","Daily")+navBtn("library","\ud83d\udcda","Library")+navBtn("free","\ud83c\udfb8","Free")+navBtn("info","\u2139\ufe0f","Info")+'</div>';
-  
-  root.innerHTML=body;
-  var fi=document.getElementById("importFile");
-  if(fi) fi.addEventListener("change",function(e){ if(e.target.files[0]) handleImportFile(e.target.files[0]); });
+    var body = topbarHTML + '<div class="page">';
+    if(ui.view==="home") body+=renderHome();
+    else if(ui.view==="daily") body+=renderDaily();
+    else if(ui.view==="library") body+=renderLibrary();
+    else if(ui.view==="free") body+=renderFree();
+    else if(ui.view==="info") body+=renderInfo();
+    body+='</div><div class="botnav">'+navBtn("home","\ud83c\udfe0","Home")+navBtn("daily","\ud83c\udfaf","Daily")+navBtn("library","\ud83d\udcda","Library")+navBtn("free","\ud83c\udfb8","Free")+navBtn("info","\u2139\ufe0f","Info")+'</div>';
+    
+    root.innerHTML=body;
+    var fi=document.getElementById("importFile");
+    if(fi) fi.addEventListener("change",function(e){ if(e.target.files[0]) handleImportFile(e.target.files[0]); });
+  } catch(err) {
+    console.error("Render error:", err);
+    var root=document.getElementById("root");
+    if(root) {
+      root.innerHTML = '<div style="padding: 20px; color: #ff3b30; font-family: monospace;"><h3>Render Error:</h3><p>' + err.message + '</p><pre>' + err.stack + '</pre></div>';
+    }
+  }
 }
 function navBtn(view,ic,label){ return '<button data-action="go" data-view="'+view+'" class="'+(ui.view===view?"active":"")+'"><span class="ic">'+ic+'</span>'+label+'</button>'; }
 
