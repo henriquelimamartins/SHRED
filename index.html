@@ -35,7 +35,7 @@ a{color:inherit;}
 .splashtitle span{color:var(--accent);}
 .topbar{position:sticky;top:0;z-index:5;background:#101217;padding:calc(12px + env(safe-area-inset-top,0px)) 16px 10px;border-bottom:1px solid var(--border);}
 
-/* --- ESTILOS DO CABEÇALHO --- */
+/* --- CABEÇALHO --- */
 .topbar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 10px; }
 .brand { font-family: 'Oswald'; font-weight: 700; font-size: 15px; letter-spacing: 1px; flex: 1; margin-bottom: 0; }
 .brand span { color: var(--accent); }
@@ -464,22 +464,6 @@ function confirmPhaseJumpBack(){
 function cancelPhaseJumpBack(){ ui.phaseJumpPending=null; render(); }
 function showToast(msg){var t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");clearTimeout(showToast._h);showToast._h=setTimeout(function(){t.classList.remove("show");},2600);}
 
-/* ---------- backup / reset ---------- */
-function exportState(){
-  var blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});
-  var url=URL.createObjectURL(blob);
-  var a=document.createElement("a"); a.href=url; a.download="shred-roadmap-progress.json"; document.body.appendChild(a); a.click(); document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
-function triggerImport(){ document.getElementById("importFile").click(); }
-function handleImportFile(file){
-  var reader=new FileReader();
-  reader.onload=function(e){
-    try{ var data=JSON.parse(e.target.result); state=Object.assign(defaultState(),data); saveState(); render(); showToast("Progress loaded!"); }
-    catch(err){ showToast("That file couldn't be read."); }
-  };
-  reader.readAsText(file);
-}
 function handleReset(){ ui.resetConfirm=true; render(); }
 function cancelReset(){ ui.resetConfirm=false; render(); }
 function confirmReset(){
@@ -644,24 +628,23 @@ function renderHome(){
 
   html+='<div class="card"><h3>Jump to phase</h3>';
   if(ui.phaseJumpPending!==null){
-    html+='<p style="margin-bottom:8px;color:#ffb3ac;"><b>Jump back to Phase '+ui.phaseJumpPending+'?</b> This resets Phase '+(ui.phaseJumpPending+1)+' through Phase '+state.phaseIndex+"'s checklist items. Chop-builder and test levels are left as they are.</p>";
+    html+='<p style="margin-bottom:8px;color:#ffb3ac;text-align:justify;"><b>Jump back to Phase '+ui.phaseJumpPending+'?</b> This resets Phase '+(ui.phaseJumpPending+1)+' through Phase '+state.phaseIndex+"'s checklist items. Chop-builder and test levels are left as they are.</p>";
     html+='<div style="display:flex;gap:8px;"><button class="tbtn" style="flex:1;" data-action="canceljump">Cancel</button><button class="tbtn danger" style="flex:1;" data-action="confirmjump">Confirm</button></div>';
   } else {
-    html+='<p>Advancing happens automatically once every item, chop level and test level in your current phase is done. Jump forward and earlier phases are marked complete too; jump back and later phases reset.</p><select class="select" data-action="setphase">';
+    html+='<p style="text-align:justify;">Advancing happens automatically once every item, chop level and test level in your current phase is done. Jump forward and earlier phases are marked complete too; jump back and later phases reset.</p><select class="select" data-action="setphase">';
     PHASES.forEach(function(p,i){html+='<option value="'+i+'"'+(i===state.phaseIndex?" selected":"")+'>Phase '+i+' \u2014 '+p.label+" ("+p.short+')</option>';});
     html+='</select>';
   }
   html+='</div>';
 
-  html+='<div class="card"><h3>Save &amp; Load</h3>';
+  html+='<div class="card"><h3>Cloud Sync</h3>';
   if(ui.resetConfirm){
-    html+='<p style="color:#ffb3ac;"><b>Delete everything?</b> This wipes every phase, checklist, chop level, test level and streak. This cannot be undone.</p>'+
+    html+='<p style="color:#ffb3ac;text-align:justify;"><b>Delete everything?</b> This wipes every phase, checklist, chop level, test level and streak. This cannot be undone.</p>'+
       '<div style="display:flex;gap:8px;margin-top:10px;"><button class="tbtn" style="flex:1;" data-action="cancelreset">Cancel</button><button class="tbtn danger" style="flex:1;" data-action="confirmreset">Yes, delete everything</button></div>';
   } else {
-    html+='<p>Saves automatically in this browser only. Save a copy to move it to another device, or load one back in.</p>'+
-      '<div style="display:flex;gap:8px;margin-top:10px;"><button class="tbtn" style="flex:1;" data-action="export">\ud83d\udcbe Save</button><button class="tbtn" style="flex:1;" data-action="import">\ud83d\udcc2 Load</button></div>'+
-      '<button class="tbtn danger" style="width:100%;margin-top:8px;" data-action="reset">\u26a0\ufe0f Reset Everything</button>'+
-      '<input type="file" id="importFile" accept="application/json" style="display:none;">';
+    html+='<p style="text-align:justify;">Your progress syncs automatically when logged in. You can also manually push a save or pull your latest cloud backup here.</p>'+
+      '<div style="display:flex;gap:8px;margin-top:10px;"><button class="tbtn" style="flex:1;" data-action="cloudsave">\u2601\ufe0f Save</button><button class="tbtn" style="flex:1;" data-action="cloudload">\u2601\ufe0f Load</button></div>'+
+      '<button class="tbtn danger" style="width:100%;margin-top:8px;" data-action="reset">\u26a0\ufe0f Reset Everything</button>';
   }
   html+='</div>';
   return html;
@@ -828,23 +811,23 @@ function renderFree(){
 
 function renderInfo(){
   var html='<div class="eyebrow">The Full Guide</div><div class="h2" style="font-size:20px;margin-bottom:10px;">Guide &amp; Info</div>';
-  html+='<div class="card"><h3>How This Plan Works</h3><p style="margin-bottom:6px;">Technique is sequential and full-coverage: start at Beginner regardless of ability, and work every exercise, chop-builder and solo in every tier before advancing.</p>'+
-    '<p style="margin-bottom:6px;">Theory and Creative (songwriting/production) run on their own independent tracks \u2014 always available in Library, never gating a phase.</p>'+
-    '<p>Essential skills get a 5-minute daily micro-dose \u2014 a different one Monday\u2013Thursday, Friday reinforces whichever felt weakest.</p></div>';
-  html+='<div class="card"><h3>Daily Blueprint</h3><p style="margin-bottom:6px;"><b style="color:var(--text)">Weekdays (60 min):</b> 5 Warm-Up + 35 Focused (30 technique/theory + 5 skill micro-dose) + 15 Casual + 5 Cool-Down.</p>'+
-    '<p><b style="color:var(--text)">Weekends (60 min):</b> 15 Warm-Up + 45 Casual/Creative.</p></div>';
-  html+='<div class="card"><h3>Exercise Time-Split (Tue/Thu)</h3><p>Newest exercise gets the most time (5\u20138 min); older, solid ones just need a quick maintenance rep (1\u20132 min). Chop-builders get a protected floor of ~15 min \u2014 that\'s your real progress signal.</p></div>';
+  html+='<div class="card"><h3>How This Plan Works</h3><p style="margin-bottom:6px;text-align:justify;">Technique is sequential and full-coverage: start at Beginner regardless of ability, and work every exercise, chop-builder and solo in every tier before advancing.</p>'+
+    '<p style="margin-bottom:6px;text-align:justify;">Theory and Creative (songwriting/production) run on their own independent tracks \u2014 always available in Library, never gating a phase.</p>'+
+    '<p style="text-align:justify;">Essential skills get a 5-minute daily micro-dose \u2014 a different one Monday\u2013Thursday, Friday reinforces whichever felt weakest.</p></div>';
+  html+='<div class="card"><h3>Daily Blueprint</h3><p style="margin-bottom:6px;text-align:justify;"><b style="color:var(--text)">Weekdays (60 min):</b> 5 Warm-Up + 35 Focused (30 technique/theory + 5 skill micro-dose) + 15 Casual + 5 Cool-Down.</p>'+
+    '<p style="text-align:justify;"><b style="color:var(--text)">Weekends (60 min):</b> 15 Warm-Up + 45 Casual/Creative.</p></div>';
+  html+='<div class="card"><h3>Exercise Time-Split (Tue/Thu)</h3><p style="text-align:justify;">Newest exercise gets the most time (5\u20138 min); older, solid ones just need a quick maintenance rep (1\u20132 min). Chop-builders get a protected floor of ~15 min \u2014 that\'s your real progress signal.</p></div>';
   html+='<div class="card"><h3>Weekly Rhythm</h3><table class="info"><tr><th>Day</th><th>Focused</th><th>Casual</th></tr>'+
     WEEKLY_RHYTHM.map(function(r){return '<tr><td class="day">'+r.day+'</td><td>'+r.focused+'</td><td>'+r.casual+'</td></tr>';}).join("")+'</table></div>';
   html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="infophases"><b>Phase Overview</b><span class="chev'+(ui.lib.infophases?" open":"")+'">\u203a</span></div>';
-  if(ui.lib.infophases){ html+='<div class="accbody"><div class="card">'+PHASES.map(function(p,i){return '<p style="margin-bottom:8px;"><b style="color:var(--text)">Phase '+i+' \u2014 '+p.label+' ('+p.short+'):</b> '+PHASE_BLURB[p.id]+'</p>';}).join("")+
-    '<p><b style="color:var(--text)">Creative (no phase number):</b> Once technique work slows down, Creative \u2014 songwriting and production \u2014 becomes your ongoing focus. It\'s tracked in Library like Theory, and never counts toward the phase progress bar.</p></div></div>'; }
+  if(ui.lib.infophases){ html+='<div class="accbody"><div class="card">'+PHASES.map(function(p,i){return '<p style="margin-bottom:8px;text-align:justify;"><b style="color:var(--text)">Phase '+i+' \u2014 '+p.label+' ('+p.short+'):</b> '+PHASE_BLURB[p.id]+'</p>';}).join("")+
+    '<p style="text-align:justify;"><b style="color:var(--text)">Creative (no phase number):</b> Once technique work slows down, Creative \u2014 songwriting and production \u2014 becomes your ongoing focus. It\'s tracked in Library like Theory, and never counts toward the phase progress bar.</p></div></div>'; }
   html+='</div>';
   html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="infoess"><b>Essential Skills Rotation</b><span class="chev'+(ui.lib.infoess?" open":"")+'">\u203a</span></div>';
   if(ui.lib.infoess){ html+='<div class="accbody"><div class="card">'+Object.keys(ESSENTIAL).map(function(d){return '<p style="margin-bottom:4px;"><b style="color:var(--text)">'+DAY_FULL[d]+':</b> '+ESSENTIAL[d]+'</p>';}).join("")+'</div></div>'; }
   html+='</div>';
   html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="infotheory"><b>Theory Track</b><span class="chev'+(ui.lib.infotheory?" open":"")+'">\u203a</span></div>';
-  if(ui.lib.infotheory){ html+='<div class="accbody"><div class="card"><p>Seven lessons, worked strictly in order: start with the Scales Handbook as a standing reference, then Ear Training (chords, then intervals), the four-part Modes Course, Soloing Over Chord Changes, and finally Phrasing Masterclass. The full checklist with links lives in Library.</p></div></div>'; }
+  if(ui.lib.infotheory){ html+='<div class="accbody"><div class="card"><p style="text-align:justify;">Seven lessons, worked strictly in order: start with the Scales Handbook as a standing reference, then Ear Training (chords, then intervals), the four-part Modes Course, Soloing Over Chord Changes, and finally Phrasing Masterclass. The full checklist with links lives in Library.</p></div></div>'; }
   html+='</div>';
   html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="infobonus"><b>Bonus Content</b><span class="chev'+(ui.lib.infobonus?" open":"")+'">\u203a</span></div>';
   if(ui.lib.infobonus){ html+='<div class="accbody"><div class="card"><ul class="infolist">'+BONUS.map(function(t){return '<li>'+t.t+'</li>';}).join("")+'</ul></div></div>'; }
@@ -866,9 +849,10 @@ function render(){
     
     if(hasFirebase){
       topbarHTML += '<div class="auth-container">';
-      // Se houver utilizador logado, mostra o email à esquerda do botão
+      // Split display username at the @ symbol
       if(currentUser && currentUser.email){
-        topbarHTML += '<span class="user-email">' + currentUser.email + '</span>';
+        var shortName = currentUser.email.split('@')[0];
+        topbarHTML += '<span class="user-email">' + shortName + '</span>';
       }
       topbarHTML += '<button id="authBtn" class="dchip2" style="padding:5px 10px; margin:0; border-color:var(--border); color:var(--text);">' + (currentUser ? "Logout" : "Login with Google") + '</button>';
       topbarHTML += '</div>';
@@ -887,8 +871,6 @@ function render(){
     body+='</div><div class="botnav">'+navBtn("home","\ud83c\udfe0","Home")+navBtn("daily","\ud83c\udfaf","Daily")+navBtn("library","\ud83d\udcda","Library")+navBtn("free","\ud83c\udfb8","Free")+navBtn("info","\u2139\ufe0f","Info")+'</div>';
     
     root.innerHTML=body;
-    var fi=document.getElementById("importFile");
-    if(fi) fi.addEventListener("change",function(e){ if(e.target.files[0]) handleImportFile(e.target.files[0]); });
   } catch(err) {
     console.error("Render error:", err);
     var root=document.getElementById("root");
@@ -933,8 +915,23 @@ document.addEventListener("click",function(e){
     ui.surprise=pool[Math.floor(Math.random()*pool.length)]; 
     render();
   }
-  else if(a==="export"){ exportState(); }
-  else if(a==="import"){ triggerImport(); }
+  else if(a==="cloudsave"){ 
+    if(!currentUser) { showToast("Please login first to save to cloud."); return; }
+    setDoc(doc(db, "users", currentUser.uid), state).then(() => showToast("Progress manually saved to cloud!")).catch(() => showToast("Error saving to cloud."));
+  }
+  else if(a==="cloudload"){ 
+    if(!currentUser) { showToast("Please login first to load from cloud."); return; }
+    getDoc(doc(db, "users", currentUser.uid)).then(docSnap => {
+      if(docSnap.exists()){
+        state = Object.assign(defaultState(), docSnap.data());
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        render();
+        showToast("Progress loaded from cloud!");
+      } else {
+        showToast("No cloud data found.");
+      }
+    }).catch(() => showToast("Error loading from cloud."));
+  }
   else if(a==="reset"){ handleReset(); }
   else if(a==="cancelreset"){ cancelReset(); }
   else if(a==="confirmreset"){ confirmReset(); }
