@@ -359,7 +359,11 @@ function applyStateChange(skipAuto){
   }
   saveState(); render();
 }
-function toggleCheck(key){ state.checks[key]=!state.checks[key]; applyStateChange(); }
+function toggleCheck(key){ 
+  // Store today's date instead of 'true' so we know exactly when it was checked
+  state.checks[key] = state.checks[key] ? false : todayISO(); 
+  applyStateChange(); 
+}
 function setChop(sk,d){ state.chop[sk]=Math.max(0,Math.min(10,(state.chop[sk]||0)+d)); applyStateChange(); }
 function setTest(sk,d){ state.testLevel[sk]=Math.max(0,Math.min(5,(state.testLevel[sk]||0)+d)); applyStateChange(); }
 function setBonusLevel(key,d,max){ state.bonusLevel[key]=Math.max(0,Math.min(max,(state.bonusLevel[key]||0)+d)); applyStateChange(); }
@@ -587,7 +591,8 @@ function renderDaily(){
     
     var monExHtml = p.exercises.map(function(t,i){
       var kk = k(p.id,"e",i);
-      if (state.checks[kk]) return "";
+      // Hide ONLY if checked on a previous day
+      if (state.checks[kk] && state.checks[kk] !== todayISO()) return "";
       return checkItem(t.t,kk,t.url,editable);
     }).join("");
     if(monExHtml) focusBody+='<p style="margin-top:6px;">Exercises in rotation (check off once solid):</p><ul class="check">'+monExHtml+'</ul>';
@@ -596,7 +601,8 @@ function renderDaily(){
   } else if(day==="Tue"){
     var tueExHtml = p.exercises.map(function(t,i){
       var kk = k(p.id,"e",i);
-      if (state.checks[kk]) return "";
+      // Hide ONLY if checked on a previous day
+      if (state.checks[kk] && state.checks[kk] !== todayISO()) return "";
       return checkItem(t.t,kk,t.url,editable);
     }).join("");
     if(tueExHtml) focusBody+='<p style="margin-bottom:6px;">Exercises in rotation (check off once solid):</p><ul class="check">'+tueExHtml+'</ul>';
@@ -793,4 +799,3 @@ setTimeout(function(){
 </script>
 </body>
 </html>
-
