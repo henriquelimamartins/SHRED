@@ -311,7 +311,13 @@ function activeDay(){ if(state.activeDayOverride && state.activeDayDate===todayI
 
 function ensureDailyReset(){
   var t=todayISO();
-  if(state.practicedDate!==t){ state.practiced={}; state.practicedDate=t; saveState(); }
+  if(state.practicedDate!==t){
+    // Se mudou o dia, salvamos permanentemente no streakDates o dia anterior caso estivesse concluído
+    updateStreakStatus();
+    state.practiced={};
+    state.practicedDate=t;
+    saveState();
+  }
 }
 
 function itemKeysForPhase(idx){
@@ -339,7 +345,7 @@ function phasePercent(idx){
 
 function totalStreak(){return (state.streakDates||[]).length;}
 
-/* Apenas atualiza o calendário se alguma caixa de "Practiced" estiver clicada hoje */
+/* Atualiza o streak com base no estado atual ou histórico do dia (garante que não se perde no dia 2) */
 function updateStreakStatus(){
   var t = todayISO();
   var hasPracticed = Object.keys(state.practiced).some(function(k){ return state.practiced[k]; });
@@ -347,7 +353,7 @@ function updateStreakStatus(){
   
   if (hasPracticed && idx === -1) {
     state.streakDates.push(t);
-  } else if (!hasPracticed && idx !== -1) {
+  } else if (!hasPracticed && idx !== -1 && state.practicedDate === t) {
     state.streakDates.splice(idx, 1);
   }
 }
