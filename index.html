@@ -184,7 +184,13 @@ import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signO
 import { getFirestore, doc, setDoc, getDoc, initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
-  // ⚠️ PASTE YOUR FIREBASE CONFIG OBJECT HERE ⚠️
+  apiKey: "AIzaSyDO-7ovvVwmowSa6KIoPwglO93nnp2kS4Y",
+    authDomain: "shred-auth.firebaseapp.com",
+    projectId: "shred-auth",
+    storageBucket: "shred-auth.firebasestorage.app",
+    messagingSenderId: "372290387192",
+    appId: "1:372290387192:web:3052450efe7d7f8eaa4f0d",
+    measurementId: "G-NLJVRXEG85"
 };
 
 const hasFirebase = !!firebaseConfig.apiKey;
