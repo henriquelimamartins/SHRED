@@ -1,26 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>The Shred Roadmap</title>
 
-<link rel="manifest" href="manifest.json">
-
-<link rel="icon" type="image/png" href="favicon.png">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
-
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" type="image/png" href="./favicon.png">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
 <meta name="theme-color" content="#ffffff">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="SHRED">
+<meta name="apple-mobile-web-app-title" content="The Shred">
 
-<style>
-    body {
-        touch-action: manipulation;
-    }
-</style>
-  
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>The Shred Roadmap</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -30,13 +22,18 @@
   --amber:#f5a623;--text:#eef0f4;--muted:#9aa0ac;--blue:#6fa8ff;--green:#63d69a;
 }
 *{box-sizing:border-box}
-html,body{height:100%;margin:0;background:var(--bg);}
+html,body{height:100%;margin:0;background:var(--bg);touch-action:manipulation;}
+button,a,img{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;}
 body{font-family:'Inter',system-ui,sans-serif;color:var(--text);-webkit-tap-highlight-color:transparent;padding-bottom:env(safe-area-inset-bottom,0px);}
 h1,h2,h3,h4{font-family:'Oswald',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin:0;}
 p{margin:0;line-height:1.45;color:var(--muted);font-size:13.5px;}
 button{font-family:inherit;cursor:pointer;}
 a{color:inherit;}
 #root{max-width:520px;margin:0 auto;padding-bottom:78px;min-height:100vh;}
+#splash{position:fixed;inset:0;background:#000;display:flex;align-items:center;justify-content:center;z-index:100;}
+.splashinner{display:flex;flex-direction:column;align-items:center;}
+.splashtitle{font-family:'Oswald';font-weight:700;font-size:26px;letter-spacing:2px;text-align:center;line-height:1.15;color:#fff;margin-top:16px;}
+.splashtitle span{color:var(--accent);}
 .topbar{position:sticky;top:0;z-index:5;background:#101217;padding:calc(12px + env(safe-area-inset-top,0px)) 16px 10px;border-bottom:1px solid var(--border);}
 .brand{font-family:'Oswald';font-weight:700;font-size:15px;letter-spacing:1px;margin-bottom:8px;}
 .brand span{color:var(--accent);}
@@ -72,21 +69,19 @@ ul.check li{display:flex;align-items:flex-start;gap:9px;padding:7px 0;border-bot
 ul.check li:last-child{border-bottom:none;}
 .box{flex:0 0 20px;height:20px;border-radius:5px;border:1.5px solid #565a66;margin-top:1px;display:flex;align-items:center;justify-content:center;background:transparent;}
 .box.on{background:var(--accent);border-color:var(--accent);}
-.box.on:after{content:'✓';color:#fff;font-size:12px;font-weight:700;}
+.box.on:after{content:'\2713';color:#fff;font-size:12px;font-weight:700;}
 .itxt{flex:1;font-size:13px;color:var(--text);line-height:1.3;}
-.itxt.done{color:var(--muted);text-decoration:line-through;}
+.itxt.done{color:var(--muted);}
 .itxt a{text-decoration:underline;text-decoration-color:var(--border);text-underline-offset:2px;}
+li.mrow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid #23262f;}
+li.mrow:last-child{border-bottom:none;}
+.mbtn{flex:0 0 auto;border-radius:8px;border:1.3px solid var(--border);background:var(--card2);color:var(--muted);font-size:11px;font-weight:700;padding:7px 12px;letter-spacing:.3px;white-space:nowrap;}
+.mbtn.on{background:#123324;border-color:var(--green);color:var(--green);}
+.mbtn.blue.on{background:#16233a;border-color:var(--blue);color:var(--blue);}
+.mbtn.ro{opacity:.4;pointer-events:none;}
 .docli{display:flex;align-items:flex-start;gap:9px;padding:7px 0;border-bottom:1px solid #23262f;}
 .docli:last-child{border-bottom:none;}
 .docic{font-size:14px;flex:0 0 20px;text-align:center;}
-/* dual checkbox (practiced / mastered) */
-li.duali{display:block;padding:9px 0;border-bottom:1px solid #23262f;}
-li.duali:last-child{border-bottom:none;}
-li.duali .itxt{margin-bottom:6px;}
-.dgroup{display:flex;gap:8px;}
-.dchip{flex:1;border-radius:8px;border:1.3px solid var(--border);background:var(--card2);color:var(--muted);font-size:11px;font-weight:600;padding:7px 4px;text-align:center;letter-spacing:.3px;}
-.dchip.pr.on{background:#16233a;border-color:var(--blue);color:var(--blue);}
-.dchip.ma.on{background:#123324;border-color:var(--green);color:var(--green);}
 /* chop / test stepper */
 .chop{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #23262f;gap:8px;}
 .chop:last-child{border-bottom:none;}
@@ -97,19 +92,22 @@ li.duali .itxt{margin-bottom:6px;}
 .stepper .lvl{font-family:'Oswald';font-size:14px;min-width:34px;text-align:center;}
 .lvl.hit{color:var(--green);}
 /* daily blocks */
-.blk{border-left:3px solid var(--accent);background:var(--card);border-radius:0 12px 12px 0;padding:12px 14px;margin-bottom:10px;}
-.blk.done-today{border-left-color:var(--green);}
-.blk .top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;}
+.blk{border-left:3px solid var(--accent);background:var(--card);border-radius:0 12px 12px 0;padding:12px 14px;margin-bottom:10px;transition:opacity .2s;}
+.blk.done-today{border-left-color:var(--green);opacity:.62;}
+.blk .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:8px;}
 .blk .nm{font-family:'Oswald';font-weight:700;font-size:13.5px;text-transform:uppercase;}
-.blk .min{font-size:10.5px;color:var(--muted);}
-.blk .markrow{margin-top:8px;}
-.blk .markrow li{border-bottom:none;padding:4px 0 0;}
-.blk .markrow .itxt{font-size:11.5px;color:var(--muted);}
+.blk .topright{display:flex;align-items:center;gap:10px;}
+.blk .min{font-size:10.5px;color:var(--muted);white-space:nowrap;}
+.blkcheck{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;font-weight:700;cursor:pointer;white-space:nowrap;}
+.blkcheck .box{width:16px;height:16px;border-radius:4px;margin:0;}
+.blkcheck .box.on:after{font-size:10px;}
+.blkcheck.ro{opacity:.4;cursor:default;}
 /* day picker */
-.daypick{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;padding-bottom:2px;}
-.dchip2{flex:0 0 auto;padding:7px 12px;border-radius:9px;background:var(--card2);border:1px solid var(--border);color:var(--muted);font-size:11.5px;font-weight:700;}
+.daypick{display:flex;gap:4px;margin-bottom:10px;}
+.dchip2{flex:1;padding:7px 3px;border-radius:9px;background:var(--card2);border:1px solid var(--border);color:var(--muted);font-size:10.5px;font-weight:700;text-align:center;}
 .dchip2.on{background:var(--accent);border-color:var(--accent);color:#fff;}
-.dchip2.istoday:after{content:'•';margin-left:3px;}
+.dchip2.istoday:after{content:'\2022';margin-left:2px;}
+.dchip2.isactive{border-color:var(--accent);}
 /* bottom nav */
 .botnav{position:fixed;bottom:0;left:0;right:0;background:#15171e;border-top:1px solid var(--border);display:flex;padding:6px 4px calc(6px + env(safe-area-inset-bottom,0px));z-index:10;}
 .botnav button{flex:1;background:none;border:none;color:var(--muted);font-size:9px;text-transform:uppercase;letter-spacing:.3px;padding:6px 1px;display:flex;flex-direction:column;align-items:center;gap:3px;font-weight:600;border-radius:8px;}
@@ -117,10 +115,10 @@ li.duali .itxt{margin-bottom:6px;}
 .botnav button.active{color:var(--accent2);}
 /* misc */
 .note{border-left:3px solid var(--amber);background:#241f14;padding:10px 12px;border-radius:0 10px 10px 0;font-size:12px;color:#e6d9b8;margin-bottom:12px;}
-.tbtn{background:var(--card2);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:10px 16px;font-size:12.5px;font-weight:600;}
+.tbtn{background:var(--card2);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:10px 16px;font-size:13.5px;font-weight:600;}
 .tbtn.primary{background:var(--accent);border-color:var(--accent);color:#fff;}
 .tbtn.danger{background:#2a1214;border-color:#5c1f22;color:#ff8a80;}
-.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--accent);color:#fff;padding:10px 18px;border-radius:30px;font-size:12.5px;font-weight:600;z-index:20;box-shadow:0 6px 20px rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .25s, transform .25s;}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--accent);color:#fff;padding:10px 18px;border-radius:30px;font-size:12.5px;font-weight:600;z-index:20;box-shadow:0 6px 20px rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .25s, transform .25s;max-width:88%;text-align:center;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(-6px);}
 .acc{margin-bottom:10px;}
 .acchead{display:flex;justify-content:space-between;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;}
@@ -133,9 +131,24 @@ table.info{width:100%;border-collapse:collapse;}
 table.info th{text-align:left;font-size:9px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);padding:4px 4px;}
 table.info td{font-size:11.5px;color:var(--text);padding:6px 4px;border-bottom:1px solid #23262f;vertical-align:top;}
 table.info td.day{font-weight:700;white-space:nowrap;color:var(--accent2);}
+.infolist{list-style:none;padding:0;margin:0;}
+.infolist li{font-size:12px;color:var(--text);padding:6px 0;border-bottom:1px solid #23262f;}
+.infolist li:last-child{border-bottom:none;}
 </style>
 </head>
 <body>
+<div id="splash">
+  <div class="splashinner">
+    <svg width="150" height="106" viewBox="0 0 200 140">
+      <circle cx="100" cy="62" r="40" fill="#ff3b30"/>
+      <polygon points="0,140 50,58 88,96 128,42 200,140" fill="#000"/>
+    </svg>
+    <div class="splashtitle">
+      <div style="letter-spacing: 2px;">THE <span>SHRED</span></div>
+      <div style="letter-spacing: 2px; font-size: 30.5px; color: #ffffff;">ROADMAP</div>
+    </div>
+  </div>
+</div>
 <div id="root"></div>
 <div id="toast" class="toast"></div>
 <script>
@@ -144,28 +157,28 @@ table.info td.day{font-weight:700;white-space:nowrap;color:var(--accent2);}
 function I(t,url){return {t:t,url:url};}
 const PHASES=[
  {id:"p0",label:"Setup",short:"Setup & Baseline",kind:"setup"},
- {id:"p1",label:"Beginner",short:"Levels 1–2",target:3,testReq:2,
+ {id:"p1",label:"Beginner",short:"Levels 1\u20132",target:3,testReq:2,
    concept:[I("Alt Picking Pt.1","https://tinyurl.com/2na6k9kj"),I("Sweep Picking Guide","https://tinyurl.com/2p94rrf2"),I("Economy Picking Guide","https://tinyurl.com/bdfs3ptn"),I("Arpeggio Masterclass","https://tinyurl.com/57t8dup4")],
    exercises:[I("Simple Alt Picking Exercise","https://tinyurl.com/4zckb2nt"),I("Melodic vs Shred Soloing (melodic)","https://tinyurl.com/4mttk257"),I("Simple vs Complex Soloing (simple)","https://tinyurl.com/yd3pumbx"),I("Tornado Of Souls (simplified)","https://tinyurl.com/mpaes6yj")],
-   songs:[I("Psycho","https://tinyurl.com/4hy7vacm"),I("Paranoid","https://tinyurl.com/aa5u3azt"),I("Ace Of Spades","https://tinyurl.com/ydkwndkb"),I("Heartwork","https://tinyurl.com/3wbrb8vs"),I("Fade To Black","https://tinyurl.com/yja86djw")]},
+   songs:[I("Psycho (System Of A Down)","https://tinyurl.com/4hy7vacm"),I("Paranoid (Black Sabbath)","https://tinyurl.com/aa5u3azt"),I("Ace Of Spades (Motörhead)","https://tinyurl.com/ydkwndkb"),I("Heartwork (Carcass)","https://tinyurl.com/3wbrb8vs"),I("Fade To Black (Metallica)","https://tinyurl.com/yja86djw")]},
  {id:"p2",label:"Intermediate",short:"Level 3",target:6,testReq:3,
    concept:[I("Alt Picking Pt.2","https://tinyurl.com/3yj5fw7n"),I("Pick-Slanting Masterclass","http://tinyurl.com/yppc9rsk"),I("Hand Sync Masterclass","https://tinyurl.com/yc8kkmvr"),I("Vibrato Masterclass","https://tinyurl.com/35vrckd8")],
    exercises:[I("Alt Picking Endurance Test","https://tinyurl.com/ykvr6ay4"),I("ABBA Neoclassical (solo)","https://tinyurl.com/5n7fftb4"),I("Ultimate Bending Workout","https://tinyurl.com/5yn8yzw5"),I("Intermediate Challenge","https://tinyurl.com/yvdf8han")],
-   songs:[I("Crystal Mountain","http://tinyurl.com/yth44h56"),I("Bed Of Razors","https://tinyurl.com/522r8529"),I("The Trooper","https://tinyurl.com/2fz9ktbr"),I("Electric Crown","https://tinyurl.com/3x2kwpwn"),I("Mr Crowley","https://tinyurl.com/29v67k8r")]},
+   songs:[I("Crystal Mountain (Death)","http://tinyurl.com/yth44h56"),I("Bed Of Razors (Children of Bodom)","https://tinyurl.com/522r8529"),I("The Trooper (Iron Maiden)","https://tinyurl.com/2fz9ktbr"),I("Electric Crown (Testament)","https://tinyurl.com/3x2kwpwn"),I("Mr Crowley (Ozzy Osbourne)","https://tinyurl.com/29v67k8r")]},
  {id:"p3",label:"Advanced",short:"Level 4",target:8,testReq:4,
    concept:[I("Picking Speed Builder","https://tinyurl.com/bdpzvn69"),I("Sweeping Speed Builder","https://tinyurl.com/4cxbx9nw"),I("Hand Strength Builder","https://tinyurl.com/d6237w33"),I("Speed Picking Hack","https://tinyurl.com/y2pfv5vx")],
    exercises:[I("10 Sick Neoclassical Licks","https://tinyurl.com/3rhfwuzr"),I("Eruption Sweeping Workout","http://tinyurl.com/yy5jv45v"),I("20 Scales In 1 Solo","https://tinyurl.com/43924kfz"),I("Melodic vs Shred Soloing (shred)","https://tinyurl.com/4mttk257"),I("Simple vs Complex Soloing (complex)","https://tinyurl.com/yd3pumbx")],
-   songs:[I("Hail To The King","https://tinyurl.com/4zjmkpxz"),I("Bark At The Moon","https://tinyurl.com/4p4vwebc"),I("Play With Me","https://tinyurl.com/ykhckrvf"),I("Domination","https://tinyurl.com/3atm4xdd"),I("Tornado Of Souls","https://tinyurl.com/52s7ape4")]},
+   songs:[I("Hail To The King (Avenged Sevenfold)","https://tinyurl.com/4zjmkpxz"),I("Bark At The Moon (Ozzy Osbourne)","https://tinyurl.com/4p4vwebc"),I("Play With Me (Extreme)","https://tinyurl.com/ykhckrvf"),I("Domination (Pantera)","https://tinyurl.com/3atm4xdd"),I("Tornado Of Souls (Megadeth)","https://tinyurl.com/52s7ape4")]},
  {id:"p4",label:"Pro",short:"Level 5",target:10,testReq:5,concept:[],
    exercises:[I("Heavenly Arpeggios","https://tinyurl.com/27ha3u7z"),I("Ultimate Soloing Challenge","https://tinyurl.com/432hkhmp"),I("Quintuplets Workout","https://tinyurl.com/5n7psubr"),I("Thrash Metal Workout","https://tinyurl.com/57f7e6nc"),I("Ultimate Neoclassical Workout","https://tinyurl.com/5a4n28wm"),I("Serrana Arpeggios","https://tinyurl.com/2z4m6c49")],
-   songs:[I("Sea Of Lies","https://tinyurl.com/3v4u8jca"),I("Kissing The Shadows","https://tinyurl.com/yyzf6bp7"),I("Under A Glass Moon","https://tinyurl.com/yh3k2j3x"),I("Winter Madness","https://tinyurl.com/mupsw5u3"),I("Nobody","https://tinyurl.com/4uak28u2"),I("Dawn Of The Dragonstar","https://tinyurl.com/3yvsmm3f")]}
+   songs:[I("Sea Of Lies (Symphony X)","https://tinyurl.com/3v4u8jca"),I("Kissing The Shadows (Children of Bodom)","https://tinyurl.com/yyzf6bp7"),I("Under A Glass Moon (Dream Theater)","https://tinyurl.com/yh3k2j3x"),I("Winter Madness (Wintersun)","https://tinyurl.com/mupsw5u3"),I("Nobody (Avenged Sevenfold)","https://tinyurl.com/4uak28u2"),I("Dawn Of The Dragonstar (Twilight Force)","https://tinyurl.com/3yvsmm3f")]}
 ];
 const CREATIVE={
  songwriting:[I("Riff Writing Masterclass","https://tinyurl.com/59wr7y4x"),I("Solo Writing Masterclass","https://tinyurl.com/ym69pkmv"),I("Metal Songwriting Masterclass","https://tinyurl.com/45du76rt"),I("Harmonize Guitars","https://tinyurl.com/dkds5aey")],
  production:[I("Guitar Transcribing","https://tinyurl.com/2t3d6n4p"),I("Home Recording Guide","https://tinyurl.com/nfkp288a"),I("MIDI Drums","http://tinyurl.com/23uj5xd9"),I("Mixing Guide","https://tinyurl.com/3ujtsn7f")]
 };
-const PHASE_BLURB={p0:"Get the prerequisites and warm-up in place, then run the baseline test for your own tracking — you start at Phase 1 regardless of the result.",
- p1:"Foundational technique — alternate picking, sweep picking and economy picking form the backbone everything later builds on.",
+const PHASE_BLURB={p0:"Get the prerequisites and warm-up in place, then run the baseline test for your own tracking \u2014 you start at Phase 1 regardless of the result.",
+ p1:"Foundational technique \u2014 alternate picking, sweep picking and economy picking form the backbone everything later builds on.",
  p2:"Endurance, precision and expressive control (vibrato, bending). Fundamentals are assumed solid by now.",
  p3:"Raw speed and dexterity get built on purpose here. Expect this tier to take real patience.",
  p4:"The toughest material in the Roadmap. Completing it clears the entire BHGS technique curriculum."};
@@ -173,35 +186,44 @@ const CHOP=[{key:"alt",label:"10 Levels Of Alternate Picking",url:"https://tinyu
 const TESTCATS=[{key:"alt",label:"Alternate Picking",url:"https://tinyurl.com/yacufunh"},{key:"sweep",label:"Sweep Picking",url:"https://tinyurl.com/bdcr5cxj"},{key:"legato",label:"Legato",url:"https://tinyurl.com/3dh7ec3v"},{key:"tap",label:"Tapping",url:"https://tinyurl.com/yv89y98j"},{key:"econ",label:"Economy Picking",url:"https://tinyurl.com/37nbdr6f"}];
 const THEORY=[{t:"Scales Handbook",doc:true,url:"https://tinyurl.com/zx29e8sn"},{t:"Ear Training Pt.1",url:"https://tinyurl.com/ycxndyxn"},{t:"Ear Training Pt.2",url:"https://tinyurl.com/2vexwxsr"},{t:"Modes Course",url:"https://tinyurl.com/5n7p9d92"},{t:"Soloing Over Chord Changes Pt.1",url:"http://tinyurl.com/4zb3dp48"},{t:"Soloing Over Chord Changes Pt.2",url:"https://tinyurl.com/4cm982ta"},{t:"Phrasing Masterclass",url:"https://tinyurl.com/478mfx4v"}];
 const ESSENTIAL={Mon:"Ear Training",Tue:"Rhythm",Wed:"Time Signatures",Thu:"Sight-Reading",Fri:"Reinforce Weakest"};
+const DAY_FULL={Mon:"Monday",Tue:"Tuesday",Wed:"Wednesday",Thu:"Thursday",Fri:"Friday",Sat:"Saturday",Sun:"Sunday"};
 const ESSENTIAL_URL={"Ear Training":"https://tinyurl.com/mu6ka36m","Rhythm":"https://tinyurl.com/2mt96kef","Time Signatures":"https://tinyurl.com/76hdskpt","Sight-Reading":"https://tinyurl.com/2xdf6ky2"};
-const BONUS=[I("10 Levels Of Metal Licks","https://tinyurl.com/sz8nkke9"),I("5 Levels Of Pentatonics","https://tinyurl.com/mr2s63ac"),I("Official Lick Pack","https://tinyurl.com/52tb79xt"),I("10 Levels Of Guitar Solo","https://tinyurl.com/4ue66ax9"),I("Hybrid Picking Workout","https://tinyurl.com/5n6pp7kc"),I("Play Like 10 Iconic Shredders","https://tinyurl.com/2p8u4wfh"),I("Whammy Bar Workout","https://tinyurl.com/se8e6act")];
+const BONUS=[
+ {t:"10 Levels Of Metal Licks",url:"https://tinyurl.com/sz8nkke9",slider:{key:"metalLicks",max:10}},
+ {t:"10 Levels Of Guitar Solo",url:"https://tinyurl.com/4ue66ax9",slider:{key:"guitarSolo",max:10}},
+ {t:"Play Like 10 Iconic Shredders",url:"https://tinyurl.com/2p8u4wfh",slider:{key:"shredders",max:10}},
+ {t:"5 Levels Of Pentatonics",url:"https://tinyurl.com/mr2s63ac",slider:{key:"pentatonics",max:5}},
+ {t:"Official Lick Pack",url:"https://tinyurl.com/52tb79xt"},
+ {t:"Hybrid Picking Workout",url:"https://tinyurl.com/5n6pp7kc"},
+ {t:"Whammy Bar Workout",url:"https://tinyurl.com/se8e6act"}
+];
 const PREREQ=[{t:"Learn The Fretboard",url:"http://tinyurl.com/43r5c8v7"},{t:"Ultimate Guide To Practising",url:"https://tinyurl.com/dn8f7sm9"},{t:"Music Theory Cheat Sheet",doc:true,url:"https://tinyurl.com/rhyav3wv"}];
 const WARMUP_URL="https://tinyurl.com/3zdum9xb";
-const RETEST_URL="https://tinyurl.com/yb7u3nsj";
 const WEEKLY_RHYTHM=[
  {day:"Mon",focused:"Concept video + exercises in rotation + 5-min Ear Training micro-dose",casual:"Current solo, in order"},
  {day:"Tue",focused:"Exercises in rotation + chop-builders (picking) + 5-min Rhythm micro-dose",casual:"Riff writing / improv"},
- {day:"Wed",focused:"Theory — next linear step + 5-min Time Signatures micro-dose",casual:"Apply theory on the fretboard"},
+ {day:"Wed",focused:"Theory in rotation + 5-min Time Signatures micro-dose",casual:"Apply theory on the fretboard"},
  {day:"Thu",focused:"Chop-builders (legato/economy/tapping) + 5-min Sight-Reading micro-dose",casual:"Continue current solo"},
  {day:"Fri",focused:"Revisit hardest exercise + reinforce weakest skill",casual:"Free jam"},
- {day:"Sat",focused:"—",casual:"Deep-dive: polish current solo / writing session (45 min)"},
- {day:"Sun",focused:"—",casual:"Improv, bonus drill, or catch-up (45 min)"}
+ {day:"Sat",focused:"\u2014",casual:"Deep-dive: polish current solo / writing session (45 min)"},
+ {day:"Sun",focused:"\u2014",casual:"Improv, bonus drill, or catch-up (45 min)"}
 ];
 const DAYS=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 const DAY_ORDER=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
-const STORAGE_KEY="shredRoadmapState_v3";
+const STORAGE_KEY="shredRoadmapState_v7";
 
-function defaultState(){return {phaseIndex:0,chop:{alt:0,sweep:0,legato:0,econ:0,tap:0},testLevel:{alt:0,sweep:0,legato:0,econ:0,tap:0},checks:{},practiced:{},practicedDate:null,blockPracticed:{},streakDates:[]};}
-function loadState(){try{var raw=localStorage.getItem(STORAGE_KEY);if(raw){var d=JSON.parse(raw);return Object.assign(defaultState(),d,{chop:Object.assign(defaultState().chop,d.chop||{}),testLevel:Object.assign(defaultState().testLevel,d.testLevel||{}),checks:d.checks||{},practiced:d.practiced||{},blockPracticed:d.blockPracticed||{},streakDates:d.streakDates||[]});}}catch(e){}return defaultState();}
+function defaultState(){return {phaseIndex:0,chop:{alt:0,sweep:0,legato:0,econ:0,tap:0},testLevel:{alt:0,sweep:0,legato:0,econ:0,tap:0},bonusLevel:{},checks:{},practiced:{},practicedDate:null,congratsDate:null,activeDayOverride:null,activeDayDate:null,streakDates:[]};}
+function loadState(){try{var raw=localStorage.getItem(STORAGE_KEY);if(raw){var d=JSON.parse(raw);return Object.assign(defaultState(),d,{chop:Object.assign(defaultState().chop,d.chop||{}),testLevel:Object.assign(defaultState().testLevel,d.testLevel||{}),bonusLevel:d.bonusLevel||{},checks:d.checks||{},practiced:d.practiced||{},streakDates:d.streakDates||[]});}}catch(e){}return defaultState();}
 function saveState(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}catch(e){}}
 
 let state=loadState();
-let ui={view:"home",lib:{},dayOverride:null,surprise:null};
+let ui={view:"home",lib:{},dayOverride:null,surprise:null,resetConfirm:false,phaseJumpPending:null};
 
 function k(){return Array.prototype.slice.call(arguments).join(".");}
 function todayISO(){return new Date().toISOString().slice(0,10);}
 function todayName(){return DAYS[new Date().getDay()];}
 function isWeekendDay(d){return d==="Sat"||d==="Sun";}
+function activeDay(){ if(state.activeDayOverride && state.activeDayDate===todayISO()) return state.activeDayOverride; return todayName(); }
 
 function ensureDailyReset(){
   var t=todayISO();
@@ -234,23 +256,87 @@ function nextUnchecked(list,prefix){for(var i=0;i<list.length;i++){if(!state.che
 function totalStreak(){return (state.streakDates||[]).length;}
 function logToday(){var t=todayISO();if(state.streakDates.indexOf(t)===-1) state.streakDates.push(t);}
 
-function applyStateChange(){
+/* ---- block-level "Practiced" flags, keyed per weekday ---- */
+function blockPKey(name,day){ return name+"."+day; }
+function isBlockPracticed(name,day){ return !!state.practiced[blockPKey(name,day)]; }
+function toggleBlockPracticed(name,day){ ensureDailyReset(); var kk=blockPKey(name,day); state.practiced[kk]=!state.practiced[kk]; applyStateChange(); }
+function dailyBlocksStatus(day,idx){
+  var p=PHASES[idx],st={};
+  if(p.kind==="setup"){ st.prereq=isBlockPracticed("prereq",day); st.warmup=isBlockPracticed("warmup",day); return st; }
+  st.warmup=isBlockPracticed("warmup",day);
+  if(isWeekendDay(day)){ st.casual=isBlockPracticed("casual",day); return st; }
+  st.focused=isBlockPracticed("focused",day);
+  st.casual=isBlockPracticed("casual",day);
+  st.cooldown=isBlockPracticed("cooldown",day);
+  return st;
+}
+function isFullyDoneToday(){
+  var st=dailyBlocksStatus(activeDay(),state.phaseIndex);
+  var keys=Object.keys(st);
+  return keys.length>0 && keys.every(function(kk){return st[kk];});
+}
+
+function resetPhaseChecks(fromIdx,toIdx){
+  for(var i=fromIdx;i<=toIdx;i++){
+    var info=itemKeysForPhase(i);
+    info.keys.forEach(function(kk){ delete state.checks[kk]; });
+  }
+}
+function markPhaseComplete(idx){
+  var info=itemKeysForPhase(idx);
+  info.keys.forEach(function(kk){ state.checks[kk]=true; });
+  if(info.chopTarget) CHOP.forEach(function(c){ if((state.chop[c.key]||0)<info.chopTarget) state.chop[c.key]=info.chopTarget; });
+  if(info.testReq) TESTCATS.forEach(function(c){ if((state.testLevel[c.key]||0)<info.testReq) state.testLevel[c.key]=info.testReq; });
+}
+
+function applyStateChange(skipAuto){
   ensureDailyReset();
   logToday();
-  var idx=state.phaseIndex;
-  if(idx<PHASES.length-1 && phasePercent(idx)===100){ state.phaseIndex=idx+1; showToast("🔥 Phase unlocked: "+PHASES[idx+1].label+"!"); }
+  if(!skipAuto){
+    var idx=state.phaseIndex;
+    if(idx<PHASES.length-1 && phasePercent(idx)===100){ state.phaseIndex=idx+1; showToast("\ud83d\udd25 Phase unlocked: "+PHASES[idx+1].label+"!"); }
+  }
+  if(isFullyDoneToday() && state.congratsDate!==todayISO()){
+    state.congratsDate=todayISO();
+    showToast("\ud83e\udd18 Nice work \u2014 today's full session is complete!");
+  }
   saveState(); render();
 }
 function toggleCheck(key){ state.checks[key]=!state.checks[key]; applyStateChange(); }
-function togglePracticed(key){ ensureDailyReset(); state.practiced[key]=!state.practiced[key]; applyStateChange(); }
 function setChop(sk,d){ state.chop[sk]=Math.max(0,Math.min(10,(state.chop[sk]||0)+d)); applyStateChange(); }
 function setTest(sk,d){ state.testLevel[sk]=Math.max(0,Math.min(5,(state.testLevel[sk]||0)+d)); applyStateChange(); }
-function setPhaseIndex(idx){ state.phaseIndex=idx; applyStateChange(); showToast("Now on "+PHASES[idx].label); }
-function blockKeyFor(name){ return todayISO()+"."+name; }
-function isBlockDone(name){ return !!state.blockPracticed[blockKeyFor(name)]; }
-function toggleBlockDone(name){ var kk=blockKeyFor(name); state.blockPracticed[kk]=!state.blockPracticed[kk]; applyStateChange(); }
+function setBonusLevel(key,d,max){ state.bonusLevel[key]=Math.max(0,Math.min(max,(state.bonusLevel[key]||0)+d)); applyStateChange(); }
+function setActiveDay(d){
+  state.activeDayOverride=d; state.activeDayDate=todayISO();
+  saveState(); render();
+  showToast(DAY_FULL[d]+" is now your active session");
+}
+function resetActiveDay(){ state.activeDayOverride=null; saveState(); render(); }
 
-function showToast(msg){var t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");clearTimeout(showToast._h);showToast._h=setTimeout(function(){t.classList.remove("show");},2200);}
+function handlePhaseSelect(newIdx){
+  var oldIdx=state.phaseIndex;
+  if(newIdx===oldIdx) return;
+  if(newIdx>oldIdx){
+    for(var i=oldIdx;i<newIdx;i++) markPhaseComplete(i);
+    state.phaseIndex=newIdx;
+    applyStateChange(true);
+    showToast("Now on "+PHASES[newIdx].label+" \u2014 earlier phases marked complete");
+  } else {
+    ui.phaseJumpPending=newIdx;
+    render();
+  }
+}
+function confirmPhaseJumpBack(){
+  var newIdx=ui.phaseJumpPending, oldIdx=state.phaseIndex;
+  resetPhaseChecks(newIdx+1,oldIdx);
+  state.phaseIndex=newIdx;
+  ui.phaseJumpPending=null;
+  applyStateChange(true);
+  showToast("Now on "+PHASES[newIdx].label+" \u2014 later phases reset");
+}
+function cancelPhaseJumpBack(){ ui.phaseJumpPending=null; render(); }
+
+function showToast(msg){var t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");clearTimeout(showToast._h);showToast._h=setTimeout(function(){t.classList.remove("show");},2600);}
 
 /* ---------- backup / reset ---------- */
 function exportState(){
@@ -263,50 +349,69 @@ function triggerImport(){ document.getElementById("importFile").click(); }
 function handleImportFile(file){
   var reader=new FileReader();
   reader.onload=function(e){
-    try{ var data=JSON.parse(e.target.result); state=Object.assign(defaultState(),data); saveState(); render(); showToast("Progress imported!"); }
+    try{ var data=JSON.parse(e.target.result); state=Object.assign(defaultState(),data); saveState(); render(); showToast("Progress loaded!"); }
     catch(err){ showToast("That file couldn't be read."); }
   };
   reader.readAsText(file);
 }
-function handleReset(){
-  if(!confirm("This permanently deletes ALL your progress across every phase — checklists, chop levels, test levels, streaks. This cannot be undone.\n\nContinue?")) return;
-  var val=prompt('Type RESET (all caps) to confirm:');
-  if(val==="RESET"){ localStorage.removeItem(STORAGE_KEY); state=defaultState(); render(); showToast("Everything has been reset."); }
-  else { showToast("Reset cancelled — nothing changed."); }
+function handleReset(){ ui.resetConfirm=true; render(); }
+function cancelReset(){ ui.resetConfirm=false; render(); }
+function confirmReset(){
+  localStorage.removeItem(STORAGE_KEY);
+  state=defaultState();
+  ui.resetConfirm=false;
+  render();
+  showToast("Everything has been reset.");
 }
 
 /* ---------- render helpers ---------- */
 function linked(label,url){ return url? '<a href="'+url+'" target="_blank" rel="noopener">'+label+'</a>' : label; }
-function checkItem(label,key,url){ var c=!!state.checks[key]; return '<li data-toggle="'+key+'"><div class="box'+(c?" on":"")+'"></div><div class="itxt'+(c?" done":"")+'">'+linked(label,url)+'</div></li>'; }
-function docItem(label,url){ return '<li class="docli"><div class="docic">📖</div><div class="itxt">'+linked(label,url)+'</div></li>'; }
-function dualItem(label,key,url){
-  var pr=!!state.practiced[key], ma=!!state.checks[key];
-  var practicedBtn = ma? '' : '<button class="dchip pr'+(pr?" on":"")+'" data-action="togp" data-key="'+key+'">'+(pr?"✓ ":"")+'Practiced</button>';
-  return '<li class="duali"><div class="itxt'+(ma?" done":"")+'">'+linked(label,url)+'</div><div class="dgroup">'+
-    practicedBtn+
-    '<button class="dchip ma'+(ma?" on":"")+'" data-action="togm" data-key="'+key+'">'+(ma?"✓ ":"")+'Mastered</button>'+
-    '</div></li>';
+function checkItem(label,key,url,editable){
+  if(editable===undefined) editable=true;
+  var c=!!state.checks[key];
+  var btn = editable
+    ? '<button class="mbtn'+(c?" on":"")+'" data-action="togm" data-key="'+key+'">'+(c?"\u2713 Mastered":"Unmastered")+'</button>'
+    : '<button class="mbtn ro'+(c?" on":"")+'">'+(c?"\u2713 Mastered":"Unmastered")+'</button>';
+  return '<li class="mrow"><div class="itxt'+(c?" done":"")+'">'+linked(label,url)+'</div>'+btn+'</li>';
 }
-function unmasteredItems(list,prefix){
-  var out=[];
-  list.forEach(function(item,i){ var kk=prefix+"."+i; if(!state.checks[kk]) out.push(dualItem(item.t,kk,item.url)); });
-  return out;
+function prereqItem(label,key,url,editable){
+  if(editable===undefined) editable=true;
+  var c=!!state.checks[key];
+  var btn = editable
+    ? '<button class="mbtn blue'+(c?" on":"")+'" data-action="togm" data-key="'+key+'">'+(c?"\u2713 Completed":"Incomplete")+'</button>'
+    : '<button class="mbtn ro blue'+(c?" on":"")+'">'+(c?"\u2713 Completed":"Incomplete")+'</button>';
+  return '<li class="mrow"><div class="itxt'+(c?" done":"")+'">'+linked(label,url)+'</div>'+btn+'</li>';
 }
-function chopRow(target,onlyKeys){
+function docItem(label,url){ return '<li class="docli"><div class="docic">\ud83d\udcd6</div><div class="itxt">'+linked(label,url)+'</div></li>'; }
+function chopRow(target,onlyKeys,editable){
+  if(editable===undefined) editable=true;
   var list=onlyKeys?CHOP.filter(function(c){return onlyKeys.indexOf(c.key)!==-1;}):CHOP;
   return list.map(function(c){
     var lvl=state.chop[c.key]||0,hit=target&&lvl>=target;
+    var minus=editable?'<button data-action="chop" data-t="'+c.key+'" data-d="-1">\u2013</button>':'';
+    var plus=editable?'<button data-action="chop" data-t="'+c.key+'" data-d="1">+</button>':'';
     return '<div class="chop"><div class="nm">'+linked(c.label,c.url)+(target?'<b>target: Level '+target+'</b>':'<b>lifetime level</b>')+'</div><div class="stepper">'+
-      '<button data-action="chop" data-t="'+c.key+'" data-d="-1">–</button><div class="lvl'+(hit?" hit":"")+'">'+lvl+(target?"/"+target:"/10")+'</div>'+
-      '<button data-action="chop" data-t="'+c.key+'" data-d="1">+</button></div></div>';
+      minus+'<div class="lvl'+(hit?" hit":"")+'">'+lvl+(target?"/"+target:"/10")+'</div>'+plus+'</div></div>';
   }).join("");
 }
 function testRow(req){
   return TESTCATS.map(function(c){
     var lvl=state.testLevel[c.key]||0,hit=req&&lvl>=req;
     return '<div class="chop"><div class="nm">'+linked(c.label,c.url)+' <span class="tag">(1-Min Test)</span>'+(req?'<b>need: Level '+req+'</b>':'<b>baseline</b>')+'</div><div class="stepper">'+
-      '<button data-action="test" data-t="'+c.key+'" data-d="-1">–</button><div class="lvl'+(hit?" hit":"")+'">'+lvl+'/5</div>'+
+      '<button data-action="test" data-t="'+c.key+'" data-d="-1">\u2013</button><div class="lvl'+(hit?" hit":"")+'">'+lvl+'/5</div>'+
       '<button data-action="test" data-t="'+c.key+'" data-d="1">+</button></div></div>';
+  }).join("");
+}
+function renderBonusList(){
+  return BONUS.map(function(b){
+    if(b.slider){
+      var lvl=state.bonusLevel[b.slider.key]||0;
+      return '<div class="chop"><div class="nm">'+linked(b.t,b.url)+'</div><div class="stepper">'+
+        '<button data-action="bonuslvl" data-k="'+b.slider.key+'" data-max="'+b.slider.max+'" data-d="-1">\u2013</button>'+
+        '<div class="lvl">'+lvl+'/'+b.slider.max+'</div>'+
+        '<button data-action="bonuslvl" data-k="'+b.slider.key+'" data-max="'+b.slider.max+'" data-d="1">+</button></div></div>';
+    }
+    return '<div class="chop"><div class="nm">'+linked(b.t,b.url)+'</div></div>';
   }).join("");
 }
 function progressBar(){
@@ -318,20 +423,20 @@ function progressBar(){
   });
   return '<div class="phasebar">'+segs+'</div><div class="plabels">'+labels+'</div>';
 }
-function dayPicker(activeDay){
-  var today=todayName();
+function dayPicker(selectedDay){
+  var today=todayName(), act=activeDay();
   return '<div class="daypick">'+DAY_ORDER.map(function(d){
-    return '<button class="dchip2'+(d===activeDay?" on":"")+(d===today?" istoday":"")+'" data-action="setday" data-day="'+d+'">'+d+'</button>';
+    var cls="dchip2"+(d===selectedDay?" on":"")+(d===today?" istoday":"")+(d===act&&act!==today?" isactive":"");
+    return '<button class="'+cls+'" data-action="setday" data-day="'+d+'">'+d+'</button>';
   }).join("")+'</div>';
 }
-function markRow(blockName,label){
-  if(!blockName) return "";
-  var done=isBlockDone(blockName);
-  return '<ul class="check markrow"><li data-action="blockdone" data-block="'+blockName+'"><div class="box'+(done?" on":"")+'" style="transform:scale(.8);"></div><div class="itxt">Mark '+label+' practiced today</div></li></ul>';
-}
-function blk(name,title,minText,bodyHtml,trackToday){
-  var done = trackToday && isBlockDone(name);
-  return '<div class="blk'+(done?" done-today":"")+'"><div class="top"><div class="nm">'+title+'</div>'+(minText?'<div class="min">'+minText+'</div>':'')+'</div>'+bodyHtml+(trackToday?markRow(name,title):"")+'</div>';
+function blk(name,day,title,minText,bodyHtml,editable){
+  if(editable===undefined) editable=true;
+  var done=isBlockPracticed(name,day);
+  var check = editable
+    ? '<div class="blkcheck" data-action="blockprac" data-block="'+name+'" data-day="'+day+'"><div class="box'+(done?" on":"")+'"></div><span>Practiced</span></div>'
+    : '<div class="blkcheck ro"><div class="box'+(done?" on":"")+'"></div><span>Practiced</span></div>';
+  return '<div class="blk'+(done?" done-today":"")+'"><div class="top"><div class="nm">'+title+'</div><div class="topright">'+(minText?'<div class="min">'+minText+'</div>':'')+check+'</div></div>'+bodyHtml+'</div>';
 }
 
 /* ---------- views ---------- */
@@ -340,157 +445,179 @@ function renderHome(){
   var req=cur.testReq||null;
   var html='<div class="eyebrow">Daily Practice System</div>';
   html+='<div class="statrow"><div class="stat"><div class="bignum">'+pct+'%</div><div class="lbl">'+cur.label+'</div></div>'+
-    '<div class="stat"><div class="bignum">🔥'+totalStreak()+'</div><div class="lbl">Days Logged</div></div></div>';
-  html+='<div class="card"><h3>🧪 Phase Transition Test <span class="tag">1-Minute Workout</span></h3>'+
-    (req?'<p style="margin-bottom:8px;">Reach Level '+req+' on all five to unlock '+(PHASES[state.phaseIndex+1]?PHASES[state.phaseIndex+1].label:"the next phase")+'.</p>':'<p style="margin-bottom:8px;">Track your baseline here — informational at this stage.</p>')+
+    '<div class="stat"><div class="bignum">\ud83d\udd25'+totalStreak()+'</div><div class="lbl">Days Logged</div></div></div>';
+  html+='<div class="card"><h3>\ud83e\uddea Phase Transition Test <span class="tag">1-Minute Workout</span></h3>'+
+    (req?'<p style="margin-bottom:8px;">Reach Level '+req+' on all five to unlock '+(PHASES[state.phaseIndex+1]?PHASES[state.phaseIndex+1].label:"the next phase")+'.</p>':'<p style="margin-bottom:8px;">Track your baseline here \u2014 informational at this stage.</p>')+
     testRow(req)+'</div>';
-  html+='<button class="navbtn accent" data-action="go" data-view="daily"><div class="ic">🎯</div><div><b>Daily Practice</b><span>Structured session, any day you pick</span></div></button>';
-  html+='<button class="navbtn blue" data-action="go" data-view="free"><div class="ic">🎸</div><div><b>Free Practice</b><span>Bonus drills, essential skills, surprise me</span></div></button>';
-  html+='<button class="navbtn" data-action="go" data-view="library"><div class="ic">📚</div><div><b>All Phases</b><span>Browse &amp; check off any tier</span></div></button>';
-  html+='<button class="navbtn info" data-action="go" data-view="info"><div class="ic">ℹ️</div><div><b>Guide &amp; Info</b><span>Weekly rhythm, all phases, essential skills</span></div></button>';
-  html+='<div class="card"><h3>Jump to phase</h3><p>Advancing happens automatically once every item, chop level and test level in your current phase is done — or set it manually here.</p><select class="select" data-action="setphase">';
-  PHASES.forEach(function(p,i){html+='<option value="'+i+'"'+(i===state.phaseIndex?" selected":"")+'>Phase '+i+' — '+p.label+" ("+p.short+')</option>';});
-  html+='</select></div>';
-  html+='<div class="card"><h3>Backup &amp; Reset</h3><p>Progress saves automatically in this browser only. Export a backup to move it to another device, or reset everything and start fresh.</p>'+
-    '<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;"><button class="tbtn" data-action="export">Export Backup</button><button class="tbtn" data-action="import">Import Backup</button><button class="tbtn danger" data-action="reset">⚠️ Reset Everything</button></div>'+
-    '<input type="file" id="importFile" accept="application/json" style="display:none;"></div>';
+  html+='<button class="navbtn accent" data-action="go" data-view="daily"><div class="ic">\ud83c\udfaf</div><div><b>Daily Practice</b><span>Structured session, any day you pick</span></div></button>';
+  html+='<button class="navbtn blue" data-action="go" data-view="free"><div class="ic">\ud83c\udfb8</div><div><b>Free Practice</b><span>Bonus content, essential skills, surprise me</span></div></button>';
+  html+='<button class="navbtn" data-action="go" data-view="library"><div class="ic">\ud83d\udcda</div><div><b>All Phases</b><span>Browse &amp; check off any tier</span></div></button>';
+  html+='<button class="navbtn info" data-action="go" data-view="info"><div class="ic">\u2139\ufe0f</div><div><b>Guide &amp; Info</b><span>Weekly rhythm, all phases, essential skills</span></div></button>';
+
+  html+='<div class="card"><h3>Jump to phase</h3>';
+  if(ui.phaseJumpPending!==null){
+    html+='<p style="margin-bottom:8px;color:#ffb3ac;"><b>Jump back to Phase '+ui.phaseJumpPending+'?</b> This resets Phase '+(ui.phaseJumpPending+1)+' through Phase '+state.phaseIndex+"'s checklist items. Chop-builder and test levels are left as they are.</p>";
+    html+='<div style="display:flex;gap:8px;"><button class="tbtn" style="flex:1;" data-action="canceljump">Cancel</button><button class="tbtn danger" style="flex:1;" data-action="confirmjump">Confirm</button></div>';
+  } else {
+    html+='<p>Advancing happens automatically once every item, chop level and test level in your current phase is done. Jump forward and earlier phases are marked complete too; jump back and later phases reset.</p><select class="select" data-action="setphase">';
+    PHASES.forEach(function(p,i){html+='<option value="'+i+'"'+(i===state.phaseIndex?" selected":"")+'>Phase '+i+' \u2014 '+p.label+" ("+p.short+')</option>';});
+    html+='</select>';
+  }
+  html+='</div>';
+
+  html+='<div class="card"><h3>Save &amp; Load</h3>';
+  if(ui.resetConfirm){
+    html+='<p style="color:#ffb3ac;"><b>Delete everything?</b> This wipes every phase, checklist, chop level, test level and streak. This cannot be undone.</p>'+
+      '<div style="display:flex;gap:8px;margin-top:10px;"><button class="tbtn" style="flex:1;" data-action="cancelreset">Cancel</button><button class="tbtn danger" style="flex:1;" data-action="confirmreset">Yes, delete everything</button></div>';
+  } else {
+    html+='<p>Saves automatically in this browser only. Save a copy to move it to another device, or load one back in.</p>'+
+      '<div style="display:flex;gap:8px;margin-top:10px;"><button class="tbtn" style="flex:1;" data-action="export">\ud83d\udcbe Save</button><button class="tbtn" style="flex:1;" data-action="import">\ud83d\udcc2 Load</button></div>'+
+      '<button class="tbtn danger" style="width:100%;margin-top:8px;" data-action="reset">\u26a0\ufe0f Reset Everything</button>'+
+      '<input type="file" id="importFile" accept="application/json" style="display:none;">';
+  }
+  html+='</div>';
   return html;
 }
 
 function renderDaily(){
   var idx=state.phaseIndex,p=PHASES[idx];
   var day=ui.dayOverride||todayName();
+  var act=activeDay();
+  var editable=(day===act);
   var wknd=isWeekendDay(day);
-  var isToday=(day===todayName());
-  var html='<div class="eyebrow">'+day+' &middot; '+p.label+'</div>';
+  var html='<div class="eyebrow">'+DAY_FULL[day]+' &middot; '+p.label+'</div>';
   html+=dayPicker(day);
 
+  if(!editable){
+    html+='<div class="note">Suggested practice session is <b>'+DAY_FULL[act]+'</b>. <button class="tbtn" data-action="activateday" data-day="'+day+'" style="margin-top:8px;display:block;">Switch to '+DAY_FULL[day]+' instead \u2192</button></div>';
+  }
+
   if(p.kind==="setup"){
-    var preBody='<ul class="check">'+PREREQ.map(function(pr,i){return pr.doc?docItem(pr.t,pr.url):checkItem(pr.t,k("p0","pre",i),pr.url);}).join("")+'</ul>';
-    html+=blk("prereq","Prerequisites",null,preBody,isToday);
-    html+=blk("warmup","Warm-Up",null,'<p>'+linked("Ultimate 5-Minute Warm-Up",WARMUP_URL)+'</p>',isToday);
-    html+='<div class="note">Run the Phase Transition Test on Home for your baseline — it\'s informational here, not required to advance.</div>';
+    var preBody='<ul class="check">'+PREREQ.map(function(pr,i){return pr.doc?docItem(pr.t,pr.url):prereqItem(pr.t,k("p0","pre",i),pr.url,editable);}).join("")+'</ul>';
+    html+=blk("prereq",day,"Prerequisites",null,preBody,editable);
+    html+=blk("warmup",day,"Warm-Up",null,'<p>'+linked("Ultimate 5-Minute Warm-Up",WARMUP_URL)+'</p>',editable);
+    html+='<div class="note">Run the Phase Transition Test on Home for your baseline \u2014 it\'s informational here, not required to advance.</div>';
     return html;
   }
 
   if(wknd){
-    var nsi=nextUnchecked(p.songs,p.id+".s");
-    html+=blk("warmup","Warm-Up","15 min",'<p>'+linked("Extended warm-up + weak-spot review",WARMUP_URL)+'</p>',isToday);
+    var nsi=nextUnchecked(p.songs.map(function(s){return s.t;}),p.id+".s");
+    html+=blk("warmup",day,"Warm-Up","15 min",'<p>Extended warm-up + weak-spot review.</p>',editable);
     if(day==="Sat"){
-      var body='<p>Deep-dive: polish '+(nsi>=0?'"'+p.songs[nsi].t+'"':"your current solo")+' toward full tempo.</p>'+
-        (nsi>=0?'<ul class="check">'+dualItem(p.songs[nsi].t,k(p.id,"s",nsi),p.songs[nsi].url)+'</ul>':'');
-      html+=blk("casual","Creative","45 min",body,isToday);
+      var body='<p>Deep-dive: polish next solo toward full tempo.</p>'+
+        (nsi>=0?'<ul class="check">'+checkItem(p.songs[nsi].t,k(p.id,"s",nsi),p.songs[nsi].url,editable)+'</ul>':'');
+      html+=blk("casual",day,"Creative","45 min",body,editable);
     } else {
-      html+=blk("casual","Creative","45 min",'<p>Improv over a backing track, or pick a bonus drill.</p><button class="tbtn" data-action="go" data-view="free">Open Free Practice →</button>',isToday);
+      html+=blk("casual",day,"Creative","45 min",'<p>Improv over a backing track, or pick a bonus drill.</p><button class="tbtn" data-action="go" data-view="free" style="margin-top:8px;">Open Free Practice \u2192</button>',editable);
     }
     return html;
   }
 
   var ci=nextUnchecked((p.concept||[]).map(function(c){return c.t;}),p.id+".c");
-  var si=nextUnchecked(p.songs.map(function(s){return s.t;}),p.id+".s");
-  var ti=-1; for(var i=0;i<THEORY.length;i++){ if(!THEORY[i].doc && !state.checks["theory."+i]){ti=i;break;} }
   var essential=ESSENTIAL[day]||"Reinforce Weakest";
   var essUrl=ESSENTIAL_URL[essential];
 
-  html+=blk("warmup","Warm-Up","5 min",'<p>'+linked("Ultimate 5-Minute Warm-Up",WARMUP_URL)+'</p>',isToday);
+  html+=blk("warmup",day,"Warm-Up","5 min",'<p>'+linked("Ultimate 5-Minute Warm-Up",WARMUP_URL)+'</p>',editable);
 
   var focusBody='';
   if(day==="Mon"){
-    if(p.concept&&p.concept.length){ focusBody+= ci>=0 ? '<ul class="check">'+checkItem("Watch: "+p.concept[ci].t,k(p.id,"c",ci),p.concept[ci].url)+'</ul>' : '<p>All concept videos done.</p>'; }
-    var exList=unmasteredItems(p.exercises,p.id+".e");
-    focusBody += exList.length ? '<p style="margin-top:6px;">Exercises in rotation (Mastered when it\'s solid at tempo):</p><ul class="check">'+exList.join("")+'</ul>' : '<p style="margin-top:6px;">All exercises for this phase mastered.</p>';
+    if(p.concept&&p.concept.length){ focusBody+= ci>=0 ? '<ul class="check">'+checkItem("Watch: "+p.concept[ci].t,k(p.id,"c",ci),p.concept[ci].url,editable)+'</ul>' : '<p>All concept videos done.</p>'; }
+    focusBody+='<p style="margin-top:6px;">Exercises in rotation (check off once solid at tempo):</p><ul class="check">'+p.exercises.map(function(t,i){return checkItem(t.t,k(p.id,"e",i),t.url,editable);}).join("")+'</ul>';
   } else if(day==="Tue"){
-    var exList2=unmasteredItems(p.exercises,p.id+".e");
-    focusBody += exList2.length ? '<ul class="check">'+exList2.join("")+'</ul>' : '<p>All exercises for this phase mastered.</p>';
-    focusBody+='<p style="margin:6px 0;">Chop-builders (picking) — protect ~15 min:</p>'+chopRow(p.target,["alt","sweep"]);
+    focusBody+='<p style="margin-bottom:6px;">Keep every earlier exercise in rotation until mastered:</p><ul class="check">'+p.exercises.map(function(t,i){return checkItem(t.t,k(p.id,"e",i),t.url,editable);}).join("")+'</ul>';
+    focusBody+='<p style="margin:6px 0;">Chop-builders (picking) \u2014 protect ~15 min:</p>'+chopRow(p.target,["alt","sweep"]);
   } else if(day==="Wed"){
-    focusBody+= ti>=0 ? '<ul class="check">'+checkItem("Theory: "+THEORY[ti].t,k("theory",ti),THEORY[ti].url)+'</ul>' : '<p>Theory track complete.</p>';
+    focusBody+='<p style="margin-bottom:6px;">Theory in rotation:</p><ul class="check">'+THEORY.map(function(t,i){return t.doc?docItem(t.t,t.url):checkItem(t.t,"theory."+i,t.url,editable);}).join("")+'</ul>';
   } else if(day==="Thu"){
     focusBody+='<p style="margin-bottom:6px;">Chop-builders (legato/economy/tapping):</p>'+chopRow(p.target,["legato","econ","tap"]);
   } else if(day==="Fri"){
-    focusBody+='<p>Revisit your hardest exercise or chop-builder from the week, then reinforce <b style="color:var(--text)">'+linked(essential,essUrl)+'</b> — whichever skill felt weakest.</p>';
+    focusBody+='<p>Revisit your hardest exercise or chop-builder from the week, then spend the micro-dose reinforcing whichever skill felt weakest.</p>';
     if(p.testReq){
       var met=TESTCATS.filter(function(c){return (state.testLevel[c.key]||0)>=p.testReq;}).length;
-      focusBody+='<div class="note" style="margin-top:8px;">Phase Transition Test: '+met+'/5 at Level '+p.testReq+'+. <button class="tbtn" data-action="go" data-view="home" style="margin-top:6px;display:block;">Open Test on Home →</button></div>';
+      focusBody+='<div class="note" style="margin-top:8px;">Phase Transition Test: '+met+'/5 at Level '+p.testReq+'+. <button class="tbtn" data-action="go" data-view="home" style="margin-top:6px;display:block;">Retake Phase Test \u2192</button></div>';
     }
   }
-  focusBody+='<p style="margin-top:8px;color:var(--blue);">+ 5 min: '+linked(essential+" micro-dose",essUrl)+'</p>';
-  html+=blk("focused","Focused","30 + 5 min",focusBody,isToday);
+  if(day!=="Fri") focusBody+='<p style="margin-top:8px;">+ 5 min: '+linked(essential+" micro-dose",essUrl)+'</p>';
+  html+=blk("focused",day,"Focused","30 + 5 min",focusBody,editable);
 
+  var si=nextUnchecked(p.songs.map(function(s){return s.t;}),p.id+".s");
   var casualBody='';
-  if(day==="Mon"||day==="Thu"){ casualBody += si>=0 ? '<ul class="check">'+dualItem(p.songs[si].t,k(p.id,"s",si),p.songs[si].url)+'</ul>' : '<p>All this tier\'s solos learned 🎸</p>'; }
-  else if(day==="Tue"){ casualBody+='<p>Riff writing / improv over a backing track</p>'; }
-  else if(day==="Wed"){ casualBody+='<p>Apply today\'s theory concept on the fretboard</p>'; }
-  else if(day==="Fri"){ casualBody+='<p>Free jam using everything from the week</p>'; }
-  html+=blk("casual","Casual","15 min",casualBody,isToday);
-  html+=blk("cooldown","Cool-Down","5 min",'<p>Quick review — what clicked, what didn\'t, tempo notes.</p>',isToday);
+  if(day==="Mon"||day==="Thu"){ casualBody += si>=0 ? '<ul class="check">'+checkItem(p.songs[si].t,k(p.id,"s",si),p.songs[si].url,editable)+'</ul>' : '<p>All this tier\'s solos learned. \ud83c\udfb8</p>'; }
+  else if(day==="Tue"){ casualBody+='<p>Riff writing / improv over a backing track.</p>'; }
+  else if(day==="Wed"){ casualBody+='<p>Apply today\'s theory concept on the fretboard.</p>'; }
+  else if(day==="Fri"){ casualBody+='<p>Free jam using everything from the week.</p>'; }
+  html+=blk("casual",day,"Casual","15 min",casualBody,editable);
+  html+=blk("cooldown",day,"Cool-Down","5 min",'<p>Quick review \u2014 what clicked, what didn\'t, tempo notes.</p>',editable);
   return html;
 }
 
 function renderLibrary(){
   var html='<div class="eyebrow">Reference &amp; Review</div><div class="h2" style="font-size:20px;margin-bottom:6px;">All Phases</div>';
-  html+='<p class="lede">Browse and check off any item, anytime — it all counts toward the same progress as Daily Practice.</p>';
+  html+='<p class="lede">Browse and check off any item, anytime \u2014 it all counts toward the same progress as Daily Practice.</p>';
   PHASES.forEach(function(p,i){
     var open=!!ui.lib["p"+i],pct=phasePercent(i);
-    html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="p'+i+'"><b>'+p.label.toUpperCase()+' <span class="tag">Phase '+i+' · '+p.short+'</span></b><span style="display:flex;align-items:center;gap:8px;"><span class="tag">'+pct+'%</span><span class="chev'+(open?" open":"")+'">›</span></span></div>';
+    html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="p'+i+'"><b>'+p.label.toUpperCase()+' <span class="tag">Phase '+i+' \u00b7 '+p.short+'</span></b><span style="display:flex;align-items:center;gap:8px;"><span class="tag">'+pct+'%</span><span class="chev'+(open?" open":"")+'">\u203a</span></span></div>';
     if(open){
       html+='<div class="accbody">';
       if(p.kind==="setup"){
-        html+='<div class="card"><h3>Prerequisites</h3><ul class="check">'+PREREQ.map(function(pr,j){return pr.doc?docItem(pr.t,pr.url):checkItem(pr.t,k("p0","pre",j),pr.url);}).join("")+'</ul></div>';
+        html+='<div class="card"><h3>Prerequisites</h3><ul class="check">'+PREREQ.map(function(pr,j){return pr.doc?docItem(pr.t,pr.url):prereqItem(pr.t,k("p0","pre",j),pr.url);}).join("")+'</ul></div>';
         html+='<div class="card"><h3>Warm-Up</h3><p>'+linked("Ultimate 5-Minute Warm-Up",WARMUP_URL)+'</p></div>';
       } else {
         if(p.concept&&p.concept.length) html+='<div class="card"><h3>Concept Videos</h3><ul class="check">'+p.concept.map(function(t,j){return checkItem(t.t,k(p.id,"c",j),t.url);}).join("")+'</ul></div>';
-        html+='<div class="card"><h3>Exercises</h3><ul class="check">'+p.exercises.map(function(t,j){return dualItem(t.t,k(p.id,"e",j),t.url);}).join("")+'</ul></div>';
+        html+='<div class="card"><h3>Exercises</h3><ul class="check">'+p.exercises.map(function(t,j){return checkItem(t.t,k(p.id,"e",j),t.url);}).join("")+'</ul></div>';
         html+='<div class="card"><h3>Chop-Builders <span class="tag">target: Level '+p.target+'</span></h3>'+chopRow(p.target)+'</div>';
-        html+='<div class="card"><h3>Songs</h3><ul class="check">'+p.songs.map(function(t,j){return dualItem(t.t,k(p.id,"s",j),t.url);}).join("")+'</ul></div>';
+        html+='<div class="card"><h3>Solos</h3><ul class="check">'+p.songs.map(function(t,j){return checkItem(t.t,k(p.id,"s",j),t.url);}).join("")+'</ul></div>';
         html+='<div class="card"><h3>Phase Transition Test <span class="tag">target: Level '+p.testReq+'</span></h3>'+testRow(p.testReq)+'</div>';
       }
       html+='</div>';
     }
     html+='</div>';
   });
-  html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="theory"><b>Theory Track</b><span class="chev'+(ui.lib.theory?" open":"")+'">›</span></div>';
+  html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="theory"><b>Theory Track</b><span class="chev'+(ui.lib.theory?" open":"")+'">\u203a</span></div>';
   if(ui.lib.theory) html+='<div class="accbody"><div class="card"><ul class="check">'+THEORY.map(function(t,j){return t.doc?docItem(t.t,t.url):checkItem(t.t,"theory."+j,t.url);}).join("")+'</ul></div></div>';
   html+='</div>';
-  html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="creative"><b>Creative <span class="tag">Songwriting &amp; Production</span></b><span class="chev'+(ui.lib.creative?" open":"")+'">›</span></div>';
+  html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="creative"><b>Creative <span class="tag">Songwriting &amp; Production</span></b><span class="chev'+(ui.lib.creative?" open":"")+'">\u203a</span></div>';
   if(ui.lib.creative){
     html+='<div class="accbody"><div class="card"><h3>Songwriting</h3><ul class="check">'+CREATIVE.songwriting.map(function(t,j){return checkItem(t.t,"creative.sw."+j,t.url);}).join("")+'</ul></div>'+
       '<div class="card"><h3>Production</h3><ul class="check">'+CREATIVE.production.map(function(t,j){return checkItem(t.t,"creative.pr."+j,t.url);}).join("")+'</ul></div></div>';
   }
+  html+='</div>';
+  html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="bonuslib"><b>Bonus Content</b><span class="chev'+(ui.lib.bonuslib?" open":"")+'">\u203a</span></div>';
+  if(ui.lib.bonuslib) html+='<div class="accbody"><div class="card">'+renderBonusList()+'</div></div>';
   html+='</div>';
   return html;
 }
 
 function renderFree(){
   var html='<div class="eyebrow">Off The Plan</div><div class="h2" style="font-size:20px;margin-bottom:10px;">Free Practice</div>';
-  html+='<div class="card"><h3>Surprise Me 🎲</h3><p style="margin-bottom:8px;">Pulls a random bonus drill or essential skill for burnout days.</p><button class="tbtn primary" data-action="surprise">Surprise Me</button>'+(ui.surprise?'<div class="note" style="margin-top:10px;">'+ui.surprise+'</div>':'')+'</div>';
-  html+='<div class="card"><h3>Bonus Exercises</h3><ul class="check">'+BONUS.map(function(t,i){return checkItem(t.t,"bonus."+i,t.url);}).join("")+'</ul></div>';
-  html+='<div class="card"><h3>Essential Skills</h3><ul class="check">'+Object.keys(ESSENTIAL).map(function(d,i){return checkItem(ESSENTIAL[d]+" ("+d+")","ess."+i,ESSENTIAL_URL[ESSENTIAL[d]]);}).join("")+'</ul></div>';
+  html+='<div class="card"><h3>Surprise Me \ud83c\udfb2</h3><p style="margin-bottom:8px;">Pulls a random bonus drill or essential skill for burnout days.</p><button class="tbtn primary" data-action="surprise">Surprise Me</button>'+(ui.surprise?'<div class="note" style="margin-top:10px;">'+ui.surprise+'</div>':'')+'</div>';
+  html+='<div class="card"><h3>Bonus Content <span class="tag">also in Library</span></h3>'+renderBonusList()+'</div>';
+  html+='<div class="card"><h3>Essential Skills</h3><ul class="check">'+Object.keys(ESSENTIAL).map(function(d,i){return checkItem(ESSENTIAL[d]+' <span class="tag">'+DAY_FULL[d]+'</span>',"ess."+i,ESSENTIAL_URL[ESSENTIAL[d]]);}).join("")+'</ul></div>';
   return html;
 }
 
 function renderInfo(){
   var html='<div class="eyebrow">The Full Guide</div><div class="h2" style="font-size:20px;margin-bottom:10px;">Guide &amp; Info</div>';
   html+='<div class="card"><h3>How This Plan Works</h3><p style="margin-bottom:6px;">Technique is sequential and full-coverage: start at Beginner regardless of ability, and work every exercise, chop-builder and solo in every tier before advancing.</p>'+
-    '<p style="margin-bottom:6px;">Theory and Creative (songwriting/production) run on their own independent tracks — always available in Library, never gating a phase, just like this guide always is.</p>'+
-    '<p>Essential skills get a 5-minute daily micro-dose — a different one Monday–Thursday, Friday reinforces whichever felt weakest.</p></div>';
+    '<p style="margin-bottom:6px;">Theory and Creative (songwriting/production) run on their own independent tracks \u2014 always available in Library, never gating a phase.</p>'+
+    '<p>Essential skills get a 5-minute daily micro-dose \u2014 a different one Monday\u2013Thursday, Friday reinforces whichever felt weakest.</p></div>';
   html+='<div class="card"><h3>Daily Blueprint</h3><p style="margin-bottom:6px;"><b style="color:var(--text)">Weekdays (60 min):</b> 5 Warm-Up + 35 Focused (30 technique/theory + 5 skill micro-dose) + 15 Casual + 5 Cool-Down.</p>'+
     '<p><b style="color:var(--text)">Weekends (60 min):</b> 15 Warm-Up + 45 Casual/Creative.</p></div>';
-  html+='<div class="card"><h3>Exercise Time-Split (Tue/Thu)</h3><p>Newest exercise gets the most time (5–8 min); older, solid ones just need a quick maintenance rep (1–2 min). Chop-builders get a protected floor of ~15 min — that\'s your real progress signal.</p></div>';
+  html+='<div class="card"><h3>Exercise Time-Split (Tue/Thu)</h3><p>Newest exercise gets the most time (5\u20138 min); older, solid ones just need a quick maintenance rep (1\u20132 min). Chop-builders get a protected floor of ~15 min \u2014 that\'s your real progress signal.</p></div>';
   html+='<div class="card"><h3>Weekly Rhythm</h3><table class="info"><tr><th>Day</th><th>Focused</th><th>Casual</th></tr>'+
     WEEKLY_RHYTHM.map(function(r){return '<tr><td class="day">'+r.day+'</td><td>'+r.focused+'</td><td>'+r.casual+'</td></tr>';}).join("")+'</table></div>';
-  html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="infophases"><b>Phase Overview</b><span class="chev'+(ui.lib.infophases?" open":"")+'">›</span></div>';
-  if(ui.lib.infophases){ html+='<div class="accbody"><div class="card">'+PHASES.map(function(p,i){return '<p style="margin-bottom:8px;"><b style="color:var(--text)">Phase '+i+' — '+p.label+' ('+p.short+'):</b> '+PHASE_BLURB[p.id]+'</p>';}).join("")+
-    '<p><b style="color:var(--text)">Creative (no phase number):</b> Once technique work slows down, Creative — songwriting and production — becomes your ongoing focus. It\'s tracked in Library like Theory, and never counts toward the phase progress bar.</p></div></div>'; }
+  html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="infophases"><b>Phase Overview</b><span class="chev'+(ui.lib.infophases?" open":"")+'">\u203a</span></div>';
+  if(ui.lib.infophases){ html+='<div class="accbody"><div class="card">'+PHASES.map(function(p,i){return '<p style="margin-bottom:8px;"><b style="color:var(--text)">Phase '+i+' \u2014 '+p.label+' ('+p.short+'):</b> '+PHASE_BLURB[p.id]+'</p>';}).join("")+
+    '<p><b style="color:var(--text)">Creative (no phase number):</b> Once technique work slows down, Creative \u2014 songwriting and production \u2014 becomes your ongoing focus. It\'s tracked in Library like Theory, and never counts toward the phase progress bar.</p></div></div>'; }
   html+='</div>';
-  html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="infoess"><b>Essential Skills Rotation</b><span class="chev'+(ui.lib.infoess?" open":"")+'">›</span></div>';
-  if(ui.lib.infoess){ html+='<div class="accbody"><div class="card">'+Object.keys(ESSENTIAL).map(function(d){return '<p style="margin-bottom:4px;"><b style="color:var(--text)">'+d+':</b> '+ESSENTIAL[d]+'</p>';}).join("")+'</div></div>'; }
+  html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="infoess"><b>Essential Skills Rotation</b><span class="chev'+(ui.lib.infoess?" open":"")+'">\u203a</span></div>';
+  if(ui.lib.infoess){ html+='<div class="accbody"><div class="card">'+Object.keys(ESSENTIAL).map(function(d){return '<p style="margin-bottom:4px;"><b style="color:var(--text)">'+DAY_FULL[d]+':</b> '+ESSENTIAL[d]+'</p>';}).join("")+'</div></div>'; }
   html+='</div>';
-  html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="infotheory"><b>Theory Track (in order)</b><span class="chev'+(ui.lib.infotheory?" open":"")+'">›</span></div>';
-  if(ui.lib.infotheory){ html+='<div class="accbody"><div class="card"><ul class="check">'+THEORY.map(function(t){return '<li style="border-bottom:1px solid #23262f;padding:6px 0;">'+t.t+(t.doc?' <span class="tag">(reference)</span>':'')+'</li>';}).join("")+'</ul></div></div>'; }
+  html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="infotheory"><b>Theory Track</b><span class="chev'+(ui.lib.infotheory?" open":"")+'">\u203a</span></div>';
+  if(ui.lib.infotheory){ html+='<div class="accbody"><div class="card"><p>Seven lessons, worked strictly in order: start with the Scales Handbook as a standing reference, then Ear Training (chords, then intervals), the four-part Modes Course, Soloing Over Chord Changes, and finally Phrasing Masterclass. The full checklist with links lives in Library.</p></div></div>'; }
   html+='</div>';
-  html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="infobonus"><b>Bonus Exercises</b><span class="chev'+(ui.lib.infobonus?" open":"")+'">›</span></div>';
-  if(ui.lib.infobonus){ html+='<div class="accbody"><div class="card"><ul class="check">'+BONUS.map(function(t){return '<li style="border-bottom:1px solid #23262f;padding:6px 0;">'+t.t+'</li>';}).join("")+'</ul></div></div>'; }
+  html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="infobonus"><b>Bonus Content</b><span class="chev'+(ui.lib.infobonus?" open":"")+'">\u203a</span></div>';
+  if(ui.lib.infobonus){ html+='<div class="accbody"><div class="card"><ul class="infolist">'+BONUS.map(function(t){return '<li>'+t.t+'</li>';}).join("")+'</ul></div></div>'; }
   html+='</div>';
   html+='<div class="note" style="margin-top:4px;">This guide and app are based on <b>Bradley Hall\'s Guitar School</b> (BHGS) Official Roadmap.</div>';
   return html;
@@ -505,7 +632,7 @@ function render(){
   else if(ui.view==="library") body+=renderLibrary();
   else if(ui.view==="free") body+=renderFree();
   else if(ui.view==="info") body+=renderInfo();
-  body+='</div><div class="botnav">'+navBtn("home","🏠","Home")+navBtn("daily","🎯","Daily")+navBtn("library","📚","Library")+navBtn("free","🎸","Free")+navBtn("info","ℹ️","Info")+'</div>';
+  body+='</div><div class="botnav">'+navBtn("home","\ud83c\udfe0","Home")+navBtn("daily","\ud83c\udfaf","Daily")+navBtn("library","\ud83d\udcda","Library")+navBtn("free","\ud83c\udfb8","Free")+navBtn("info","\u2139\ufe0f","Info")+'</div>';
   root.innerHTML=body;
   var fi=document.getElementById("importFile");
   if(fi) fi.addEventListener("change",function(e){ if(e.target.files[0]) handleImportFile(e.target.files[0]); });
@@ -524,22 +651,32 @@ document.addEventListener("click",function(e){
   }
   else if(a==="toggleacc"){ui.lib[t.dataset.acc]=!ui.lib[t.dataset.acc]; render();}
   else if(a==="setday"){ ui.dayOverride=t.dataset.day; render(); }
-  else if(a==="togp"){ togglePracticed(t.dataset.key); }
-  else if(a==="togm"){ toggleCheck(t.dataset.key); }
   else if(a==="chop"){ setChop(t.dataset.t,parseInt(t.dataset.d,10)); }
   else if(a==="test"){ setTest(t.dataset.t,parseInt(t.dataset.d,10)); }
-  else if(a==="blockdone"){ toggleBlockDone(t.dataset.block); }
+  else if(a==="bonuslvl"){ setBonusLevel(t.dataset.k,parseInt(t.dataset.d,10),parseInt(t.dataset.max,10)); }
+  else if(a==="blockprac"){ toggleBlockPracticed(t.dataset.block,t.dataset.day); }
+  else if(a==="togm"){ toggleCheck(t.dataset.key); }
+  else if(a==="activateday"){ setActiveDay(t.dataset.day); }
+  else if(a==="resetactiveday"){ resetActiveDay(); }
   else if(a==="surprise"){var pool=BONUS.map(function(b){return b.t;}).concat(Object.keys(ESSENTIAL).map(function(d){return ESSENTIAL[d]+" essential-skill drill";})); ui.surprise=pool[Math.floor(Math.random()*pool.length)]; render();}
   else if(a==="export"){ exportState(); }
   else if(a==="import"){ triggerImport(); }
   else if(a==="reset"){ handleReset(); }
+  else if(a==="cancelreset"){ cancelReset(); }
+  else if(a==="confirmreset"){ confirmReset(); }
+  else if(a==="canceljump"){ cancelPhaseJumpBack(); }
+  else if(a==="confirmjump"){ confirmPhaseJumpBack(); }
 });
 document.addEventListener("change",function(e){
-  if(e.target.dataset.action==="setphase") setPhaseIndex(parseInt(e.target.value,10));
+  if(e.target.dataset.action==="setphase") handlePhaseSelect(parseInt(e.target.value,10));
 });
 
 ensureDailyReset();
 render();
+setTimeout(function(){
+  var sp=document.getElementById("splash");
+  if(sp) sp.remove();
+},1200);
 })();
 </script>
 </body>
