@@ -35,7 +35,7 @@ a{color:inherit;}
 .splashtitle span{color:var(--accent);}
 .topbar{position:sticky;top:0;z-index:5;background:#101217;padding:calc(12px + env(safe-area-inset-top,0px)) 16px 10px;border-bottom:1px solid var(--border);}
 
-/* --- NOVOS ESTILOS DO CABEÇALHO --- */
+/* --- ESTILOS DO CABEÇALHO --- */
 .topbar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 10px; }
 .brand { font-family: 'Oswald'; font-weight: 700; font-size: 15px; letter-spacing: 1px; flex: 1; margin-bottom: 0; }
 .brand span { color: var(--accent); }
@@ -338,7 +338,19 @@ function phasePercent(idx){
 }
 
 function totalStreak(){return (state.streakDates||[]).length;}
-function logToday(){var t=todayISO();if(state.streakDates.indexOf(t)===-1) state.streakDates.push(t);}
+
+/* Apenas atualiza o calendário se alguma caixa de "Practiced" estiver clicada hoje */
+function updateStreakStatus(){
+  var t = todayISO();
+  var hasPracticed = Object.keys(state.practiced).some(function(k){ return state.practiced[k]; });
+  var idx = state.streakDates.indexOf(t);
+  
+  if (hasPracticed && idx === -1) {
+    state.streakDates.push(t);
+  } else if (!hasPracticed && idx !== -1) {
+    state.streakDates.splice(idx, 1);
+  }
+}
 
 function currentStreak(){
   var dates = state.streakDates.slice().sort().reverse();
@@ -403,7 +415,7 @@ function markPhaseComplete(idx){
 
 function applyStateChange(skipAuto){
   ensureDailyReset();
-  logToday();
+  updateStreakStatus();
   if(!skipAuto){
     var idx=state.phaseIndex;
     if(idx<PHASES.length-1 && phasePercent(idx)===100){ state.phaseIndex=idx+1; showToast("\ud83d\udd25 Phase unlocked: "+PHASES[idx+1].label+"!"); }
