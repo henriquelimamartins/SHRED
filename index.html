@@ -919,7 +919,9 @@ document.addEventListener("click",function(e){
   var a=t.dataset.action;
   if(a==="go"){
     if(t.dataset.view!==ui.view){ ui.lib={}; ui.dayOverride=null; ui.surprise=null; }
-    ui.view=t.dataset.view; render();
+    ui.view=t.dataset.view;
+    window.scrollTo(0, 0); // Força o ecrã a voltar ao topo ao mudar de separador
+    render();
   }
   else if(a==="toggleacc"){ui.lib[t.dataset.acc]=!ui.lib[t.dataset.acc]; render();}
   else if(a==="setday"){ ui.dayOverride=t.dataset.day; render(); }
