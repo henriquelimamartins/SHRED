@@ -262,7 +262,20 @@ const PHASE_BLURB={p0:"Get the prerequisites and warm-up in place, then run the 
  p4:"The toughest material in the Roadmap. Completing it clears the entire BHGS technique curriculum."};
 const CHOP=[{key:"alt",label:"10 Levels Of Alternate Picking",url:"https://tinyurl.com/4anrfje9"},{key:"sweep",label:"10 Levels Of Sweep Picking",url:"https://tinyurl.com/nzcv65ux"},{key:"legato",label:"10 Levels Of Legato",url:"https://tinyurl.com/54fc68fm"},{key:"econ",label:"10 Levels Of Economy Picking",url:"https://tinyurl.com/3v5xt6ne"},{key:"tap",label:"10 Levels Of Tapping",url:"https://tinyurl.com/yw4ex5ma"}];
 const TESTCATS=[{key:"alt",label:"Alternate Picking",url:"https://tinyurl.com/yacufunh"},{key:"sweep",label:"Sweep Picking",url:"https://tinyurl.com/bdcr5cxj"},{key:"legato",label:"Legato",url:"https://tinyurl.com/3dh7ec3v"},{key:"tap",label:"Tapping",url:"https://tinyurl.com/yv89y98j"},{key:"econ",label:"Economy Picking",url:"https://tinyurl.com/37nbdr6f"}];
-const THEORY=[{t:"Scales Handbook",doc:true,url:"https://tinyurl.com/zx29e8sn"},{t:"Ear Training Pt.1",url:"https://tinyurl.com/ycxndyxn"},{t:"Ear Training Pt.2",url:"https://tinyurl.com/2vexwxsr"},{t:"Modes Course",url:"https://tinyurl.com/5n7p9d92"},{t:"Soloing Over Chord Changes Pt.1",url:"http://tinyurl.com/4zb3dp48"},{t:"Soloing Over Chord Changes Pt.2",url:"https://tinyurl.com/4cm982ta"},{t:"Phrasing Masterclass",url:"https://tinyurl.com/478mfx4v"}];
+
+const THEORY_DOCS=[
+  {t:"Music Theory Cheat Sheet",url:"./music-theory-cheat-sheet.pdf"},
+  {t:"Scales Handbook",url:"./scales-handbook.pdf"}
+];
+const THEORY_ITEMS=[
+  {t:"Ear Training Pt.1",url:"https://tinyurl.com/ycxndyxn"},
+  {t:"Ear Training Pt.2",url:"https://tinyurl.com/2vexwxsr"},
+  {t:"Modes Course",url:"https://tinyurl.com/5n7p9d92"},
+  {t:"Soloing Over Chord Changes Pt.1",url:"http://tinyurl.com/4zb3dp48"},
+  {t:"Soloing Over Chord Changes Pt.2",url:"https://tinyurl.com/4cm982ta"},
+  {t:"Phrasing Masterclass",url:"https://tinyurl.com/478mfx4v"}
+];
+
 const ESSENTIAL={Mon:"Ear Training",Tue:"Rhythm",Wed:"Time Signatures",Thu:"Sight-Reading",Fri:"Reinforce Weakest"};
 const DAY_FULL={Mon:"Monday",Tue:"Tuesday",Wed:"Wednesday",Thu:"Thursday",Fri:"Friday",Sat:"Saturday",Sun:"Sunday"};
 const ESSENTIAL_URL={"Ear Training":"https://tinyurl.com/mu6ka36m","Rhythm":"https://tinyurl.com/2mt96kef","Time Signatures":"https://tinyurl.com/76hdskpt","Sight-Reading":"https://tinyurl.com/2xdf6ky2"};
@@ -275,7 +288,10 @@ const BONUS=[
  {t:"Hybrid Picking Workout",url:"https://tinyurl.com/5n6pp7kc"},
  {t:"Whammy Bar Workout",url:"https://tinyurl.com/se8e6act"}
 ];
-const PREREQ=[{t:"Learn The Fretboard",url:"http://tinyurl.com/43r5c8v7"},{t:"Ultimate Guide To Practising",url:"https://tinyurl.com/dn8f7sm9"},{t:"Music Theory Cheat Sheet",doc:true,url:"https://tinyurl.com/rhyav3wv"}];
+const PREREQ=[
+  {t:"Learn The Fretboard",url:"http://tinyurl.com/43r5c8v7"},
+  {t:"Ultimate Guide To Practising",url:"https://tinyurl.com/dn8f7sm9"}
+];
 const WARMUP_URL="https://tinyurl.com/3zdum9xb";
 const WEEKLY_RHYTHM=[
  {day:"Mon",focused:"Concept video + exercises in rotation + 5-min Ear Training micro-dose",casual:"Current solo, in order"},
@@ -312,7 +328,6 @@ function activeDay(){ if(state.activeDayOverride && state.activeDayDate===todayI
 function ensureDailyReset(){
   var t=todayISO();
   if(state.practicedDate!==t){
-    // Se mudou o dia, salvamos permanentemente no streakDates o dia anterior caso estivesse concluído
     updateStreakStatus();
     state.practiced={};
     state.practicedDate=t;
@@ -323,7 +338,7 @@ function ensureDailyReset(){
 function itemKeysForPhase(idx){
   var p=PHASES[idx];
   if(p.kind==="setup"){
-    var ks=[]; PREREQ.forEach(function(pr,i){if(!pr.doc) ks.push(k("p0","pre",i));});
+    var ks=[]; PREREQ.forEach(function(pr,i){ ks.push(k("p0","pre",i)); });
     return {keys:ks,chopTarget:null,testReq:null};
   }
   var ks3=[];
@@ -345,7 +360,6 @@ function phasePercent(idx){
 
 function totalStreak(){return (state.streakDates||[]).length;}
 
-/* Atualiza o streak com base no estado atual ou histórico do dia (garante que não se perde no dia 2) */
 function updateStreakStatus(){
   var t = todayISO();
   var hasPracticed = Object.keys(state.practiced).some(function(k){ return state.practiced[k]; });
@@ -562,11 +576,15 @@ function blk(name,day,title,minText,bodyHtml,editable){
 function getDailyActiveSequence(list, prefix, editable){
   var html="";
   for(var i=0; i<list.length; i++){
-    var val = state.checks[prefix+"."+i];
+    var kk = prefix + "." + i;
+    var val = state.checks[kk];
     if(val){
-      if(val === todayISO()) html += checkItem(list[i].t, prefix+"."+i, list[i].url, editable);
+      if(val === todayISO()){
+        html += checkItem(list[i].t, kk, list[i].url, editable);
+        break; 
+      }
     } else {
-      html += checkItem(list[i].t, prefix+"."+i, list[i].url, editable);
+      html += checkItem(list[i].t, kk, list[i].url, editable);
       break; 
     }
   }
@@ -578,13 +596,11 @@ function renderStreakCalendar(){
   var now = new Date();
   var todayIsoStr = todayISO();
   
-  // Find current day of week where Mon=0, Sun=6
-  var jsDay = now.getDay(); // Sun=0, Mon=1...Sat=6
+  var jsDay = now.getDay(); 
   var monBasedDay = (jsDay + 6) % 7; 
   
-  // We want to show exactly 4 full Mon-Sun weeks (28 days total ending on this week's Sunday)
   var startDate = new Date(now.getTime());
-  startDate.setDate(now.getDate() - monBasedDay - 21); // Go back 3 full weeks plus offset to current Monday
+  startDate.setDate(now.getDate() - monBasedDay - 21);
 
   var shortDays = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
 
@@ -674,7 +690,7 @@ function renderDaily(){
     var preBody='<ul class="check">'+PREREQ.map(function(pr,i){
       var kk = k("p0","pre",i);
       if(state.checks[kk] && state.checks[kk] !== todayISO()) return ""; 
-      return pr.doc?docItem(pr.t,pr.url):prereqItem(pr.t,kk,pr.url,editable);
+      return prereqItem(pr.t,kk,pr.url,editable);
     }).join("")+'</ul>';
     html+=blk("prereq",day,"Prerequisites",null,preBody,editable);
     html+=blk("warmup",day,"Warm-Up",null,'<p>'+linked("Ultimate 5-Minute Warm-Up",WARMUP_URL)+'</p>',editable);
@@ -686,8 +702,8 @@ function renderDaily(){
     html+=blk("warmup",day,"Warm-Up","15 min",'<p>Extended warm-up + weak-spot review.</p>',editable);
     if(day==="Sat"){
       var songHtml = getDailyActiveSequence(p.songs||[], p.id+".s", editable);
-      var body='<p>Deep-dive: polish next solo toward full tempo.</p>' + (songHtml ? '<ul class="check">'+songHtml+'</ul>' : '');
-      html+=blk("casual",day,"Creative","45 min",body,editable);
+      var body='<p>Deep-dive: polish next solo toward full tempo.</p>' + (songHtml ? '<ul class="check">'+songHtml+'</ul>' : '<p>All this tier\'s solos learned. \ud83c\udfb8</p>');
+      html+=blk("casual",day,"CASUAL","45 min",body,editable);
     } else {
       html+=blk("casual",day,"Creative","45 min",'<p>Improv over a backing track, or pick a bonus drill.</p><button class="tbtn" data-action="go" data-view="free" style="margin-top:8px;">Open Free Practice \u2192</button>',editable);
     }
@@ -704,12 +720,13 @@ function renderDaily(){
     if(p.concept && p.concept.length){
       var conceptHtml = getDailyActiveSequence(p.concept, p.id+".c", editable);
       focusBody += conceptHtml ? '<ul class="check">'+conceptHtml+'</ul>' : '<p>All concept videos completed.</p>';
+    } else {
+      focusBody += '<p>All concept videos completed.</p>';
     }
     
     var monExHtml = p.exercises.map(function(t,i){
       var kk = k(p.id,"e",i);
-      if (state.checks[kk] && state.checks[kk] !== todayISO()) return "";
-      return checkItem(t.t,kk,t.url,editable);
+      return checkItem(t.t, kk, t.url, editable);
     }).join("");
     if(monExHtml) focusBody+='<p style="margin-top:6px;">Exercises in rotation (check off once solid):</p><ul class="check">'+monExHtml+'</ul>';
     else focusBody+='<p style="margin-top:6px;color:var(--muted);">All exercises mastered for this phase! \ud83c\udfb8</p>';
@@ -717,8 +734,7 @@ function renderDaily(){
   } else if(day==="Tue"){
     var tueExHtml = p.exercises.map(function(t,i){
       var kk = k(p.id,"e",i);
-      if (state.checks[kk] && state.checks[kk] !== todayISO()) return "";
-      return checkItem(t.t,kk,t.url,editable);
+      return checkItem(t.t, kk, t.url, editable);
     }).join("");
     if(tueExHtml) focusBody+='<p style="margin-bottom:6px;">Exercises in rotation (check off once solid):</p><ul class="check">'+tueExHtml+'</ul>';
     else focusBody+='<p style="margin-bottom:6px;color:var(--muted);">All exercises mastered for this phase! \ud83c\udfb8</p>';
@@ -726,19 +742,14 @@ function renderDaily(){
     focusBody+='<p style="margin:6px 0;">Chop-builders (picking) \u2014 protect ~15 min:</p>'+chopRow(p.target,["alt","sweep"]);
   } else if(day==="Wed"){
     var theoryHtml = "";
-    for(var i=0; i<THEORY.length; i++){
-      var t = THEORY[i];
-      if(t.doc){ theoryHtml += docItem(t.t, t.url); } 
-      else {
-        var kk = "theory."+i;
-        var val = state.checks[kk];
-        if(val){
-          if(val === todayISO()) theoryHtml += checkItem(t.t, kk, t.url, editable);
-        } else {
-          theoryHtml += checkItem(t.t, kk, t.url, editable);
-          break; 
-        }
-      }
+    THEORY_DOCS.forEach(function(docItemObj){
+      theoryHtml += docItem(docItemObj.t, docItemObj.url);
+    });
+    var theorySeq = getDailyActiveSequence(THEORY_ITEMS, "theory", editable);
+    if(theorySeq) {
+      theoryHtml += theorySeq;
+    } else {
+      theoryHtml += '<p style="margin-top:6px;color:var(--muted);">All theory items completed!</p>';
     }
     focusBody+='<p style="margin-bottom:6px;">Theory in rotation:</p><ul class="check">'+theoryHtml+'</ul>';
   } else if(day==="Thu"){
@@ -775,7 +786,7 @@ function renderLibrary(){
     if(open){
       html+='<div class="accbody">';
       if(p.kind==="setup"){
-        html+='<div class="card"><h3>Prerequisites</h3><ul class="check">'+PREREQ.map(function(pr,j){return pr.doc?docItem(pr.t,pr.url):prereqItem(pr.t,k("p0","pre",j),pr.url);}).join("")+'</ul></div>';
+        html+='<div class="card"><h3>Prerequisites</h3><ul class="check">'+PREREQ.map(function(pr,j){return prereqItem(pr.t,k("p0","pre",j),pr.url);}).join("")+'</ul></div>';
         html+='<div class="card"><h3>Warm-Up</h3><p>'+linked("Ultimate 5-Minute Warm-Up",WARMUP_URL)+'</p></div>';
       } else {
         if(p.concept&&p.concept.length) html+='<div class="card"><h3>Concept Videos</h3><ul class="check">'+p.concept.map(function(t,j){return checkItem(t.t,k(p.id,"c",j),t.url);}).join("")+'</ul></div>';
@@ -789,7 +800,12 @@ function renderLibrary(){
     html+='</div>';
   });
   html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="theory"><b>Theory Track</b><span class="chev'+(ui.lib.theory?" open":"")+'">\u203a</span></div>';
-  if(ui.lib.theory) html+='<div class="accbody"><div class="card"><ul class="check">'+THEORY.map(function(t,j){return t.doc?docItem(t.t,t.url):checkItem(t.t,"theory."+j,t.url);}).join("")+'</ul></div></div>';
+  if(ui.lib.theory) {
+    html+='<div class="accbody"><div class="card"><ul class="check">';
+    THEORY_DOCS.forEach(function(docItemObj){ html += docItem(docItemObj.t, docItemObj.url); });
+    THEORY_ITEMS.forEach(function(t,j){ html += checkItem(t.t, "theory."+j, t.url); });
+    html+='</ul></div></div>';
+  }
   html+='</div>';
   html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="creative"><b>Creative <span class="tag">Songwriting &amp; Production</span></b><span class="chev'+(ui.lib.creative?" open":"")+'">\u203a</span></div>';
   if(ui.lib.creative){
@@ -848,14 +864,12 @@ function render(){
     var root=document.getElementById("root");
     if(!root) return;
     
-    // Nova estrutura do cabeçalho
     var topbarHTML = '<div class="topbar">';
     topbarHTML += '<div class="topbar-header">';
     topbarHTML += '<div class="brand">THE <span>SHRED</span> ROADMAP</div>';
     
     if(hasFirebase){
       topbarHTML += '<div class="auth-container">';
-      // Split display username at the @ symbol
       if(currentUser && currentUser.email){
         var shortName = currentUser.email.split('@')[0];
         topbarHTML += '<span class="user-email">' + shortName + '</span>';
@@ -863,9 +877,9 @@ function render(){
       topbarHTML += '<button id="authBtn" class="dchip2" style="padding:5px 10px; margin:0; border-color:var(--border); color:var(--text);">' + (currentUser ? "Logout" : "Login with Google") + '</button>';
       topbarHTML += '</div>';
     }
-    topbarHTML += '</div>'; // Fim do topbar-header
+    topbarHTML += '</div>';
     
-    topbarHTML += progressBar()+'</div>'; // Fecha a topbar e adiciona a barra de progresso
+    topbarHTML += progressBar()+'</div>';
 
     var body = topbarHTML + '<div class="page">';
     if(ui.view==="home") body+=renderHome();
