@@ -33,16 +33,18 @@ a{color:inherit;}
 .splashinner{display:flex;flex-direction:column;align-items:center;}
 .splashtitle{font-family:'Oswald';font-weight:700;font-size:26px;letter-spacing:2px;text-align:center;line-height:1.15;color:#fff;margin-top:16px;}
 .splashtitle span{color:var(--accent);}
-.topbar{position:sticky;top:0;z-index:5;background:#101217;padding:calc(12px + env(safe-area-inset-top,0px)) 16px 10px;border-bottom:1px solid var(--border);}
 
-/* --- CABEÇALHO --- */
-.topbar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 10px; }
+/* --- TOP BAR --- */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:50;background:#101217;padding:calc(12px + env(safe-area-inset-top,0px)) 16px 10px;border-bottom:1px solid var(--border);}
+.topbar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 10px; max-width: 520px; margin-left: auto; margin-right: auto;}
 .brand { font-family: 'Oswald'; font-weight: 700; font-size: 15px; letter-spacing: 1px; flex: 1; margin-bottom: 0; }
 .brand span { color: var(--accent); }
 .auth-container { display: flex; align-items: center; gap: 8px; }
 .user-email { font-size: 9.5px; color: var(--muted); font-family: 'Inter', system-ui, sans-serif; }
 
-.page{padding:6px 16px 20px;}
+/* Increased top padding to accommodate the new fixed header */
+.page{padding:85px 16px 20px;}
+
 .eyebrow{color:var(--accent);font-size:10.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;}
 .h2{font-size:16px;}
 .lede{font-size:13px;margin-bottom:14px;}
@@ -51,6 +53,7 @@ a{color:inherit;}
 .card h3 .tag{text-align:right;}
 .tag{color:var(--muted);font-size:10.5px;text-transform:none;letter-spacing:0;font-weight:500;}
 /* progress bar */
+.phasebar-wrapper { max-width: 520px; margin: 0 auto; }
 .phasebar{display:flex;gap:4px;margin-bottom:3px;}
 .pseg{flex:1;height:8px;border-radius:5px;background:var(--card2);border:1px solid var(--border);overflow:hidden;}
 .pseg i{display:block;height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent));border-radius:5px;}
@@ -235,7 +238,7 @@ if(hasFirebase) {
 function I(t,url){return {t:t,url:url};}
 const PHASES=[
  {id:"p0",label:"Setup",short:"Setup & Baseline",kind:"setup"},
- {id:"p1",label:"Beginner",short:"Levels 1\u20132",target:3,testReq:2,
+ {id:"p1",label:"Beginner",short:"Levels 1 - 2",target:3,testReq:2,
    concept:[I("Alt Picking Pt.1","https://tinyurl.com/2na6k9kj"),I("Sweep Picking Guide","https://tinyurl.com/2p94rrf2"),I("Economy Picking Guide","https://tinyurl.com/bdfs3ptn"),I("Arpeggio Masterclass","https://tinyurl.com/57t8dup4")],
    exercises:[I("Simple Alt Picking Exercise","https://tinyurl.com/4zckb2nt"),I("Melodic vs Shred Soloing (melodic)","https://tinyurl.com/4mttk257"),I("Simple vs Complex Soloing (simple)","https://tinyurl.com/yd3pumbx"),I("Tornado Of Souls (simplified)","https://tinyurl.com/mpaes6yj")],
    songs:[I("Psycho (System Of A Down)","https://tinyurl.com/4hy7vacm"),I("Paranoid (Black Sabbath)","https://tinyurl.com/aa5u3azt"),I("Ace Of Spades (Motörhead)","https://tinyurl.com/ydkwndkb"),I("Heartwork (Carcass)","https://tinyurl.com/3wbrb8vs"),I("Fade To Black (Metallica)","https://tinyurl.com/yja86djw")]},
@@ -255,8 +258,8 @@ const CREATIVE={
  songwriting:[I("Riff Writing Masterclass","https://tinyurl.com/59wr7y4x"),I("Solo Writing Masterclass","https://tinyurl.com/ym69pkmv"),I("Metal Songwriting Masterclass","https://tinyurl.com/45du76rt"),I("Harmonize Guitars","https://tinyurl.com/dkds5aey")],
  production:[I("Guitar Transcribing","https://tinyurl.com/2t3d6n4p"),I("Home Recording Guide","https://tinyurl.com/nfkp288a"),I("MIDI Drums","http://tinyurl.com/23uj5xd9"),I("Mixing Guide","https://tinyurl.com/3ujtsn7f")]
 };
-const PHASE_BLURB={p0:"Get the prerequisites and warm-up in place, then run the baseline test for your own tracking \u2014 you start at Phase 1 regardless of the result.",
- p1:"Foundational technique \u2014 alternate picking, sweep picking and economy picking form the backbone everything later builds on.",
+const PHASE_BLURB={p0:"Get the prerequisites and warm-up in place, then run the baseline test for your own tracking - you start at Phase 1 regardless of the result.",
+ p1:"Foundational technique - alternate picking, sweep picking and economy picking form the backbone everything later builds on.",
  p2:"Endurance, precision and expressive control (vibrato, bending). Fundamentals are assumed solid by now.",
  p3:"Raw speed and dexterity get built on purpose here. Expect this tier to take real patience.",
  p4:"The toughest material in the Roadmap. Completing it clears the entire BHGS technique curriculum."};
@@ -299,8 +302,8 @@ const WEEKLY_RHYTHM=[
  {day:"Wed",focused:"Theory in rotation + 5-min Time Signatures micro-dose",casual:"Apply theory on the fretboard"},
  {day:"Thu",focused:"Chop-builders (legato/economy/tapping) + 5-min Sight-Reading micro-dose",casual:"Continue current solo"},
  {day:"Fri",focused:"Revisit hardest exercise + reinforce weakest skill",casual:"Free jam"},
- {day:"Sat",focused:"\u2014",casual:"Deep-dive: polish current solo / writing session (45 min)"},
- {day:"Sun",focused:"\u2014",casual:"Improv, bonus drill, or catch-up (45 min)"}
+ {day:"Sat",focused:" - ",casual:"Deep-dive: polish current solo / writing session (45 min)"},
+ {day:"Sun",focused:" - ",casual:"Improv, bonus drill, or catch-up (45 min)"}
 ];
 const DAYS=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 const DAY_ORDER=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
@@ -442,7 +445,7 @@ function applyStateChange(skipAuto){
   }
   if(isFullyDoneToday() && state.congratsDate!==todayISO()){
     state.congratsDate=todayISO();
-    showToast("\ud83e\udd18 Nice work \u2014 today's full session is complete!");
+    showToast("\ud83e\udd18 Nice work - today's full session is complete!");
   }
   saveState(); render();
 }
@@ -467,7 +470,7 @@ function handlePhaseSelect(newIdx){
     for(var i=oldIdx;i<newIdx;i++) markPhaseComplete(i);
     state.phaseIndex=newIdx;
     applyStateChange(true);
-    showToast("Now on "+PHASES[newIdx].label+" \u2014 earlier phases marked complete");
+    showToast("Now on "+PHASES[newIdx].label+" - earlier phases marked complete");
   } else {
     ui.phaseJumpPending=newIdx;
     render();
@@ -479,7 +482,7 @@ function confirmPhaseJumpBack(){
   state.phaseIndex=newIdx;
   ui.phaseJumpPending=null;
   applyStateChange(true);
-  showToast("Now on "+PHASES[newIdx].label+" \u2014 later phases reset");
+  showToast("Now on "+PHASES[newIdx].label+" - later phases reset");
 }
 function cancelPhaseJumpBack(){ ui.phaseJumpPending=null; render(); }
 function showToast(msg){var t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");clearTimeout(showToast._h);showToast._h=setTimeout(function(){t.classList.remove("show");},2600);}
@@ -521,7 +524,7 @@ function chopRow(target,onlyKeys,editable){
   var list=onlyKeys?CHOP.filter(function(c){return onlyKeys.indexOf(c.key)!==-1;}):CHOP;
   return list.map(function(c){
     var lvl=state.chop[c.key]||0,hit=target&&lvl>=target;
-    var minus=editable?'<button data-action="chop" data-t="'+c.key+'" data-d="-1">\u2013</button>':'';
+    var minus=editable?'<button data-action="chop" data-t="'+c.key+'" data-d="-1"> - </button>':'';
     var plus=editable?'<button data-action="chop" data-t="'+c.key+'" data-d="1">+</button>':'';
     return '<div class="chop"><div class="nm">'+linked(c.label,c.url)+(target?'<b>target: Level '+target+'</b>':'<b>lifetime level</b>')+'</div><div class="stepper">'+
       minus+'<div class="lvl'+(hit?" hit":"")+'">'+lvl+(target?"/"+target:"/10")+'</div>'+plus+'</div></div>';
@@ -531,7 +534,7 @@ function testRow(req){
   return TESTCATS.map(function(c){
     var lvl=state.testLevel[c.key]||0,hit=req&&lvl>=req;
     return '<div class="chop"><div class="nm">'+linked(c.label,c.url)+(req?'<b>need: Level '+req+'</b>':'<b>baseline</b>')+'</div><div class="stepper">'+
-      '<button data-action="test" data-t="'+c.key+'" data-d="-1">\u2013</button><div class="lvl'+(hit?" hit":"")+'">'+lvl+'/5</div>'+
+      '<button data-action="test" data-t="'+c.key+'" data-d="-1"> - </button><div class="lvl'+(hit?" hit":"")+'">'+lvl+'/5</div>'+
       '<button data-action="test" data-t="'+c.key+'" data-d="1">+</button></div></div>';
   }).join("");
 }
@@ -541,7 +544,7 @@ function renderBonusList(){
       var lvl=state.bonusLevel[b.slider.key]||0;
       var isMax = lvl >= b.slider.max;
       return '<div class="chop"><div class="nm">'+linked(b.t,b.url)+'</div><div class="stepper">'+
-        '<button data-action="bonuslvl" data-k="'+b.slider.key+'" data-max="'+b.slider.max+'" data-d="-1">\u2013</button>'+
+        '<button data-action="bonuslvl" data-k="'+b.slider.key+'" data-max="'+b.slider.max+'" data-d="-1"> - </button>'+
         '<div class="lvl'+(isMax?" hit":"")+'">'+lvl+'/'+b.slider.max+'</div>'+
         '<button data-action="bonuslvl" data-k="'+b.slider.key+'" data-max="'+b.slider.max+'" data-d="1">+</button></div></div>';
     }
@@ -555,7 +558,7 @@ function progressBar(){
     segs+='<div class="pseg"><i style="width:'+pct+'%"></i></div>';
     labels+='<span class="'+(i===state.phaseIndex?"cur":"")+'">Phase '+i+'</span>';
   });
-  return '<div class="phasebar">'+segs+'</div><div class="plabels">'+labels+'</div>';
+  return '<div class="phasebar-wrapper"><div class="phasebar">'+segs+'</div><div class="plabels">'+labels+'</div></div>';
 }
 function dayPicker(selectedDay){
   var today=todayName(), act=activeDay();
@@ -640,7 +643,7 @@ function renderHome(){
   html+='</div>';
 
   html+='<div class="card"><h3>\ud83e\uddea Phase Transition Test <span class="tag">1-Minute Workout</span></h3>'+
-    (req?'<p style="margin-bottom:8px;">Reach Level '+req+' on all five to unlock '+(PHASES[state.phaseIndex+1]?PHASES[state.phaseIndex+1].label:"the next phase")+'.</p>':'<p style="margin-bottom:8px;">Track your baseline here \u2014 informational at this stage.</p>')+
+    (req?'<p style="margin-bottom:8px;">Reach Level '+req+' on all five to unlock '+(PHASES[state.phaseIndex+1]?PHASES[state.phaseIndex+1].label:"the next phase")+'.</p>':'<p style="margin-bottom:8px;">Track your baseline here - informational at this stage.</p>')+
     testRow(req)+'</div>';
     
   html+='<button class="navbtn accent" data-action="go" data-view="daily"><div class="ic">\ud83c\udfaf</div><div><b>Daily Practice</b><span>Structured session, any day you pick</span></div></button>';
@@ -654,7 +657,7 @@ function renderHome(){
     html+='<div style="display:flex;gap:8px;"><button class="tbtn" style="flex:1;" data-action="canceljump">Cancel</button><button class="tbtn danger" style="flex:1;" data-action="confirmjump">Confirm</button></div>';
   } else {
     html+='<p style="text-align:justify;">Advancing happens automatically once every item, chop level and test level in your current phase is done. Jump forward and earlier phases are marked complete too; jump back and later phases reset.</p><select class="select" data-action="setphase">';
-    PHASES.forEach(function(p,i){html+='<option value="'+i+'"'+(i===state.phaseIndex?" selected":"")+'>Phase '+i+' \u2014 '+p.label+" ("+p.short+')</option>';});
+    PHASES.forEach(function(p,i){html+='<option value="'+i+'"'+(i===state.phaseIndex?" selected":"")+'>Phase '+i+' - '+p.label+" ("+p.short+')</option>';});
     html+='</select>';
   }
   html+='</div>';
@@ -694,7 +697,7 @@ function renderDaily(){
     }).join("")+'</ul>';
     html+=blk("prereq",day,"Prerequisites",null,preBody,editable);
     html+=blk("warmup",day,"Warm-Up",null,'<p>'+linked("Ultimate 5-Minute Warm-Up",WARMUP_URL)+'</p>',editable);
-    html+='<div class="note">Run the Phase Transition Test on Home for your baseline \u2014 it\'s informational here, not required to advance.</div>';
+    html+='<div class="note">Run the Phase Transition Test on Home for your baseline - it\'s informational here, not required to advance.</div>';
     return html;
   }
 
@@ -739,7 +742,7 @@ function renderDaily(){
     if(tueExHtml) focusBody+='<p style="margin-bottom:6px;">Exercises in rotation (check off once solid):</p><ul class="check">'+tueExHtml+'</ul>';
     else focusBody+='<p style="margin-bottom:6px;color:var(--muted);">All exercises mastered for this phase! \ud83c\udfb8</p>';
     
-    focusBody+='<p style="margin:6px 0;">Chop-builders (picking) \u2014 protect ~15 min:</p>'+chopRow(p.target,["alt","sweep"]);
+    focusBody+='<p style="margin:6px 0;">Chop-builders (picking) - protect ~15 min:</p>'+chopRow(p.target,["alt","sweep"]);
   } else if(day==="Wed"){
     var theoryHtml = "";
     THEORY_DOCS.forEach(function(docItemObj){
@@ -779,7 +782,7 @@ function renderDaily(){
 
 function renderLibrary(){
   var html='<div class="eyebrow">Reference &amp; Review</div><div class="h2" style="font-size:20px;margin-bottom:6px;">All Phases</div>';
-  html+='<p class="lede">Browse and check off any item, anytime \u2014 it all counts toward the same progress as Daily Practice.</p>';
+  html+='<p class="lede">Browse and check off any item, anytime - it all counts toward the same progress as Daily Practice.</p>';
   PHASES.forEach(function(p,i){
     var open=!!ui.lib["p"+i],pct=phasePercent(i);
     html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="p'+i+'"><b>'+p.label.toUpperCase()+' <span class="tag">Phase '+i+' \u00b7 '+p.short+'</span></b><span style="display:flex;align-items:center;gap:8px;"><span class="tag">'+pct+'%</span><span class="chev'+(open?" open":"")+'">\u203a</span></span></div>';
@@ -834,16 +837,16 @@ function renderFree(){
 function renderInfo(){
   var html='<div class="eyebrow">The Full Guide</div><div class="h2" style="font-size:20px;margin-bottom:10px;">Guide &amp; Info</div>';
   html+='<div class="card"><h3>How This Plan Works</h3><p style="margin-bottom:6px;text-align:justify;">Technique is sequential and full-coverage: start at Beginner regardless of ability, and work every exercise, chop-builder and solo in every tier before advancing.</p>'+
-    '<p style="margin-bottom:6px;text-align:justify;">Theory and Creative (songwriting/production) run on their own independent tracks \u2014 always available in Library, never gating a phase.</p>'+
-    '<p style="text-align:justify;">Essential skills get a 5-minute daily micro-dose \u2014 a different one Monday\u2013Thursday, Friday reinforces whichever felt weakest.</p></div>';
+    '<p style="margin-bottom:6px;text-align:justify;">Theory and Creative (songwriting/production) run on their own independent tracks - always available in Library, never gating a phase.</p>'+
+    '<p style="text-align:justify;">Essential skills get a 5-minute daily micro-dose - a different one Monday - Thursday, Friday reinforces whichever felt weakest.</p></div>';
   html+='<div class="card"><h3>Daily Blueprint</h3><p style="margin-bottom:6px;text-align:justify;"><b style="color:var(--text)">Weekdays (60 min):</b> 5 Warm-Up + 35 Focused (30 technique/theory + 5 skill micro-dose) + 15 Casual + 5 Cool-Down.</p>'+
     '<p style="text-align:justify;"><b style="color:var(--text)">Weekends (60 min):</b> 15 Warm-Up + 45 Casual/Creative.</p></div>';
-  html+='<div class="card"><h3>Exercise Time-Split (Tue/Thu)</h3><p style="text-align:justify;">Newest exercise gets the most time (5\u20138 min); older, solid ones just need a quick maintenance rep (1\u20132 min). Chop-builders get a protected floor of ~15 min \u2014 that\'s your real progress signal.</p></div>';
+  html+='<div class="card"><h3>Exercise Time-Split (Tue/Thu)</h3><p style="text-align:justify;">Newest exercise gets the most time (5 - 8 min); older, solid ones just need a quick maintenance rep (1 - 2 min). Chop-builders get a protected floor of ~15 min - that\'s your real progress signal.</p></div>';
   html+='<div class="card"><h3>Weekly Rhythm</h3><table class="info"><tr><th>Day</th><th>Focused</th><th>Casual</th></tr>'+
     WEEKLY_RHYTHM.map(function(r){return '<tr><td class="day">'+r.day+'</td><td>'+r.focused+'</td><td>'+r.casual+'</td></tr>';}).join("")+'</table></div>';
   html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="infophases"><b>Phase Overview</b><span class="chev'+(ui.lib.infophases?" open":"")+'">\u203a</span></div>';
-  if(ui.lib.infophases){ html+='<div class="accbody"><div class="card">'+PHASES.map(function(p,i){return '<p style="margin-bottom:8px;text-align:justify;"><b style="color:var(--text)">Phase '+i+' \u2014 '+p.label+' ('+p.short+'):</b> '+PHASE_BLURB[p.id]+'</p>';}).join("")+
-    '<p style="text-align:justify;"><b style="color:var(--text)">Creative (no phase number):</b> Once technique work slows down, Creative \u2014 songwriting and production \u2014 becomes your ongoing focus. It\'s tracked in Library like Theory, and never counts toward the phase progress bar.</p></div></div>'; }
+  if(ui.lib.infophases){ html+='<div class="accbody"><div class="card">'+PHASES.map(function(p,i){return '<p style="margin-bottom:8px;text-align:justify;"><b style="color:var(--text)">Phase '+i+' - '+p.label+' ('+p.short+'):</b> '+PHASE_BLURB[p.id]+'</p>';}).join("")+
+    '<p style="text-align:justify;"><b style="color:var(--text)">Creative (no phase number):</b> Once technique work slows down, Creative - songwriting and production - becomes your ongoing focus. It\'s tracked in Library like Theory, and never counts toward the phase progress bar.</p></div></div>'; }
   html+='</div>';
   html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="infoess"><b>Essential Skills Rotation</b><span class="chev'+(ui.lib.infoess?" open":"")+'">\u203a</span></div>';
   if(ui.lib.infoess){ html+='<div class="accbody"><div class="card">'+Object.keys(ESSENTIAL).map(function(d){return '<p style="margin-bottom:4px;"><b style="color:var(--text)">'+DAY_FULL[d]+':</b> '+ESSENTIAL[d]+'</p>';}).join("")+'</div></div>'; }
@@ -855,6 +858,36 @@ function renderInfo(){
   if(ui.lib.infobonus){ html+='<div class="accbody"><div class="card"><ul class="infolist">'+BONUS.map(function(t){return '<li>'+t.t+'</li>';}).join("")+'</ul></div></div>'; }
   html+='</div>';
   html+='<div class="note" style="margin-top:4px;">This guide and app are based on <b>Bradley Hall\'s Guitar School</b> (BHGS) Official Roadmap.</div>';
+  return html;
+}
+
+function renderSetup(){
+  var html='<div class="eyebrow">Gear Optimization</div><div class="h2" style="font-size:20px;margin-bottom:10px;">PRS SE CE 24 Shred Setup</div>';
+  html+='<p class="lede">Follow these mechanical adjustments in this exact order to achieve low string action suitable for shredding without excessive fret buzz.</p>';
+  
+  html+='<div class="card"><h3>Target Measurements</h3><table class="info"><tr><th>Adjustment</th><th>Target (mm)</th></tr>'+
+    '<tr><td class="day">Tremolo Float</td><td>1.6 mm (1/16") off body</td></tr>'+
+    '<tr><td class="day">Neck Relief</td><td>0.15 mm at 8th fret</td></tr>'+
+    '<tr><td class="day">Action (Low E)</td><td>1.5 mm at 12th fret</td></tr>'+
+    '<tr><td class="day">Action (High E)</td><td>1.1 - 1.2 mm at 12th fret</td></tr>'+
+    '</table></div>';
+    
+  html+='<div class="card"><h3>1. Strip and Clean</h3><p style="text-align:justify;">Tape off your fretboard with low-tack painter\'s tape. Polish the frets using 0000 steel wool or fret polishing erasers to remove oxidation, making wide bends feel smooth. Condition the rosewood fretboard with a light coat of lemon oil. Leave it for 10 min for the neck to absorb the oils, and then wipe the excess away.</p></div>';
+  
+  html+='<div class="card"><h3>2. Restring and Stretch</h3><p style="text-align:justify;">Install fresh strings (10-46 gauge). Before measuring anything, stretch the strings thoroughly by pulling firmly on each string all the way up and down the neck. Retune and repeat until the tuning stops dropping.</p></div>';
+  
+  html+='<div class="card"><h3>3. Set the Tremolo Float</h3><p style="text-align:justify;">The PRS patented tremolo is designed to float exactly 1.6 mm parallel to the guitar body. If it sits too high or low, remove the back cavity plate and adjust the two claw screws holding the springs (tightening pulls the bridge down; loosening lifts it). Retune after every quarter-turn.<br><br><b>The PRS F# Test:</b> To confirm the perfect float without a ruler, pull the whammy bar back as far as it will go. When perfectly balanced, your open Low E string will pitch up exactly to an F#.</p></div>';
+  
+  html+='<div class="card"><h3>4. Adjust Neck Relief (Truss Rod)</h3><p style="text-align:justify;">Put a capo on the 1st fret and hold down the Low E string at the 24th fret. Check the gap between the bottom of the string and the top of the 8th fret. You want a tiny 0.15 mm gap - just enough space to slide a piece of standard printer paper through with slight friction. If the gap is larger, tighten the truss rod (turn clockwise) a quarter-turn at a time.</p></div>';
+  
+  html+='<div class="card"><h3>5. Lower the String Action</h3><p style="text-align:justify;">With the neck nearly flat, drop the saddles using a small Allen key on the two grub screws per saddle. Set the Low E to 1.5 mm at the 12th fret, and the High E to 1.1 - 1.2 mm at the 12th fret.<br><br><b>Radius matching:</b> Adjust the middle strings so they form a matching 10-inch (254 mm) curve to fit the fretboard. Test by doing 1.5-step bends above the 15th fret on the High E string; if the note chokes out, raise that specific saddle just a hair.</p></div>';
+  
+  html+='<div class="card"><h3>6. Lubricate the Nut</h3><p style="text-align:justify;">Apply graphite powder (from a mechanical pencil) or a dedicated lubricant into the nut slots before tuning up to pitch. This stops the strings from binding during dive bombs.</p></div>';
+  
+  html+='<div class="card"><h3>7. Set Intonation</h3><p style="text-align:justify;">This must be done last. Check the tuning of the open string, then fret the note at the 12th fret. If the fretted note is <b>sharp</b>, use a Phillips screwdriver on the back of the bridge to move the saddle <b>backward</b> (away from the neck). If the fretted note is <b>flat</b>, move the saddle <b>forward</b>. Retune the open string after every saddle adjustment until both match perfectly.</p></div>';
+
+  html+='<button class="tbtn primary" style="width:100%; margin-bottom: 20px; display:flex; justify-content:center; align-items:center; gap:8px;" onclick="window.open(\'https://www.youtube.com/watch?v=wmoc9ksdZdE\', \'_blank\')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33 2.78 2.78 0 0 0 1.94 2c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.33 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg> Official PRS Setup Guide</button>';
+
   return html;
 }
 
@@ -887,8 +920,9 @@ function render(){
     else if(ui.view==="library") body+=renderLibrary();
     else if(ui.view==="free") body+=renderFree();
     else if(ui.view==="info") body+=renderInfo();
+    else if(ui.view==="setup") body+=renderSetup();
     
-    body+='</div><div class="botnav">'+navBtn("home","\ud83c\udfe0","Home")+navBtn("daily","\ud83c\udfaf","Daily")+navBtn("library","\ud83d\udcda","Library")+navBtn("free","\ud83c\udfb8","Free")+navBtn("info","\u2139\ufe0f","Info")+'</div>';
+    body+='</div><div class="botnav">'+navBtn("home","\ud83c\udfe0","Home")+navBtn("daily","\ud83c\udfaf","Daily")+navBtn("library","\ud83d\udcda","Library")+navBtn("free","\ud83c\udfb8","Free")+navBtn("info","\u2139\ufe0f","Info")+navBtn("setup","\ud83d\udee0\ufe0f","Setup")+'</div>';
     
     root.innerHTML=body;
   } catch(err) {
@@ -920,7 +954,7 @@ document.addEventListener("click",function(e){
   if(a==="go"){
     if(t.dataset.view!==ui.view){ ui.lib={}; ui.dayOverride=null; ui.surprise=null; }
     ui.view=t.dataset.view;
-    window.scrollTo(0, 0); // Força o ecrã a voltar ao topo ao mudar de separador
+    window.scrollTo(0, 0); 
     render();
   }
   else if(a==="toggleacc"){ui.lib[t.dataset.acc]=!ui.lib[t.dataset.acc]; render();}
