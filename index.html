@@ -14,7 +14,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=block" rel="stylesheet">
 <style>
 :root{
   --bg:#101217;--card:#1b1e27;--card2:#1e222c;--border:#2a2e38;--accent:#ff3b30;--accent2:#ff5a4e;
@@ -865,6 +865,8 @@ function renderSetup(){
   var html='<div class="eyebrow">Gear Optimization</div><div class="h2" style="font-size:20px;margin-bottom:10px;">PRS SE CE 24 Shred Setup</div>';
   html+='<p class="lede">Follow these mechanical adjustments in this exact order to achieve low string action suitable for shredding without excessive fret buzz.</p>';
   
+  html+='<div class="note"><b>Note:</b> These target measurements are specifically optimized for a <b>10-46</b> string gauge.</div>';
+  
   html+='<div class="card"><h3>Target Measurements</h3><table class="info"><tr><th>Adjustment</th><th>Target (mm)</th></tr>'+
     '<tr><td class="day">Tremolo Float</td><td>1.6 mm (1/16") off body</td></tr>'+
     '<tr><td class="day">Neck Relief</td><td>0.15 mm at 8th fret</td></tr>'+
@@ -872,9 +874,9 @@ function renderSetup(){
     '<tr><td class="day">Action (High E)</td><td>1.1 - 1.2 mm at 12th fret</td></tr>'+
     '</table></div>';
     
-  html+='<div class="card"><h3>1. Strip and Clean</h3><p style="text-align:justify;">Tape off your fretboard with low-tack painter\'s tape. Polish the frets using 0000 steel wool or fret polishing erasers to remove oxidation, making wide bends feel smooth. Condition the rosewood fretboard with a light coat of lemon oil. Leave it for 10 min for the neck to absorb the oils, and then wipe the excess away.</p></div>';
+  html+='<div class="card"><h3>1. Strip and Clean</h3><p style="text-align:justify;">Remove the old strings and deep clean the fretboard to lift away accumulated dirt. Condition the rosewood fretboard with a light coat of lemon oil. Leave it for 10 min for the neck to absorb the oils, and then wipe the excess away. Finally, clean the rest of the guitar body and hardware using appropriate instrument cleaning products.</p></div>';
   
-  html+='<div class="card"><h3>2. Restring and Stretch</h3><p style="text-align:justify;">Install fresh strings (10-46 gauge). Before measuring anything, stretch the strings thoroughly by pulling firmly on each string all the way up and down the neck. Retune and repeat until the tuning stops dropping.</p></div>';
+  html+='<div class="card"><h3>2. Restring and Stretch</h3><p style="text-align:justify;">Install your fresh strings. Before measuring anything, stretch the strings thoroughly by pulling firmly on each string all the way up and down the neck. Retune and repeat until the tuning stops dropping.</p></div>';
   
   html+='<div class="card"><h3>3. Set the Tremolo Float</h3><p style="text-align:justify;">The PRS patented tremolo is designed to float exactly 1.6 mm parallel to the guitar body. If it sits too high or low, remove the back cavity plate and adjust the two claw screws holding the springs (tightening pulls the bridge down; loosening lifts it). Retune after every quarter-turn.<br><br><b>The PRS F# Test:</b> To confirm the perfect float without a ruler, pull the whammy bar back as far as it will go. When perfectly balanced, your open Low E string will pitch up exactly to an F#.</p></div>';
   
