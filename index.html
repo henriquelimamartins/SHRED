@@ -26,7 +26,17 @@
 ::-webkit-scrollbar { display: none; }
 * { -ms-overflow-style: none; scrollbar-width: none; }
 
-html,body{height:100%;height:100dvh;margin:0;background:var(--bg);touch-action:manipulation;overflow:hidden;}
+html,body{
+  position:fixed;
+  inset:0;
+  width:100%;
+  height:100%;
+  margin:0;
+  padding:0;
+  background:var(--bg);
+  touch-action:manipulation;
+  overflow:hidden;
+}
 button,a,img{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;}
 body{font-family:'Inter',system-ui,sans-serif;color:var(--text);-webkit-tap-highlight-color:transparent;}
 h1,h2,h3,h4{font-family:'Oswald',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin:0;}
@@ -34,7 +44,16 @@ p{margin:0;line-height:1.45;color:var(--muted);font-size:13.5px;}
 button{font-family:inherit;cursor:pointer;}
 a{color:inherit;}
 
-#root{position:relative; max-width:520px; margin:0 auto; height:100%; height:100dvh; display:flex; flex-direction:column; overflow:hidden;}
+#root{
+  position:fixed;
+  inset:0;
+  max-width:520px;
+  margin:0 auto;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  background:var(--bg);
+}
 #splash{position:fixed;inset:0;background:#000;display:flex;align-items:center;justify-content:center;z-index:100;}
 .splashinner{display:flex;flex-direction:column;align-items:center;}
 .splashtitle{font-family:'Oswald';font-weight:700;font-size:26px;letter-spacing:2px;text-align:center;line-height:1.15;color:#fff;margin-top:16px;}
