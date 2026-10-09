@@ -963,7 +963,7 @@ function renderSetup(){
   html+='</select>';
   html+='</div>';
   
-  html+='<div class="note"><b>Note:</b> These target measurements are specifically optimized to match the tension profile of '+conf.gauge+' with E standard tuning on a 25" scale guitar.</div>';
+  html+='<div class="note"><b>Note:</b> These target measurements are specifically optimized to match the tension profile of '+conf.gauge+' string gauge with E standard tuning on a 25" scale guitar.</div>';
   
   html+='<div class="card"><h3>Recommended Measurements</h3><table class="info"><tr><th>Adjustment</th><th>Target</th></tr>';
   html+='<tr><td class="day">String Gauge</td><td>'+formatGauge(conf.gauge)+'</td></tr>';
@@ -985,7 +985,7 @@ function renderSetup(){
   
   html+='<div class="card"><h3>4. Adjust Neck Relief (Truss Rod)</h3><p style="text-align:justify;">Put a capo on the 1st fret and hold down the Low E string at the highest fret. Check the gap between the bottom of the string and the top of the 8th fret. You want a tiny '+conf.relief+' mm gap - just enough space to slide a piece of standard printer paper through with slight friction. If the gap is larger, tighten the truss rod (turn clockwise) a quarter-turn at a time.</p></div>';
   
-  html+='<div class="card"><h3>5. Lower the String Action</h3><p style="text-align:justify;">With the neck nearly flat, adjust the saddle heights. Set the Low E to '+conf.actBass+' mm at the 12th fret, and the High E to '+conf.actTreb+' - '+(conf.actTreb+0.1).toFixed(1)+' mm at the 12th fret.<br><br><b>Radius matching:</b> '+(isPrs ? 'Drop the individual saddles using a small Allen key on the two grub screws per saddle. Adjust the middle strings so they form a matching '+setupData[state.setupGuitar].radius+' curve to fit the fretboard.' : 'Adjust the thumbwheels on either side of the Tune-O-Matic bridge. The bridge saddle slots are pre-cut to automatically match the '+setupData[state.setupGuitar].radius+' fretboard radius.')+' Test by doing 1.5-step bends above the 15th fret on the High E string; if the note chokes out, raise that specific side just a hair.</p></div>';
+  html+='<div class="card"><h3>5. Lower the String Action</h3><p style="text-align:justify;">With the neck nearly flat, adjust the saddle heights. Set the Low E to '+conf.actBass+' mm at the 12th fret, and the High E to '+conf.actTreb+' - '+(conf.actTreb+0.1).toFixed(1)+' mm at the 12th fret.<br><br><b>Radius matching:</b> '+(isPrs ? 'Drop the individual saddles using a small Allen key on the two grub screws per saddle. Adjust the middle strings so they form a matching '+setupData[state.setupGuitar].radius+' curve to fit the fretboard.' : 'Adjust the thumbwheels on either side of the Tune-O-Matic bridge. The bridge saddle slots are pre-cut to automatically match the '+setupData[state.setupGuitar].radius+' fretboard radius.')+' Test by doing 1.5-step bends above the 15th fret on the High E string; if the note chokes out, raise that specific side.</p></div>';
   
   html+='<div class="card"><h3>6. Lubricate the Nut</h3><p style="text-align:justify;">Apply graphite powder (from a mechanical pencil) or a dedicated lubricant into the nut slots before tuning up to pitch. This stops the strings from binding and pinging.</p></div>';
   
