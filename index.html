@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>The Shred Roadmap</title>
+<title>SHRED</title>
 
 <link rel="icon" type="image/png" href="./favicon.png?v=4">
 <link rel="apple-touch-icon" href="./apple-touch-icon.png?v=4">
@@ -26,7 +26,7 @@
 ::-webkit-scrollbar { display: none; }
 * { -ms-overflow-style: none; scrollbar-width: none; }
 
-html,body{height:100%;margin:0;background:var(--bg);touch-action:manipulation;overflow:hidden;}
+html,body{height:100%;height:100dvh;margin:0;background:var(--bg);touch-action:manipulation;overflow:hidden;}
 button,a,img{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;}
 body{font-family:'Inter',system-ui,sans-serif;color:var(--text);-webkit-tap-highlight-color:transparent;}
 h1,h2,h3,h4{font-family:'Oswald',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin:0;}
@@ -575,6 +575,18 @@ function confirmReset(){
   showToast("Everything has been reset.");
 }
 
+function formatGauge(g){
+  var parts = g.split('-');
+  if(parts.length === 2) {
+    var p1 = parseInt(parts[0], 10);
+    var p2 = parseInt(parts[1], 10);
+    var s1 = (p1 >= 10 && p1 <= 19) ? "0.0" + p1 : "0." + p1;
+    var s2 = (p2 >= 10 && p2 <= 99) ? "0.0" + p2 : "0." + p2;
+    return s1 + '" - ' + s2 + '"';
+  }
+  return g;
+}
+
 /* ---------- render helpers ---------- */
 function linked(label,url){ return url? '<a href="'+url+'" target="_blank" rel="noopener">'+label+'</a>' : label; }
 function checkItem(label,key,url,editable){
@@ -718,7 +730,7 @@ function renderHome(){
   html+='<button class="navbtn accent" data-action="go" data-view="daily"><div class="ic">\ud83c\udfaf</div><div><b>Daily Practice</b><span>Structured session, any day you pick</span></div></button>';
   html+='<button class="navbtn" data-action="go" data-view="library"><div class="ic">\ud83d\udcda</div><div><b>Library</b><span>Browse phases, essential skills &amp; bonus drills</span></div></button>';
   html+='<button class="navbtn info" data-action="go" data-view="info"><div class="ic">\u2139\ufe0f</div><div><b>Guide &amp; Info</b><span>Weekly rhythm and app overview</span></div></button>';
-  html+='<button class="navbtn setupbtn" data-action="go" data-view="setup"><div class="ic">\ud83d\udee0\ufe0f</div><div><b>Setup Companion</b><span>Optimize your gear for shredding</span></div></button>';
+  html+='<button class="navbtn setupbtn" data-action="go" data-view="setup"><div class="ic">\ud83d\udee0\ufe0f</div><div><b>Guitar Setup Companion</b><span>Optimize your gear for shredding</span></div></button>';
 
   html+='<div class="card"><h3>Jump to phase</h3>';
   if(ui.phaseJumpPending!==null){
@@ -939,8 +951,8 @@ function renderSetup(){
   // DROPDOWNS
   html+='<div style="display:flex; gap:8px; margin-bottom:12px;">';
   html+='<select class="select" style="flex:1; margin-top:0;" data-action="setGuitar">';
-  html+='<option value="prs" '+(isPrs?'selected':'')+'>PRS (25")</option>';
-  html+='<option value="epi" '+(isPrs?'':'selected')+'>Les Paul (24.75")</option>';
+  html+='<option value="prs" '+(isPrs?'selected':'')+'>PRS SE CE 24 (25" scale)</option>';
+  html+='<option value="epi" '+(isPrs?'':'selected')+'>Epiphone LP Std (24.75" scale)</option>';
   html+='</select>';
   
   html+='<select class="select" style="flex:1; margin-top:0;" data-action="setTuning">';
@@ -953,24 +965,24 @@ function renderSetup(){
   html+='</select>';
   html+='</div>';
   
-  html+='<div class="note"><b>Note:</b> These target measurements are specifically optimized to match the tension profile of 10-46 string gauge with E standard tuning on a 25" scale guitar.</div>';
+  html+='<div class="note"><b>Note:</b> These target measurements are specifically optimized to match the tension profile of 0.010" - 0.046" E Standard strings on a 25" scale.</div>';
   
-  html+='<div class="card"><h3>Recommended Measurements</h3><table class="info"><tr><th>Adjustment</th><th>Target</th></tr>';
-  html+='<tr><td class="day">String Gauge</td><td>'+conf.gauge+'</td></tr>';
+  html+='<div class="card"><h3>Target Measurements</h3><table class="info"><tr><th>Adjustment</th><th>Target</th></tr>';
+  html+='<tr><td class="day">String Gauge</td><td>'+formatGauge(conf.gauge)+'</td></tr>';
   if(isPrs) html+='<tr><td class="day">Tremolo Float</td><td>1.6 mm (1/16") off body</td></tr>';
   html+='<tr><td class="day">Neck Relief</td><td>'+conf.relief+' mm at 8th fret</td></tr>'+
-    '<tr><td class="day">String Action (Low E)</td><td>'+conf.actBass+' mm at 12th fret</td></tr>'+
-    '<tr><td class="day">String Action (High E)</td><td>'+conf.actTreb+' mm at 12th fret</td></tr>'+
-    '<tr><td class="day">Pickup Height (Neck)</td><td>2.5 mm to string</td></tr>'+
-    '<tr><td class="day">Pickup Height (Bridge)</td><td>1.5 mm to string</td></tr>'+
+    '<tr><td class="day">Action (Low E)</td><td>'+conf.actBass+' mm at 12th fret</td></tr>'+
+    '<tr><td class="day">Action (High E)</td><td>'+conf.actTreb+' mm at 12th fret</td></tr>'+
+    '<tr><td class="day">Pickup (Bass)</td><td>2.5 mm</td></tr>'+
+    '<tr><td class="day">Pickup (Treble)</td><td>1.5 mm</td></tr>'+
     '</table></div>';
     
-  html+='<div class="card"><h3>1. Strip and Clean</h3><p style="text-align:justify;">Remove the old strings and deep clean the fretboard to lift away accumulated dirt. If needed (once every six months) condition the rosewood fretboard with a light coat of lemon oil. Leave it for 10 min for the neck to absorb the oils, and then wipe the excess away. Finally, clean the rest of the guitar body and hardware using appropriate instrument cleaning products.</p></div>';
+  html+='<div class="card"><h3>1. Strip and Clean</h3><p style="text-align:justify;">Remove the old strings and deep clean the fretboard to lift away accumulated dirt. Condition the rosewood fretboard with a light coat of lemon oil. Leave it for 10 min for the neck to absorb the oils, and then wipe the excess away. Finally, clean the rest of the guitar body and hardware using appropriate instrument cleaning products.</p></div>';
   
   html+='<div class="card"><h3>2. Restring and Stretch</h3><p style="text-align:justify;">Install your fresh strings. Before measuring anything, stretch the strings thoroughly by pulling firmly on each string all the way up and down the neck. Retune and repeat until the tuning stops dropping.</p></div>';
   
   if(isPrs) {
-    html+='<div class="card"><h3>3. Set the Tremolo Float</h3><p style="text-align:justify;">The PRS patented tremolo is designed to float exactly 1.6 mm parallel to the guitar body. If it sits too high or low, remove the back cavity plate and adjust the two claw screws holding the springs (tightening pulls the bridge down; loosening lifts it). Retune after every turn.<br><br><b>The PRS F# Test:</b> To confirm the perfect float without a ruler, pull the whammy bar back as far as it will go. When perfectly balanced, your open Low E string will pitch up exactly to an F#.</p></div>';
+    html+='<div class="card"><h3>3. Set the Tremolo Float</h3><p style="text-align:justify;">The PRS patented tremolo is designed to float exactly 1.6 mm parallel to the guitar body. If it sits too high or low, remove the back cavity plate and adjust the two claw screws holding the springs (tightening pulls the bridge down; loosening lifts it). Retune after every quarter-turn.<br><br><b>The PRS F# Test:</b> To confirm the perfect float without a ruler, pull the whammy bar back as far as it will go. When perfectly balanced, your open Low E string will pitch up exactly to an F#.</p></div>';
   }
   
   html+='<div class="card"><h3>4. Adjust Neck Relief (Truss Rod)</h3><p style="text-align:justify;">Put a capo on the 1st fret and hold down the Low E string at the highest fret. Check the gap between the bottom of the string and the top of the 8th fret. You want a tiny '+conf.relief+' mm gap - just enough space to slide a piece of standard printer paper through with slight friction. If the gap is larger, tighten the truss rod (turn clockwise) a quarter-turn at a time.</p></div>';
