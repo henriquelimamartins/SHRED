@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>The Shred Roadmap</title>
+<title>THE SHRED ROADMAP</title>
 
-<link rel="icon" type="image/png" href="./favicon.png?v=3">
-<link rel="apple-touch-icon" href="./apple-touch-icon.png?v=3">
+<link rel="icon" type="image/png" href="./favicon.png?v=4">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png?v=4">
 <meta name="theme-color" content="#101217">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -55,8 +55,8 @@ a{color:inherit;}
   height: 100%;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
-  padding-top: calc(85px + env(safe-area-inset-top, 0px)); /* Adjust for header */
-  padding-bottom: calc(78px + env(safe-area-inset-bottom, 0px)); /* Adjust for footer */
+  padding-top: calc(85px + env(safe-area-inset-top, 0px));
+  padding-bottom: calc(78px + env(safe-area-inset-bottom, 0px));
   scroll-behavior: smooth;
 }
 .view-panel {
@@ -98,6 +98,7 @@ a{color:inherit;}
 .navbtn.accent{border-color:#4a2226;background:#211316;}
 .navbtn.blue{border-color:#263049;background:#161b26;}
 .navbtn.info{border-color:#264034;background:#12211c;}
+.navbtn.setupbtn{border-color:#3a301e;background:#1a150e;} /* Custom color for setup button */
 
 /* checklist */
 ul.check{list-style:none;padding:0;margin:0;}
@@ -186,7 +187,26 @@ li.mrow:last-child{border-bottom:none;}
 .accbody{padding:10px 4px 2px;}
 .chev{color:var(--muted);font-size:11px;transition:transform .2s;}
 .chev.open{transform:rotate(90deg);}
-.select{background:var(--card2);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:8px 10px;font-size:12.5px;font-weight:500;font-family:inherit;width:100%;margin-top:6px; appearance:none; -webkit-appearance:none; outline:none;}
+/* customized dropdown selector with built-in arrow */
+.select{
+  background:var(--card2);
+  border:1px solid var(--border);
+  color:var(--text);
+  border-radius:8px;
+  padding:8px 30px 8px 10px;
+  font-size:12.5px;
+  font-weight:500;
+  font-family:inherit;
+  width:100%;
+  margin-top:6px;
+  appearance:none;
+  -webkit-appearance:none;
+  outline:none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239aa0ac' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 14px;
+}
 table.info{width:100%;border-collapse:collapse;}
 table.info th{text-align:left;font-size:9px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);padding:4px 4px;}
 table.info td{font-size:11.5px;color:var(--text);padding:6px 4px;border-bottom:1px solid #23262f;vertical-align:top;}
@@ -301,7 +321,6 @@ const PHASE_BLURB={p0:"Get the prerequisites and warm-up in place, then run the 
  p4:"The toughest material in the Roadmap. Completing it clears the entire BHGS technique curriculum."};
  
 const CHOP=[{key:"alt",label:"10 Levels Of Alternate Picking",url:"https://tinyurl.com/4anrfje9"},{key:"sweep",label:"10 Levels Of Sweep Picking",url:"https://tinyurl.com/nzcv65ux"},{key:"legato",label:"10 Levels Of Legato",url:"https://tinyurl.com/54fc68fm"},{key:"econ",label:"10 Levels Of Economy Picking",url:"https://tinyurl.com/3v5xt6ne"},{key:"tap",label:"10 Levels Of Tapping",url:"https://tinyurl.com/yw4ex5ma"}];
-// Reordered Testcats to put Economy before Tapping
 const TESTCATS=[{key:"alt",label:"Alternate Picking",url:"https://tinyurl.com/yacufunh"},{key:"sweep",label:"Sweep Picking",url:"https://tinyurl.com/bdcr5cxj"},{key:"legato",label:"Legato",url:"https://tinyurl.com/3dh7ec3v"},{key:"econ",label:"Economy Picking",url:"https://tinyurl.com/37nbdr6f"},{key:"tap",label:"Tapping",url:"https://tinyurl.com/yv89y98j"}];
 
 const THEORY_DOCS=[
@@ -361,7 +380,7 @@ const setupData = {
   },
   epi: {
     scale: "24.75\"",
-    name: "Epiphone Les Paul Standard Plus Pro",
+    name: "Epiphone Les Paul Standard",
     radius: "12-inch (305 mm)",
     e_std:  { gauge: "10-48", actBass: 1.6, actTreb: 1.2, relief: 0.18 }, 
     drop_d: { gauge: "10-54", actBass: 1.6, actTreb: 1.2, relief: 0.18 },
@@ -698,6 +717,7 @@ function renderHome(){
   html+='<button class="navbtn accent" data-action="go" data-view="daily"><div class="ic">\ud83c\udfaf</div><div><b>Daily Practice</b><span>Structured session, any day you pick</span></div></button>';
   html+='<button class="navbtn" data-action="go" data-view="library"><div class="ic">\ud83d\udcda</div><div><b>Library</b><span>Browse phases, essential skills &amp; bonus drills</span></div></button>';
   html+='<button class="navbtn info" data-action="go" data-view="info"><div class="ic">\u2139\ufe0f</div><div><b>Guide &amp; Info</b><span>Weekly rhythm and app overview</span></div></button>';
+  html+='<button class="navbtn setupbtn" data-action="go" data-view="setup"><div class="ic">\ud83d\udee0\ufe0f</div><div><b>Setup Companion</b><span>Optimize your gear for shredding</span></div></button>';
 
   html+='<div class="card"><h3>Jump to phase</h3>';
   if(ui.phaseJumpPending!==null){
@@ -912,14 +932,14 @@ function renderSetup(){
   var isPrs = state.setupGuitar === "prs";
   var conf = setupData[state.setupGuitar][state.setupTuning];
   
-  var html='<div class="eyebrow">Gear Optimization</div><div class="h2" style="font-size:20px;margin-bottom:10px;">'+setupData[state.setupGuitar].name+' Setup</div>';
+  var html='<div class="eyebrow">Gear Optimization</div><div class="h2" style="font-size:20px;margin-bottom:10px;">Guitar Setup Companion</div>';
   html+='<p class="lede">Follow these mechanical adjustments in exactly this order to achieve optimal low string action suitable for shredding without excessive fret buzz.</p>';
 
   // DROPDOWNS
   html+='<div style="display:flex; gap:8px; margin-bottom:12px;">';
   html+='<select class="select" style="flex:1; margin-top:0;" data-action="setGuitar">';
-  html+='<option value="prs" '+(isPrs?'selected':'')+'>PRS SE CE 24</option>';
-  html+='<option value="epi" '+(isPrs?'':'selected')+'>Epiphone Les Paul</option>';
+  html+='<option value="prs" '+(isPrs?'selected':'')+'>PRS SE CE 24 (25" scale)</option>';
+  html+='<option value="epi" '+(isPrs?'':'selected')+'>Epiphone Les Paul Standard (24.75" scale)</option>';
   html+='</select>';
   
   html+='<select class="select" style="flex:1; margin-top:0;" data-action="setTuning">';
@@ -959,7 +979,10 @@ function renderSetup(){
 
   html+='<div class="card"><h3>8. Adjust Pickup Height</h3><p style="text-align:justify;">Fret the highest note ('+(isPrs?'24th':'22nd')+' fret). Adjust the height screws on either side of the pickups. Set the bass side to <b>2.5 mm</b> below the strings, and the treble side to <b>1.5 mm</b>. In high-gain and shred contexts, keeping the bass side slightly lower prevents the low-end from becoming muddy (stratitis), while the higher treble side keeps your pick attack aggressive and cuts through the mix.</p></div>';
 
-  html+='<button class="tbtn primary" style="width:100%; margin-bottom: 20px; display:flex; justify-content:center; align-items:center; gap:8px;" onclick="window.open(\'https://www.youtube.com/watch?v=wmoc9ksdZdE\', \'_blank\')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33 2.78 2.78 0 0 0 1.94 2c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.33 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg> Official PRS Setup Guide</button>';
+  var vidUrl = isPrs ? 'https://www.youtube.com/watch?v=wmoc9ksdZdE' : 'https://www.youtube.com/watch?v=3Dhn56ybQHg';
+  var vidTitle = isPrs ? 'Official PRS Setup Guide' : 'Epiphone Les Paul Setup Guide';
+
+  html+='<button class="tbtn primary" style="width:100%; margin-bottom: 20px; display:flex; justify-content:center; align-items:center; gap:8px;" onclick="window.open(\''+vidUrl+'\', \'_blank\')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33 2.78 2.78 0 0 0 1.94 2c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.33 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg> '+vidTitle+'</button>';
 
   return html;
 }
