@@ -939,8 +939,8 @@ function renderSetup(){
   // DROPDOWNS
   html+='<div style="display:flex; gap:8px; margin-bottom:12px;">';
   html+='<select class="select" style="flex:1; margin-top:0;" data-action="setGuitar">';
-  html+='<option value="prs" '+(isPrs?'selected':'')+'>PRS SE CE 24 (25" scale)</option>';
-  html+='<option value="epi" '+(isPrs?'':'selected')+'>Epiphone LP Std (24.75" scale)</option>';
+  html+='<option value="prs" '+(isPrs?'selected':'')+'>PRS (25")</option>';
+  html+='<option value="epi" '+(isPrs?'':'selected')+'>Les Paul (24.75")</option>';
   html+='</select>';
   
   html+='<select class="select" style="flex:1; margin-top:0;" data-action="setTuning">';
@@ -961,8 +961,8 @@ function renderSetup(){
   html+='<tr><td class="day">Neck Relief</td><td>'+conf.relief+' mm at 8th fret</td></tr>'+
     '<tr><td class="day">String Action (Low E)</td><td>'+conf.actBass+' mm at 12th fret</td></tr>'+
     '<tr><td class="day">String Action (High E)</td><td>'+conf.actTreb+' mm at 12th fret</td></tr>'+
-    '<tr><td class="day">Pickup Height (Bass, Neck)</td><td>2.5 mm to bottom of string</td></tr>'+
-    '<tr><td class="day">Pickup Height (Treble, Bridge)</td><td>1.5 mm to bottom of string</td></tr>'+
+    '<tr><td class="day">Pickup Height (Neck)</td><td>2.5 mm to string</td></tr>'+
+    '<tr><td class="day">Pickup Height (Bridge)</td><td>1.5 mm to string</td></tr>'+
     '</table></div>';
     
   html+='<div class="card"><h3>1. Strip and Clean</h3><p style="text-align:justify;">Remove the old strings and deep clean the fretboard to lift away accumulated dirt. Condition the rosewood fretboard with a light coat of lemon oil. Leave it for 10 min for the neck to absorb the oils, and then wipe the excess away. Finally, clean the rest of the guitar body and hardware using appropriate instrument cleaning products.</p></div>';
