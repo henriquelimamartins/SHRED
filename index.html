@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>THE SHRED ROADMAP</title>
+<title>The Shred Roadmap</title>
 
 <link rel="icon" type="image/png" href="./favicon.png?v=4">
 <link rel="apple-touch-icon" href="./apple-touch-icon.png?v=4">
@@ -26,7 +26,7 @@
 ::-webkit-scrollbar { display: none; }
 * { -ms-overflow-style: none; scrollbar-width: none; }
 
-html,body{height:100%;margin:0;background:var(--bg);touch-action:manipulation;overflow:hidden;} /* Locked body scroll for swipe carousel */
+html,body{height:100%;margin:0;background:var(--bg);touch-action:manipulation;overflow:hidden;}
 button,a,img{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;}
 body{font-family:'Inter',system-ui,sans-serif;color:var(--text);-webkit-tap-highlight-color:transparent;}
 h1,h2,h3,h4{font-family:'Oswald',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin:0;}
@@ -98,7 +98,7 @@ a{color:inherit;}
 .navbtn.accent{border-color:#4a2226;background:#211316;}
 .navbtn.blue{border-color:#263049;background:#161b26;}
 .navbtn.info{border-color:#264034;background:#12211c;}
-.navbtn.setupbtn{border-color:#3a301e;background:#1a150e;} /* Custom color for setup button */
+.navbtn.setupbtn{border-color:#3a301e;background:#1a150e;}
 
 /* checklist */
 ul.check{list-style:none;padding:0;margin:0;}
@@ -187,6 +187,7 @@ li.mrow:last-child{border-bottom:none;}
 .accbody{padding:10px 4px 2px;}
 .chev{color:var(--muted);font-size:11px;transition:transform .2s;}
 .chev.open{transform:rotate(90deg);}
+
 /* customized dropdown selector with built-in arrow */
 .select{
   background:var(--card2);
@@ -939,7 +940,7 @@ function renderSetup(){
   html+='<div style="display:flex; gap:8px; margin-bottom:12px;">';
   html+='<select class="select" style="flex:1; margin-top:0;" data-action="setGuitar">';
   html+='<option value="prs" '+(isPrs?'selected':'')+'>PRS SE CE 24 (25" scale)</option>';
-  html+='<option value="epi" '+(isPrs?'':'selected')+'>Epiphone Les Paul Standard (24.75" scale)</option>';
+  html+='<option value="epi" '+(isPrs?'':'selected')+'>Epiphone LP Std (24.75" scale)</option>';
   html+='</select>';
   
   html+='<select class="select" style="flex:1; margin-top:0;" data-action="setTuning">';
@@ -954,16 +955,19 @@ function renderSetup(){
   
   html+='<div class="note"><b>Note:</b> These target measurements are specifically optimized to match the tension profile of 10-46 E Standard strings on a 25" scale.</div>';
   
-  html+='<div class="card"><h3>Target Measurements</h3><table class="info"><tr><th>Adjustment</th><th>Target (mm)</th></tr>';
+  html+='<div class="card"><h3>Target Measurements</h3><table class="info"><tr><th>Adjustment</th><th>Target</th></tr>';
+  html+='<tr><td class="day">String Gauge</td><td>'+conf.gauge+'</td></tr>';
   if(isPrs) html+='<tr><td class="day">Tremolo Float</td><td>1.6 mm (1/16") off body</td></tr>';
   html+='<tr><td class="day">Neck Relief</td><td>'+conf.relief+' mm at 8th fret</td></tr>'+
     '<tr><td class="day">Action (Low E)</td><td>'+conf.actBass+' mm at 12th fret</td></tr>'+
     '<tr><td class="day">Action (High E)</td><td>'+conf.actTreb+' mm at 12th fret</td></tr>'+
+    '<tr><td class="day">Pickup (Bass)</td><td>2.5 mm</td></tr>'+
+    '<tr><td class="day">Pickup (Treble)</td><td>1.5 mm</td></tr>'+
     '</table></div>';
     
   html+='<div class="card"><h3>1. Strip and Clean</h3><p style="text-align:justify;">Remove the old strings and deep clean the fretboard to lift away accumulated dirt. Condition the rosewood fretboard with a light coat of lemon oil. Leave it for 10 min for the neck to absorb the oils, and then wipe the excess away. Finally, clean the rest of the guitar body and hardware using appropriate instrument cleaning products.</p></div>';
   
-  html+='<div class="card"><h3>2. Restring and Stretch</h3><p style="text-align:justify;">Install your fresh strings (<b>'+conf.gauge+'</b> gauge recommended for this scale and tuning). Before measuring anything, stretch the strings thoroughly by pulling firmly on each string all the way up and down the neck. Retune and repeat until the tuning stops dropping.</p></div>';
+  html+='<div class="card"><h3>2. Restring and Stretch</h3><p style="text-align:justify;">Install your fresh strings. Before measuring anything, stretch the strings thoroughly by pulling firmly on each string all the way up and down the neck. Retune and repeat until the tuning stops dropping.</p></div>';
   
   if(isPrs) {
     html+='<div class="card"><h3>3. Set the Tremolo Float</h3><p style="text-align:justify;">The PRS patented tremolo is designed to float exactly 1.6 mm parallel to the guitar body. If it sits too high or low, remove the back cavity plate and adjust the two claw screws holding the springs (tightening pulls the bridge down; loosening lifts it). Retune after every quarter-turn.<br><br><b>The PRS F# Test:</b> To confirm the perfect float without a ruler, pull the whammy bar back as far as it will go. When perfectly balanced, your open Low E string will pitch up exactly to an F#.</p></div>';
@@ -1001,7 +1005,6 @@ function initAppLayout() {
     <div class="botnav" id="botnav"></div>
   `;
   var carousel = document.getElementById('carousel');
-  // Intersection Observer for horizontal scroll snapping
   carousel.addEventListener('scroll', function() {
     var width = carousel.offsetWidth;
     var scrollX = carousel.scrollLeft;
@@ -1030,11 +1033,9 @@ function render(){
     ensureDailyReset();
     if(!document.getElementById("carousel")) initAppLayout();
 
-    // Preserve scroll positions of individual panels before innerHTML update
     var tops = {};
     document.querySelectorAll('.view-panel').forEach(function(p){ tops[p.id] = p.scrollTop; });
 
-    // UPDATE TOPBAR
     var topbarHTML = '<div class="topbar-header"><div class="brand">THE <span>SHRED</span> ROADMAP</div>';
     if(hasFirebase){
       topbarHTML += '<div class="auth-container">';
@@ -1047,7 +1048,6 @@ function render(){
     topbarHTML += '</div>' + progressBar();
     document.getElementById('topbar').innerHTML = topbarHTML;
 
-    // UPDATE PANELS
     document.getElementById('panel-home').innerHTML = renderHome();
     document.getElementById('panel-daily').innerHTML = renderDaily();
     document.getElementById('panel-library').innerHTML = renderLibrary();
@@ -1056,10 +1056,8 @@ function render(){
 
     updateBotNav();
 
-    // Restore scroll positions
     document.querySelectorAll('.view-panel').forEach(function(p){ p.scrollTop = tops[p.id] || 0; });
 
-    // Snap carousel to correct panel if entirely misaligned (e.g., initial load)
     var idx = APP_VIEWS.indexOf(ui.view);
     var carousel = document.getElementById('carousel');
     var expectedScroll = idx * carousel.offsetWidth;
@@ -1094,12 +1092,11 @@ document.addEventListener("click",function(e){
     var carousel = document.getElementById('carousel');
     carousel.scrollTo({left: idx * carousel.offsetWidth, behavior: 'smooth'});
     
-    // Optionally reset vertical scroll of the target panel to top
     var panel = document.getElementById('panel-' + ui.view);
     if(panel) panel.scrollTo({top: 0, behavior: 'smooth'});
     
     updateBotNav();
-    return; // Fast escape, no need to re-render DOM string!
+    return;
   }
   
   if(a==="toggleacc"){ui.lib[t.dataset.acc]=!ui.lib[t.dataset.acc]; render();}
