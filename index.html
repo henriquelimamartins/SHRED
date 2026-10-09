@@ -26,7 +26,31 @@
 ::-webkit-scrollbar { display: none; }
 * { -ms-overflow-style: none; scrollbar-width: none; }
 
-html,body{height:100%;height:100dvh;margin:0;background:var(--bg);touch-action:manipulation;overflow:hidden;}
+/* iOS standalone fix: do NOT make html/body position:fixed with height:100%.
+   That sizes them to the "safe" viewport and leaves a black strip under the nav.
+   Let html/body fill the real screen; #root is the only fixed layer. */
+html{
+  margin:0;
+  padding:0;
+  width:100%;
+  height:100%;
+  min-height:100vh;
+  background:var(--bg);
+  overflow:hidden;
+}
+body{
+  margin:0;
+  padding:0;
+  width:100%;
+  min-height:100vh;
+  height:100%;
+  background:var(--bg);
+  touch-action:manipulation;
+  overflow:hidden;
+}
+@media all and (display-mode: standalone){
+  html,body{min-height:100vh;}
+}
 button,a,img{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;}
 body{font-family:'Inter',system-ui,sans-serif;color:var(--text);-webkit-tap-highlight-color:transparent;}
 h1,h2,h3,h4{font-family:'Oswald',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin:0;}
@@ -34,7 +58,16 @@ p{margin:0;line-height:1.45;color:var(--muted);font-size:13.5px;}
 button{font-family:inherit;cursor:pointer;}
 a{color:inherit;}
 
-#root{position:relative; max-width:520px; margin:0 auto; height:100%; height:100dvh; display:flex; flex-direction:column; overflow:hidden;}
+#root{
+  position:fixed;
+  top:0;left:0;right:0;bottom:0;
+  max-width:520px;
+  margin:0 auto;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  background:var(--bg);
+}
 #splash{position:fixed;inset:0;background:#000;display:flex;align-items:center;justify-content:center;z-index:100;}
 .splashinner{display:flex;flex-direction:column;align-items:center;}
 .splashtitle{font-family:'Oswald';font-weight:700;font-size:26px;letter-spacing:2px;text-align:center;line-height:1.15;color:#fff;margin-top:16px;}
@@ -963,7 +996,7 @@ function renderSetup(){
   html+='</select>';
   html+='</div>';
   
-  html+='<div class="note"><b>Note:</b> These target measurements are specifically optimized to match the tension profile of '+formatGauge(conf.gauge)+' with E standard tuning on a 25" scale guitar.</div>';
+  html+='<div class="note"><b>Note:</b> These target measurements are specifically optimized to match the tension profile of '+conf.gauge+' string gauge with E standard tuning on a 25" scale guitar.</div>';
   
   html+='<div class="card"><h3>Recommended Measurements</h3><table class="info"><tr><th>Adjustment</th><th>Target</th></tr>';
   html+='<tr><td class="day">String Gauge</td><td>'+formatGauge(conf.gauge)+'</td></tr>';
@@ -985,7 +1018,7 @@ function renderSetup(){
   
   html+='<div class="card"><h3>4. Adjust Neck Relief (Truss Rod)</h3><p style="text-align:justify;">Put a capo on the 1st fret and hold down the Low E string at the highest fret. Check the gap between the bottom of the string and the top of the 8th fret. You want a tiny '+conf.relief+' mm gap - just enough space to slide a piece of standard printer paper through with slight friction. If the gap is larger, tighten the truss rod (turn clockwise) a quarter-turn at a time.</p></div>';
   
-  html+='<div class="card"><h3>5. Lower the String Action</h3><p style="text-align:justify;">With the neck nearly flat, adjust the saddle heights. Set the Low E to '+conf.actBass+' mm at the 12th fret, and the High E to '+conf.actTreb+' - '+(conf.actTreb+0.1).toFixed(1)+' mm at the 12th fret.<br><br><b>Radius matching:</b> '+(isPrs ? 'Drop the individual saddles using a small Allen key on the two grub screws per saddle. Adjust the middle strings so they form a matching '+setupData[state.setupGuitar].radius+' curve to fit the fretboard.' : 'Adjust the thumbwheels on either side of the Tune-O-Matic bridge. The bridge saddle slots are pre-cut to automatically match the '+setupData[state.setupGuitar].radius+' fretboard radius.')+' Test by doing 1.5-step bends above the 15th fret on the High E string; if the note chokes out, raise that specific side just a hair.</p></div>';
+  html+='<div class="card"><h3>5. Lower the String Action</h3><p style="text-align:justify;">With the neck nearly flat, adjust the saddle heights. Set the Low E to '+conf.actBass+' mm at the 12th fret, and the High E to '+conf.actTreb+' - '+(conf.actTreb+0.1).toFixed(1)+' mm at the 12th fret.<br><br><b>Radius matching:</b> '+(isPrs ? 'Drop the individual saddles using a small Allen key on the two grub screws per saddle. Adjust the middle strings so they form a matching '+setupData[state.setupGuitar].radius+' curve to fit the fretboard.' : 'Adjust the thumbwheels on either side of the Tune-O-Matic bridge. The bridge saddle slots are pre-cut to automatically match the '+setupData[state.setupGuitar].radius+' fretboard radius.')+' Test by doing 1.5-step bends above the 15th fret on the High E string; if the note chokes out, raise that specific side.</p></div>';
   
   html+='<div class="card"><h3>6. Lubricate the Nut</h3><p style="text-align:justify;">Apply graphite powder (from a mechanical pencil) or a dedicated lubricant into the nut slots before tuning up to pitch. This stops the strings from binding and pinging.</p></div>';
   
