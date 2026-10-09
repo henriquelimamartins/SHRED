@@ -34,7 +34,7 @@ p{margin:0;line-height:1.45;color:var(--muted);font-size:13.5px;}
 button{font-family:inherit;cursor:pointer;}
 a{color:inherit;}
 
-#root{position:relative; max-width:520px; margin:0 auto; height:100%;}
+#root{position:relative; max-width:520px; margin:0 auto; height:100%; height:100dvh; display:flex; flex-direction:column; overflow:hidden;}
 #splash{position:fixed;inset:0;background:#000;display:flex;align-items:center;justify-content:center;z-index:100;}
 .splashinner{display:flex;flex-direction:column;align-items:center;}
 .splashtitle{font-family:'Oswald';font-weight:700;font-size:26px;letter-spacing:2px;text-align:center;line-height:1.15;color:#fff;margin-top:16px;}
@@ -52,11 +52,9 @@ a{color:inherit;}
 .carousel {
   display: flex;
   width: 100%;
-  height: 100%;
+  flex: 1;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
-  padding-top: calc(85px + env(safe-area-inset-top, 0px));
-  padding-bottom: calc(78px + env(safe-area-inset-bottom, 0px));
   scroll-behavior: smooth;
 }
 .view-panel {
@@ -65,7 +63,7 @@ a{color:inherit;}
   height: 100%;
   scroll-snap-align: start;
   overflow-y: auto;
-  padding: 0 16px 20px;
+  padding: calc(85px + env(safe-area-inset-top, 0px)) 16px calc(90px + env(safe-area-inset-bottom, 0px));
   -webkit-overflow-scrolling: touch;
 }
 
@@ -965,7 +963,7 @@ function renderSetup(){
   html+='</select>';
   html+='</div>';
   
-  html+='<div class="note"><b>Note:</b> These target measurements are specifically optimized to match the tension profile of '+formatGauge(conf.gauge)+' with E standard tuning on a 25" scale guitar.</div>';
+  html+='<div class="note"><b>Note:</b> These target measurements are specifically optimized to match the tension profile of '+conf.gauge+' with E standard tuning on a 25" scale guitar.</div>';
   
   html+='<div class="card"><h3>Recommended Measurements</h3><table class="info"><tr><th>Adjustment</th><th>Target</th></tr>';
   html+='<tr><td class="day">String Gauge</td><td>'+formatGauge(conf.gauge)+'</td></tr>';
