@@ -5,14 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>The Shred Roadmap</title>
 
-<!-- Added ?v=2 to force iOS to bypass the cache and fetch the icons again -->
-<link rel="icon" type="image/png" href="./favicon.png?v=2">
-<link rel="apple-touch-icon" href="./apple-touch-icon.png?v=2">
-
-<meta name="theme-color" content="#ffffff">
+<link rel="icon" type="image/png" href="./favicon.png?v=3">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png?v=3">
+<meta name="theme-color" content="#101217">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="The Shred">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SHRED">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,14 +21,20 @@
   --amber:#f5a623;--text:#eef0f4;--muted:#9aa0ac;--blue:#6fa8ff;--green:#63d69a;
 }
 *{box-sizing:border-box}
-html,body{height:100%;margin:0;background:var(--bg);touch-action:manipulation;}
+
+/* Hide scrollbars globally */
+::-webkit-scrollbar { display: none; }
+* { -ms-overflow-style: none; scrollbar-width: none; }
+
+html,body{height:100%;margin:0;background:var(--bg);touch-action:manipulation;overflow:hidden;} /* Locked body scroll for swipe carousel */
 button,a,img{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;}
-body{font-family:'Inter',system-ui,sans-serif;color:var(--text);-webkit-tap-highlight-color:transparent;padding-bottom:env(safe-area-inset-bottom,0px);}
+body{font-family:'Inter',system-ui,sans-serif;color:var(--text);-webkit-tap-highlight-color:transparent;}
 h1,h2,h3,h4{font-family:'Oswald',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin:0;}
 p{margin:0;line-height:1.45;color:var(--muted);font-size:13.5px;}
 button{font-family:inherit;cursor:pointer;}
 a{color:inherit;}
-#root{max-width:520px;margin:0 auto;padding-bottom:78px;min-height:100vh;}
+
+#root{position:relative; max-width:520px; margin:0 auto; height:100%;}
 #splash{position:fixed;inset:0;background:#000;display:flex;align-items:center;justify-content:center;z-index:100;}
 .splashinner{display:flex;flex-direction:column;align-items:center;}
 .splashtitle{font-family:'Oswald';font-weight:700;font-size:26px;letter-spacing:2px;text-align:center;line-height:1.15;color:#fff;margin-top:16px;}
@@ -44,8 +48,26 @@ a{color:inherit;}
 .auth-container { display: flex; align-items: center; gap: 8px; }
 .user-email { font-size: 9.5px; color: var(--muted); font-family: 'Inter', system-ui, sans-serif; }
 
-/* Increased top padding to accommodate the new fixed header */
-.page{padding:85px 16px 20px;}
+/* --- CAROUSEL ARCHITECTURE --- */
+.carousel {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-top: calc(85px + env(safe-area-inset-top, 0px)); /* Adjust for header */
+  padding-bottom: calc(78px + env(safe-area-inset-bottom, 0px)); /* Adjust for footer */
+  scroll-behavior: smooth;
+}
+.view-panel {
+  flex: 0 0 100%;
+  width: 100%;
+  height: 100%;
+  scroll-snap-align: start;
+  overflow-y: auto;
+  padding: 0 16px 20px;
+  -webkit-overflow-scrolling: touch;
+}
 
 .eyebrow{color:var(--accent);font-size:10.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;}
 .h2{font-size:16px;}
@@ -54,6 +76,7 @@ a{color:inherit;}
 .card h3{font-size:13.5px;margin-bottom:8px;color:#fff;display:flex;justify-content:space-between;align-items:baseline;gap:8px;}
 .card h3 .tag{text-align:right;}
 .tag{color:var(--muted);font-size:10.5px;text-transform:none;letter-spacing:0;font-weight:500;}
+
 /* progress bar */
 .phasebar-wrapper { max-width: 520px; margin: 0 auto; }
 .phasebar{display:flex;gap:4px;margin-bottom:3px;}
@@ -66,6 +89,7 @@ a{color:inherit;}
 .statrow{display:flex;gap:10px;margin-bottom:12px;}
 .stat{flex:1;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center;}
 .stat .lbl{font-size:9.5px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:2px;}
+
 /* nav buttons */
 .navbtn{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:10px;width:100%;text-align:left;color:var(--text);}
 .navbtn .ic{font-size:22px;}
@@ -74,6 +98,7 @@ a{color:inherit;}
 .navbtn.accent{border-color:#4a2226;background:#211316;}
 .navbtn.blue{border-color:#263049;background:#161b26;}
 .navbtn.info{border-color:#264034;background:#12211c;}
+
 /* checklist */
 ul.check{list-style:none;padding:0;margin:0;}
 ul.check li{display:flex;align-items:flex-start;gap:9px;padding:7px 0;border-bottom:1px solid #23262f;}
@@ -94,6 +119,7 @@ li.mrow:last-child{border-bottom:none;}
 .docli{display:flex;align-items:flex-start;gap:9px;padding:7px 0;border-bottom:1px solid #23262f;}
 .docli:last-child{border-bottom:none;}
 .docic{font-size:14px;flex:0 0 20px;text-align:center;}
+
 /* chop / test stepper */
 .chop{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #23262f;gap:8px;}
 .chop:last-child{border-bottom:none;}
@@ -103,6 +129,7 @@ li.mrow:last-child{border-bottom:none;}
 .stepper button{width:26px;height:26px;border-radius:7px;background:var(--card2);border:1px solid var(--border);color:var(--text);font-size:14px;line-height:1;}
 .stepper .lvl{font-family:'Oswald';font-size:14px;min-width:34px;text-align:center;}
 .lvl.hit{color:var(--green);}
+
 /* daily blocks */
 .blk{border-left:3px solid var(--accent);background:var(--card);border-radius:0 12px 12px 0;padding:12px 14px;margin-bottom:10px;transition:opacity .2s;}
 .blk.done-today{border-left-color:var(--green);opacity:.62;}
@@ -114,12 +141,14 @@ li.mrow:last-child{border-bottom:none;}
 .blkcheck .box{width:16px;height:16px;border-radius:4px;margin:0;}
 .blkcheck .box.on:after{font-size:10px;}
 .blkcheck.ro{opacity:.4;cursor:default;}
+
 /* day picker */
 .daypick{display:flex;gap:4px;margin-bottom:10px;}
 .dchip2{flex:1;padding:7px 3px;border-radius:9px;background:var(--card2);border:1px solid var(--border);color:var(--muted);font-size:10.5px;font-weight:700;text-align:center;}
 .dchip2.on{background:var(--accent);border-color:var(--accent);color:#fff;}
 .dchip2.istoday:after{content:'\2022';margin-left:2px;}
 .dchip2.isactive{border-color:var(--accent);}
+
 /* streak calendar */
 .streak-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-top: 2px; }
 .s-day { background: #23262f; border-radius: 6px; padding: 5px 2px; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 1px solid transparent; }
@@ -136,11 +165,14 @@ li.mrow:last-child{border-bottom:none;}
 .s-day.hit .s-date, .s-day.hit .s-wkd { color: var(--green) !important; opacity: 1; }
 .s-day.today { border-color: var(--accent); }
 .s-day.today .s-date { color: #fff !important; opacity: 1; }
+
 /* bottom nav */
 .botnav{position:fixed;bottom:0;left:0;right:0;background:#15171e;border-top:1px solid var(--border);display:flex;padding:6px 4px calc(6px + env(safe-area-inset-bottom,0px));z-index:10;}
+.botnav-inner{display:flex; width:100%; max-width:520px; margin:0 auto;}
 .botnav button{flex:1;background:none;border:none;color:var(--muted);font-size:9px;text-transform:uppercase;letter-spacing:.3px;padding:6px 1px;display:flex;flex-direction:column;align-items:center;gap:3px;font-weight:600;border-radius:8px;}
 .botnav button .ic{font-size:16px;}
 .botnav button.active{color:var(--accent2);}
+
 /* misc */
 .note{border-left:3px solid var(--amber);background:#241f14;padding:10px 12px;border-radius:0 10px 10px 0;font-size:12px;color:#e6d9b8;margin-bottom:12px;}
 .tbtn{background:var(--card2);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:10px 16px;font-size:13.5px;font-weight:600;}
@@ -154,7 +186,7 @@ li.mrow:last-child{border-bottom:none;}
 .accbody{padding:10px 4px 2px;}
 .chev{color:var(--muted);font-size:11px;transition:transform .2s;}
 .chev.open{transform:rotate(90deg);}
-.select{background:var(--card2);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:6px 8px;font-size:12px;font-family:inherit;width:100%;margin-top:6px;}
+.select{background:var(--card2);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:8px 10px;font-size:12.5px;font-weight:500;font-family:inherit;width:100%;margin-top:6px; appearance:none; -webkit-appearance:none; outline:none;}
 table.info{width:100%;border-collapse:collapse;}
 table.info th{text-align:left;font-size:9px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);padding:4px 4px;}
 table.info td{font-size:11.5px;color:var(--text);padding:6px 4px;border-bottom:1px solid #23262f;vertical-align:top;}
@@ -220,6 +252,8 @@ if(hasFirebase) {
           const docSnap = await getDoc(doc(db, "users", user.uid));
           if(docSnap.exists()){
             state = Object.assign(defaultState(), docSnap.data());
+            state.setupGuitar = state.setupGuitar || "prs";
+            state.setupTuning = state.setupTuning || "e_std";
             localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
             showToast("Progress synced from cloud!");
           } else {
@@ -265,8 +299,10 @@ const PHASE_BLURB={p0:"Get the prerequisites and warm-up in place, then run the 
  p2:"Endurance, precision and expressive control (vibrato, bending). Fundamentals are assumed solid by now.",
  p3:"Raw speed and dexterity get built on purpose here. Expect this tier to take real patience.",
  p4:"The toughest material in the Roadmap. Completing it clears the entire BHGS technique curriculum."};
+ 
 const CHOP=[{key:"alt",label:"10 Levels Of Alternate Picking",url:"https://tinyurl.com/4anrfje9"},{key:"sweep",label:"10 Levels Of Sweep Picking",url:"https://tinyurl.com/nzcv65ux"},{key:"legato",label:"10 Levels Of Legato",url:"https://tinyurl.com/54fc68fm"},{key:"econ",label:"10 Levels Of Economy Picking",url:"https://tinyurl.com/3v5xt6ne"},{key:"tap",label:"10 Levels Of Tapping",url:"https://tinyurl.com/yw4ex5ma"}];
-const TESTCATS=[{key:"alt",label:"Alternate Picking",url:"https://tinyurl.com/yacufunh"},{key:"sweep",label:"Sweep Picking",url:"https://tinyurl.com/bdcr5cxj"},{key:"legato",label:"Legato",url:"https://tinyurl.com/3dh7ec3v"},{key:"tap",label:"Tapping",url:"https://tinyurl.com/yv89y98j"},{key:"econ",label:"Economy Picking",url:"https://tinyurl.com/37nbdr6f"}];
+// Reordered Testcats to put Economy before Tapping
+const TESTCATS=[{key:"alt",label:"Alternate Picking",url:"https://tinyurl.com/yacufunh"},{key:"sweep",label:"Sweep Picking",url:"https://tinyurl.com/bdcr5cxj"},{key:"legato",label:"Legato",url:"https://tinyurl.com/3dh7ec3v"},{key:"econ",label:"Economy Picking",url:"https://tinyurl.com/37nbdr6f"},{key:"tap",label:"Tapping",url:"https://tinyurl.com/yv89y98j"}];
 
 const THEORY_DOCS=[
   {t:"Music Theory Cheat Sheet",url:"./music-theory-cheat-sheet.pdf"},
@@ -305,14 +341,41 @@ const WEEKLY_RHYTHM=[
  {day:"Thu",focused:"Chop-builders (legato/economy/tapping) + 5-min Sight-Reading micro-dose",casual:"Continue current solo"},
  {day:"Fri",focused:"Revisit hardest exercise + reinforce weakest skill",casual:"Free jam"},
  {day:"Sat",focused:" - ",casual:"Deep-dive: polish current solo / writing session (45 min)"},
- {day:"Sun",focused:" - ",casual:"Improv, bonus drill, or catch-up (45 min)"}
+ {day:"Sun",focused:" - ",casual:"Improv, catch-up or bonus drill (45 min)"}
 ];
 const DAYS=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 const DAY_ORDER=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
-const STORAGE_KEY="shredRoadmapState_v7";
 
-function defaultState(){return {phaseIndex:0,chop:{alt:0,sweep:0,legato:0,econ:0,tap:0},testLevel:{alt:0,sweep:0,legato:0,econ:0,tap:0},bonusLevel:{},checks:{},practiced:{},practicedDate:null,congratsDate:null,activeDayOverride:null,activeDayDate:null,streakDates:[]};}
-function loadState(){try{var raw=localStorage.getItem(STORAGE_KEY);if(raw){var d=JSON.parse(raw);return Object.assign(defaultState(),d,{chop:Object.assign(defaultState().chop,d.chop||{}),testLevel:Object.assign(defaultState().testLevel,d.testLevel||{}),bonusLevel:d.bonusLevel||{},checks:d.checks||{},practiced:d.practiced||{},streakDates:d.streakDates||[]});}}catch(e){}return defaultState();}
+/* SETUP CALCULATOR DATA */
+const setupData = {
+  prs: {
+    scale: "25\"",
+    name: "PRS SE CE 24",
+    radius: "10-inch (254 mm)",
+    e_std:  { gauge: "10-46", actBass: 1.5, actTreb: 1.1, relief: 0.15 },
+    drop_d: { gauge: "10-52", actBass: 1.5, actTreb: 1.1, relief: 0.15 },
+    d_std:  { gauge: "11-48", actBass: 1.6, actTreb: 1.2, relief: 0.18 },
+    drop_c: { gauge: "11-56", actBass: 1.6, actTreb: 1.2, relief: 0.18 },
+    c_std:  { gauge: "12-56", actBass: 1.7, actTreb: 1.3, relief: 0.20 },
+    dadfae: { gauge: "10-52", actBass: 1.5, actTreb: 1.1, relief: 0.15 } 
+  },
+  epi: {
+    scale: "24.75\"",
+    name: "Epiphone Les Paul Standard Plus Pro",
+    radius: "12-inch (305 mm)",
+    e_std:  { gauge: "10-48", actBass: 1.6, actTreb: 1.2, relief: 0.18 }, 
+    drop_d: { gauge: "10-54", actBass: 1.6, actTreb: 1.2, relief: 0.18 },
+    d_std:  { gauge: "11-52", actBass: 1.7, actTreb: 1.3, relief: 0.20 },
+    drop_c: { gauge: "11-56", actBass: 1.7, actTreb: 1.3, relief: 0.20 },
+    c_std:  { gauge: "12-60", actBass: 1.8, actTreb: 1.4, relief: 0.22 },
+    dadfae: { gauge: "11-54", actBass: 1.6, actTreb: 1.2, relief: 0.18 }
+  }
+};
+
+const STORAGE_KEY="shredRoadmapState_v8";
+
+function defaultState(){return {phaseIndex:0,chop:{alt:0,sweep:0,legato:0,econ:0,tap:0},testLevel:{alt:0,sweep:0,legato:0,econ:0,tap:0},bonusLevel:{},checks:{},practiced:{},practicedDate:null,congratsDate:null,activeDayOverride:null,activeDayDate:null,streakDates:[],setupGuitar:"prs",setupTuning:"e_std"};}
+function loadState(){try{var raw=localStorage.getItem(STORAGE_KEY);if(raw){var d=JSON.parse(raw);return Object.assign(defaultState(),d,{chop:Object.assign(defaultState().chop,d.chop||{}),testLevel:Object.assign(defaultState().testLevel,d.testLevel||{}),bonusLevel:d.bonusLevel||{},checks:d.checks||{},practiced:d.practiced||{},streakDates:d.streakDates||[],setupGuitar:d.setupGuitar||"prs",setupTuning:d.setupTuning||"e_std"});}}catch(e){}return defaultState();}
 
 function saveState(){
   try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}catch(e){}
@@ -322,7 +385,8 @@ function saveState(){
 }
 
 let state=loadState();
-let ui={view:"home",lib:{},dayOverride:null,surprise:null,resetConfirm:false,phaseJumpPending:null};
+let ui={view:"home",lib:{},dayOverride:null,resetConfirm:false,phaseJumpPending:null};
+const APP_VIEWS = ["home", "daily", "library", "info", "setup"];
 
 function k(){return Array.prototype.slice.call(arguments).join(".");}
 function todayISO(){return new Date().toISOString().slice(0,10);}
@@ -405,7 +469,6 @@ function currentStreak(){
   return streak;
 }
 
-/* ---- block-level flags ---- */
 function blockPKey(name,day){ return name+"."+day; }
 function isBlockPracticed(name,day){ return !!state.practiced[blockPKey(name,day)]; }
 function toggleBlockPracticed(name,day){ ensureDailyReset(); var kk=blockPKey(name,day); state.practiced[kk]=!state.practiced[kk]; applyStateChange(); }
@@ -451,20 +514,12 @@ function applyStateChange(skipAuto){
   }
   saveState(); render();
 }
-function toggleCheck(key){ 
-  state.checks[key] = state.checks[key] ? false : todayISO(); 
-  applyStateChange(); 
-}
+function toggleCheck(key){ state.checks[key] = state.checks[key] ? false : todayISO(); applyStateChange(); }
 function setChop(sk,d){ state.chop[sk]=Math.max(0,Math.min(10,(state.chop[sk]||0)+d)); applyStateChange(); }
 function setTest(sk,d){ state.testLevel[sk]=Math.max(0,Math.min(5,(state.testLevel[sk]||0)+d)); applyStateChange(); }
 function setBonusLevel(key,d,max){ state.bonusLevel[key]=Math.max(0,Math.min(max,(state.bonusLevel[key]||0)+d)); applyStateChange(); }
-function setActiveDay(d){
-  state.activeDayOverride=d; state.activeDayDate=todayISO();
-  saveState(); render();
-  showToast(DAY_FULL[d]+" is now your active session");
-}
+function setActiveDay(d){ state.activeDayOverride=d; state.activeDayDate=todayISO(); saveState(); render(); showToast(DAY_FULL[d]+" is now your active session"); }
 function resetActiveDay(){ state.activeDayOverride=null; saveState(); render(); }
-
 function handlePhaseSelect(newIdx){
   var oldIdx=state.phaseIndex;
   if(newIdx===oldIdx) return;
@@ -494,9 +549,7 @@ function cancelReset(){ ui.resetConfirm=false; render(); }
 function confirmReset(){
   localStorage.removeItem(STORAGE_KEY);
   state=defaultState();
-  if(hasFirebase && currentUser && db) {
-    setDoc(doc(db, "users", currentUser.uid), state).catch(e => console.error(e));
-  }
+  if(hasFirebase && currentUser && db) { setDoc(doc(db, "users", currentUser.uid), state).catch(e => console.error(e)); }
   ui.resetConfirm=false;
   render();
   showToast("Everything has been reset.");
@@ -600,13 +653,10 @@ function renderStreakCalendar(){
   var html='<div class="streak-grid">';
   var now = new Date();
   var todayIsoStr = todayISO();
-  
   var jsDay = now.getDay(); 
   var monBasedDay = (jsDay + 6) % 7; 
-  
   var startDate = new Date(now.getTime());
   startDate.setDate(now.getDate() - monBasedDay - 21);
-
   var shortDays = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
 
   for(var i=0; i<28; i++){
@@ -616,15 +666,12 @@ function renderStreakCalendar(){
     var isHit = state.streakDates.indexOf(iso) !== -1;
     var isToday = iso === todayIsoStr;
     var isPast = iso < todayIsoStr;
-    
     var dayOfWeek = d.getDay();
     var isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
     
     var c = "s-day" + (isHit?" hit":"") + (isToday?" today":"") + (isPast?" past":"") + (isWeekend?" weekend":"");
-    
     var dayName = shortDays[i % 7];
     var dateNum = d.getDate();
-
     html += '<div class="'+c+'"><div class="s-date">'+dateNum+'</div><div class="s-wkd">'+dayName+'</div></div>';
   }
   return html + '</div>';
@@ -649,9 +696,8 @@ function renderHome(){
     testRow(req)+'</div>';
     
   html+='<button class="navbtn accent" data-action="go" data-view="daily"><div class="ic">\ud83c\udfaf</div><div><b>Daily Practice</b><span>Structured session, any day you pick</span></div></button>';
-  html+='<button class="navbtn blue" data-action="go" data-view="free"><div class="ic">\ud83c\udfb8</div><div><b>Free Practice</b><span>Bonus content, essential skills, surprise me</span></div></button>';
-  html+='<button class="navbtn" data-action="go" data-view="library"><div class="ic">\ud83d\udcda</div><div><b>All Phases</b><span>Browse &amp; check off any tier</span></div></button>';
-  html+='<button class="navbtn info" data-action="go" data-view="info"><div class="ic">\u2139\ufe0f</div><div><b>Guide &amp; Info</b><span>Weekly rhythm, all phases, essential skills</span></div></button>';
+  html+='<button class="navbtn" data-action="go" data-view="library"><div class="ic">\ud83d\udcda</div><div><b>Library</b><span>Browse phases, essential skills &amp; bonus drills</span></div></button>';
+  html+='<button class="navbtn info" data-action="go" data-view="info"><div class="ic">\u2139\ufe0f</div><div><b>Guide &amp; Info</b><span>Weekly rhythm and app overview</span></div></button>';
 
   html+='<div class="card"><h3>Jump to phase</h3>';
   if(ui.phaseJumpPending!==null){
@@ -710,7 +756,7 @@ function renderDaily(){
       var body='<p>Deep-dive: polish next solo toward full tempo.</p>' + (songHtml ? '<ul class="check">'+songHtml+'</ul>' : '<p>All this tier\'s solos learned. \ud83c\udfb8</p>');
       html+=blk("casual",day,"CASUAL","45 min",body,editable);
     } else {
-      html+=blk("casual",day,"Creative","45 min",'<p>Improv over a backing track, or pick a bonus drill.</p><button class="tbtn" data-action="go" data-view="free" style="margin-top:8px;">Open Free Practice \u2192</button>',editable);
+      html+=blk("casual",day,"Creative","45 min",'<p>Improv over a backing track, or pick a bonus drill.</p><button class="tbtn" data-action="go" data-view="library" style="margin-top:8px;">Open Library \u2192</button>',editable);
     }
     return html;
   }
@@ -783,8 +829,19 @@ function renderDaily(){
 }
 
 function renderLibrary(){
-  var html='<div class="eyebrow">Reference &amp; Review</div><div class="h2" style="font-size:20px;margin-bottom:6px;">All Phases</div>';
+  var html='<div class="eyebrow">Reference &amp; Review</div><div class="h2" style="font-size:20px;margin-bottom:6px;">Library</div>';
   html+='<p class="lede">Browse and check off any item, anytime - it all counts toward the same progress as Daily Practice.</p>';
+  
+  // Essential Skills Section
+  html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="essentials"><b>Essential Skills</b><span class="chev'+(ui.lib.essentials?" open":"")+'">\u203a</span></div>';
+  if(ui.lib.essentials){ 
+    html+='<div class="accbody"><div class="card"><ul class="check">'+Object.keys(ESSENTIAL).map(function(d){
+      var label=ESSENTIAL[d], url=ESSENTIAL_URL[label];
+      return '<li style="display:flex;align-items:flex-start;gap:9px;padding:7px 0;border-bottom:1px solid #23262f;"><div class="itxt">'+linked(label,url)+' <span class="tag">('+DAY_FULL[d]+')</span></div></li>';
+    }).join("")+'</ul></div></div>'; 
+  }
+  html+='</div>';
+
   PHASES.forEach(function(p,i){
     var open=!!ui.lib["p"+i],pct=phasePercent(i);
     html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="p'+i+'"><b>'+p.label.toUpperCase()+' <span class="tag">Phase '+i+' \u00b7 '+p.short+'</span></b><span style="display:flex;align-items:center;gap:8px;"><span class="tag">'+pct+'%</span><span class="chev'+(open?" open":"")+'">\u203a</span></span></div>';
@@ -824,18 +881,6 @@ function renderLibrary(){
   return html;
 }
 
-function renderFree(){
-  var html='<div class="eyebrow">Off The Plan</div><div class="h2" style="font-size:20px;margin-bottom:10px;">Free Practice</div>';
-  html+='<div class="card"><h3>Surprise Me \ud83c\udfb2</h3><p style="margin-bottom:8px;">Pulls a random bonus drill or essential skill for burnout days.</p><button class="tbtn primary" data-action="surprise">Surprise Me</button>'+(ui.surprise?'<div class="note" style="margin-top:10px;">'+ui.surprise+'</div>':'')+'</div>';
-  html+='<div class="card"><h3>Bonus Content <span class="tag">also in Library</span></h3>'+renderBonusList()+'</div>';
-  html+='<div class="card"><h3>Essential Skills</h3><ul class="check">'+Object.keys(ESSENTIAL).map(function(d){
-    var label=ESSENTIAL[d];
-    var url=ESSENTIAL_URL[label];
-    return '<li style="display:flex;align-items:flex-start;gap:9px;padding:7px 0;border-bottom:1px solid #23262f;"><div class="itxt">'+linked(label,url)+' <span class="tag">('+DAY_FULL[d]+')</span></div></li>';
-  }).join("")+'</ul></div>';
-  return html;
-}
-
 function renderInfo(){
   var html='<div class="eyebrow">The Full Guide</div><div class="h2" style="font-size:20px;margin-bottom:10px;">Guide &amp; Info</div>';
   html+='<div class="card"><h3>How This Plan Works</h3><p style="margin-bottom:6px;text-align:justify;">Technique is sequential and full-coverage: start at Beginner regardless of ability, and work every exercise, chop-builder and solo in every tier before advancing.</p>'+
@@ -864,80 +909,147 @@ function renderInfo(){
 }
 
 function renderSetup(){
-  var html='<div class="eyebrow">Gear Optimization</div><div class="h2" style="font-size:20px;margin-bottom:10px;">PRS Shred Setup</div>';
-  html+='<p class="lede">Follow these mechanical adjustments in this exact order to achieve low string action suitable for shredding without excessive fret buzz.</p>';
+  var isPrs = state.setupGuitar === "prs";
+  var conf = setupData[state.setupGuitar][state.setupTuning];
   
-  html+='<div class="note"><b>Note:</b> These target measurements are specifically optimized for a <b>10-46</b> string gauge.</div>';
+  var html='<div class="eyebrow">Gear Optimization</div><div class="h2" style="font-size:20px;margin-bottom:10px;">'+setupData[state.setupGuitar].name+' Setup</div>';
+  html+='<p class="lede">Follow these mechanical adjustments in exactly this order to achieve optimal low string action suitable for shredding without excessive fret buzz.</p>';
+
+  // DROPDOWNS
+  html+='<div style="display:flex; gap:8px; margin-bottom:12px;">';
+  html+='<select class="select" style="flex:1; margin-top:0;" data-action="setGuitar">';
+  html+='<option value="prs" '+(isPrs?'selected':'')+'>PRS SE CE 24</option>';
+  html+='<option value="epi" '+(isPrs?'':'selected')+'>Epiphone Les Paul</option>';
+  html+='</select>';
   
-  html+='<div class="card"><h3>Target Measurements</h3><table class="info"><tr><th>Adjustment</th><th>Target (mm)</th></tr>'+
-    '<tr><td class="day">Tremolo Float</td><td>1.6 mm (1/16") off body</td></tr>'+
-    '<tr><td class="day">Neck Relief</td><td>0.15 mm at 8th fret</td></tr>'+
-    '<tr><td class="day">Action (Low E)</td><td>1.5 mm at 12th fret</td></tr>'+
-    '<tr><td class="day">Action (High E)</td><td>1.1 - 1.2 mm at 12th fret</td></tr>'+
+  html+='<select class="select" style="flex:1; margin-top:0;" data-action="setTuning">';
+  html+='<option value="e_std" '+(state.setupTuning==='e_std'?'selected':'')+'>E Standard</option>';
+  html+='<option value="drop_d" '+(state.setupTuning==='drop_d'?'selected':'')+'>Drop D</option>';
+  html+='<option value="d_std" '+(state.setupTuning==='d_std'?'selected':'')+'>D Standard</option>';
+  html+='<option value="drop_c" '+(state.setupTuning==='drop_c'?'selected':'')+'>Drop C</option>';
+  html+='<option value="c_std" '+(state.setupTuning==='c_std'?'selected':'')+'>C Standard</option>';
+  html+='<option value="dadfae" '+(state.setupTuning==='dadfae'?'selected':'')+'>DADFAE (Ghost Reveries)</option>';
+  html+='</select>';
+  html+='</div>';
+  
+  html+='<div class="note"><b>Note:</b> These target measurements are specifically optimized to match the tension profile of 10-46 E Standard strings on a 25" scale.</div>';
+  
+  html+='<div class="card"><h3>Target Measurements</h3><table class="info"><tr><th>Adjustment</th><th>Target (mm)</th></tr>';
+  if(isPrs) html+='<tr><td class="day">Tremolo Float</td><td>1.6 mm (1/16") off body</td></tr>';
+  html+='<tr><td class="day">Neck Relief</td><td>'+conf.relief+' mm at 8th fret</td></tr>'+
+    '<tr><td class="day">Action (Low E)</td><td>'+conf.actBass+' mm at 12th fret</td></tr>'+
+    '<tr><td class="day">Action (High E)</td><td>'+conf.actTreb+' mm at 12th fret</td></tr>'+
     '</table></div>';
     
   html+='<div class="card"><h3>1. Strip and Clean</h3><p style="text-align:justify;">Remove the old strings and deep clean the fretboard to lift away accumulated dirt. Condition the rosewood fretboard with a light coat of lemon oil. Leave it for 10 min for the neck to absorb the oils, and then wipe the excess away. Finally, clean the rest of the guitar body and hardware using appropriate instrument cleaning products.</p></div>';
   
-  html+='<div class="card"><h3>2. Restring and Stretch</h3><p style="text-align:justify;">Install your fresh strings. Before measuring anything, stretch the strings thoroughly by pulling firmly on each string all the way up and down the neck. Retune and repeat until the tuning stops dropping.</p></div>';
+  html+='<div class="card"><h3>2. Restring and Stretch</h3><p style="text-align:justify;">Install your fresh strings (<b>'+conf.gauge+'</b> gauge recommended for this scale and tuning). Before measuring anything, stretch the strings thoroughly by pulling firmly on each string all the way up and down the neck. Retune and repeat until the tuning stops dropping.</p></div>';
   
-  html+='<div class="card"><h3>3. Set the Tremolo Float</h3><p style="text-align:justify;">The PRS patented tremolo is designed to float exactly 1.6 mm parallel to the guitar body. If it sits too high or low, remove the back cavity plate and adjust the two claw screws holding the springs (tightening pulls the bridge down; loosening lifts it). Retune after every quarter-turn.<br><br><b>The PRS F# Test:</b> To confirm the perfect float without a ruler, pull the whammy bar back as far as it will go. When perfectly balanced, your open Low E string will pitch up exactly to an F#.</p></div>';
+  if(isPrs) {
+    html+='<div class="card"><h3>3. Set the Tremolo Float</h3><p style="text-align:justify;">The PRS patented tremolo is designed to float exactly 1.6 mm parallel to the guitar body. If it sits too high or low, remove the back cavity plate and adjust the two claw screws holding the springs (tightening pulls the bridge down; loosening lifts it). Retune after every quarter-turn.<br><br><b>The PRS F# Test:</b> To confirm the perfect float without a ruler, pull the whammy bar back as far as it will go. When perfectly balanced, your open Low E string will pitch up exactly to an F#.</p></div>';
+  }
   
-  html+='<div class="card"><h3>4. Adjust Neck Relief (Truss Rod)</h3><p style="text-align:justify;">Put a capo on the 1st fret and hold down the Low E string at the 24th fret. Check the gap between the bottom of the string and the top of the 8th fret. You want a tiny 0.15 mm gap - just enough space to slide a piece of standard printer paper through with slight friction. If the gap is larger, tighten the truss rod (turn clockwise) a quarter-turn at a time.</p></div>';
+  html+='<div class="card"><h3>4. Adjust Neck Relief (Truss Rod)</h3><p style="text-align:justify;">Put a capo on the 1st fret and hold down the Low E string at the highest fret. Check the gap between the bottom of the string and the top of the 8th fret. You want a tiny '+conf.relief+' mm gap - just enough space to slide a piece of standard printer paper through with slight friction. If the gap is larger, tighten the truss rod (turn clockwise) a quarter-turn at a time.</p></div>';
   
-  html+='<div class="card"><h3>5. Lower the String Action</h3><p style="text-align:justify;">With the neck nearly flat, drop the saddles using a small Allen key on the two grub screws per saddle. Set the Low E to 1.5 mm at the 12th fret, and the High E to 1.1 - 1.2 mm at the 12th fret.<br><br><b>Radius matching:</b> Adjust the middle strings so they form a matching 10-inch (254 mm) curve to fit the fretboard. Test by doing 1.5-step bends above the 15th fret on the High E string; if the note chokes out, raise that specific saddle just a hair.</p></div>';
+  html+='<div class="card"><h3>5. Lower the String Action</h3><p style="text-align:justify;">With the neck nearly flat, adjust the saddle heights. Set the Low E to '+conf.actBass+' mm at the 12th fret, and the High E to '+conf.actTreb+' - '+(conf.actTreb+0.1).toFixed(1)+' mm at the 12th fret.<br><br><b>Radius matching:</b> '+(isPrs ? 'Drop the individual saddles using a small Allen key on the two grub screws per saddle. Adjust the middle strings so they form a matching '+setupData[state.setupGuitar].radius+' curve to fit the fretboard.' : 'Adjust the thumbwheels on either side of the Tune-O-Matic bridge. The bridge saddle slots are pre-cut to automatically match the '+setupData[state.setupGuitar].radius+' fretboard radius.')+' Test by doing 1.5-step bends above the 15th fret on the High E string; if the note chokes out, raise that specific side just a hair.</p></div>';
   
-  html+='<div class="card"><h3>6. Lubricate the Nut</h3><p style="text-align:justify;">Apply graphite powder (from a mechanical pencil) or a dedicated lubricant into the nut slots before tuning up to pitch. This stops the strings from binding during dive bombs.</p></div>';
+  html+='<div class="card"><h3>6. Lubricate the Nut</h3><p style="text-align:justify;">Apply graphite powder (from a mechanical pencil) or a dedicated lubricant into the nut slots before tuning up to pitch. This stops the strings from binding and pinging.</p></div>';
   
-  html+='<div class="card"><h3>7. Set Intonation</h3><p style="text-align:justify;">This must be done last. Check the tuning of the open string, then fret the note at the 12th fret. If the fretted note is <b>sharp</b>, use a Phillips screwdriver on the back of the bridge to move the saddle <b>backward</b> (away from the neck). If the fretted note is <b>flat</b>, move the saddle <b>forward</b>. Retune the open string after every saddle adjustment until both match perfectly.</p></div>';
+  html+='<div class="card"><h3>7. Set Intonation</h3><p style="text-align:justify;">This must be done last. Check the tuning of the open string, then fret the note at the 12th fret. If the fretted note is <b>sharp</b>, use a screwdriver on the back of the bridge to move the saddle <b>backward</b> (away from the neck). If the fretted note is <b>flat</b>, move the saddle <b>forward</b>. Retune the open string after every saddle adjustment until both match perfectly.</p></div>';
+
+  html+='<div class="card"><h3>8. Adjust Pickup Height</h3><p style="text-align:justify;">Fret the highest note ('+(isPrs?'24th':'22nd')+' fret). Adjust the height screws on either side of the pickups. Set the bass side to <b>2.5 mm</b> below the strings, and the treble side to <b>1.5 mm</b>. In high-gain and shred contexts, keeping the bass side slightly lower prevents the low-end from becoming muddy (stratitis), while the higher treble side keeps your pick attack aggressive and cuts through the mix.</p></div>';
 
   html+='<button class="tbtn primary" style="width:100%; margin-bottom: 20px; display:flex; justify-content:center; align-items:center; gap:8px;" onclick="window.open(\'https://www.youtube.com/watch?v=wmoc9ksdZdE\', \'_blank\')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33 2.78 2.78 0 0 0 1.94 2c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.33 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg> Official PRS Setup Guide</button>';
 
   return html;
 }
 
+function initAppLayout() {
+  var root = document.getElementById("root");
+  root.innerHTML = `
+    <div class="topbar" id="topbar"></div>
+    <div class="carousel" id="carousel">
+      <div class="view-panel" data-view-id="home" id="panel-home"></div>
+      <div class="view-panel" data-view-id="daily" id="panel-daily"></div>
+      <div class="view-panel" data-view-id="library" id="panel-library"></div>
+      <div class="view-panel" data-view-id="info" id="panel-info"></div>
+      <div class="view-panel" data-view-id="setup" id="panel-setup"></div>
+    </div>
+    <div class="botnav" id="botnav"></div>
+  `;
+  var carousel = document.getElementById('carousel');
+  // Intersection Observer for horizontal scroll snapping
+  carousel.addEventListener('scroll', function() {
+    var width = carousel.offsetWidth;
+    var scrollX = carousel.scrollLeft;
+    var index = Math.round(scrollX / width);
+    if (APP_VIEWS[index] && ui.view !== APP_VIEWS[index]) {
+       ui.view = APP_VIEWS[index];
+       updateBotNav();
+    }
+  }, {passive: true});
+}
+
+function updateBotNav() {
+  var botnav = document.getElementById('botnav');
+  if(!botnav) return;
+  botnav.innerHTML = '<div class="botnav-inner">' +
+    navBtn("home","\ud83c\udfe0","Home") + 
+    navBtn("daily","\ud83c\udfaf","Daily") + 
+    navBtn("library","\ud83d\udcda","Library") + 
+    navBtn("info","\u2139\ufe0f","Info") + 
+    navBtn("setup","\ud83d\udee0\ufe0f","Setup") + '</div>';
+}
+function navBtn(view,ic,label){ return '<button data-action="go" data-view="'+view+'" class="'+(ui.view===view?"active":"")+'"><span class="ic">'+ic+'</span>'+label+'</button>'; }
+
 function render(){
   try {
     ensureDailyReset();
-    var root=document.getElementById("root");
-    if(!root) return;
-    
-    var topbarHTML = '<div class="topbar">';
-    topbarHTML += '<div class="topbar-header">';
-    topbarHTML += '<div class="brand">THE <span>SHRED</span> ROADMAP</div>';
-    
+    if(!document.getElementById("carousel")) initAppLayout();
+
+    // Preserve scroll positions of individual panels before innerHTML update
+    var tops = {};
+    document.querySelectorAll('.view-panel').forEach(function(p){ tops[p.id] = p.scrollTop; });
+
+    // UPDATE TOPBAR
+    var topbarHTML = '<div class="topbar-header"><div class="brand">THE <span>SHRED</span> ROADMAP</div>';
     if(hasFirebase){
       topbarHTML += '<div class="auth-container">';
       if(currentUser && currentUser.email){
         var shortName = currentUser.email.split('@')[0];
         topbarHTML += '<span class="user-email">' + shortName + '</span>';
       }
-      topbarHTML += '<button id="authBtn" class="dchip2" style="padding:5px 10px; margin:0; border-color:var(--border); color:var(--text);">' + (currentUser ? "Logout" : "Login with Google") + '</button>';
-      topbarHTML += '</div>';
+      topbarHTML += '<button id="authBtn" class="dchip2" style="padding:5px 10px; margin:0; border-color:var(--border); color:var(--text);">' + (currentUser ? "Logout" : "Login with Google") + '</button></div>';
     }
-    topbarHTML += '</div>';
-    
-    topbarHTML += progressBar()+'</div>';
+    topbarHTML += '</div>' + progressBar();
+    document.getElementById('topbar').innerHTML = topbarHTML;
 
-    var body = topbarHTML + '<div class="page">';
-    if(ui.view==="home") body+=renderHome();
-    else if(ui.view==="daily") body+=renderDaily();
-    else if(ui.view==="library") body+=renderLibrary();
-    else if(ui.view==="free") body+=renderFree();
-    else if(ui.view==="info") body+=renderInfo();
-    else if(ui.view==="setup") body+=renderSetup();
-    
-    body+='</div><div class="botnav">'+navBtn("home","\ud83c\udfe0","Home")+navBtn("daily","\ud83c\udfaf","Daily")+navBtn("library","\ud83d\udcda","Library")+navBtn("free","\ud83c\udfb8","Free")+navBtn("info","\u2139\ufe0f","Info")+navBtn("setup","\ud83d\udee0\ufe0f","Setup")+'</div>';
-    
-    root.innerHTML=body;
+    // UPDATE PANELS
+    document.getElementById('panel-home').innerHTML = renderHome();
+    document.getElementById('panel-daily').innerHTML = renderDaily();
+    document.getElementById('panel-library').innerHTML = renderLibrary();
+    document.getElementById('panel-info').innerHTML = renderInfo();
+    document.getElementById('panel-setup').innerHTML = renderSetup();
+
+    updateBotNav();
+
+    // Restore scroll positions
+    document.querySelectorAll('.view-panel').forEach(function(p){ p.scrollTop = tops[p.id] || 0; });
+
+    // Snap carousel to correct panel if entirely misaligned (e.g., initial load)
+    var idx = APP_VIEWS.indexOf(ui.view);
+    var carousel = document.getElementById('carousel');
+    var expectedScroll = idx * carousel.offsetWidth;
+    if (Math.abs(carousel.scrollLeft - expectedScroll) > carousel.offsetWidth * 0.5) {
+      carousel.scrollTo({left: expectedScroll, behavior: 'instant'});
+    }
+
   } catch(err) {
     console.error("Render error:", err);
     var root=document.getElementById("root");
-    if(root) {
-      root.innerHTML = '<div style="padding: 20px; color: #ff3b30; font-family: monospace;"><h3>Render Error:</h3><p>' + err.message + '</p><pre>' + err.stack + '</pre></div>';
-    }
+    if(root) { root.innerHTML = '<div style="padding: 20px; color: #ff3b30; font-family: monospace;"><h3>Render Error:</h3><p>' + err.message + '</p><pre>' + err.stack + '</pre></div>'; }
   }
 }
-function navBtn(view,ic,label){ return '<button data-action="go" data-view="'+view+'" class="'+(ui.view===view?"active":"")+'"><span class="ic">'+ic+'</span>'+label+'</button>'; }
 
 document.addEventListener("click",function(e){
   if(e.target.closest("a")) return;
@@ -945,23 +1057,29 @@ document.addEventListener("click",function(e){
   if(!t) return;
 
   if(t.id === "authBtn"){
-    if(currentUser){
-      signOut(auth).then(() => { showToast("Logged out"); render(); });
-    } else {
-      signInWithPopup(auth, googleProvider).catch(err => showToast("Login failed"));
-    }
+    if(currentUser){ signOut(auth).then(() => { showToast("Logged out"); render(); }); } 
+    else { signInWithPopup(auth, googleProvider).catch(err => showToast("Login failed")); }
     return;
   }
 
   if(t.dataset.toggle){ toggleCheck(t.dataset.toggle); return; }
   var a=t.dataset.action;
+  
   if(a==="go"){
-    if(t.dataset.view!==ui.view){ ui.lib={}; ui.dayOverride=null; ui.surprise=null; }
     ui.view=t.dataset.view;
-    window.scrollTo(0, 0); 
-    render();
+    var idx = APP_VIEWS.indexOf(ui.view);
+    var carousel = document.getElementById('carousel');
+    carousel.scrollTo({left: idx * carousel.offsetWidth, behavior: 'smooth'});
+    
+    // Optionally reset vertical scroll of the target panel to top
+    var panel = document.getElementById('panel-' + ui.view);
+    if(panel) panel.scrollTo({top: 0, behavior: 'smooth'});
+    
+    updateBotNav();
+    return; // Fast escape, no need to re-render DOM string!
   }
-  else if(a==="toggleacc"){ui.lib[t.dataset.acc]=!ui.lib[t.dataset.acc]; render();}
+  
+  if(a==="toggleacc"){ui.lib[t.dataset.acc]=!ui.lib[t.dataset.acc]; render();}
   else if(a==="setday"){ ui.dayOverride=t.dataset.day; render(); }
   else if(a==="chop"){ setChop(t.dataset.t,parseInt(t.dataset.d,10)); }
   else if(a==="test"){ setTest(t.dataset.t,parseInt(t.dataset.d,10)); }
@@ -970,11 +1088,6 @@ document.addEventListener("click",function(e){
   else if(a==="togm"){ toggleCheck(t.dataset.key); }
   else if(a==="activateday"){ setActiveDay(t.dataset.day); }
   else if(a==="resetactiveday"){ resetActiveDay(); }
-  else if(a==="surprise"){
-    var pool=BONUS.map(function(b){return b.t;}).concat(Object.keys(ESSENTIAL).map(function(d){return ESSENTIAL[d]+" essential-skill drill";})); 
-    ui.surprise=pool[Math.floor(Math.random()*pool.length)]; 
-    render();
-  }
   else if(a==="cloudsave"){ 
     if(!currentUser) { showToast("Please login first to save to cloud."); return; }
     setDoc(doc(db, "users", currentUser.uid), state).then(() => showToast("Progress manually saved to cloud!")).catch(() => showToast("Error saving to cloud."));
@@ -998,8 +1111,11 @@ document.addEventListener("click",function(e){
   else if(a==="canceljump"){ cancelPhaseJumpBack(); }
   else if(a==="confirmjump"){ confirmPhaseJumpBack(); }
 });
+
 document.addEventListener("change",function(e){
   if(e.target.dataset.action==="setphase") handlePhaseSelect(parseInt(e.target.value,10));
+  if(e.target.dataset.action==="setGuitar") { state.setupGuitar = e.target.value; saveState(); render(); }
+  if(e.target.dataset.action==="setTuning") { state.setupTuning = e.target.value; saveState(); render(); }
 });
 
 ensureDailyReset();
