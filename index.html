@@ -1028,6 +1028,7 @@ function renderLibrary(){
 function renderInfo(){
   var html='<div class="eyebrow">The Full Guide</div><div class="h2" style="font-size:20px;margin-bottom:10px;">Guide &amp; Info</div>';
   html+='<div class="card"><h3>How This Plan Works</h3><p style="margin-bottom:6px;text-align:justify;">Technique is sequential and full-coverage: start at Beginner regardless of ability, and work every exercise, chop-builder and solo in every tier before advancing.</p>'+
+    '<p style="margin-bottom:6px;text-align:justify;">To unlock the next phase, you must master all checklist items, hit your chop-builder targets, and reach the required level in all 6 categories of the <b>Phase Transition Test</b> (which includes the Ultimate Technique Workout).</p>'+
     '<p style="margin-bottom:6px;text-align:justify;">Theory and Creative (songwriting/production) run on their own independent tracks - always available in Library, never gating a phase.</p>'+
     '<p style="text-align:justify;">Essential skills get a 5-minute daily micro-dose - a different one Monday - Thursday, Friday reinforces whichever felt weakest.</p></div>';
   html+='<div class="card"><h3>Daily Blueprint</h3><p style="margin-bottom:6px;text-align:justify;"><b style="color:var(--text)">Weekdays (60 min):</b> 5 Warm-Up + 35 Focused (30 technique/theory + 5 skill micro-dose) + 15 Casual + 5 Cool-Down.</p>'+
@@ -1043,7 +1044,7 @@ function renderInfo(){
   if(ui.lib.infoess){ html+='<div class="accbody"><div class="card">'+Object.keys(ESSENTIAL).map(function(d){return '<p style="margin-bottom:4px;"><b style="color:var(--text)">'+DAY_FULL[d]+':</b> '+ESSENTIAL[d]+'</p>';}).join("")+'</div></div>'; }
   html+='</div>';
   html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="infotheory"><b>Theory Track</b><span class="chev'+(ui.lib.infotheory?" open":"")+'">\u203a</span></div>';
-  if(ui.lib.infotheory){ html+='<div class="accbody"><div class="card"><p style="text-align:justify;">Seven lessons, worked strictly in order: start with the Scales Handbook as a standing reference, then Ear Training (chords, then intervals), the four-part Modes Course, Soloing Over Chord Changes, and finally Phrasing Masterclass. The full checklist with links lives in Library.</p></div></div>'; }
+  if(ui.lib.infotheory){ html+='<div class="accbody"><div class="card"><p style="text-align:justify;">The Theory Track is grouped into key pillars: Ear Training, Modes, and Chords & Soloing. Start with the Cheat Sheets and Handbooks as standing references, then work through the courses and apply them to iconic metal songs. Masterclasses like "Phrasing" and "7 Tips" tie everything together. The full checklist with links lives in the Library.</p></div></div>'; }
   html+='</div>';
   html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="infobonus"><b>Bonus Content</b><span class="chev'+(ui.lib.infobonus?" open":"")+'">\u203a</span></div>';
   if(ui.lib.infobonus){ html+='<div class="accbody"><div class="card"><ul class="infolist">'+BONUS.map(function(t){return '<li>'+t.t+'</li>';}).join("")+'</ul></div></div>'; }
