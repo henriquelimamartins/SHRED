@@ -437,6 +437,50 @@ const PHASES=[
    exercises:[I("Heavenly Arpeggios","https://tinyurl.com/27ha3u7z"),I("Ultimate Soloing Challenge","https://tinyurl.com/432hkhmp"),I("Quintuplets Workout","https://tinyurl.com/5n7psubr"),I("Thrash Metal Workout","https://tinyurl.com/57f7e6nc"),I("Ultimate Neoclassical Workout","https://tinyurl.com/5a4n28wm"),I("Serrana Arpeggios","https://tinyurl.com/2z4m6c49")],
    songs:[I("Sea Of Lies (Symphony X)","https://tinyurl.com/3v4u8jca"),I("Kissing The Shadows (Children of Bodom)","https://tinyurl.com/yyzf6bp7"),I("Under A Glass Moon (Dream Theater)","https://tinyurl.com/yh3k2j3x"),I("Winter Madness (Wintersun)","https://tinyurl.com/mupsw5u3"),I("Nobody (Avenged Sevenfold)","https://tinyurl.com/4uak28u2"),I("Dawn Of The Dragonstar (Twilight Force)","https://tinyurl.com/3yvsmm3f")]}
 ];
+
+const LISTENING_VAULT = [
+  {
+    category: "Stoner, Doom & Sludge",
+    items: [
+      {t: "Tony Iommi (Black Sabbath) - 'Snowblind' & 'Sabbath Bloody Sabbath'", desc: "Horizontal slides on single strings; hitting dominant chord tones for sudden tension."},
+      {t: "Matt Pike (Sleep / High on Fire)", desc: "Milking single strings for fuzz sustain ('Dragonaut'); injecting sudden harmonic minor scales into sludge ('Snakes for the Divine')."},
+      {t: "Jus Oborn (Electric Wizard) - 'Funeralopolis' & 'Dopethrone'", desc: "Colossal horizontal doom sliding; pure Locrian/Phrygian sludge."},
+      {t: "Nick DiSalvo (Elder) - 'Lore'", desc: "Microtonal tension by bending into and out of notes with heavy fuzz."},
+      {t: "Monolord - 'Empress Rising'", desc: "Letting chords ring across multiple measures to build oppressive weight."},
+      {t: "All Them Witches / King Buffalo", desc: "Using the Dorian mode over simple two-chord vamps for a vast, desert-highway atmosphere."}
+    ]
+  },
+  {
+    category: "Prog, Odd Meters & Harmony",
+    items: [
+      {t: "John Petrucci (Dream Theater)", desc: "Resolving fast runs perfectly on the downbeat 3rd ('The Spirit Carries On'); wide, emotional vibrato without moving hand position ('Lines in the Sand'); odd-meter survival ('The Dance of Eternity')."},
+      {t: "Opeth (Mikael Åkerfeldt & Fredrik Åkesson)", desc: "Vocal-like clean slides ('Windowpane'); targeting minor 3rds over heavy odd-meter riffs ('Ghost of Perdition'); terrifyingly clean diminished connecting runs ('Heir Apparent')."},
+      {t: "Guthrie Govan", desc: "Vocal-like sliding ('Regret #9'); chromatic enclosures to 'surround' target notes safely ('Fives'); making odd meters feel like a pop song ('Sevens')."},
+      {t: "Leprous - 'The Price'", desc: "Syncopated stabs in odd meters that somehow feel groovy."}
+    ]
+  },
+  {
+    category: "Death Metal & Groove Aggression",
+    items: [
+      {t: "Chuck Schuldiner (Death)", desc: "Meticulous alternate-picked triads ('Crystal Mountain'); tragic pull of harmonic minor ('Voice of the Soul'); chromatic passing tones ('Symbolic')."},
+      {t: "Dimebag Darrell (Pantera)", desc: "Aggression through syncopation and starting riffs on off-beats ('I'm Broken', 'Walk')."},
+      {t: "Gojira - 'Toxic Garbage Island' & 'Stranded'", desc: "Exploiting the Phrygian b2 interval for crushing darkness; rhythmic displacement of simple groove riffs."},
+      {t: "Blood Incantation - 'Hidden History of the Human Race'", desc: "Cosmic Lydian expansion in a death metal context (ambient sections and outro solos)."},
+      {t: "Nile - 'Lashed to the Slave Stick'", desc: "Middle-Eastern phrygian dominant nightmare."}
+    ]
+  },
+  {
+    category: "Classic Rock, Blues & Soul",
+    items: [
+      {t: "David Gilmour (Pink Floyd)", desc: "1.5-step bends in a tiny box ('Comfortably Numb'); perfectly intonated pre-bends ('Shine On...'); treating guitar like a lead vocalist ('Time')."},
+      {t: "Slash (Guns N' Roses)", desc: "Epic symphonies within tight minor pentatonic boxes ('November Rain'); 1:1 connection between inner ear and hands."},
+      {t: "Brian May (Queen) - 'Bohemian Rhapsody' & 'Somebody to Love'", desc: "Compositions within compositions; every solo maps perfectly to the underlying chord progression's 3rds."},
+      {t: "Stevie Ray Vaughan - 'Texas Flood'", desc: "Dragging phrasing slightly behind the snare drum for ultimate swagger; call and response."},
+      {t: "Eddie Van Halen", desc: "Carrying the entire song alone ('Eruption'); happy/aggressive Mixolydian swing ('Panama')."}
+    ]
+  }
+];
+
 const CREATIVE={
  songwriting:[I("Riff Writing Masterclass","https://tinyurl.com/59wr7y4x"),I("Solo Writing Masterclass","https://tinyurl.com/ym69pkmv"),I("Metal Songwriting Masterclass","https://tinyurl.com/45du76rt"),I("Harmonize Guitars","https://tinyurl.com/dkds5aey")],
  production:[I("Guitar Transcribing","https://tinyurl.com/2t3d6n4p"),I("Home Recording Guide","https://tinyurl.com/nfkp288a"),I("MIDI Drums","http://tinyurl.com/23uj5xd9"),I("Mixing Guide","https://tinyurl.com/3ujtsn7f")]
@@ -1195,6 +1239,25 @@ function renderLibrary(){
   
   html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="bonuslib"><b>Bonus Content</b><span class="chev'+(ui.lib.bonuslib?" open":"")+'">\u203a</span></div>';
   if(ui.lib.bonuslib) html+='<div class="accbody"><div class="card">'+renderBonusList()+'</div></div>';
+  html+='</div>';
+  
+  
+  html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="listening"><b>Listening Vault <span class="tag">Inspiration &amp; Refs</span></b><span class="chev'+(ui.lib.listening?" open":"")+'">\u203a</span></div>';
+  if(ui.lib.listening){
+    html+='<div class="accbody">';
+    LISTENING_VAULT.forEach(function(g){
+      html+='<div class="card" style="border-color:var(--purple); box-shadow: 0 0 10px rgba(176,82,255,0.05);">'+
+            '<h3 style="color:var(--purple);">'+g.category+'</h3>'+
+            '<ul style="padding:0; margin:0; list-style:none;">';
+      g.items.forEach(function(item){
+        html+='<li style="font-size:12px; color:var(--text); padding:10px 0; border-bottom:1px solid #23262f;">'+
+              '<b style="color:#eef0f4; font-size:13px; margin-bottom:4px; display:block;">\ud83c\udfa7 '+item.t+'</b>'+
+              '<span style="color:var(--muted); line-height:1.45;">'+item.desc+'</span></li>';
+      });
+      html+='</ul></div>';
+    });
+    html+='</div>';
+  }
   html+='</div>';
   
   // Embedded Info Guide
