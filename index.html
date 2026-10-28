@@ -177,6 +177,7 @@ ul.check li.mrow:last-child{border-bottom:none;}
 .dchip2.istoday:after{content:'\2022';margin-left:2px;}
 .dchip2.isactive{border-color:var(--accent);}
 
+
 .calendar-header-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 12px; font-weight: 600; color: var(--muted); }
 .calendar-header-nav button { flex-direction: column; background: var(--card2); border: 1px solid var(--border); color: var(--text); padding: 5px; border-radius: 6px; font-size: 9px; height: auto; gap: 3px; min-width: 40px; display: inline-flex; align-items: center; justify-content: center; line-height: 1; text-transform: uppercase; font-weight: bold; }
 .calendar-header-nav button:disabled { opacity: 0.2; pointer-events: none; }
@@ -221,8 +222,7 @@ ul.check li.mrow:last-child{border-bottom:none;}
 .acc{margin-bottom:10px;}
 .acchead{display:flex;justify-content:space-between;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;}
 .acchead b{font-family:'Oswald';font-size:13px;text-transform:uppercase;}
-.accbody{padding:10px 4px 2px 14px; margin-left:6px; border-left:2px solid var(--border); position:relative;}
-.accbody.purple-tree { border-left-color: var(--purple); }
+.accbody{padding:10px 4px 2px;}
 .chev{color:var(--muted);font-size:11px;transition:transform .2s;}
 .chev.open{transform:rotate(90deg);}
 
@@ -474,9 +474,9 @@ const LISTENING_VAULT = [
   {
     category: "Death Metal, Sludge & Groove",
     items: [
-      {t: "Chuck Schuldiner (Death)", desc: "'Crystal Mountain', 'Voice of the Soul', 'Symbolic'. Meticulous alternate-picked triads; tragic pull of harmonic minor; seamless chromatic passing tones."},
-      {t: "Dimebag Darrell (Pantera)", desc: "'I'm Broken', 'Walk', 'Domination'. Aggression through syncopation, starting riffs on off-beats, and wild wide-stretch symmetrical licks."},
+      {t: "Death (Chuck Schuldiner)", desc: "'Crystal Mountain', 'Voice of the Soul', 'Symbolic'. Meticulous alternate-picked triads; tragic pull of harmonic minor; seamless chromatic passing tones."},
       {t: "Mastodon (Brent Hinds / Bill Kelliher)", desc: "'Blood and Thunder', 'Leviathan', 'Crack the Skye'. Sludge-infused progressive metal riffing; intricate dual-guitar harmony lines; heavy use of minor/major pentatonic shred blended with open-string sludge."},
+      {t: "Pantera (Dimebag Darrell)", desc: "'I'm Broken', 'Walk', 'Domination'. Aggression through syncopation, starting riffs on off-beats, and wild wide-stretch symmetrical licks."},
       {t: "Gojira", desc: "'Toxic Garbage Island', 'Stranded', 'Silvera'. Exploiting the Phrygian b2 interval for crushing darkness; rhythmic displacement and pick scrapes over simple groove riffs."},
       {t: "Blood Incantation", desc: "'Hidden History of the Human Race'. Cosmic Lydian expansion in a death metal context, especially in ambient sections and sprawling outro solos."}
     ]
@@ -740,11 +740,11 @@ function applyStateChange(skipAuto){
   updateStreakStatus();
   if(!skipAuto){
     var idx=state.phaseIndex;
-    if(idx<PHASES.length-1 && phasePercent(idx)===100){ state.phaseIndex=idx+1; showToast("🔥 Phase unlocked: "+PHASES[idx+1].label+"!"); }
+    if(idx<PHASES.length-1 && phasePercent(idx)===100){ state.phaseIndex=idx+1; showToast("\ud83d\udd25 Phase unlocked: "+PHASES[idx+1].label+"!"); }
   }
   if(isFullyDoneToday() && state.congratsDate!==todayISO()){
     state.congratsDate=todayISO();
-    showToast("🤘 Nice work - today's full session is complete!");
+    showToast("\ud83e\udd18 Nice work - today's full session is complete!");
   }
   saveState(); render();
 }
@@ -807,27 +807,27 @@ function checkItem(label,key,url,editable){
   if(editable===undefined) editable=true;
   var c=!!state.checks[key];
   var btn = editable
-    ? '<button class="mbtn'+(c?" on":"")+'" data-action="togm" data-key="'+key+'">'+(c?"✓ Mastered":"Unmastered")+'</button>'
-    : '<button class="mbtn ro'+(c?" on":"")+'">'+(c?"✓ Mastered":"Unmastered")+'</button>';
+    ? '<button class="mbtn'+(c?" on":"")+'" data-action="togm" data-key="'+key+'">'+(c?"\u2713 Mastered":"Unmastered")+'</button>'
+    : '<button class="mbtn ro'+(c?" on":"")+'">'+(c?"\u2713 Mastered":"Unmastered")+'</button>';
   return '<li class="mrow"><div class="itxt'+(c?" done":"")+'">'+linked(label,url)+'</div>'+btn+'</li>';
 }
 function watchItem(label,key,url,editable){
   if(editable===undefined) editable=true;
   var c=!!state.checks[key];
   var btn = editable
-    ? '<button class="mbtn blue'+(c?" on":"")+'" data-action="togm" data-key="'+key+'">'+(c?"✓ Watched":"Unwatched")+'</button>'
-    : '<button class="mbtn ro blue'+(c?" on":"")+'">'+(c?"✓ Watched":"Unwatched")+'</button>';
+    ? '<button class="mbtn blue'+(c?" on":"")+'" data-action="togm" data-key="'+key+'">'+(c?"\u2713 Watched":"Unwatched")+'</button>'
+    : '<button class="mbtn ro blue'+(c?" on":"")+'">'+(c?"\u2713 Watched":"Unwatched")+'</button>';
   return '<li class="mrow"><div class="itxt'+(c?" done":"")+'">'+linked(label,url)+'</div>'+btn+'</li>';
 }
 function prereqItem(label,key,url,editable){
   if(editable===undefined) editable=true;
   var c=!!state.checks[key];
   var btn = editable
-    ? '<button class="mbtn blue'+(c?" on":"")+'" data-action="togm" data-key="'+key+'">'+(c?"✓ Completed":"Incomplete")+'</button>'
-    : '<button class="mbtn ro blue'+(c?" on":"")+'">'+(c?"✓ Completed":"Incomplete")+'</button>';
+    ? '<button class="mbtn blue'+(c?" on":"")+'" data-action="togm" data-key="'+key+'">'+(c?"\u2713 Completed":"Incomplete")+'</button>'
+    : '<button class="mbtn ro blue'+(c?" on":"")+'">'+(c?"\u2713 Completed":"Incomplete")+'</button>';
   return '<li class="mrow"><div class="itxt'+(c?" done":"")+'">'+linked(label,url)+'</div>'+btn+'</li>';
 }
-function docItem(label,url){ return '<li class="docli"><div class="docic">📖</div><div class="itxt">'+linked(label,url)+'</div></li>'; }
+function docItem(label,url){ return '<li class="docli"><div class="docic">\ud83d\udcd6</div><div class="itxt">'+linked(label,url)+'</div></li>'; }
 function chopRow(target,onlyKeys,editable){
   if(editable===undefined) editable=true;
   var list=onlyKeys?CHOP.filter(function(c){return onlyKeys.indexOf(c.key)!==-1;}):CHOP;
@@ -905,6 +905,7 @@ function getDailyActiveSequence(list, prefix, editable, isWatch){
   return html;
 }
 
+
 function getEarliestYearMonth() {
   if(!state.streakDates || state.streakDates.length === 0) return { y: new Date().getFullYear(), m: new Date().getMonth() };
   var sorted = state.streakDates.slice().sort();
@@ -936,7 +937,7 @@ function renderStreakCalendar(){
   html += '</div>';
   html += '<div style="display:flex; gap:4px;">';
   html += '<button data-action="calnext" ' + (!canGoFwd ? 'disabled' : '') + '><span>&rsaquo;</span><span>Next</span></button>';
-  html += '<button data-action="caltoday" style="background:var(--accent); color:#fff; border-color:var(--accent);"><span>▼</span><span>Today</span></button>';
+  html += '<button data-action="caltoday" style="background:var(--accent); color:#fff; border-color:var(--accent);"><span>&#9660;</span><span>Today</span></button>';
   html += '</div></div>';
 
   html += '<div class="streak-wrapper" id="cal-swipe-area"><div class="streak-grid" style="grid-auto-rows: 48px;">';
@@ -991,6 +992,7 @@ function changeCalMonth(dir) {
   render();
 }
 
+
 /* ---------- views ---------- */
 function renderHome(){
   var cur=PHASES[state.phaseIndex],pct=phasePercent(state.phaseIndex);
@@ -998,21 +1000,21 @@ function renderHome(){
   var html='<div class="eyebrow">Daily Practice System</div>';
   
   html+='<div class="statrow"><div class="stat"><div class="bignum">'+pct+'%</div><div class="lbl">'+cur.label+'</div></div>'+
-    '<div class="stat"><div class="bignum">🔥'+totalStreak()+'</div><div class="lbl">Days Logged</div></div></div>';
+    '<div class="stat"><div class="bignum">\ud83d\udd25'+totalStreak()+'</div><div class="lbl">Days Logged</div></div></div>';
     
   var streakText = currentStreak() === 1 ? "You've practiced 1 day in a row!" : "You've practiced " + currentStreak() + " days in a row!";
   html+='<div class="card"><h3>Consistency Grid <span class="tag">'+streakText+'</span></h3>';
   html+=renderStreakCalendar();
   html+='</div>';
 
-  html+='<div class="card"><h3>🧪 Phase Transition Test <span class="tag">1-Minute Workout</span></h3>'+
+  html+='<div class="card"><h3>\ud83e\uddea Phase Transition Test <span class="tag">1-Minute Workout</span></h3>'+
     (req?'<p style="margin-bottom:8px;">Reach Level '+req+' on all '+TESTCATS.length+' to unlock '+(PHASES[state.phaseIndex+1]?PHASES[state.phaseIndex+1].label:"the next phase")+'.</p>':'<p style="margin-bottom:8px;">Track your baseline here - informational at this stage.</p>')+
     testRow(req)+'</div>';
     
-  html+='<button class="navbtn accent" data-action="go" data-view="daily"><div class="ic">🎯</div><div><b>Daily Practice</b><span>Structured session, any day you pick</span></div></button>';
-  html+='<button class="navbtn purple" data-action="go" data-view="improv"><div class="ic">🧠</div><div><b>Improv Masterclass</b><span>The 5 Gates of Freedom</span></div></button>';
-  html+='<button class="navbtn" data-action="go" data-view="library"><div class="ic">📚</div><div><b>Library &amp; Info</b><span>Browse phases & essential skills</span></div></button>';
-  html+='<button class="navbtn setupbtn" data-action="go" data-view="setup"><div class="ic">🛠️</div><div><b>Setup Companion</b><span>Optimize your gear for shredding</span></div></button>';
+  html+='<button class="navbtn accent" data-action="go" data-view="daily"><div class="ic">\ud83c\udfaf</div><div><b>Daily Practice</b><span>Structured session, any day you pick</span></div></button>';
+  html+='<button class="navbtn purple" data-action="go" data-view="improv"><div class="ic">\ud83e\udde0</div><div><b>Improv Masterclass</b><span>The 5 Gates of Freedom</span></div></button>';
+  html+='<button class="navbtn" data-action="go" data-view="library"><div class="ic">\ud83d\udcda</div><div><b>Library &amp; Info</b><span>Browse phases & essential skills</span></div></button>';
+  html+='<button class="navbtn setupbtn" data-action="go" data-view="setup"><div class="ic">\ud83d\udee0\ufe0f</div><div><b>Setup Companion</b><span>Optimize your gear for shredding</span></div></button>';
 
   html+='<div class="card"><h3>Jump to phase</h3>';
   if(ui.phaseJumpPending!==null){
@@ -1031,8 +1033,8 @@ function renderHome(){
       '<div style="display:flex;gap:8px;margin-top:10px;"><button class="tbtn" style="flex:1;" data-action="cancelreset">Cancel</button><button class="tbtn danger" style="flex:1;" data-action="confirmreset">Yes, delete everything</button></div>';
   } else {
     html+='<p style="text-align:justify;">Your progress syncs automatically when logged in. You can also manually push a save or pull your latest cloud backup here.</p>'+
-      '<div style="display:flex;gap:8px;margin-top:10px;"><button class="tbtn" style="flex:1;" data-action="cloudsave">☁️ Save</button><button class="tbtn" style="flex:1;" data-action="cloudload">☁️ Load</button></div>'+
-      '<button class="tbtn danger" style="width:100%;margin-top:8px;" data-action="reset">⚠️ Reset Everything</button>';
+      '<div style="display:flex;gap:8px;margin-top:10px;"><button class="tbtn" style="flex:1;" data-action="cloudsave">\u2601\ufe0f Save</button><button class="tbtn" style="flex:1;" data-action="cloudload">\u2601\ufe0f Load</button></div>'+
+      '<button class="tbtn danger" style="width:100%;margin-top:8px;" data-action="reset">\u26a0\ufe0f Reset Everything</button>';
   }
   html+='</div>';
   return html;
@@ -1049,7 +1051,7 @@ function renderDaily(){
 
   if(!editable){
     var notePrefix = state.activeDayOverride ? "Currently selected practice session is" : "Suggested practice session is";
-    html+='<div class="note">'+notePrefix+' <b>'+DAY_FULL[act]+'</b>. <button class="tbtn" data-action="activateday" data-day="'+day+'" style="margin-top:8px;display:block;">Switch to '+DAY_FULL[day]+' instead →</button></div>';
+    html+='<div class="note">'+notePrefix+' <b>'+DAY_FULL[act]+'</b>. <button class="tbtn" data-action="activateday" data-day="'+day+'" style="margin-top:8px;display:block;">Switch to '+DAY_FULL[day]+' instead \u2192</button></div>';
   }
 
   if(p.kind==="setup"){
@@ -1068,7 +1070,7 @@ function renderDaily(){
     html+=blk("warmup",day,"Warm-Up","15 min",'<p>Extended warm-up + weak-spot review.</p>',editable);
     if(day==="Sat"){
       var songHtml = getDailyActiveSequence(p.songs||[], p.id+".s", editable, false);
-      var body='<p>Deep-dive: polish next solo toward full tempo.</p>' + (songHtml ? '<ul class="check">'+songHtml+'</ul>' : '<p>All this tier\'s solos learned. 🎸</p>');
+      var body='<p>Deep-dive: polish next solo toward full tempo.</p>' + (songHtml ? '<ul class="check">'+songHtml+'</ul>' : '<p>All this tier\'s solos learned. \ud83c\udfb8</p>');
       html+=blk("casual",day,"CASUAL","45 min",body,editable);
     } else {
       var actGate = Math.min(state.improvIndex, IMPROV_GATES.length - 1);
@@ -1105,7 +1107,7 @@ function renderDaily(){
       return checkItem(t.t, kk, t.url, editable);
     }).join("");
     if(monExHtml) focusBody+='<p style="margin-top:6px;">Exercises in rotation (check off once solid):</p><ul class="check">'+monExHtml+'</ul>';
-    else focusBody+='<p style="margin-top:6px;color:var(--muted);">All exercises mastered for this phase! 🎸</p>';
+    else focusBody+='<p style="margin-top:6px;color:var(--muted);">All exercises mastered for this phase! \ud83c\udfb8</p>';
 
   } else if(day==="Tue"){
     var tueExHtml = p.exercises.map(function(t,i){
@@ -1113,7 +1115,7 @@ function renderDaily(){
       return checkItem(t.t, kk, t.url, editable);
     }).join("");
     if(tueExHtml) focusBody+='<p style="margin-bottom:6px;">Exercises in rotation (check off once solid):</p><ul class="check">'+tueExHtml+'</ul>';
-    else focusBody+='<p style="margin-bottom:6px;color:var(--muted);">All exercises mastered for this phase! 🎸</p>';
+    else focusBody+='<p style="margin-bottom:6px;color:var(--muted);">All exercises mastered for this phase! \ud83c\udfb8</p>';
     
     focusBody+='<p style="margin:6px 0;">Chop-builders (picking) - protect ~15 min:</p>'+chopRow(p.target,["alt","sweep"]);
   } else if(day==="Wed"){
@@ -1151,7 +1153,7 @@ function renderDaily(){
     focusBody+='<p>Revisit your hardest exercise or chop-builder from the week, then spend the micro-dose reinforcing whichever skill felt weakest.</p>';
     if(p.testReq){
       var met=TESTCATS.filter(function(c){return (state.testLevel[c.key]||0)>=p.testReq;}).length;
-      focusBody+='<div class="note" style="margin-top:8px;">Phase Transition Test: '+met+'/'+TESTCATS.length+' at Level '+p.testReq+'+. <button class="tbtn" data-action="go" data-view="home" style="margin-top:6px;display:block;">Retake Phase Test →</button></div>';
+      focusBody+='<div class="note" style="margin-top:8px;">Phase Transition Test: '+met+'/'+TESTCATS.length+' at Level '+p.testReq+'+. <button class="tbtn" data-action="go" data-view="home" style="margin-top:6px;display:block;">Retake Phase Test \u2192</button></div>';
     }
   }
   if(day!=="Fri") focusBody+='<p style="margin-top:8px;">+ 5 min: '+linked(essential+" micro-dose",essUrl)+'</p>';
@@ -1160,7 +1162,7 @@ function renderDaily(){
   if(day==="Mon"||day==="Thu"){ 
     var casualBody='';
     var songHtml = getDailyActiveSequence(p.songs||[], p.id+".s", editable, false);
-    casualBody += songHtml ? '<ul class="check">'+songHtml+'</ul>' : '<p>All this tier\'s solos learned. 🎸</p>';
+    casualBody += songHtml ? '<ul class="check">'+songHtml+'</ul>' : '<p>All this tier\'s solos learned. \ud83c\udfb8</p>';
     html+=blk("casual",day,"Casual","15 min",casualBody,editable);
   }
   else if(day==="Tue" || day==="Wed" || day==="Fri"){ 
@@ -1189,7 +1191,7 @@ function renderImprov(){
   var allDone = state.improvIndex >= IMPROV_GATES.length;
 
   if(allDone){
-    html+='<div class="note purple" style="text-align:center;"><b>🏆 YOU HAVE MASTERED THE 5 GATES!</b><br>You are now a free player. Keep using these tools in your daily jams.</div>';
+    html+='<div class="note purple" style="text-align:center;"><b>\ud83c\udfc6 YOU HAVE MASTERED THE 5 GATES!</b><br>You are now a free player. Keep using these tools in your daily jams.</div>';
   }
 
   IMPROV_GATES.forEach(function(g, i){
@@ -1198,16 +1200,16 @@ function renderImprov(){
     var isLocked = i > actGate;
 
     if(isLocked){
-      html+='<div class="card" style="opacity:0.5;"><h3>🔒 Gate '+(i+1)+': '+g.title+'</h3></div>';
+      html+='<div class="card" style="opacity:0.5;"><h3>\ud83d\udd12 Gate '+(i+1)+': '+g.title+'</h3></div>';
       return;
     }
 
     if(isPast){
-      html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="improvG'+i+'"><b style="color:var(--purple);">✓ GATE '+(i+1)+': '+g.title.toUpperCase()+'</b><span class="chev'+(ui.lib["improvG"+i]?" open":"")+'">›</span></div>';
+      html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="improvG'+i+'"><b style="color:var(--purple);">\u2713 GATE '+(i+1)+': '+g.title.toUpperCase()+'</b><span class="chev'+(ui.lib["improvG"+i]?" open":"")+'">\u203a</span></div>';
       if(ui.lib["improvG"+i]){
         html+='<div class="accbody">';
         g.exercises.forEach(function(ex){
-          html+='<p style="font-size:12px; margin-bottom:8px; color:var(--muted);">✓ '+ex.t+'</p>';
+          html+='<p style="font-size:12px; margin-bottom:8px; color:var(--muted);">\u2713 '+ex.t+'</p>';
         });
         html+='</div>';
       }
@@ -1225,7 +1227,7 @@ function renderImprov(){
     g.exercises.forEach(function(ex, j){
       var isChecked = !!state.improvChecks["g"+i+"e"+j];
       if(isChecked) exercisesDone++;
-      var btn = '<button class="mbtn purple'+(isChecked?" on":"")+'" data-action="togimprov" data-g="'+i+'" data-e="'+j+'">'+(isChecked?"✓ Mastered":"Unmastered")+'</button>';
+      var btn = '<button class="mbtn purple'+(isChecked?" on":"")+'" data-action="togimprov" data-g="'+i+'" data-e="'+j+'">'+(isChecked?"\u2713 Mastered":"Unmastered")+'</button>';
       html+='<li class="mrow" style="flex-direction:column; align-items:stretch; gap:6px;">'+
             '<div style="display:flex; justify-content:space-between; align-items:center;">'+
               '<b style="color:var(--text); font-size:13px;">'+ex.t+'</b>'+
@@ -1240,7 +1242,7 @@ function renderImprov(){
     html+='</ul>';
 
     if(exercisesDone === g.exercises.length){
-      html+='<button class="tbtn purple" style="width:100%; margin-top:15px;" data-action="advanceimprov">🔓 Unlock Gate '+(i+2)+'</button>';
+      html+='<button class="tbtn purple" style="width:100%; margin-top:15px;" data-action="advanceimprov">\ud83d\udd13 Unlock Gate '+(i+2)+'</button>';
     }
     
     html+='</div>';
@@ -1323,7 +1325,7 @@ function renderLibrary(){
         html+='<ul class="check">';
         g.exercises.forEach(function(ex, j){
           var isChecked = !!state.improvChecks["g"+i+"e"+j];
-          var btn = '<button class="mbtn purple'+(isChecked?" on":"")+'" data-action="togimprov" data-g="'+i+'" data-e="'+j+'">'+(isChecked?"✓ Mastered":"Unmastered")+'</button>';
+          var btn = '<button class="mbtn purple'+(isChecked?" on":"")+'" data-action="togimprov" data-g="'+i+'" data-e="'+j+'">'+(isChecked?"&#10003; Mastered":"Unmastered")+'</button>';
           html+='<li class="mrow" style="flex-direction:column; align-items:stretch; gap:6px;">'+
                 '<div style="display:flex; justify-content:space-between; align-items:center;">'+
                   '<b style="color:var(--text); font-size:12.5px;">'+ex.t+'</b>'+
@@ -1353,7 +1355,7 @@ function renderLibrary(){
             '<ul style="padding:0; margin:0; list-style:none;">';
       g.items.forEach(function(item){
         html+='<li style="font-size:12px; color:var(--text); padding:10px 0; border-bottom:1px solid #23262f;">'+
-              '<b style="color:#eef0f4; font-size:13px; margin-bottom:4px; display:block;">🎸 '+item.t+'</b>'+
+              '<b style="color:#eef0f4; font-size:13px; margin-bottom:4px; display:block;">&#127927; '+item.t+'</b>'+
               '<span style="color:var(--muted); line-height:1.45; display:block; text-align:justify;">'+item.desc+'</span></li>';
       });
       html+='</ul></div>';
@@ -1376,6 +1378,8 @@ function renderLibrary(){
   html+='</div>';
   
   // Embedded Info Guide
+
+
   html+='<hr style="border:0; border-top:1px solid #23262f; margin:20px 0;">';
   html+='<div class="h2" style="font-size:20px;margin-bottom:10px;">Guide &amp; Info</div>';
   html+='<div class="card"><h3>How This Plan Works</h3><p style="margin-bottom:6px;text-align:justify;">Technique is sequential and full-coverage: start at Beginner regardless of ability, and work every exercise, chop-builder and solo in every tier before advancing.</p>'+
@@ -1477,11 +1481,11 @@ function updateBotNav() {
   var botnav = document.getElementById('botnav');
   if(!botnav) return;
   botnav.innerHTML = '<div class="botnav-inner">' +
-    navBtn("home","🏠","Home") + 
-    navBtn("daily","🎯","Daily") + 
-    navBtn("improv","🧠","Improv", "improv-nav") + 
-    navBtn("library","📚","Library") + 
-    navBtn("setup","🛠️","Setup") + '</div>';
+    navBtn("home","\ud83c\udfe0","Home") + 
+    navBtn("daily","\ud83c\udfaf","Daily") + 
+    navBtn("improv","\ud83e\udde0","Improv", "improv-nav") + 
+    navBtn("library","\ud83d\udcda","Library") + 
+    navBtn("setup","\ud83d\udee0\ufe0f","Setup") + '</div>';
 }
 function navBtn(view,ic,label, customClass){ 
   var cl = ui.view===view ? "active" : "";
@@ -1533,6 +1537,7 @@ function render(){
   }
 }
 
+
 document.addEventListener("touchstart", function(e) {
   var t = e.target.closest("#cal-swipe-area");
   if(t) {
@@ -1564,6 +1569,7 @@ document.addEventListener("touchend", function(e) {
 }, {passive: true});
 
 document.addEventListener("click",function(e){
+
   if(e.target.closest("a")) return;
   var t=e.target.closest("[data-action],[data-toggle],#authBtn");
   if(!t) return;
@@ -1604,7 +1610,7 @@ document.addEventListener("click",function(e){
   }
   else if(a==="advanceimprov"){ 
     state.improvIndex++; 
-    showToast("🔓 New Gate Unlocked!"); 
+    showToast("\ud83d\udd13 New Gate Unlocked!"); 
     saveState(); render();
   }
   else if(a==="activateday"){ setActiveDay(t.dataset.day); }
@@ -1630,10 +1636,12 @@ document.addEventListener("click",function(e){
   else if(a==="cancelreset"){ cancelReset(); }
   else if(a==="confirmreset"){ confirmReset(); }
   else if(a==="canceljump"){ cancelPhaseJumpBack(); }
+  
   else if(a==="confirmjump"){ confirmPhaseJumpBack(); }
   else if(a==="calprev"){ changeCalMonth(-1); }
   else if(a==="calnext"){ changeCalMonth(1); }
   else if(a==="caltoday"){ ui.calMonth = new Date().getMonth(); ui.calYear = new Date().getFullYear(); render(); }
+
 });
 
 document.addEventListener("change",function(e){
