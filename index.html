@@ -18,7 +18,7 @@
 <style>
 :root{
   --bg:#101217;--card:#1b1e27;--card2:#1e222c;--border:#2a2e38;--accent:#ff3b30;--accent2:#ff5a4e;
-  --amber:#f5a623;--text:#eef0f4;--muted:#9aa0ac;--blue:#6fa8ff;--green:#63d69a;
+  --amber:#f5a623;--text:#eef0f4;--muted:#9aa0ac;--blue:#6fa8ff;--green:#63d69a;--purple:#b052ff;
 }
 *{box-sizing:border-box}
 
@@ -167,7 +167,9 @@ ul.check li.mrow:last-child{border-bottom:none;}
 
 /* daily blocks */
 .blk{border-left:3px solid var(--accent);background:var(--card);border-radius:0 12px 12px 0;padding:12px 14px;margin-bottom:10px;transition:opacity .2s;}
+.blk.improv{border-left-color:var(--purple);}
 .blk.done-today{border-left-color:var(--green);opacity:.62;}
+.blk.improv.done-today{border-left-color:var(--green);}
 .blk .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:8px;}
 .blk .nm{font-family:'Oswald';font-weight:700;font-size:13.5px;text-transform:uppercase;}
 .blk .topright{display:flex;align-items:center;gap:10px;}
@@ -407,6 +409,13 @@ const THEORY_GROUPS = [
 
 let THEORY_ITEMS = [].concat(THEORY_ROOT_ITEMS);
 THEORY_GROUPS.forEach(function(g){ THEORY_ITEMS = THEORY_ITEMS.concat(g.items); });
+
+const IMPROV_TRACK = [
+  { t: "Voice Leading Loop (Tuesday)", desc: "Pick 2 chords (e.g., Am - E7). Play 1 note per bar, landing strictly on the 3rd of each chord exactly on beat 1. Forces you to hear chord changes before they happen." },
+  { t: "One-String Prison (Wednesday)", desc: "Jam over a Stoner/Doom backing track using ONLY 1 string. Destroys the habit of playing vertical boxes and forces horizontal vision, slides, and micro-bends." },
+  { t: "Rhythmic Displacement (Friday)", desc: "Create a 3-note lick. Play it starting on beat 1. Then force yourself to start the exact same lick on the off-beat of 2, then on beat 4. Builds massive groove and breaks the 'square' playing." },
+  { t: "Audiation Translation & Free Expression (Sunday)", desc: "Put the pick down. Sing or hum a short melody over a backing track. Find the exact notes on the guitar on the first try. Finish with a free jam applying specific theoretical intervals (e.g., Dorian major 6th, Death Metal major 7th, Blue note)." }
+];
 
 const ESSENTIAL={Mon:"Ear Training",Tue:"Rhythm",Wed:"Time Signatures",Thu:"Sight-Reading",Fri:"Reinforce Weakest"};
 const DAY_FULL={Mon:"Monday",Tue:"Tuesday",Wed:"Wednesday",Thu:"Thursday",Fri:"Friday",Sat:"Saturday",Sun:"Sunday"};
@@ -734,13 +743,14 @@ function dayPicker(selectedDay){
     return '<button class="'+cls+'" data-action="setday" data-day="'+d+'">'+d+'</button>';
   }).join("")+'</div>';
 }
-function blk(name,day,title,minText,bodyHtml,editable){
+function blk(name,day,title,minText,bodyHtml,editable,customClass){
   if(editable===undefined) editable=true;
   var done=isBlockPracticed(name,day);
   var check = editable
     ? '<div class="blkcheck" data-action="blockprac" data-block="'+name+'" data-day="'+day+'"><div class="box'+(done?" on":"")+'"></div><span>Practiced</span></div>'
     : '<div class="blkcheck ro"><div class="box'+(done?" on":"")+'"></div><span>Practiced</span></div>';
-  return '<div class="blk'+(done?" done-today":"")+'"><div class="top"><div class="nm">'+title+'</div><div class="topright">'+(minText?'<div class="min">'+minText+'</div>':'')+check+'</div></div>'+bodyHtml+'</div>';
+  var cClass = customClass ? ' ' + customClass : '';
+  return '<div class="blk'+cClass+(done?" done-today":"")+'"><div class="top"><div class="nm">'+title+'</div><div class="topright">'+(minText?'<div class="min">'+minText+'</div>':'')+check+'</div></div>'+bodyHtml+'</div>';
 }
 
 function getDailyActiveSequence(list, prefix, editable, isWatch){
@@ -869,7 +879,8 @@ function renderDaily(){
       var body='<p>Deep-dive: polish next solo toward full tempo.</p>' + (songHtml ? '<ul class="check">'+songHtml+'</ul>' : '<p>All this tier\'s solos learned. \ud83c\udfb8</p>');
       html+=blk("casual",day,"CASUAL","45 min",body,editable);
     } else {
-      html+=blk("casual",day,"Creative","45 min",'<p>Improv over a backing track, or pick a bonus drill.</p><button class="tbtn" data-action="go" data-view="library" style="margin-top:8px;">Open Library \u2192</button>',editable);
+      var body='<p><b>Audiation Translation & Jam:</b> Sing a melody, find it on the fretboard. Finish with a free jam focusing on specific theoretical intervals.</p><button class="tbtn" data-action="go" data-view="library" style="margin-top:8px;">Open Improv Guide \u2192</button>';
+      html+=blk("casual",day,"Improv & Expression","45 min",body,editable,"improv");
     }
     return html;
   }
@@ -946,15 +957,25 @@ function renderDaily(){
   if(day!=="Fri") focusBody+='<p style="margin-top:8px;">+ 5 min: '+linked(essential+" micro-dose",essUrl)+'</p>';
   html+=blk("focused",day,"Focused","30 + 5 min",focusBody,editable);
 
-  var casualBody='';
   if(day==="Mon"||day==="Thu"){ 
+    var casualBody='';
     var songHtml = getDailyActiveSequence(p.songs||[], p.id+".s", editable, false);
     casualBody += songHtml ? '<ul class="check">'+songHtml+'</ul>' : '<p>All this tier\'s solos learned. \ud83c\udfb8</p>';
+    html+=blk("casual",day,"Casual","15 min",casualBody,editable);
   }
-  else if(day==="Tue"){ casualBody+='<p>Riff writing / improv over a backing track.</p>'; }
-  else if(day==="Wed"){ casualBody+='<p>Apply today\'s theory concept on the fretboard.</p>'; }
-  else if(day==="Fri"){ casualBody+='<p>Free jam using everything from the week.</p>'; }
-  html+=blk("casual",day,"Casual","15 min",casualBody,editable);
+  else if(day==="Tue"){ 
+    var casualBody='<p><b>Voice Leading Loop:</b> Pick 2 chords. Play 1 note per bar, landing on the 3rd of each chord exactly on beat 1.</p>';
+    html+=blk("casual",day,"Improv & Expression","15 min",casualBody,editable,"improv");
+  }
+  else if(day==="Wed"){ 
+    var casualBody='<p><b>One-String Prison:</b> Jam over a backing track using ONLY 1 string to force horizontal phrasing.</p>';
+    html+=blk("casual",day,"Improv & Expression","15 min",casualBody,editable,"improv");
+  }
+  else if(day==="Fri"){ 
+    var casualBody='<p><b>Rhythmic Displacement:</b> Create a short lick. Start it on beat 1, then the off-beat of 2, then beat 4.</p>';
+    html+=blk("casual",day,"Improv & Expression","15 min",casualBody,editable,"improv");
+  }
+
   html+=blk("cooldown",day,"Cool-Down","5 min",'<p>Quick review - what clicked, what didn\'t.</p>',editable);
   return html;
 }
@@ -996,23 +1017,31 @@ function renderLibrary(){
   if(ui.lib.theory) {
     html+='<div class="accbody">';
     
-    // Documentos Globais & Items Raiz
     html+='<div class="card"><ul class="check">';
     THEORY_DOCS.forEach(function(docItemObj){ html += docItem(docItemObj.t, docItemObj.url); });
     THEORY_ROOT_ITEMS.forEach(function(t){ html += watchItem(t.t, t.key, t.url); });
     html+='</ul></div>';
 
-    // Agrupamento com Subtítulos
     THEORY_GROUPS.forEach(function(g){
       html+='<div class="card"><h3>'+g.title+'</h3><ul class="check">';
       if(g.docs) g.docs.forEach(function(d){ html+=docItem(d.t, d.url); });
       g.items.forEach(function(t){ html += watchItem(t.t, t.key, t.url); });
       html+='</ul></div>';
     });
-
     html+='</div>';
   }
   html+='</div>';
+
+  html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="improv"><b>Improv &amp; Expression Track</b><span class="chev'+(ui.lib.improv?" open":"")+'">\u203a</span></div>';
+  if(ui.lib.improv){
+    html+='<div class="accbody">';
+    IMPROV_TRACK.forEach(function(imp){
+      html+='<div class="card" style="margin-bottom:10px;"><h3>'+imp.t+'</h3><p style="text-align:justify; color:var(--muted); font-size:13px; line-height:1.4;">'+imp.desc+'</p></div>';
+    });
+    html+='</div>';
+  }
+  html+='</div>';
+
   html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="creative"><b>Creative <span class="tag">Songwriting &amp; Production</span></b><span class="chev'+(ui.lib.creative?" open":"")+'">\u203a</span></div>';
   if(ui.lib.creative){
     html+='<div class="accbody"><div class="card"><h3>Songwriting</h3><ul class="check">'+CREATIVE.songwriting.map(function(t,j){return watchItem(t.t,"creative.sw."+j,t.url);}).join("")+'</ul></div>'+
@@ -1031,10 +1060,10 @@ function renderInfo(){
     '<p style="margin-bottom:6px;text-align:justify;">To unlock the next phase, you must master all checklist items, hit your chop-builder targets, and reach the required level in all 6 categories of the <b>Phase Transition Test</b> (which includes the Ultimate Technique Workout).</p>'+
     '<p style="margin-bottom:6px;text-align:justify;">Theory and Creative (songwriting/production) run on their own independent tracks - always available in Library, never gating a phase.</p>'+
     '<p style="text-align:justify;">Essential skills get a 5-minute daily micro-dose - a different one Monday - Thursday, Friday reinforces whichever felt weakest.</p></div>';
-  html+='<div class="card"><h3>Daily Blueprint</h3><p style="margin-bottom:6px;text-align:justify;"><b style="color:var(--text)">Weekdays (60 min):</b> 5 Warm-Up + 35 Focused (30 technique/theory + 5 skill micro-dose) + 15 Casual + 5 Cool-Down.</p>'+
-    '<p style="text-align:justify;"><b style="color:var(--text)">Weekends (60 min):</b> 15 Warm-Up + 45 Casual/Creative.</p></div>';
+  html+='<div class="card"><h3>Daily Blueprint</h3><p style="margin-bottom:6px;text-align:justify;"><b style="color:var(--text)">Weekdays (60 min):</b> 5 Warm-Up + 35 Focused (30 technique/theory + 5 skill micro-dose) + 15 Casual/Improv + 5 Cool-Down.</p>'+
+    '<p style="text-align:justify;"><b style="color:var(--text)">Weekends (60 min):</b> 15 Warm-Up + 45 Casual/Creative/Improv.</p></div>';
   html+='<div class="card"><h3>Exercise Time-Split (Tue/Thu)</h3><p style="text-align:justify;">Newest exercise gets the most time (5 - 8 min); older, solid ones just need a quick maintenance rep (1 - 2 min). Chop-builders get a protected floor of ~15 min - that\'s your real progress signal.</p></div>';
-  html+='<div class="card"><h3>Weekly Rhythm</h3><table class="info"><tr><th>Day</th><th>Focused</th><th>Casual</th></tr>'+
+  html+='<div class="card"><h3>Weekly Rhythm</h3><table class="info"><tr><th>Day</th><th>Focused</th><th>Casual / Improv</th></tr>'+
     WEEKLY_RHYTHM.map(function(r){return '<tr><td class="day">'+r.day+'</td><td>'+r.focused+'</td><td>'+r.casual+'</td></tr>';}).join("")+'</table></div>';
   html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="infophases"><b>Phase Overview</b><span class="chev'+(ui.lib.infophases?" open":"")+'">\u203a</span></div>';
   if(ui.lib.infophases){ html+='<div class="accbody"><div class="card">'+PHASES.map(function(p,i){return '<p style="margin-bottom:8px;text-align:justify;"><b style="color:var(--text)">Phase '+i+' - '+p.label+' ('+p.short+'):</b> '+PHASE_BLURB[p.id]+'</p>';}).join("")+
