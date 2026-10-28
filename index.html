@@ -215,7 +215,7 @@ ul.check li.mrow:last-child{border-bottom:none;}
 .tbtn{background:var(--card2);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:10px 16px;font-size:13.5px;font-weight:600;}
 .tbtn.primary{background:var(--accent);border-color:var(--accent);color:#fff;}
 .tbtn.danger{background:#2a1214;border-color:#5c1f22;color:#ff8a80;}
-.tbtn.purple{background:var(--purple);border-color:var(--purple);color:#fff;}
+.tbtn.purple{background:#522878;border-color:#6c379e;color:#fff;}
 .toast{position:fixed;left:50%;bottom:80px;transform:translateX(-50%);background:var(--accent);color:#fff;padding:10px 18px;border-radius:30px;font-size:12.5px;font-weight:600;z-index:20;box-shadow:0 6px 20px rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .25s, transform .25s;max-width:88%;text-align:center;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(-6px);}
 
@@ -1318,10 +1318,10 @@ function renderLibrary(){
     html+='<div class="accbody purple-tree">';
     IMPROV_GATES.forEach(function(g, i){
       var gateOpen = !!ui.lib["libGate"+i];
-      html+='<div class="card" style="border-color:var(--purple);">'+
-            '<div class="acchead" data-action="toggleacc" data-acc="libGate'+i+'" style="background:var(--card2); border:none; padding:6px 0;"><h3 style="color:var(--purple); font-size:14px; margin:0;">Gate '+(i+1)+': '+g.title+'</h3><span class="chev'+(gateOpen?" open":"")+'">&#8250;</span></div>'+
-            '<p style="font-size:12px; margin:6px 0 10px;">'+g.desc+'</p>';
+      html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="libGate'+i+'"><b style="color:var(--purple);">Gate '+(i+1)+': '+g.title+'</b><span class="chev'+(gateOpen?" open":"")+'">&#8250;</span></div>';
       if(gateOpen){
+        html+='<div class="accbody">';
+        html+='<p style="font-size:12px; margin-bottom:10px;">'+g.desc+'</p>';
         html+='<ul class="check">';
         g.exercises.forEach(function(ex, j){
           var isChecked = !!state.improvChecks["g"+i+"e"+j];
@@ -1338,6 +1338,7 @@ function renderLibrary(){
                 '</li>';
         });
         html+='</ul>';
+        html+='</div>';
       }
       html+='</div>';
     });
@@ -1538,11 +1539,30 @@ function render(){
 }
 
 
+
+let calStartX = 0;
+let calCurrentTranslate = 0;
+
 document.addEventListener("touchstart", function(e) {
   var t = e.target.closest("#cal-swipe-area");
   if(t) {
-    ui.calTouchStartX = e.changedTouches[0].screenX;
-    ui.calTouchStartY = e.changedTouches[0].screenY;
+    ui.calTouchStartX = e.touches[0].screenX;
+    ui.calTouchStartY = e.touches[0].screenY;
+    calCurrentTranslate = 0;
+  }
+}, {passive: true});
+
+document.addEventListener("touchmove", function(e) {
+  var t = e.target.closest("#cal-swipe-area");
+  if(t && ui.calTouchStartX !== undefined) {
+    var currentX = e.touches[0].screenX;
+    var dx = currentX - ui.calTouchStartX;
+    calCurrentTranslate = dx;
+    var grid = t.querySelector('.streak-grid');
+    if(grid) {
+      grid.style.transform = 'translateX(' + dx + 'px)';
+      grid.style.transition = 'none';
+    }
   }
 }, {passive: true});
 
@@ -1550,11 +1570,14 @@ document.addEventListener("touchend", function(e) {
   var t = e.target.closest("#cal-swipe-area");
   if(t && ui.calTouchStartX !== undefined) {
     var endX = e.changedTouches[0].screenX;
-    var endY = e.changedTouches[0].screenY;
     var dx = endX - ui.calTouchStartX;
-    var dy = endY - (ui.calTouchStartY || endY);
+    var grid = t.querySelector('.streak-grid');
+    if(grid) {
+      grid.style.transition = 'transform 0.25s ease';
+      grid.style.transform = 'translateX(0px)';
+    }
 
-    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
+    if (Math.abs(dx) > 60) {
       var now = new Date();
       var earliest = getEarliestYearMonth();
       if (dx < 0) {
@@ -1565,8 +1588,10 @@ document.addEventListener("touchend", function(e) {
         if(canGoBack) changeCalMonth(-1);
       }
     }
+    ui.calTouchStartX = undefined;
   }
 }, {passive: true});
+
 
 document.addEventListener("click",function(e){
 
