@@ -185,6 +185,8 @@ ul.check li.mrow:last-child{border-bottom:none;}
 .center-date span { display: block; }
 
 .streak-wrapper { overflow: hidden; position: relative; touch-action: pan-y; }
+.streak-carousel-track { display: flex; width: 300%; transform: translateX(-33.333%); will-change: transform; }
+.streak-month-pane { width: 33.3333%; flex: 0 0 33.3333%; }
 .streak-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
 
 .s-day { background: var(--card2); border-radius: 6px; height: 48px; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 1px solid var(--border); position: relative; }
@@ -202,6 +204,7 @@ ul.check li.mrow:last-child{border-bottom:none;}
 
 .s-day.today { border-color: var(--accent) !important; background: rgba(255, 59, 48, 0.15) !important; opacity: 1 !important; }
 .s-day.today .s-date { color: var(--accent) !important; opacity: 1; }
+.s-day.today .s-wkd { color: var(--muted) !important; }
 
 .botnav{position:fixed;bottom:0;left:0;right:0;background:#15171e;border-top:1px solid var(--border);display:flex;padding:6px 2px calc(6px + env(safe-area-inset-bottom,0px));z-index:10;}
 .botnav-inner{display:flex; width:100%; max-width:520px; margin:0 auto;}
@@ -913,34 +916,11 @@ function getEarliestYearMonth() {
   return { y: parseInt(parts[0], 10), m: parseInt(parts[1], 10) - 1 };
 }
 
-function renderStreakCalendar(){
-  var now = new Date();
-  if (ui.calMonth === undefined) { ui.calMonth = now.getMonth(); ui.calYear = now.getFullYear(); }
-
-  var m = ui.calMonth;
-  var y = ui.calYear;
-  var earliest = getEarliestYearMonth();
-
-  var canGoBack = (y > earliest.y) || (y === earliest.y && m > earliest.m);
-  var canGoFwd = (y < now.getFullYear()) || (y === now.getFullYear() && m < now.getMonth());
-
+function generateMonthGrid(y, m) {
   var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   var shortMonths = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-
-  var html = '<div class="calendar-header-nav">';
-  html += '<div style="display:flex; gap:4px;">';
-  html += '<button data-action="calprev" ' + (!canGoBack ? 'disabled' : '') + '><span>&lsaquo;</span><span>Prev</span></button>';
-  html += '</div>';
-  html += '<div class="center-date">';
-  html += '<span style="font-weight:700; color:var(--accent2); text-transform:uppercase; font-size:12px; letter-spacing: 1px;">' + monthNames[m] + '</span>';
-  html += '<span style="color:var(--muted); font-weight:600;">' + y + '</span>';
-  html += '</div>';
-  html += '<div style="display:flex; gap:4px;">';
-  html += '<button data-action="calnext" ' + (!canGoFwd ? 'disabled' : '') + '><span>&rsaquo;</span><span>Next</span></button>';
-  html += '<button data-action="caltoday" style="background:var(--accent); color:#fff; border-color:var(--accent);"><span>&#9660;</span><span>Today</span></button>';
-  html += '</div></div>';
-
-  html += '<div class="streak-wrapper" id="cal-swipe-area"><div class="streak-grid" style="grid-auto-rows: 48px;">';
+  var shortDays = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
+  var todayIsoStr = todayISO();
 
   var firstDayOfMonth = new Date(y, m, 1);
   var startDayOfWeek = (firstDayOfMonth.getDay() + 6) % 7; 
@@ -950,9 +930,7 @@ function renderStreakCalendar(){
   var endDayOfWeek = (lastDayOfMonth.getDay() + 6) % 7; 
   var endDate = new Date(y, m + 1, 0 + (6 - endDayOfWeek));
 
-  var shortDays = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
-  var todayIsoStr = todayISO();
-
+  var gridHtml = '<div class="streak-grid" style="grid-auto-rows: 48px;">';
   for (var d = new Date(startDate.getTime()); d <= endDate; d.setDate(d.getDate() + 1)) {
     var iso = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,'0') + "-" + String(d.getDate()).padStart(2,'0');
     var isHit = state.streakDates.indexOf(iso) !== -1;
@@ -979,8 +957,53 @@ function renderStreakCalendar(){
       badgeHtml = '<div class="s-month-badge">' + shortMonths[d.getMonth()] + '</div>';
     }
 
-    html += '<div class="'+c+'">' + badgeHtml + '<div class="s-date">'+dateNum+'</div><div class="s-wkd">'+dayName+'</div></div>';
+    gridHtml += '<div class="'+c+'">' + badgeHtml + '<div class="s-date">'+dateNum+'</div><div class="s-wkd">'+dayName+'</div></div>';
   }
+  gridHtml += '</div>';
+  return gridHtml;
+}
+
+function renderStreakCalendar(){
+  var now = new Date();
+  if (ui.calMonth === undefined) { ui.calMonth = now.getMonth(); ui.calYear = now.getFullYear(); }
+
+  var m = ui.calMonth;
+  var y = ui.calYear;
+  var earliest = getEarliestYearMonth();
+
+  var canGoBack = (y > earliest.y) || (y === earliest.y && m > earliest.m);
+  var canGoFwd = (y < now.getFullYear()) || (y === now.getFullYear() && m < now.getMonth());
+
+  var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+  var html = '<div class="calendar-header-nav">';
+  html += '<div style="display:flex; gap:4px;">';
+  html += '<button data-action="calprev" ' + (!canGoBack ? 'disabled' : '') + '><span>&lsaquo;</span><span>Prev</span></button>';
+  html += '</div>';
+  html += '<div class="center-date">';
+  html += '<span style="font-weight:700; color:var(--accent2); text-transform:uppercase; font-size:12px; letter-spacing: 1px;">' + monthNames[m] + '</span>';
+  html += '<span style="color:var(--muted); font-weight:600;">' + y + '</span>';
+  html += '</div>';
+  html += '<div style="display:flex; gap:4px;">';
+  html += '<button data-action="calnext" ' + (!canGoFwd ? 'disabled' : '') + '><span>&rsaquo;</span><span>Next</span></button>';
+  html += '<button data-action="caltoday" style="background:var(--accent); color:#fff; border-color:var(--accent);"><span>&#9660;</span><span>Today</span></button>';
+  html += '</div></div>';
+
+  html += '<div class="streak-wrapper" id="cal-swipe-area">';
+  html += '<div class="streak-carousel-track" id="cal-track" style="transform: translateX(-33.333%);">';
+  
+  // Previous month pane
+  var prevM = m - 1, prevY = y;
+  if(prevM < 0) { prevM = 11; prevY--; }
+  html += '<div class="streak-month-pane">' + generateMonthGrid(prevY, prevM) + '</div>';
+
+  // Current month pane
+  html += '<div class="streak-month-pane">' + generateMonthGrid(y, m) + '</div>';
+
+  // Next month pane
+  var nextM = m + 1, nextY = y;
+  if(nextM > 11) { nextM = 0; nextY++; }
+  html += '<div class="streak-month-pane">' + generateMonthGrid(nextY, nextM) + '</div>';
 
   html += '</div></div>';
   return html;
@@ -1165,7 +1188,7 @@ function renderDaily(){
     casualBody += songHtml ? '<ul class="check">'+songHtml+'</ul>' : '<p>All this tier\'s solos learned. \ud83c\udfb8</p>';
     html+=blk("casual",day,"Casual","15 min",casualBody,editable);
   }
-  else if(day==="Tue" || day==="Wed" || day==="Fri"){ 
+  else if(day==="Tue" || day === "Wed" || day === "Fri"){ 
     var actGate = Math.min(state.improvIndex, IMPROV_GATES.length - 1);
     var gateObj = IMPROV_GATES[actGate];
     var nextEx = null;
@@ -1540,55 +1563,76 @@ function render(){
 
 
 
-let calStartX = 0;
-let calCurrentTranslate = 0;
+let calTouchStartX = 0;
+let calCurrentTranslate = -33.333; // starting at current month pane index 1
 
 document.addEventListener("touchstart", function(e) {
   var t = e.target.closest("#cal-swipe-area");
   if(t) {
-    ui.calTouchStartX = e.touches[0].screenX;
-    ui.calTouchStartY = e.touches[0].screenY;
-    calCurrentTranslate = 0;
+    calTouchStartX = e.touches[0].screenX;
+    var track = document.getElementById("cal-track");
+    if(track) {
+      track.style.transition = "none";
+    }
   }
 }, {passive: true});
 
 document.addEventListener("touchmove", function(e) {
   var t = e.target.closest("#cal-swipe-area");
-  if(t && ui.calTouchStartX !== undefined) {
+  if(t && calTouchStartX !== undefined) {
     var currentX = e.touches[0].screenX;
-    var dx = currentX - ui.calTouchStartX;
-    calCurrentTranslate = dx;
-    var grid = t.querySelector('.streak-grid');
-    if(grid) {
-      grid.style.transform = 'translateX(' + dx + 'px)';
-      grid.style.transition = 'none';
+    var dx = currentX - calTouchStartX;
+    var track = document.getElementById("cal-track");
+    if(track) {
+      var wrapperWidth = t.offsetWidth || 300;
+      var percentDx = (dx / wrapperWidth) * 33.3333;
+      var newTranslate = -33.3333 + percentDx;
+      track.style.transform = 'translateX(' + newTranslate + '%)';
     }
   }
 }, {passive: true});
 
 document.addEventListener("touchend", function(e) {
   var t = e.target.closest("#cal-swipe-area");
-  if(t && ui.calTouchStartX !== undefined) {
+  if(t && calTouchStartX !== undefined) {
     var endX = e.changedTouches[0].screenX;
-    var dx = endX - ui.calTouchStartX;
-    var grid = t.querySelector('.streak-grid');
-    if(grid) {
-      grid.style.transition = 'transform 0.25s ease';
-      grid.style.transform = 'translateX(0px)';
+    var dx = endX - calTouchStartX;
+    var track = document.getElementById("cal-track");
+    var wrapperWidth = t.offsetWidth || 300;
+
+    if(track) {
+      track.style.transition = 'transform 0.25s cubic-bezier(0.25, 1, 0.5, 1)';
     }
 
-    if (Math.abs(dx) > 60) {
+    if (Math.abs(dx) > wrapperWidth * 0.25) {
       var now = new Date();
       var earliest = getEarliestYearMonth();
       if (dx < 0) {
+        // Swiped left -> next month
         var canGoFwd = (ui.calYear < now.getFullYear()) || (ui.calYear === now.getFullYear() && ui.calMonth < now.getMonth());
-        if(canGoFwd) changeCalMonth(1);
+        if(canGoFwd) {
+          if(track) track.style.transform = 'translateX(-66.666%)';
+          setTimeout(function(){ changeCalMonth(1); }, 250);
+          calTouchStartX = undefined;
+          return;
+        }
       } else {
+        // Swiped right -> previous month
         var canGoBack = (ui.calYear > earliest.y) || (ui.calYear === earliest.y && ui.calMonth > earliest.m);
-        if(canGoBack) changeCalMonth(-1);
+        if(canGoBack) {
+          if(track) track.style.transform = 'translateX(0%)';
+          setTimeout(function(){ changeCalMonth(-1); }, 250);
+          calTouchStartX = undefined;
+          return;
+        }
       }
     }
-    ui.calTouchStartX = undefined;
+    
+    // Snap back if threshold not met or limit reached
+    if(track) {
+      track.style.transform = 'translateX(-33.3333%)';
+    }
+    calTouchStartX = undefined;
   }
 }, {passive: true});
 
