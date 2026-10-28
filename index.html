@@ -177,7 +177,18 @@ ul.check li.mrow:last-child{border-bottom:none;}
 .dchip2.istoday:after{content:'\2022';margin-left:2px;}
 .dchip2.isactive{border-color:var(--accent);}
 
-.streak-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-top: 2px; }
+
+.cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.cal-nav { display: flex; gap: 8px; align-items: center; }
+.cal-nav button { background: var(--card2); border: 1px solid var(--border); color: var(--text); border-radius: 6px; padding: 4px 10px; font-weight: bold; }
+.cal-nav button:disabled { opacity: 0.2; pointer-events: none; }
+.cal-title { font-family: 'Oswald'; font-size: 16px; font-weight: 700; text-transform: uppercase; color: var(--accent2); letter-spacing: 1px; }
+.cal-today { background: var(--accent) !important; border-color: var(--accent) !important; color: #fff !important; font-size: 11px; padding: 4px 10px !important; letter-spacing: .5px; }
+.streak-wrapper { overflow: hidden; position: relative; touch-action: pan-y; }
+.streak-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+.s-day.empty { background: transparent !important; border-color: transparent !important; }
+.s-day.empty .s-date, .s-day.empty .s-wkd { display: none; }
+
 .s-day { background: #23262f; border-radius: 6px; padding: 5px 2px; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 1px solid transparent; }
 .s-day .s-date { font-family: 'Oswald', sans-serif; font-size: 13px; font-weight: 700; color: var(--muted); line-height: 1; transition: color 0.2s;}
 .s-day .s-wkd { font-size: 8px; text-transform: uppercase; color: var(--muted); margin-top: 2px; font-weight: 600; letter-spacing: .3px; transition: color 0.2s;}
@@ -442,41 +453,41 @@ const LISTENING_VAULT = [
   {
     category: "Stoner, Doom & Sludge",
     items: [
-      {t: "Tony Iommi (Black Sabbath) - 'Snowblind' & 'Sabbath Bloody Sabbath'", desc: "Horizontal slides on single strings; hitting dominant chord tones for sudden tension."},
-      {t: "Matt Pike (Sleep / High on Fire)", desc: "Milking single strings for fuzz sustain ('Dragonaut'); injecting sudden harmonic minor scales into sludge ('Snakes for the Divine')."},
-      {t: "Jus Oborn (Electric Wizard) - 'Funeralopolis' & 'Dopethrone'", desc: "Colossal horizontal doom sliding; pure Locrian/Phrygian sludge."},
-      {t: "Nick DiSalvo (Elder) - 'Lore'", desc: "Microtonal tension by bending into and out of notes with heavy fuzz."},
-      {t: "Monolord - 'Empress Rising'", desc: "Letting chords ring across multiple measures to build oppressive weight."},
-      {t: "All Them Witches / King Buffalo", desc: "Using the Dorian mode over simple two-chord vamps for a vast, desert-highway atmosphere."}
+      {t: "Tony Iommi (Black Sabbath)", desc: "'Snowblind', 'Sabbath Bloody Sabbath', 'Into the Void'. Notice horizontal slides, trills on single strings, and hitting dominant chord tones for sudden tension."},
+      {t: "Matt Pike (Sleep / High on Fire)", desc: "'Dragonaut', 'Dopesmoker', 'Snakes for the Divine'. Milking single strings for maximum fuzz sustain; injecting sudden harmonic minor scales into aggressive sludge."},
+      {t: "Jus Oborn (Electric Wizard)", desc: "'Funeralopolis', 'Dopethrone', 'Return Trip'. Colossal horizontal doom sliding; exploiting pure Locrian/Phrygian sludge with overwhelming volume."},
+      {t: "Nick DiSalvo (Elder)", desc: "'Lore', 'Reflections of a Floating World', 'Dead Roots Stirring'. Crying, microtonal tension by bending into and out of notes with heavy fuzz; brilliant use of Lydian and Dorian."},
+      {t: "Monolord", desc: "'Empress Rising', 'Rust', 'Audhumbla'. Letting fuzzy chords and slow bends ring across multiple measures to build oppressive weight and hypnotic repetition."},
+      {t: "All Them Witches / King Buffalo", desc: "'Blood and Sand', 'Red Star Pt. 1 & 2'. Using the Dorian mode over simple two-chord vamps to create a vast, psychedelic desert-highway atmosphere."}
     ]
   },
   {
     category: "Prog, Odd Meters & Harmony",
     items: [
-      {t: "John Petrucci (Dream Theater)", desc: "Resolving fast runs perfectly on the downbeat 3rd ('The Spirit Carries On'); wide, emotional vibrato without moving hand position ('Lines in the Sand'); odd-meter survival ('The Dance of Eternity')."},
-      {t: "Opeth (Mikael Åkerfeldt & Fredrik Åkesson)", desc: "Vocal-like clean slides ('Windowpane'); targeting minor 3rds over heavy odd-meter riffs ('Ghost of Perdition'); terrifyingly clean diminished connecting runs ('Heir Apparent')."},
-      {t: "Guthrie Govan", desc: "Vocal-like sliding ('Regret #9'); chromatic enclosures to 'surround' target notes safely ('Fives'); making odd meters feel like a pop song ('Sevens')."},
-      {t: "Leprous - 'The Price'", desc: "Syncopated stabs in odd meters that somehow feel groovy."}
+      {t: "John Petrucci (Dream Theater)", desc: "'The Spirit Carries On', 'Lines in the Sand', 'The Dance of Eternity'. Resolving fast runs perfectly on the downbeat 3rd; wide, emotional vibrato in tight positions; surviving odd-meters."},
+      {t: "Opeth (Mikael Åkerfeldt / Fredrik Åkesson)", desc: "'Windowpane', 'Ghost of Perdition', 'Heir Apparent'. Vocal-like clean slides; targeting minor 3rds over odd-meter riffs; terrifyingly clean diminished connecting runs."},
+      {t: "Guthrie Govan", desc: "'Regret #9', 'Fives', 'Sevens'. Uncanny vocal-like sliding; chromatic enclosures to 'surround' target notes safely; making 7/8 feel like a standard pop song."},
+      {t: "Leprous", desc: "'The Price', 'From the Flame'. Syncopated stabs in odd meters that somehow feel groovy and heavily rhythmic."}
     ]
   },
   {
     category: "Death Metal & Groove Aggression",
     items: [
-      {t: "Chuck Schuldiner (Death)", desc: "Meticulous alternate-picked triads ('Crystal Mountain'); tragic pull of harmonic minor ('Voice of the Soul'); chromatic passing tones ('Symbolic')."},
-      {t: "Dimebag Darrell (Pantera)", desc: "Aggression through syncopation and starting riffs on off-beats ('I'm Broken', 'Walk')."},
-      {t: "Gojira - 'Toxic Garbage Island' & 'Stranded'", desc: "Exploiting the Phrygian b2 interval for crushing darkness; rhythmic displacement of simple groove riffs."},
-      {t: "Blood Incantation - 'Hidden History of the Human Race'", desc: "Cosmic Lydian expansion in a death metal context (ambient sections and outro solos)."},
-      {t: "Nile - 'Lashed to the Slave Stick'", desc: "Middle-Eastern phrygian dominant nightmare."}
+      {t: "Chuck Schuldiner (Death)", desc: "'Crystal Mountain', 'Voice of the Soul', 'Symbolic'. Meticulous alternate-picked triads; tragic pull of harmonic minor; seamless chromatic passing tones."},
+      {t: "Dimebag Darrell (Pantera)", desc: "'I'm Broken', 'Walk', 'Domination'. Aggression through syncopation, starting riffs on off-beats, and wild wide-stretch symmetrical licks."},
+      {t: "Gojira", desc: "'Toxic Garbage Island', 'Stranded', 'Silvera'. Exploiting the Phrygian b2 interval for crushing darkness; rhythmic displacement and pick scrapes over simple groove riffs."},
+      {t: "Blood Incantation", desc: "'Hidden History of the Human Race'. Cosmic Lydian expansion in a death metal context, especially in ambient sections and sprawling outro solos."},
+      {t: "Nile", desc: "'Lashed to the Slave Stick', 'Kafir!'. Intense Middle-Eastern phrygian dominant nightmares and relentless picking endurance."}
     ]
   },
   {
     category: "Classic Rock, Blues & Soul",
     items: [
-      {t: "David Gilmour (Pink Floyd)", desc: "1.5-step bends in a tiny box ('Comfortably Numb'); perfectly intonated pre-bends ('Shine On...'); treating guitar like a lead vocalist ('Time')."},
-      {t: "Slash (Guns N' Roses)", desc: "Epic symphonies within tight minor pentatonic boxes ('November Rain'); 1:1 connection between inner ear and hands."},
-      {t: "Brian May (Queen) - 'Bohemian Rhapsody' & 'Somebody to Love'", desc: "Compositions within compositions; every solo maps perfectly to the underlying chord progression's 3rds."},
-      {t: "Stevie Ray Vaughan - 'Texas Flood'", desc: "Dragging phrasing slightly behind the snare drum for ultimate swagger; call and response."},
-      {t: "Eddie Van Halen", desc: "Carrying the entire song alone ('Eruption'); happy/aggressive Mixolydian swing ('Panama')."}
+      {t: "David Gilmour (Pink Floyd)", desc: "'Comfortably Numb', 'Shine On You Crazy Diamond', 'Time'. 1.5-step bends in tiny boxes; perfectly intonated pre-bends; treating guitar exactly like a lead vocalist."},
+      {t: "Slash (Guns N' Roses)", desc: "'November Rain', 'Sweet Child O' Mine'. Epic symphonies built within tight minor pentatonic boxes; a direct 1:1 connection between the inner ear and the hands."},
+      {t: "Brian May (Queen)", desc: "'Bohemian Rhapsody', 'Somebody to Love', 'Killer Queen'. Compositions within compositions; every solo maps perfectly to the underlying chord progression's 3rds."},
+      {t: "Stevie Ray Vaughan", desc: "'Texas Flood', 'Lenny'. Dragging phrasing slightly behind the snare drum for ultimate swagger; aggressive microtonal blues bends."},
+      {t: "Eddie Van Halen", desc: "'Eruption', 'Panama', 'I'm the One'. Carrying the entire song's harmony alone; a unique, happy and aggressive Mixolydian swing."}
     ]
   }
 ];
@@ -893,33 +904,77 @@ function getDailyActiveSequence(list, prefix, editable, isWatch){
   return html;
 }
 
-function renderStreakCalendar(){
-  var html='<div class="streak-grid">';
-  var now = new Date();
-  var todayIsoStr = todayISO();
-  var jsDay = now.getDay(); 
-  var monBasedDay = (jsDay + 6) % 7; 
-  var startDate = new Date(now.getTime());
-  startDate.setDate(now.getDate() - monBasedDay - 21);
-  var shortDays = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
 
-  for(var i=0; i<28; i++){
-    var d = new Date(startDate.getTime());
-    d.setDate(startDate.getDate() + i);
-    var iso = d.toISOString().slice(0,10);
+function getEarliestYearMonth() {
+  if(!state.streakDates || state.streakDates.length === 0) return { y: new Date().getFullYear(), m: new Date().getMonth() };
+  var sorted = state.streakDates.slice().sort();
+  var parts = sorted[0].split('-');
+  return { y: parseInt(parts[0], 10), m: parseInt(parts[1], 10) - 1 };
+}
+
+function renderStreakCalendar(){
+  var now = new Date();
+  if (ui.calMonth === undefined) { ui.calMonth = now.getMonth(); ui.calYear = now.getFullYear(); }
+
+  var m = ui.calMonth;
+  var y = ui.calYear;
+  var earliest = getEarliestYearMonth();
+
+  var canGoBack = (y > earliest.y) || (y === earliest.y && m > earliest.m);
+  var canGoFwd = (y < now.getFullYear()) || (y === now.getFullYear() && m < now.getMonth());
+
+  var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+  var html = '<div class="cal-header">';
+  html += '<div class="cal-title">' + monthNames[m] + ' ' + y + '</div>';
+  html += '<div class="cal-nav">';
+  html += '<button data-action="calprev" ' + (!canGoBack ? 'disabled' : '') + '>&lsaquo;</button>';
+  html += '<button data-action="caltoday" class="cal-today">TODAY</button>';
+  html += '<button data-action="calnext" ' + (!canGoFwd ? 'disabled' : '') + '>&rsaquo;</button>';
+  html += '</div></div>';
+
+  html += '<div class="streak-wrapper" id="cal-swipe-area"><div class="streak-grid">';
+
+  var firstDay = new Date(y, m, 1);
+  var lastDay = new Date(y, m + 1, 0);
+  var startDayOfWeek = (firstDay.getDay() + 6) % 7; // Aligning Monday as start of week
+  var daysInMonth = lastDay.getDate();
+
+  var shortDays = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
+  for(var i=0; i<7; i++) {
+     html += '<div style="text-align:center; font-size:9.5px; color:var(--muted); font-weight:700; margin-bottom:4px;">'+shortDays[i]+'</div>';
+  }
+
+  for (var i = 0; i < startDayOfWeek; i++) {
+    html += '<div class="s-day empty"></div>';
+  }
+
+  var todayIsoStr = todayISO();
+  for (var d = 1; d <= daysInMonth; d++) {
+    var currDate = new Date(y, m, d);
+    var iso = currDate.getFullYear() + "-" + String(currDate.getMonth()+1).padStart(2,'0') + "-" + String(currDate.getDate()).padStart(2,'0');
+
     var isHit = state.streakDates.indexOf(iso) !== -1;
     var isToday = iso === todayIsoStr;
     var isPast = iso < todayIsoStr;
-    var dayOfWeek = d.getDay();
+    var dayOfWeek = currDate.getDay();
     var isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
-    
+
     var c = "s-day" + (isHit?" hit":"") + (isToday?" today":"") + (isPast?" past":"") + (isWeekend?" weekend":"");
-    var dayName = shortDays[i % 7];
-    var dateNum = d.getDate();
-    html += '<div class="'+c+'"><div class="s-date">'+dateNum+'</div><div class="s-wkd">'+dayName+'</div></div>';
+    html += '<div class="'+c+'"><div class="s-date">'+d+'</div></div>';
   }
-  return html + '</div>';
+
+  html += '</div></div>';
+  return html;
 }
+
+function changeCalMonth(dir) {
+  ui.calMonth += dir;
+  if (ui.calMonth > 11) { ui.calMonth = 0; ui.calYear++; }
+  else if (ui.calMonth < 0) { ui.calMonth = 11; ui.calYear--; }
+  render();
+}
+
 
 /* ---------- views ---------- */
 function renderHome(){
@@ -1418,7 +1473,39 @@ function render(){
   }
 }
 
+
+document.addEventListener("touchstart", function(e) {
+  var t = e.target.closest("#cal-swipe-area");
+  if(t) {
+    ui.calTouchStartX = e.changedTouches[0].screenX;
+    ui.calTouchStartY = e.changedTouches[0].screenY;
+  }
+}, {passive: true});
+
+document.addEventListener("touchend", function(e) {
+  var t = e.target.closest("#cal-swipe-area");
+  if(t && ui.calTouchStartX !== undefined) {
+    var endX = e.changedTouches[0].screenX;
+    var endY = e.changedTouches[0].screenY;
+    var dx = endX - ui.calTouchStartX;
+    var dy = endY - (ui.calTouchStartY || endY);
+
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
+      var now = new Date();
+      var earliest = getEarliestYearMonth();
+      if (dx < 0) {
+        var canGoFwd = (ui.calYear < now.getFullYear()) || (ui.calYear === now.getFullYear() && ui.calMonth < now.getMonth());
+        if(canGoFwd) changeCalMonth(1);
+      } else {
+        var canGoBack = (ui.calYear > earliest.y) || (ui.calYear === earliest.y && ui.calMonth > earliest.m);
+        if(canGoBack) changeCalMonth(-1);
+      }
+    }
+  }
+}, {passive: true});
+
 document.addEventListener("click",function(e){
+
   if(e.target.closest("a")) return;
   var t=e.target.closest("[data-action],[data-toggle],#authBtn");
   if(!t) return;
@@ -1485,7 +1572,12 @@ document.addEventListener("click",function(e){
   else if(a==="cancelreset"){ cancelReset(); }
   else if(a==="confirmreset"){ confirmReset(); }
   else if(a==="canceljump"){ cancelPhaseJumpBack(); }
+  
   else if(a==="confirmjump"){ confirmPhaseJumpBack(); }
+  else if(a==="calprev"){ changeCalMonth(-1); }
+  else if(a==="calnext"){ changeCalMonth(1); }
+  else if(a==="caltoday"){ ui.calMonth = new Date().getMonth(); ui.calYear = new Date().getFullYear(); render(); }
+
 });
 
 document.addEventListener("change",function(e){
