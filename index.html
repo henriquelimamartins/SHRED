@@ -1260,30 +1260,30 @@ function renderLibrary(){
   if(ui.lib.shredroadmap){
     html+='<div class="accbody">';
     // Essential Skills sub-acc
-    html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="essentials"><b style="color:var(--text);">Essential Skills</b><span class="chev'+(ui.lib.essentials?" open":"")+'">&#8250;</span></div>';
+    html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="essentials"><b>Essential Skills</b><span class="chev'+(ui.lib.essentials?" open":"")+'">&#8250;</span></div>';
     if(ui.lib.essentials){ 
-      html+='<div class="accbody"><ul class="check">'+Object.keys(ESSENTIAL).map(function(d){
+      html+='<div class="accbody"><div class="card"><ul class="check">'+Object.keys(ESSENTIAL).map(function(d){
         var label=ESSENTIAL[d], url=ESSENTIAL_URL[label];
         return '<li style="display:flex;align-items:flex-start;gap:9px;padding:7px 0;border-bottom:1px solid #23262f;"><div class="itxt">'+linked(label,url)+' <span class="tag">('+DAY_FULL[d]+')</span></div></li>';
-      }).join("")+'</ul></div>'; 
+      }).join("")+'</ul></div></div>'; 
     }
     html+='</div>';
 
     // 5 Phases
     PHASES.forEach(function(p,i){
       var open=!!ui.lib["p"+i],pct=phasePercent(i);
-      html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="p'+i+'"><b style="color:var(--text);">'+p.label.toUpperCase()+' <span class="tag">Phase '+i+' &middot; '+p.short+'</span></b><span style="display:flex;align-items:center;gap:8px;"><span class="tag">'+pct+'%</span><span class="chev'+(open?" open":"")+'">&#8250;</span></span></div>';
+      html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="p'+i+'"><b>'+p.label.toUpperCase()+' <span class="tag">Phase '+i+' &middot; '+p.short+'</span></b><span style="display:flex;align-items:center;gap:8px;"><span class="tag">'+pct+'%</span><span class="chev'+(open?" open":"")+'">&#8250;</span></span></div>';
       if(open){
         html+='<div class="accbody">';
         if(p.kind==="setup"){
-          html+='<div style="margin-bottom:10px;"><b style="font-size:13px; color:var(--text); display:block; margin-bottom:6px;">Prerequisites</b><ul class="check">'+PREREQ.map(function(pr,j){return prereqItem(pr.t,k("p0","pre",j),pr.url);}).join("")+'</ul></div>';
-          html+='<div style="margin-bottom:10px;"><b style="font-size:13px; color:var(--text); display:block; margin-bottom:6px;">Warm-Up</b><p>'+linked("Ultimate 5-Minute Warm-Up",WARMUP_URL)+'</p></div>';
+          html+='<div class="card"><h3>Prerequisites</h3><ul class="check">'+PREREQ.map(function(pr,j){return prereqItem(pr.t,k("p0","pre",j),pr.url);}).join("")+'</ul></div>';
+          html+='<div class="card"><h3>Warm-Up</h3><p>'+linked("Ultimate 5-Minute Warm-Up",WARMUP_URL)+'</p></div>';
         } else {
-          if(p.concept&&p.concept.length) html+='<div style="margin-bottom:12px; border-bottom:1px solid #23262f; padding-bottom:10px;"><b style="font-size:13px; color:var(--text); display:block; margin-bottom:6px;">Concept Videos</b><ul class="check">'+p.concept.map(function(t,j){return watchItem(t.t,k(p.id,"c",j),t.url);}).join("")+'</ul></div>';
-          html+='<div style="margin-bottom:12px; border-bottom:1px solid #23262f; padding-bottom:10px;"><b style="font-size:13px; color:var(--text); display:block; margin-bottom:6px;">Exercises</b><ul class="check">'+p.exercises.map(function(t,j){return checkItem(t.t,k(p.id,"e",j),t.url);}).join("")+'</ul></div>';
-          html+='<div style="margin-bottom:12px; border-bottom:1px solid #23262f; padding-bottom:10px;"><b style="font-size:13px; color:var(--text); display:block; margin-bottom:6px;">Chop-Builders <span class="tag">target: Level '+p.target+'</span></b>'+chopRow(p.target)+'</div>';
-          html+='<div style="margin-bottom:12px; border-bottom:1px solid #23262f; padding-bottom:10px;"><b style="font-size:13px; color:var(--text); display:block; margin-bottom:6px;">Solos</b><ul class="check">'+p.songs.map(function(t,j){return checkItem(t.t,k(p.id,"s",j),t.url);}).join("")+'</ul></div>';
-          html+='<div style="margin-bottom:6px;"><b style="font-size:13px; color:var(--text); display:block; margin-bottom:6px;">Phase Transition Test <span class="tag">target: Level '+p.testReq+'</span></b>'+testRow(p.testReq)+'</div>';
+          if(p.concept&&p.concept.length) html+='<div class="card"><h3>Concept Videos</h3><ul class="check">'+p.concept.map(function(t,j){return watchItem(t.t,k(p.id,"c",j),t.url);}).join("")+'</ul></div>';
+          html+='<div class="card"><h3>Exercises</h3><ul class="check">'+p.exercises.map(function(t,j){return checkItem(t.t,k(p.id,"e",j),t.url);}).join("")+'</ul></div>';
+          html+='<div class="card"><h3>Chop-Builders <span class="tag">target: Level '+p.target+'</span></h3>'+chopRow(p.target)+'</div>';
+          html+='<div class="card"><h3>Solos</h3><ul class="check">'+p.songs.map(function(t,j){return checkItem(t.t,k(p.id,"s",j),t.url);}).join("")+'</ul></div>';
+          html+='<div class="card"><h3>Phase Transition Test <span class="tag">target: Level '+p.testReq+'</span></h3>'+testRow(p.testReq)+'</div>';
         }
         html+='</div>';
       }
@@ -1297,14 +1297,13 @@ function renderLibrary(){
   html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="theory"><b>Theory Track</b><span class="chev'+(ui.lib.theory?" open":"")+'">&#8250;</span></div>';
   if(ui.lib.theory) {
     html+='<div class="accbody">';
-    html+='<ul class="check" style="margin-bottom:12px; border-bottom:1px solid #23262f; padding-bottom:10px;">';
+    html+='<div class="card"><ul class="check">';
     THEORY_DOCS.forEach(function(docItemObj){ html += docItem(docItemObj.t, docItemObj.url); });
     THEORY_ROOT_ITEMS.forEach(function(t){ html += watchItem(t.t, t.key, t.url); });
-    html+='</ul>';
+    html+='</ul></div>';
 
-    THEORY_GROUPS.forEach(function(g, gi){
-      html+='<div style="margin-bottom:12px;'+(gi < THEORY_GROUPS.length - 1 ? ' border-bottom:1px solid #23262f; padding-bottom:12px;' : '')+'">';
-      html+='<b style="font-size:13px; color:var(--purple); display:block; margin-bottom:6px;">'+g.title+'</b><ul class="check">';
+    THEORY_GROUPS.forEach(function(g){
+      html+='<div class="card"><h3>'+g.title+'</h3><ul class="check">';
       if(g.docs) g.docs.forEach(function(d){ html+=docItem(d.t, d.url); });
       g.items.forEach(function(t){ html += watchItem(t.t, t.key, t.url); });
       html+='</ul></div>';
@@ -1351,13 +1350,13 @@ function renderLibrary(){
   html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="listening"><b>Listening Vault <span class="tag">Inspiration &amp; Refs</span></b><span class="chev'+(ui.lib.listening?" open":"")+'">&#8250;</span></div>';
   if(ui.lib.listening){
     html+='<div class="accbody">';
-    LISTENING_VAULT.forEach(function(g, gi){
-      html+='<div style="margin-bottom:14px;'+(gi < LISTENING_VAULT.length - 1 ? ' border-bottom:1px solid #23262f; padding-bottom:14px;' : '')+'">'+
-            '<b style="color:var(--purple); font-size:13px; display:block; margin-bottom:6px;">'+g.category+'</b>'+
+    LISTENING_VAULT.forEach(function(g){
+      html+='<div class="card" style="border-color:var(--purple); box-shadow: 0 0 10px rgba(176,82,255,0.05);">'+
+            '<h3 style="color:var(--purple);">'+g.category+'</h3>'+
             '<ul style="padding:0; margin:0; list-style:none;">';
       g.items.forEach(function(item){
-        html+='<li style="font-size:12px; color:var(--text); padding:8px 0; border-bottom:1px solid #23262f;">'+
-              '<b style="color:#eef0f4; font-size:12.5px; margin-bottom:3px; display:block;">🎸 '+item.t+'</b>'+
+        html+='<li style="font-size:12px; color:var(--text); padding:10px 0; border-bottom:1px solid #23262f;">'+
+              '<b style="color:#eef0f4; font-size:13px; margin-bottom:4px; display:block;">🎸 '+item.t+'</b>'+
               '<span style="color:var(--muted); line-height:1.45; display:block; text-align:justify;">'+item.desc+'</span></li>';
       });
       html+='</ul></div>';
@@ -1369,17 +1368,19 @@ function renderLibrary(){
   // 5. CREATIVE
   html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="creative"><b>Creative <span class="tag">Songwriting &amp; Production</span></b><span class="chev'+(ui.lib.creative?" open":"")+'">&#8250;</span></div>';
   if(ui.lib.creative){
-    html+='<div class="accbody"><div style="margin-bottom:12px; border-bottom:1px solid #23262f; padding-bottom:10px;"><b style="font-size:13px; color:var(--text); display:block; margin-bottom:6px;">Songwriting</b><ul class="check">'+CREATIVE.songwriting.map(function(t,j){return watchItem(t.t,"creative.sw."+j,t.url);}).join("")+'</ul></div>'+
-      '<div><b style="font-size:13px; color:var(--text); display:block; margin-bottom:6px;">Production</b><ul class="check">'+CREATIVE.production.map(function(t,j){return watchItem(t.t,"creative.pr."+j,t.url);}).join("")+'</ul></div></div>';
+    html+='<div class="accbody"><div class="card"><h3>Songwriting</h3><ul class="check">'+CREATIVE.songwriting.map(function(t,j){return watchItem(t.t,"creative.sw."+j,t.url);}).join("")+'</ul></div>'+
+      '<div class="card"><h3>Production</h3><ul class="check">'+CREATIVE.production.map(function(t,j){return watchItem(t.t,"creative.pr."+j,t.url);}).join("")+'</ul></div></div>';
   }
   html+='</div>';
 
   // 6. BONUS CONTENT
   html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="bonuslib"><b>Bonus Content</b><span class="chev'+(ui.lib.bonuslib?" open":"")+'">&#8250;</span></div>';
-  if(ui.lib.bonuslib) html+='<div class="accbody">'+renderBonusList()+'</div>';
+  if(ui.lib.bonuslib) html+='<div class="accbody"><div class="card">'+renderBonusList()+'</div></div>';
   html+='</div>';
+  
+  // Embedded Info Guide
 
-  // Guide & Info embedded
+
   html+='<hr style="border:0; border-top:1px solid #23262f; margin:20px 0;">';
   html+='<div class="h2" style="font-size:20px;margin-bottom:10px;">Guide &amp; Info</div>';
   html+='<div class="card"><h3>How This Plan Works</h3><p style="margin-bottom:6px;text-align:justify;">Technique is sequential and full-coverage: start at Beginner regardless of ability, and work every exercise, chop-builder and solo in every tier before advancing.</p>'+
@@ -1390,7 +1391,6 @@ function renderLibrary(){
   html+='<div class="note" style="margin-top:4px;">This guide and app are based on <b>Bradley Hall\'s Guitar School</b> (BHGS) Official Roadmap. Improv module custom tailored for expression.</div>';
   return html;
 }
-
 
 function renderSetup(){
   var isPrs = state.setupGuitar === "prs";
