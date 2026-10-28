@@ -22,13 +22,9 @@
 }
 *{box-sizing:border-box}
 
-/* Hide scrollbars globally */
 ::-webkit-scrollbar { display: none; }
 * { -ms-overflow-style: none; scrollbar-width: none; }
 
-/* iOS standalone fix: do NOT make html/body position:fixed with height:100%.
-   That sizes them to the "safe" viewport and leaves a black strip under the nav.
-   Let html/body fill the real screen; #root is the only fixed layer. */
 html{
   margin:0;
   padding:0;
@@ -73,7 +69,6 @@ a{color:inherit;}
 .splashtitle{font-family:'Oswald';font-weight:700;font-size:26px;letter-spacing:2px;text-align:center;line-height:1.15;color:#fff;margin-top:16px;}
 .splashtitle span{color:var(--accent);}
 
-/* --- TOP BAR --- */
 .topbar{position:fixed;top:0;left:0;right:0;z-index:50;background:#101217;padding:calc(12px + env(safe-area-inset-top,0px)) 16px 10px;border-bottom:1px solid var(--border);}
 .topbar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 10px; max-width: 520px; margin-left: auto; margin-right: auto;}
 .brand { font-family: 'Oswald'; font-weight: 700; font-size: 15px; letter-spacing: 1px; flex: 1; margin-bottom: 0; }
@@ -81,7 +76,6 @@ a{color:inherit;}
 .auth-container { display: flex; align-items: center; gap: 8px; }
 .user-email { font-size: 9.5px; color: var(--muted); font-family: 'Inter', system-ui, sans-serif; }
 
-/* --- CAROUSEL ARCHITECTURE --- */
 .carousel {
   display: flex;
   width: 100%;
@@ -108,7 +102,6 @@ a{color:inherit;}
 .card h3 .tag{text-align:right;}
 .tag{color:var(--muted);font-size:10.5px;text-transform:none;letter-spacing:0;font-weight:500;}
 
-/* progress bar */
 .phasebar-wrapper { max-width: 520px; margin: 0 auto; }
 .phasebar{display:flex;gap:4px;margin-bottom:3px;}
 .pseg{flex:1;height:8px;border-radius:5px;background:var(--card2);border:1px solid var(--border);overflow:hidden;}
@@ -121,41 +114,41 @@ a{color:inherit;}
 .stat{flex:1;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center;}
 .stat .lbl{font-size:9.5px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:2px;}
 
-/* nav buttons */
 .navbtn{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:10px;width:100%;text-align:left;color:var(--text);}
 .navbtn .ic{font-size:22px;}
 .navbtn b{display:block;font-family:'Oswald';font-size:15px;text-transform:uppercase;letter-spacing:.5px;}
 .navbtn span{font-size:11.5px;color:var(--muted);}
 .navbtn.accent{border-color:#4a2226;background:#211316;}
 .navbtn.blue{border-color:#263049;background:#161b26;}
+.navbtn.purple{border-color:#361d4a;background:#1a1025;}
 .navbtn.info{border-color:#264034;background:#12211c;}
 .navbtn.setupbtn{border-color:#3a301e;background:#1a150e;}
 
-/* checklist */
 ul.check{list-style:none;padding:0;margin:0;}
 ul.check li{display:flex;align-items:flex-start;gap:9px;padding:7px 0;border-bottom:1px solid #23262f;}
 ul.check li:last-child{border-bottom:none;}
 .box{flex:0 0 20px;height:20px;border-radius:5px;border:1.5px solid #565a66;margin-top:1px;display:flex;align-items:center;justify-content:center;background:transparent;}
 .box.on{background:var(--accent);border-color:var(--accent);}
 .box.on:after{content:'\2713';color:#fff;font-size:12px;font-weight:700;}
+.box.purple.on{background:var(--purple);border-color:var(--purple);}
+
 .itxt{flex:1;font-size:13px;color:var(--text);line-height:1.3;}
 .itxt a{text-decoration:underline;text-decoration-color:var(--border);text-underline-offset:2px;}
 .itxt.done, .itxt.done a{color:var(--muted); text-decoration:line-through;}
 .itxt.done .tag{text-decoration:none; display:inline-block;}
-
-/* Fix the vertical alignment by targeting the specific li.mrow inside ul.check */
 ul.check li.mrow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid #23262f;}
 ul.check li.mrow:last-child{border-bottom:none;}
 
 .mbtn{flex:0 0 auto;border-radius:8px;border:1.3px solid var(--border);background:var(--card2);color:var(--muted);font-size:11px;font-weight:700;padding:7px 12px;letter-spacing:.3px;white-space:nowrap;}
 .mbtn.on{background:#123324;border-color:var(--green);color:var(--green);}
 .mbtn.blue.on{background:#16233a;border-color:var(--blue);color:var(--blue);}
+.mbtn.purple.on{background:#231535;border-color:var(--purple);color:var(--purple);}
 .mbtn.ro{opacity:.4;pointer-events:none;}
+
 .docli{display:flex;align-items:flex-start;gap:9px;padding:7px 0;border-bottom:1px solid #23262f;}
 .docli:last-child{border-bottom:none;}
 .docic{font-size:14px;flex:0 0 20px;text-align:center;}
 
-/* chop / test stepper */
 .chop{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #23262f;gap:8px;}
 .chop:last-child{border-bottom:none;}
 .chop .nm{font-size:12px;line-height:1.3;}
@@ -165,7 +158,6 @@ ul.check li.mrow:last-child{border-bottom:none;}
 .stepper .lvl{font-family:'Oswald';font-size:14px;min-width:34px;text-align:center;}
 .lvl.hit{color:var(--green);}
 
-/* daily blocks */
 .blk{border-left:3px solid var(--accent);background:var(--card);border-radius:0 12px 12px 0;padding:12px 14px;margin-bottom:10px;transition:opacity .2s;}
 .blk.improv{border-left-color:var(--purple);}
 .blk.done-today{border-left-color:var(--green);opacity:.62;}
@@ -179,44 +171,42 @@ ul.check li.mrow:last-child{border-bottom:none;}
 .blkcheck .box.on:after{font-size:10px;}
 .blkcheck.ro{opacity:.4;cursor:default;}
 
-/* day picker */
 .daypick{display:flex;gap:4px;margin-bottom:10px;}
 .dchip2{flex:1;padding:7px 3px;border-radius:9px;background:var(--card2);border:1px solid var(--border);color:var(--muted);font-size:10.5px;font-weight:700;text-align:center;}
 .dchip2.on{background:var(--accent);border-color:var(--accent);color:#fff;}
 .dchip2.istoday:after{content:'\2022';margin-left:2px;}
 .dchip2.isactive{border-color:var(--accent);}
 
-/* streak calendar */
 .streak-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-top: 2px; }
 .s-day { background: #23262f; border-radius: 6px; padding: 5px 2px; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 1px solid transparent; }
 .s-day .s-date { font-family: 'Oswald', sans-serif; font-size: 13px; font-weight: 700; color: var(--muted); line-height: 1; transition: color 0.2s;}
 .s-day .s-wkd { font-size: 8px; text-transform: uppercase; color: var(--muted); margin-top: 2px; font-weight: 600; letter-spacing: .3px; transition: color 0.2s;}
-/* shades */
 .s-day.past { background: #16181e; }
 .s-day.past .s-date, .s-day.past .s-wkd { opacity: 0.4; }
 .s-day.weekend { background: #2d1e21; } 
 .s-day.weekend .s-date, .s-day.weekend .s-wkd { color: #e57368; opacity: 0.75; }
 .s-day.past.weekend { background: #1f1618; }
-/* hit overrides */
 .s-day.hit { background: #123324 !important; border-color: var(--green); }
 .s-day.hit .s-date, .s-day.hit .s-wkd { color: var(--green) !important; opacity: 1; }
 .s-day.today { border-color: var(--accent); }
 .s-day.today .s-date { color: #fff !important; opacity: 1; }
 
-/* bottom nav */
-.botnav{position:fixed;bottom:0;left:0;right:0;background:#15171e;border-top:1px solid var(--border);display:flex;padding:6px 4px calc(6px + env(safe-area-inset-bottom,0px));z-index:10;}
+.botnav{position:fixed;bottom:0;left:0;right:0;background:#15171e;border-top:1px solid var(--border);display:flex;padding:6px 2px calc(6px + env(safe-area-inset-bottom,0px));z-index:10;}
 .botnav-inner{display:flex; width:100%; max-width:520px; margin:0 auto;}
-.botnav button{flex:1;background:none;border:none;color:var(--muted);font-size:9px;text-transform:uppercase;letter-spacing:.3px;padding:6px 1px;display:flex;flex-direction:column;align-items:center;gap:3px;font-weight:600;border-radius:8px;}
+.botnav button{flex:1;background:none;border:none;color:var(--muted);font-size:8.5px;text-transform:uppercase;letter-spacing:.2px;padding:6px 1px;display:flex;flex-direction:column;align-items:center;gap:3px;font-weight:600;border-radius:8px;}
 .botnav button .ic{font-size:16px;}
 .botnav button.active{color:var(--accent2);}
+.botnav button.active.improv-nav{color:var(--purple);}
 
-/* misc */
 .note{border-left:3px solid var(--amber);background:#241f14;padding:10px 12px;border-radius:0 10px 10px 0;font-size:12px;color:#e6d9b8;margin-bottom:12px;}
+.note.purple{border-left-color:var(--purple); background:#1e1428; color:#d8b8ff;}
 .tbtn{background:var(--card2);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:10px 16px;font-size:13.5px;font-weight:600;}
 .tbtn.primary{background:var(--accent);border-color:var(--accent);color:#fff;}
 .tbtn.danger{background:#2a1214;border-color:#5c1f22;color:#ff8a80;}
+.tbtn.purple{background:var(--purple);border-color:var(--purple);color:#fff;}
 .toast{position:fixed;left:50%;bottom:80px;transform:translateX(-50%);background:var(--accent);color:#fff;padding:10px 18px;border-radius:30px;font-size:12.5px;font-weight:600;z-index:20;box-shadow:0 6px 20px rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .25s, transform .25s;max-width:88%;text-align:center;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(-6px);}
+
 .acc{margin-bottom:10px;}
 .acchead{display:flex;justify-content:space-between;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;}
 .acchead b{font-family:'Oswald';font-size:13px;text-transform:uppercase;}
@@ -224,7 +214,6 @@ ul.check li.mrow:last-child{border-bottom:none;}
 .chev{color:var(--muted);font-size:11px;transition:transform .2s;}
 .chev.open{transform:rotate(90deg);}
 
-/* customized dropdown selector with built-in arrow */
 .select{
   background:var(--card2);
   border:1px solid var(--border);
@@ -311,24 +300,83 @@ if(hasFirebase) {
             state = Object.assign(defaultState(), docSnap.data());
             state.setupGuitar = state.setupGuitar || "prs";
             state.setupTuning = state.setupTuning || "e_std";
+            state.improvIndex = state.improvIndex || 0;
+            state.improvChecks = state.improvChecks || {};
             localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
             showToast("Progress synced from cloud!");
           } else {
             await setDoc(doc(db, "users", user.uid), state);
             showToast("Local progress saved to cloud!");
           }
-        } catch(e) {
-          console.error("Sync error:", e);
-        }
+        } catch(e) { console.error("Sync error:", e); }
       }
       render();
     });
-  } catch(e) {
-    console.error("Firebase init error:", e);
-  }
+  } catch(e) { console.error("Firebase init error:", e); }
 }
 
 function I(t,url){return {t:t,url:url};}
+
+const IMPROV_GATES = [
+  {
+    title: "The Horizontal Prison",
+    desc: "Destroy the vertical pentatonic boxes and force expressiveness. Stop 'going up and down' and start playing melodies.",
+    listening: "<b>Tony Iommi (Black Sabbath)</b> - Pay attention to his wide, slow vibrato and how he squeezes melody out of 3 or 4 notes using trills.",
+    exercises: [
+      { t: "One-String Solos",
+        desc: "<b>Track:</b> Mid-tempo Stoner/Doom in D minor.<br><b>Rule:</b> You can ONLY use the G string for 3 full minutes. Focus on finding D, F, A, C horizontally. Force yourself to use slides to connect notes instead of crossing strings." },
+      { t: "The 4-Fret Box",
+        desc: "<b>Track:</b> Heavy Blues vamp in E.<br><b>Rule:</b> Stay strictly between frets 5 and 8. Use all 6 strings, but your hand cannot shift up or down the neck. Use bends to reach pitches that aren't physically under your fingers." }
+    ]
+  },
+  {
+    title: "The Chord Tone Architect",
+    desc: "Eliminate the 4-second mental lag. Train your ear and fingers to land on the changes exactly as they happen.",
+    listening: "<b>John Petrucci / Slash</b> - Notice how their fastest, most chaotic runs always resolve perfectly on the 3rd or the root of the backing chord exactly on Beat 1.",
+    exercises: [
+      { t: "The Target 3rd",
+        desc: "<b>Track:</b> Thrash/Traditional Metal loop (Am - F - C - E7).<br><b>Rule:</b> You must land on the 3rd of the chord EXACTLY on Beat 1. (Am -> C, F -> A, C -> E). When the E7 hits, you MUST land on G#." },
+      { t: "Chromatic Approach",
+        desc: "<b>Track:</b> Same loop.<br><b>Rule:</b> Play the note exactly one fret below your target 3rd on the 'and' of Beat 4, and slide into the target 3rd on Beat 1. This builds the tension-release mechanism." }
+    ]
+  },
+  {
+    title: "The Rhythmic Displacer",
+    desc: "Break the 'square' playing. Stop ending phrases where the ear expects them to end.",
+    listening: "<b>Dimebag Darrell / Mikael Åkerfeldt (Opeth)</b> - Listen to how they start aggressive licks on off-beats, creating a massive, unpredictable groove.",
+    exercises: [
+      { t: "The Pantera Shift",
+        desc: "<b>Track:</b> 90bpm Groove Metal.<br><b>Rule:</b> Write a heavy 4-note lick. In Bar 1, start it on Beat 1. In Bar 2, force yourself to start the exact same lick on the 'and' of Beat 2. In Bar 3, start it on Beat 4." },
+      { t: "Sustain Beyond Death",
+        desc: "<b>Track:</b> Slow Doom/Sludge.<br><b>Rule:</b> Play a phrase but NEVER end it on Beat 4 or Beat 1. Hold your final bent note (or let it feedback) across the bar line into Beat 2 or 3 of the next bar." }
+    ]
+  },
+  {
+    title: "The Modal Alchemist",
+    desc: "Translate theory directly into emotion. Command specific colors (Thrash, Stoner, Death) without leaving the key.",
+    listening: "<b>Chuck Schuldiner (Death)</b> for Harmonic Minor. <b>Elder/Kyuss</b> for Dorian. <b>Nile/Gojira</b> for Phrygian Dominant.",
+    exercises: [
+      { t: "Stoner Flotation (Dorian vs Blues)",
+        desc: "<b>Track:</b> Dm groove vamp.<br><b>Rule:</b> Alternate between extreme sludge (using the b5 Blue note / Ab) and spacey flotation (targeting the Dorian Major 6th / B natural). Don't mix them randomly; make distinct phrases." },
+      { t: "Death Metal Dominant (Harmonic Minor)",
+        desc: "<b>Track:</b> Am - E loop.<br><b>Rule:</b> Over the Am, play normal minor. The millisecond the E hits, play an E dominant or G# diminished arpeggio. Focus on the sinister drop from A to G#." },
+      { t: "Egyptian Doom (Phrygian Dominant)",
+        desc: "<b>Track:</b> Heavy E pedal chug.<br><b>Rule:</b> Focus purely on the exotic, massive jump between the b2 (F natural) and the Major 3rd (G#). Play trills between them." }
+    ]
+  },
+  {
+    title: "Total Audiation",
+    desc: "The Master Level. The brain commands, the fingers obey. No more muscle memory dictating your solos.",
+    listening: "<b>David Gilmour / Guthrie Govan</b> - The ultimate masters of singing through the instrument. Every note has intent.",
+    exercises: [
+      { t: "Sing and Play (The Slash Game)",
+        desc: "<b>Track:</b> Any melodic backing track.<br><b>Rule:</b> Put the pick down. Sing/hum a 2-bar melody. Pick up the guitar and find those exact notes on the very first try. Repeat for 10 minutes." },
+      { t: "The Free Expression Flow",
+        desc: "<b>Track:</b> Long, dynamic Prog Metal track.<br><b>Rule:</b> Improvise freely. Incorporate Dorian 6ths, Harmonic Minor 7ths, chromatic approaches, and rhythmic displacement seamlessly without stopping to think." }
+    ]
+  }
+];
+
 const PHASES=[
  {id:"p0",label:"Setup",short:"Setup & Baseline",kind:"setup"},
  {id:"p1",label:"Beginner",short:"Levels 1 - 2",target:3,testReq:2,
@@ -410,13 +458,6 @@ const THEORY_GROUPS = [
 let THEORY_ITEMS = [].concat(THEORY_ROOT_ITEMS);
 THEORY_GROUPS.forEach(function(g){ THEORY_ITEMS = THEORY_ITEMS.concat(g.items); });
 
-const IMPROV_TRACK = [
-  { t: "Voice Leading Loop (Tuesday)", desc: "Pick 2 chords (e.g., Am - E7). Play 1 note per bar, landing strictly on the 3rd of each chord exactly on beat 1. Forces you to hear chord changes before they happen." },
-  { t: "One-String Prison (Wednesday)", desc: "Jam over a Stoner/Doom backing track using ONLY 1 string. Destroys the habit of playing vertical boxes and forces horizontal vision, slides, and micro-bends." },
-  { t: "Rhythmic Displacement (Friday)", desc: "Create a 3-note lick. Play it starting on beat 1. Then force yourself to start the exact same lick on the off-beat of 2, then on beat 4. Builds massive groove and breaks the 'square' playing." },
-  { t: "Audiation Translation & Free Expression (Sunday)", desc: "Put the pick down. Sing or hum a short melody over a backing track. Find the exact notes on the guitar on the first try. Finish with a free jam applying specific theoretical intervals (e.g., Dorian major 6th, Death Metal major 7th, Blue note)." }
-];
-
 const ESSENTIAL={Mon:"Ear Training",Tue:"Rhythm",Wed:"Time Signatures",Thu:"Sight-Reading",Fri:"Reinforce Weakest"};
 const DAY_FULL={Mon:"Monday",Tue:"Tuesday",Wed:"Wednesday",Thu:"Thursday",Fri:"Friday",Sat:"Saturday",Sun:"Sunday"};
 const ESSENTIAL_URL={"Ear Training":"https://tinyurl.com/mu6ka36m","Rhythm":"https://tinyurl.com/2mt96kef","Time Signatures":"https://tinyurl.com/76hdskpt","Sight-Reading":"https://tinyurl.com/2xdf6ky2"};
@@ -446,12 +487,9 @@ const WEEKLY_RHYTHM=[
 const DAYS=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 const DAY_ORDER=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
 
-/* SETUP CALCULATOR DATA */
 const setupData = {
   prs: {
-    scale: "25\"",
-    name: "PRS SE CE 24",
-    radius: "10-inch (254 mm)",
+    scale: "25\"", name: "PRS SE CE 24", radius: "10-inch (254 mm)",
     e_std:  { gauge: "10-46", actBass: 1.5, actTreb: 1.1, relief: 0.15 },
     drop_d: { gauge: "10-52", actBass: 1.5, actTreb: 1.1, relief: 0.15 },
     d_std:  { gauge: "11-48", actBass: 1.6, actTreb: 1.2, relief: 0.18 },
@@ -460,9 +498,7 @@ const setupData = {
     dadfae: { gauge: "10-52", actBass: 1.5, actTreb: 1.1, relief: 0.15 } 
   },
   epi: {
-    scale: "24.75\"",
-    name: "Epiphone Les Paul Standard",
-    radius: "12-inch (305 mm)",
+    scale: "24.75\"", name: "Epiphone Les Paul Standard", radius: "12-inch (305 mm)",
     e_std:  { gauge: "10-48", actBass: 1.6, actTreb: 1.2, relief: 0.18 }, 
     drop_d: { gauge: "10-54", actBass: 1.6, actTreb: 1.2, relief: 0.18 },
     d_std:  { gauge: "11-52", actBass: 1.7, actTreb: 1.3, relief: 0.20 },
@@ -472,10 +508,10 @@ const setupData = {
   }
 };
 
-const STORAGE_KEY="shredRoadmapState_v8";
+const STORAGE_KEY="shredRoadmapState_v9";
 
-function defaultState(){return {phaseIndex:0,chop:{alt:0,sweep:0,legato:0,econ:0,tap:0},testLevel:{alt:0,sweep:0,legato:0,econ:0,tap:0,ult:0},bonusLevel:{},checks:{},practiced:{},practicedDate:null,congratsDate:null,activeDayOverride:null,activeDayDate:null,streakDates:[],setupGuitar:"prs",setupTuning:"e_std"};}
-function loadState(){try{var raw=localStorage.getItem(STORAGE_KEY);if(raw){var d=JSON.parse(raw);return Object.assign(defaultState(),d,{chop:Object.assign(defaultState().chop,d.chop||{}),testLevel:Object.assign(defaultState().testLevel,d.testLevel||{}),bonusLevel:d.bonusLevel||{},checks:d.checks||{},practiced:d.practiced||{},streakDates:d.streakDates||[],setupGuitar:d.setupGuitar||"prs",setupTuning:d.setupTuning||"e_std"});}}catch(e){}return defaultState();}
+function defaultState(){return {phaseIndex:0,chop:{alt:0,sweep:0,legato:0,econ:0,tap:0},testLevel:{alt:0,sweep:0,legato:0,econ:0,tap:0,ult:0},bonusLevel:{},checks:{},practiced:{},practicedDate:null,congratsDate:null,activeDayOverride:null,activeDayDate:null,streakDates:[],setupGuitar:"prs",setupTuning:"e_std",improvIndex:0,improvChecks:{}};}
+function loadState(){try{var raw=localStorage.getItem(STORAGE_KEY);if(raw){var d=JSON.parse(raw);return Object.assign(defaultState(),d,{chop:Object.assign(defaultState().chop,d.chop||{}),testLevel:Object.assign(defaultState().testLevel,d.testLevel||{}),bonusLevel:d.bonusLevel||{},checks:d.checks||{},practiced:d.practiced||{},streakDates:d.streakDates||[],setupGuitar:d.setupGuitar||"prs",setupTuning:d.setupTuning||"e_std",improvIndex:d.improvIndex||0,improvChecks:d.improvChecks||{}});}}catch(e){}return defaultState();}
 
 function saveState(){
   try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}catch(e){}
@@ -486,7 +522,7 @@ function saveState(){
 
 let state=loadState();
 let ui={view:"home",lib:{},dayOverride:null,resetConfirm:false,phaseJumpPending:null};
-const APP_VIEWS = ["home", "daily", "library", "info", "setup"];
+const APP_VIEWS = ["home", "daily", "improv", "library", "setup"];
 
 function k(){return Array.prototype.slice.call(arguments).join(".");}
 function todayISO(){return new Date().toISOString().slice(0,10);}
@@ -818,8 +854,8 @@ function renderHome(){
     testRow(req)+'</div>';
     
   html+='<button class="navbtn accent" data-action="go" data-view="daily"><div class="ic">\ud83c\udfaf</div><div><b>Daily Practice</b><span>Structured session, any day you pick</span></div></button>';
-  html+='<button class="navbtn" data-action="go" data-view="library"><div class="ic">\ud83d\udcda</div><div><b>Library</b><span>Browse phases, essential skills &amp; bonus drills</span></div></button>';
-  html+='<button class="navbtn info" data-action="go" data-view="info"><div class="ic">\u2139\ufe0f</div><div><b>Guide &amp; Info</b><span>Weekly rhythm and app overview</span></div></button>';
+  html+='<button class="navbtn purple" data-action="go" data-view="improv"><div class="ic">\ud83e\udde0</div><div><b>Improv Masterclass</b><span>The 5 Gates of Freedom</span></div></button>';
+  html+='<button class="navbtn" data-action="go" data-view="library"><div class="ic">\ud83d\udcda</div><div><b>Library &amp; Info</b><span>Browse phases & essential skills</span></div></button>';
   html+='<button class="navbtn setupbtn" data-action="go" data-view="setup"><div class="ic">\ud83d\udee0\ufe0f</div><div><b>Setup Companion</b><span>Optimize your gear for shredding</span></div></button>';
 
   html+='<div class="card"><h3>Jump to phase</h3>';
@@ -879,7 +915,16 @@ function renderDaily(){
       var body='<p>Deep-dive: polish next solo toward full tempo.</p>' + (songHtml ? '<ul class="check">'+songHtml+'</ul>' : '<p>All this tier\'s solos learned. \ud83c\udfb8</p>');
       html+=blk("casual",day,"CASUAL","45 min",body,editable);
     } else {
-      var body='<p><b>Audiation Translation & Jam:</b> Sing a melody, find it on the fretboard. Finish with a free jam focusing on specific theoretical intervals.</p><button class="tbtn" data-action="go" data-view="library" style="margin-top:8px;">Open Improv Guide \u2192</button>';
+      var actGate = Math.min(state.improvIndex, IMPROV_GATES.length - 1);
+      var gateObj = IMPROV_GATES[actGate];
+      var nextEx = null;
+      for(var i=0; i<gateObj.exercises.length; i++){
+        if(!state.improvChecks["g"+actGate+"e"+i]) { nextEx = gateObj.exercises[i]; break; }
+      }
+      var body = '<p style="color:var(--text); font-weight:600; margin-bottom:4px;">Gate '+(actGate+1)+': '+gateObj.title+'</p>';
+      if(nextEx) body += '<p style="font-size:12px; margin-bottom:8px;"><b>Next up:</b> '+nextEx.t+'</p>';
+      else body += '<p style="font-size:12px; margin-bottom:8px;">Ready to unlock the next gate!</p>';
+      body += '<button class="tbtn purple" data-action="go" data-view="improv" style="width:100%; text-align:center;">Open Improv Masterclass</button>';
       html+=blk("casual",day,"Improv & Expression","45 min",body,editable,"improv");
     }
     return html;
@@ -921,7 +966,6 @@ function renderDaily(){
       theoryHtml += docItem(docItemObj.t, docItemObj.url);
     });
     
-    // Check which group the current active item belongs to, to render docs for that specific group (e.g. Modes Cheat Sheet)
     var activeItem = null, activeGroup = null;
     for(var i=0; i<THEORY_GROUPS.length; i++){
       var g = THEORY_GROUPS[i];
@@ -963,20 +1007,88 @@ function renderDaily(){
     casualBody += songHtml ? '<ul class="check">'+songHtml+'</ul>' : '<p>All this tier\'s solos learned. \ud83c\udfb8</p>';
     html+=blk("casual",day,"Casual","15 min",casualBody,editable);
   }
-  else if(day==="Tue"){ 
-    var casualBody='<p><b>Voice Leading Loop:</b> Pick 2 chords. Play 1 note per bar, landing on the 3rd of each chord exactly on beat 1.</p>';
-    html+=blk("casual",day,"Improv & Expression","15 min",casualBody,editable,"improv");
-  }
-  else if(day==="Wed"){ 
-    var casualBody='<p><b>One-String Prison:</b> Jam over a backing track using ONLY 1 string to force horizontal phrasing.</p>';
-    html+=blk("casual",day,"Improv & Expression","15 min",casualBody,editable,"improv");
-  }
-  else if(day==="Fri"){ 
-    var casualBody='<p><b>Rhythmic Displacement:</b> Create a short lick. Start it on beat 1, then the off-beat of 2, then beat 4.</p>';
-    html+=blk("casual",day,"Improv & Expression","15 min",casualBody,editable,"improv");
+  else if(day==="Tue" || day==="Wed" || day==="Fri"){ 
+    var actGate = Math.min(state.improvIndex, IMPROV_GATES.length - 1);
+    var gateObj = IMPROV_GATES[actGate];
+    var nextEx = null;
+    for(var i=0; i<gateObj.exercises.length; i++){
+      if(!state.improvChecks["g"+actGate+"e"+i]) { nextEx = gateObj.exercises[i]; break; }
+    }
+    var body = '<p style="color:var(--text); font-weight:600; margin-bottom:4px;">Gate '+(actGate+1)+': '+gateObj.title+'</p>';
+    if(nextEx) body += '<p style="font-size:12px; margin-bottom:8px;"><b>Next up:</b> '+nextEx.t+'</p>';
+    else body += '<p style="font-size:12px; margin-bottom:8px;">Ready to unlock the next gate!</p>';
+    body += '<button class="tbtn purple" data-action="go" data-view="improv" style="width:100%; text-align:center;">Open Improv Masterclass</button>';
+    html+=blk("casual",day,"Improv & Expression","15 min",body,editable,"improv");
   }
 
   html+=blk("cooldown",day,"Cool-Down","5 min",'<p>Quick review - what clicked, what didn\'t.</p>',editable);
+  return html;
+}
+
+function renderImprov(){
+  var html='<div class="eyebrow" style="color:var(--purple);">Expression Track</div><div class="h2" style="font-size:20px;margin-bottom:10px;">The 5 Gates of Freedom</div>';
+  html+='<p class="lede">Destroy your muscle memory. This is your progressive masterclass to unlock pure musical audiation. Do not advance until you master every exercise in a Gate.</p>';
+
+  var actGate = Math.min(state.improvIndex, IMPROV_GATES.length - 1);
+  var allDone = state.improvIndex >= IMPROV_GATES.length;
+
+  if(allDone){
+    html+='<div class="note purple" style="text-align:center;"><b>\ud83c\udfc6 YOU HAVE MASTERED THE 5 GATES!</b><br>You are now a free player. Keep using these tools in your daily jams.</div>';
+  }
+
+  IMPROV_GATES.forEach(function(g, i){
+    var isPast = i < state.improvIndex;
+    var isCur = i === actGate && !allDone;
+    var isLocked = i > actGate;
+
+    if(isLocked){
+      html+='<div class="card" style="opacity:0.5;"><h3>\ud83d\udd12 Gate '+(i+1)+': '+g.title+'</h3></div>';
+      return;
+    }
+
+    if(isPast){
+      html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="improvG'+i+'"><b style="color:var(--purple);">\u2713 GATE '+(i+1)+': '+g.title.toUpperCase()+'</b><span class="chev'+(ui.lib["improvG"+i]?" open":"")+'">\u203a</span></div>';
+      if(ui.lib["improvG"+i]){
+        html+='<div class="accbody">';
+        g.exercises.forEach(function(ex){
+          html+='<p style="font-size:12px; margin-bottom:8px; color:var(--muted);">\u2713 '+ex.t+'</p>';
+        });
+        html+='</div>';
+      }
+      html+='</div>';
+      return;
+    }
+
+    // CURRENT GATE
+    html+='<div class="card" style="border-color:var(--purple); box-shadow: 0 0 10px rgba(176,82,255,0.1);">'+
+          '<h3 style="color:var(--purple); font-size:16px;">Gate '+(i+1)+': '+g.title+'</h3>'+
+          '<p style="font-size:12.5px; margin-bottom:12px;">'+g.desc+'</p>';
+    
+    html+='<div class="note purple"><b>\ud83c\udfa7 Listening Homework:</b><br>'+g.listening+'</div>';
+    
+    var exercisesDone = 0;
+    html+='<ul class="check">';
+    g.exercises.forEach(function(ex, j){
+      var isChecked = !!state.improvChecks["g"+i+"e"+j];
+      if(isChecked) exercisesDone++;
+      var btn = '<button class="mbtn purple'+(isChecked?" on":"")+'" data-action="togimprov" data-g="'+i+'" data-e="'+j+'">'+(isChecked?"\u2713 Mastered":"Mark Mastered")+'</button>';
+      html+='<li class="mrow" style="flex-direction:column; align-items:stretch; gap:6px;">'+
+            '<div style="display:flex; justify-content:space-between; align-items:center;">'+
+              '<b style="color:var(--text); font-size:13px;">'+ex.t+'</b>'+
+              btn+
+            '</div>'+
+            '<div style="font-size:12px; line-height:1.45; color:var(--muted);">'+ex.desc+'</div>'+
+            '</li>';
+    });
+    html+='</ul>';
+
+    if(exercisesDone === g.exercises.length){
+      html+='<button class="tbtn purple" style="width:100%; margin-top:15px;" data-action="advanceimprov">\ud83d\udd13 Unlock Gate '+(i+2)+'</button>';
+    }
+    
+    html+='</div>';
+  });
+
   return html;
 }
 
@@ -984,7 +1096,6 @@ function renderLibrary(){
   var html='<div class="eyebrow">Reference &amp; Review</div><div class="h2" style="font-size:20px;margin-bottom:6px;">Library</div>';
   html+='<p class="lede">Browse and check off any item, anytime - it all counts toward the same progress as Daily Practice.</p>';
   
-  // Essential Skills Section
   html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="essentials"><b>Essential Skills</b><span class="chev'+(ui.lib.essentials?" open":"")+'">\u203a</span></div>';
   if(ui.lib.essentials){ 
     html+='<div class="accbody"><div class="card"><ul class="check">'+Object.keys(ESSENTIAL).map(function(d){
@@ -1013,10 +1124,10 @@ function renderLibrary(){
     }
     html+='</div>';
   });
+  
   html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="theory"><b>Theory Track</b><span class="chev'+(ui.lib.theory?" open":"")+'">\u203a</span></div>';
   if(ui.lib.theory) {
     html+='<div class="accbody">';
-    
     html+='<div class="card"><ul class="check">';
     THEORY_DOCS.forEach(function(docItemObj){ html += docItem(docItemObj.t, docItemObj.url); });
     THEORY_ROOT_ITEMS.forEach(function(t){ html += watchItem(t.t, t.key, t.url); });
@@ -1032,53 +1143,26 @@ function renderLibrary(){
   }
   html+='</div>';
 
-  html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="improv"><b>Improv &amp; Expression Track</b><span class="chev'+(ui.lib.improv?" open":"")+'">\u203a</span></div>';
-  if(ui.lib.improv){
-    html+='<div class="accbody">';
-    IMPROV_TRACK.forEach(function(imp){
-      html+='<div class="card" style="margin-bottom:10px;"><h3>'+imp.t+'</h3><p style="text-align:justify; color:var(--muted); font-size:13px; line-height:1.4;">'+imp.desc+'</p></div>';
-    });
-    html+='</div>';
-  }
-  html+='</div>';
-
   html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="creative"><b>Creative <span class="tag">Songwriting &amp; Production</span></b><span class="chev'+(ui.lib.creative?" open":"")+'">\u203a</span></div>';
   if(ui.lib.creative){
     html+='<div class="accbody"><div class="card"><h3>Songwriting</h3><ul class="check">'+CREATIVE.songwriting.map(function(t,j){return watchItem(t.t,"creative.sw."+j,t.url);}).join("")+'</ul></div>'+
       '<div class="card"><h3>Production</h3><ul class="check">'+CREATIVE.production.map(function(t,j){return watchItem(t.t,"creative.pr."+j,t.url);}).join("")+'</ul></div></div>';
   }
   html+='</div>';
+  
   html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="bonuslib"><b>Bonus Content</b><span class="chev'+(ui.lib.bonuslib?" open":"")+'">\u203a</span></div>';
   if(ui.lib.bonuslib) html+='<div class="accbody"><div class="card">'+renderBonusList()+'</div></div>';
   html+='</div>';
-  return html;
-}
-
-function renderInfo(){
-  var html='<div class="eyebrow">The Full Guide</div><div class="h2" style="font-size:20px;margin-bottom:10px;">Guide &amp; Info</div>';
+  
+  // Embedded Info Guide
+  html+='<hr style="border:0; border-top:1px solid #23262f; margin:20px 0;">';
+  html+='<div class="h2" style="font-size:20px;margin-bottom:10px;">Guide &amp; Info</div>';
   html+='<div class="card"><h3>How This Plan Works</h3><p style="margin-bottom:6px;text-align:justify;">Technique is sequential and full-coverage: start at Beginner regardless of ability, and work every exercise, chop-builder and solo in every tier before advancing.</p>'+
     '<p style="margin-bottom:6px;text-align:justify;">To unlock the next phase, you must master all checklist items, hit your chop-builder targets, and reach the required level in all 6 categories of the <b>Phase Transition Test</b> (which includes the Ultimate Technique Workout).</p>'+
-    '<p style="margin-bottom:6px;text-align:justify;">Theory and Creative (songwriting/production) run on their own independent tracks - always available in Library, never gating a phase.</p>'+
-    '<p style="text-align:justify;">Essential skills get a 5-minute daily micro-dose - a different one Monday - Thursday, Friday reinforces whichever felt weakest.</p></div>';
-  html+='<div class="card"><h3>Daily Blueprint</h3><p style="margin-bottom:6px;text-align:justify;"><b style="color:var(--text)">Weekdays (60 min):</b> 5 Warm-Up + 35 Focused (30 technique/theory + 5 skill micro-dose) + 15 Casual/Improv + 5 Cool-Down.</p>'+
-    '<p style="text-align:justify;"><b style="color:var(--text)">Weekends (60 min):</b> 15 Warm-Up + 45 Casual/Creative/Improv.</p></div>';
-  html+='<div class="card"><h3>Exercise Time-Split (Tue/Thu)</h3><p style="text-align:justify;">Newest exercise gets the most time (5 - 8 min); older, solid ones just need a quick maintenance rep (1 - 2 min). Chop-builders get a protected floor of ~15 min - that\'s your real progress signal.</p></div>';
+    '<p style="margin-bottom:6px;text-align:justify;">Theory and Creative run on their own independent tracks - always available in Library, never gating a phase.</p></div>';
   html+='<div class="card"><h3>Weekly Rhythm</h3><table class="info"><tr><th>Day</th><th>Focused</th><th>Casual / Improv</th></tr>'+
     WEEKLY_RHYTHM.map(function(r){return '<tr><td class="day">'+r.day+'</td><td>'+r.focused+'</td><td>'+r.casual+'</td></tr>';}).join("")+'</table></div>';
-  html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="infophases"><b>Phase Overview</b><span class="chev'+(ui.lib.infophases?" open":"")+'">\u203a</span></div>';
-  if(ui.lib.infophases){ html+='<div class="accbody"><div class="card">'+PHASES.map(function(p,i){return '<p style="margin-bottom:8px;text-align:justify;"><b style="color:var(--text)">Phase '+i+' - '+p.label+' ('+p.short+'):</b> '+PHASE_BLURB[p.id]+'</p>';}).join("")+
-    '<p style="text-align:justify;"><b style="color:var(--text)">Creative (no phase number):</b> Once technique work slows down, Creative - songwriting and production - becomes your ongoing focus. It\'s tracked in Library like Theory, and never counts toward the phase progress bar.</p></div></div>'; }
-  html+='</div>';
-  html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="infoess"><b>Essential Skills Rotation</b><span class="chev'+(ui.lib.infoess?" open":"")+'">\u203a</span></div>';
-  if(ui.lib.infoess){ html+='<div class="accbody"><div class="card">'+Object.keys(ESSENTIAL).map(function(d){return '<p style="margin-bottom:4px;"><b style="color:var(--text)">'+DAY_FULL[d]+':</b> '+ESSENTIAL[d]+'</p>';}).join("")+'</div></div>'; }
-  html+='</div>';
-  html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="infotheory"><b>Theory Track</b><span class="chev'+(ui.lib.infotheory?" open":"")+'">\u203a</span></div>';
-  if(ui.lib.infotheory){ html+='<div class="accbody"><div class="card"><p style="text-align:justify;">The Theory Track is grouped into key pillars: Ear Training, Modes, and Chords & Soloing. Start with the Cheat Sheets and Handbooks as standing references, then work through the courses and apply them to iconic metal songs. Masterclasses like "Phrasing" and "7 Tips" tie everything together. The full checklist with links lives in the Library.</p></div></div>'; }
-  html+='</div>';
-  html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="infobonus"><b>Bonus Content</b><span class="chev'+(ui.lib.infobonus?" open":"")+'">\u203a</span></div>';
-  if(ui.lib.infobonus){ html+='<div class="accbody"><div class="card"><ul class="infolist">'+BONUS.map(function(t){return '<li>'+t.t+'</li>';}).join("")+'</ul></div></div>'; }
-  html+='</div>';
-  html+='<div class="note" style="margin-top:4px;">This guide and app are based on <b>Bradley Hall\'s Guitar School</b> (BHGS) Official Roadmap.</div>';
+  html+='<div class="note" style="margin-top:4px;">This guide and app are based on <b>Bradley Hall\'s Guitar School</b> (BHGS) Official Roadmap. Improv module custom tailored for expression.</div>';
   return html;
 }
 
@@ -1089,7 +1173,6 @@ function renderSetup(){
   var html='<div class="eyebrow">Gear Optimization</div><div class="h2" style="font-size:20px;margin-bottom:10px;">Guitar Setup Companion</div>';
   html+='<p class="lede">Follow these mechanical adjustments in exactly this order to achieve optimal low string action suitable for shredding without excessive fret buzz.</p>';
 
-  // DROPDOWNS
   html+='<div style="display:flex; gap:8px; margin-bottom:12px;">';
   html+='<select class="select" style="flex:1; margin-top:0;" data-action="setGuitar">';
   html+='<option value="prs" '+(isPrs?'selected':'')+'>PRS (25")</option>';
@@ -1102,7 +1185,7 @@ function renderSetup(){
   html+='<option value="d_std" '+(state.setupTuning==='d_std'?'selected':'')+'>D Standard</option>';
   html+='<option value="drop_c" '+(state.setupTuning==='drop_c'?'selected':'')+'>Drop C</option>';
   html+='<option value="c_std" '+(state.setupTuning==='c_std'?'selected':'')+'>C Standard</option>';
-  html+='<option value="dadfae" '+(state.setupTuning==='dadfae'?'selected':'')+'>DADFAE (Ghost Reveries)</option>';
+  html+='<option value="dadfae" '+(state.setupTuning==='dadfae'?'selected':'')+'>DADFAE</option>';
   html+='</select>';
   html+='</div>';
   
@@ -1151,8 +1234,8 @@ function initAppLayout() {
     <div class="carousel" id="carousel">
       <div class="view-panel" data-view-id="home" id="panel-home"></div>
       <div class="view-panel" data-view-id="daily" id="panel-daily"></div>
+      <div class="view-panel" data-view-id="improv" id="panel-improv"></div>
       <div class="view-panel" data-view-id="library" id="panel-library"></div>
-      <div class="view-panel" data-view-id="info" id="panel-info"></div>
       <div class="view-panel" data-view-id="setup" id="panel-setup"></div>
     </div>
     <div class="botnav" id="botnav"></div>
@@ -1175,11 +1258,15 @@ function updateBotNav() {
   botnav.innerHTML = '<div class="botnav-inner">' +
     navBtn("home","\ud83c\udfe0","Home") + 
     navBtn("daily","\ud83c\udfaf","Daily") + 
+    navBtn("improv","\ud83e\udde0","Improv", "improv-nav") + 
     navBtn("library","\ud83d\udcda","Library") + 
-    navBtn("info","\u2139\ufe0f","Info") + 
     navBtn("setup","\ud83d\udee0\ufe0f","Setup") + '</div>';
 }
-function navBtn(view,ic,label){ return '<button data-action="go" data-view="'+view+'" class="'+(ui.view===view?"active":"")+'"><span class="ic">'+ic+'</span>'+label+'</button>'; }
+function navBtn(view,ic,label, customClass){ 
+  var cl = ui.view===view ? "active" : "";
+  if(ui.view===view && customClass) cl += " " + customClass;
+  return '<button data-action="go" data-view="'+view+'" class="'+cl+'"><span class="ic">'+ic+'</span>'+label+'</button>'; 
+}
 
 function render(){
   try {
@@ -1203,8 +1290,8 @@ function render(){
 
     document.getElementById('panel-home').innerHTML = renderHome();
     document.getElementById('panel-daily').innerHTML = renderDaily();
+    document.getElementById('panel-improv').innerHTML = renderImprov();
     document.getElementById('panel-library').innerHTML = renderLibrary();
-    document.getElementById('panel-info').innerHTML = renderInfo();
     document.getElementById('panel-setup').innerHTML = renderSetup();
 
     updateBotNav();
@@ -1259,6 +1346,16 @@ document.addEventListener("click",function(e){
   else if(a==="bonuslvl"){ setBonusLevel(t.dataset.k,parseInt(t.dataset.d,10),parseInt(t.dataset.max,10)); }
   else if(a==="blockprac"){ toggleBlockPracticed(t.dataset.block,t.dataset.day); }
   else if(a==="togm"){ toggleCheck(t.dataset.key); }
+  else if(a==="togimprov"){ 
+    var gk = "g"+t.dataset.g+"e"+t.dataset.e;
+    state.improvChecks[gk] = !state.improvChecks[gk]; 
+    saveState(); render();
+  }
+  else if(a==="advanceimprov"){ 
+    state.improvIndex++; 
+    showToast("\ud83d\udd13 New Gate Unlocked!"); 
+    saveState(); render();
+  }
   else if(a==="activateday"){ setActiveDay(t.dataset.day); }
   else if(a==="resetactiveday"){ resetActiveDay(); }
   else if(a==="cloudsave"){ 
@@ -1291,7 +1388,6 @@ document.addEventListener("change",function(e){
   if(e.target.dataset.action==="setTuning") { state.setupTuning = e.target.value; saveState(); render(); }
 });
 
-/* Fix scroll on Desktop Web when hovering outside the 520px root container */
 window.addEventListener('wheel', function(e) {
   var activePanel = document.getElementById('panel-' + ui.view);
   if (activePanel && !activePanel.contains(e.target)) {
