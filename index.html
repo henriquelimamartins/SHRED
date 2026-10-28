@@ -178,29 +178,30 @@ ul.check li.mrow:last-child{border-bottom:none;}
 .dchip2.isactive{border-color:var(--accent);}
 
 
-.cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-.cal-nav { display: flex; gap: 8px; align-items: center; }
-.cal-nav button { background: var(--card2); border: 1px solid var(--border); color: var(--text); border-radius: 6px; padding: 4px 10px; font-weight: bold; }
-.cal-nav button:disabled { opacity: 0.2; pointer-events: none; }
-.cal-title { font-family: 'Oswald'; font-size: 16px; font-weight: 700; text-transform: uppercase; color: var(--accent2); letter-spacing: 1px; }
-.cal-today { background: var(--accent) !important; border-color: var(--accent) !important; color: #fff !important; font-size: 11px; padding: 4px 10px !important; letter-spacing: .5px; }
-.streak-wrapper { overflow: hidden; position: relative; touch-action: pan-y; }
-.streak-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
-.s-day.empty { background: transparent !important; border-color: transparent !important; }
-.s-day.empty .s-date, .s-day.empty .s-wkd { display: none; }
+.calendar-header-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 12px; font-weight: 600; color: var(--muted); }
+.calendar-header-nav button { flex-direction: column; background: var(--card2); border: 1px solid var(--border); color: var(--text); padding: 5px; border-radius: 6px; font-size: 9px; height: auto; gap: 3px; min-width: 40px; display: inline-flex; align-items: center; justify-content: center; line-height: 1; text-transform: uppercase; font-weight: bold; }
+.calendar-header-nav button:disabled { opacity: 0.2; pointer-events: none; }
+.center-date { text-align: center; line-height: 1.2; font-size: 11px; }
+.center-date span { display: block; }
 
-.s-day { background: #23262f; border-radius: 6px; padding: 5px 2px; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 1px solid transparent; }
-.s-day .s-date { font-family: 'Oswald', sans-serif; font-size: 13px; font-weight: 700; color: var(--muted); line-height: 1; transition: color 0.2s;}
-.s-day .s-wkd { font-size: 8px; text-transform: uppercase; color: var(--muted); margin-top: 2px; font-weight: 600; letter-spacing: .3px; transition: color 0.2s;}
-.s-day.past { background: #16181e; }
-.s-day.past .s-date, .s-day.past .s-wkd { opacity: 0.4; }
-.s-day.weekend { background: #2d1e21; } 
-.s-day.weekend .s-date, .s-day.weekend .s-wkd { color: #e57368; opacity: 0.75; }
+.streak-wrapper { overflow: hidden; position: relative; touch-action: pan-y; }
+.streak-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+
+.s-day { background: var(--card2); border-radius: 6px; height: 48px; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 1px solid var(--border); position: relative; }
+.s-month-badge { position: absolute; top: 2px; left: 0; right: 0; text-align: center; font-size: 7px; font-weight: 700; color: var(--muted); opacity: 0.8; letter-spacing: 0.5px; }
+.s-day .s-date { font-family: 'Oswald', sans-serif; font-size: 14px; font-weight: 700; color: var(--text); line-height: 1; margin-top: 2px; transition: color 0.2s;}
+.s-day .s-wkd { font-size: 8.5px; text-transform: uppercase; color: var(--muted); margin-top: 2px; font-weight: 600; letter-spacing: .3px; transition: color 0.2s;}
+
+.s-day.past { background: #16181e; opacity: 0.85; }
+.s-day.other-month { opacity: 0.35 !important; }
+.s-day.weekend { background: #2d1e21; border-color: transparent; }
 .s-day.past.weekend { background: #1f1618; }
-.s-day.hit { background: #123324 !important; border-color: var(--green); }
+
+.s-day.hit { background: #123324 !important; border-color: var(--green) !important; opacity: 1 !important; }
 .s-day.hit .s-date, .s-day.hit .s-wkd { color: var(--green) !important; opacity: 1; }
-.s-day.today { border-color: var(--accent); }
-.s-day.today .s-date { color: #fff !important; opacity: 1; }
+
+.s-day.today { border-color: var(--accent) !important; background: rgba(255, 59, 48, 0.15) !important; opacity: 1 !important; }
+.s-day.today .s-date { color: var(--accent) !important; opacity: 1; }
 
 .botnav{position:fixed;bottom:0;left:0;right:0;background:#15171e;border-top:1px solid var(--border);display:flex;padding:6px 2px calc(6px + env(safe-area-inset-bottom,0px));z-index:10;}
 .botnav-inner{display:flex; width:100%; max-width:520px; margin:0 auto;}
@@ -924,50 +925,66 @@ function renderStreakCalendar(){
   var canGoFwd = (y < now.getFullYear()) || (y === now.getFullYear() && m < now.getMonth());
 
   var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  var shortMonths = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
 
-  var html = '<div class="cal-header">';
-  html += '<div class="cal-title">' + monthNames[m] + ' ' + y + '</div>';
-  html += '<div class="cal-nav">';
-  html += '<button data-action="calprev" ' + (!canGoBack ? 'disabled' : '') + '>&lsaquo;</button>';
-  html += '<button data-action="caltoday" class="cal-today">TODAY</button>';
-  html += '<button data-action="calnext" ' + (!canGoFwd ? 'disabled' : '') + '>&rsaquo;</button>';
+  var html = '<div class="calendar-header-nav">';
+  html += '<div style="display:flex; gap:4px;">';
+  html += '<button data-action="calprev" ' + (!canGoBack ? 'disabled' : '') + '><span>&lsaquo;</span><span>Prev</span></button>';
+  html += '</div>';
+  html += '<div class="center-date">';
+  html += '<span style="font-weight:700; color:var(--accent2); text-transform:uppercase; font-size:12px; letter-spacing: 1px;">' + monthNames[m] + '</span>';
+  html += '<span style="color:var(--muted); font-weight:600;">' + y + '</span>';
+  html += '</div>';
+  html += '<div style="display:flex; gap:4px;">';
+  html += '<button data-action="calnext" ' + (!canGoFwd ? 'disabled' : '') + '><span>&rsaquo;</span><span>Next</span></button>';
+  html += '<button data-action="caltoday" style="background:var(--accent); color:#fff; border-color:var(--accent);"><span>&#9660;</span><span>Today</span></button>';
   html += '</div></div>';
 
-  html += '<div class="streak-wrapper" id="cal-swipe-area"><div class="streak-grid">';
+  html += '<div class="streak-wrapper" id="cal-swipe-area"><div class="streak-grid" style="grid-auto-rows: 48px;">';
 
-  var firstDay = new Date(y, m, 1);
-  var lastDay = new Date(y, m + 1, 0);
-  var startDayOfWeek = (firstDay.getDay() + 6) % 7; // Aligning Monday as start of week
-  var daysInMonth = lastDay.getDate();
+  var firstDayOfMonth = new Date(y, m, 1);
+  var startDayOfWeek = (firstDayOfMonth.getDay() + 6) % 7; 
+  var startDate = new Date(y, m, 1 - startDayOfWeek);
+
+  var lastDayOfMonth = new Date(y, m + 1, 0);
+  var endDayOfWeek = (lastDayOfMonth.getDay() + 6) % 7; 
+  var endDate = new Date(y, m + 1, 0 + (6 - endDayOfWeek));
 
   var shortDays = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
-  for(var i=0; i<7; i++) {
-     html += '<div style="text-align:center; font-size:9.5px; color:var(--muted); font-weight:700; margin-bottom:4px;">'+shortDays[i]+'</div>';
-  }
-
-  for (var i = 0; i < startDayOfWeek; i++) {
-    html += '<div class="s-day empty"></div>';
-  }
-
   var todayIsoStr = todayISO();
-  for (var d = 1; d <= daysInMonth; d++) {
-    var currDate = new Date(y, m, d);
-    var iso = currDate.getFullYear() + "-" + String(currDate.getMonth()+1).padStart(2,'0') + "-" + String(currDate.getDate()).padStart(2,'0');
 
+  for (var d = new Date(startDate.getTime()); d <= endDate; d.setDate(d.getDate() + 1)) {
+    var iso = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,'0') + "-" + String(d.getDate()).padStart(2,'0');
     var isHit = state.streakDates.indexOf(iso) !== -1;
     var isToday = iso === todayIsoStr;
     var isPast = iso < todayIsoStr;
-    var dayOfWeek = currDate.getDay();
+    var dayOfWeek = d.getDay();
     var isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
+    var isOtherMonth = d.getMonth() !== m;
 
-    var c = "s-day" + (isHit?" hit":"") + (isToday?" today":"") + (isPast?" past":"") + (isWeekend?" weekend":"");
-    html += '<div class="'+c+'"><div class="s-date">'+d+'</div></div>';
+    var c = "s-day";
+    if(isPast) c += " past";
+    if(isWeekend) c += " weekend";
+    if(isOtherMonth) c += " other-month";
+    if(isHit) c += " hit";
+    if(isToday) c += " today";
+
+    var dayName = shortDays[(dayOfWeek + 6) % 7];
+    var dateNum = d.getDate();
+    var isFirst = dateNum === 1;
+    var isLast = dateNum === new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+
+    var badgeHtml = "";
+    if (isFirst || isLast) {
+      badgeHtml = '<div class="s-month-badge">' + shortMonths[d.getMonth()] + '</div>';
+    }
+
+    html += '<div class="'+c+'">' + badgeHtml + '<div class="s-date">'+dateNum+'</div><div class="s-wkd">'+dayName+'</div></div>';
   }
 
   html += '</div></div>';
   return html;
 }
-
 function changeCalMonth(dir) {
   ui.calMonth += dir;
   if (ui.calMonth > 11) { ui.calMonth = 0; ui.calYear++; }
@@ -1307,7 +1324,7 @@ function renderLibrary(){
       g.items.forEach(function(item){
         html+='<li style="font-size:12px; color:var(--text); padding:10px 0; border-bottom:1px solid #23262f;">'+
               '<b style="color:#eef0f4; font-size:13px; margin-bottom:4px; display:block;">\ud83c\udfa7 '+item.t+'</b>'+
-              '<span style="color:var(--muted); line-height:1.45;">'+item.desc+'</span></li>';
+              '<span style="color:var(--muted); line-height:1.45; display:block; text-align:justify;">'+item.desc+'</span></li>';
       });
       html+='</ul></div>';
     });
