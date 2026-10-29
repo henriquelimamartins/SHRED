@@ -129,7 +129,7 @@ ul.check li{display:flex;align-items:flex-start;gap:9px;padding:7px 0;border-bot
 ul.check li:last-child{border-bottom:none;}
 .box{flex:0 0 20px;height:20px;border-radius:5px;border:1.5px solid #565a66;margin-top:1px;display:flex;align-items:center;justify-content:center;background:transparent;}
 .box.on{background:var(--accent);border-color:var(--accent);}
-.box.on:after{content:'\2713';color:#fff;font-size:12px;font-weight:700;}
+.box.on:after{content:'\\2713';color:#fff;font-size:12px;font-weight:700;}
 .box.purple.on{background:var(--purple);border-color:var(--purple);}
 
 .itxt{flex:1;font-size:13px;color:var(--text);line-height:1.3;}
@@ -174,7 +174,7 @@ ul.check li.mrow:last-child{border-bottom:none;}
 .daypick{display:flex;gap:4px;margin-bottom:10px;}
 .dchip2{flex:1;padding:7px 3px;border-radius:9px;background:var(--card2);border:1px solid var(--border);color:var(--muted);font-size:10.5px;font-weight:700;text-align:center;}
 .dchip2.on{background:var(--accent);border-color:var(--accent);color:#fff;}
-.dchip2.istoday:after{content:'\2022';margin-left:2px;}
+.dchip2.istoday:after{content:'\\2022';margin-left:2px;}
 .dchip2.isactive{border-color:var(--accent);}
 
 
@@ -185,8 +185,8 @@ ul.check li.mrow:last-child{border-bottom:none;}
 .center-date span { display: block; }
 
 .streak-wrapper { overflow: hidden; position: relative; touch-action: pan-y; }
-.streak-carousel-track { display: flex; width: 300%; transform: translateX(-33.333%); will-change: transform; }
-.streak-month-pane { width: 33.3333%; flex: 0 0 33.3333%; }
+.cal-carousel { display: flex; width: 100%; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; }
+.cal-panel { flex: 0 0 100%; width: 100%; scroll-snap-align: start; }
 .streak-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
 
 .s-day { background: var(--card2); border-radius: 6px; height: 48px; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 1px solid var(--border); position: relative; }
@@ -204,7 +204,7 @@ ul.check li.mrow:last-child{border-bottom:none;}
 
 .s-day.today { border-color: var(--accent) !important; background: rgba(255, 59, 48, 0.15) !important; opacity: 1 !important; }
 .s-day.today .s-date { color: var(--accent) !important; opacity: 1; }
-.s-day.today .s-wkd { color: var(--muted) !important; }
+.s-day.today.hit .s-wkd { color: var(--muted) !important; }
 
 .botnav{position:fixed;bottom:0;left:0;right:0;background:#15171e;border-top:1px solid var(--border);display:flex;padding:6px 2px calc(6px + env(safe-area-inset-bottom,0px));z-index:10;}
 .botnav-inner{display:flex; width:100%; max-width:520px; margin:0 auto;}
@@ -223,7 +223,7 @@ ul.check li.mrow:last-child{border-bottom:none;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(-6px);}
 
 .acc{margin-bottom:10px;}
-.acchead{display:flex;justify-content:space-between;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;}
+.acchead{display:flex;justify-content:space-between;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;gap:10px;} .acchead b{flex:1;} .acc-sub{font-size:10.5px;color:var(--muted);text-transform:none;letter-spacing:0;font-weight:500;text-align:right;} .acc-right{display:flex;align-items:center;gap:8px;}
 .acchead b{font-family:'Oswald';font-size:13px;text-transform:uppercase;}
 .accbody{padding:10px 4px 2px 14px; margin-left:6px; border-left:1px solid rgba(255,255,255,0.18); position:relative;}
 .chev{color:var(--muted);font-size:11px;transition:transform .2s;}
@@ -248,6 +248,9 @@ ul.check li.mrow:last-child{border-bottom:none;}
   background-position: right 10px center;
   background-size: 14px;
 }
+
+.list-card { background: transparent; border: none; padding: 0; margin-bottom: 12px; }
+.list-card h3 { font-size: 13.5px; margin-bottom: 8px; color: #fff; display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
 table.info{width:100%;border-collapse:collapse;}
 table.info th{text-align:left;font-size:9px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);padding:4px 4px;}
 table.info td{font-size:11.5px;color:var(--text);padding:6px 4px;border-bottom:1px solid #23262f;vertical-align:top;}
@@ -916,12 +919,7 @@ function getEarliestYearMonth() {
   return { y: parseInt(parts[0], 10), m: parseInt(parts[1], 10) - 1 };
 }
 
-function generateMonthGrid(y, m) {
-  var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-  var shortMonths = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-  var shortDays = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
-  var todayIsoStr = todayISO();
-
+function buildMonthGrid(y, m){
   var firstDayOfMonth = new Date(y, m, 1);
   var startDayOfWeek = (firstDayOfMonth.getDay() + 6) % 7; 
   var startDate = new Date(y, m, 1 - startDayOfWeek);
@@ -930,7 +928,11 @@ function generateMonthGrid(y, m) {
   var endDayOfWeek = (lastDayOfMonth.getDay() + 6) % 7; 
   var endDate = new Date(y, m + 1, 0 + (6 - endDayOfWeek));
 
-  var gridHtml = '<div class="streak-grid" style="grid-auto-rows: 48px;">';
+  var shortDays = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
+  var shortMonths = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+  var todayIsoStr = todayISO();
+  var html = '<div class="streak-grid" >';
+
   for (var d = new Date(startDate.getTime()); d <= endDate; d.setDate(d.getDate() + 1)) {
     var iso = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,'0') + "-" + String(d.getDate()).padStart(2,'0');
     var isHit = state.streakDates.indexOf(iso) !== -1;
@@ -957,10 +959,10 @@ function generateMonthGrid(y, m) {
       badgeHtml = '<div class="s-month-badge">' + shortMonths[d.getMonth()] + '</div>';
     }
 
-    gridHtml += '<div class="'+c+'">' + badgeHtml + '<div class="s-date">'+dateNum+'</div><div class="s-wkd">'+dayName+'</div></div>';
+    html += '<div class="'+c+'">' + badgeHtml + '<div class="s-date">'+dateNum+'</div><div class="s-wkd">'+dayName+'</div></div>';
   }
-  gridHtml += '</div>';
-  return gridHtml;
+  html += '</div>';
+  return html;
 }
 
 function renderStreakCalendar(){
@@ -971,18 +973,24 @@ function renderStreakCalendar(){
   var y = ui.calYear;
   var earliest = getEarliestYearMonth();
 
-  var canGoBack = (y > earliest.y) || (y === earliest.y && m > earliest.m);
-  var canGoFwd = (y < now.getFullYear()) || (y === now.getFullYear() && m < now.getMonth());
+  // Prev month, Current month, Next month for fluid carousel
+  var prevM = m - 1, prevY = y;
+  if(prevM < 0) { prevM = 11; prevY--; }
+  var nextM = m + 1, nextY = y;
+  if(nextM > 11) { nextM = 0; nextY++; }
 
   var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+  var canGoBack = (y > earliest.y) || (y === earliest.y && m > earliest.m);
+  var canGoFwd = (y < now.getFullYear()) || (y === now.getFullYear() && m < now.getMonth());
 
   var html = '<div class="calendar-header-nav">';
   html += '<div style="display:flex; gap:4px;">';
   html += '<button data-action="calprev" ' + (!canGoBack ? 'disabled' : '') + '><span>&lsaquo;</span><span>Prev</span></button>';
   html += '</div>';
   html += '<div class="center-date">';
-  html += '<span style="font-weight:700; color:var(--accent2); text-transform:uppercase; font-size:12px; letter-spacing: 1px;">' + monthNames[m] + '</span>';
-  html += '<span style="color:var(--muted); font-weight:600;">' + y + '</span>';
+  html += '<span style="font-weight:700; color:var(--accent2); text-transform:uppercase; font-size:12px; letter-spacing: 1px;" id="cal-month-title">' + monthNames[m] + '</span>';
+  html += '<span style="color:var(--muted); font-weight:600;" id="cal-year-title">' + y + '</span>';
   html += '</div>';
   html += '<div style="display:flex; gap:4px;">';
   html += '<button data-action="calnext" ' + (!canGoFwd ? 'disabled' : '') + '><span>&rsaquo;</span><span>Next</span></button>';
@@ -990,31 +998,26 @@ function renderStreakCalendar(){
   html += '</div></div>';
 
   html += '<div class="streak-wrapper" id="cal-swipe-area">';
-  html += '<div class="streak-carousel-track" id="cal-track" style="transform: translateX(-33.333%);">';
+  html += '<div class="cal-carousel" id="cal-carousel">';
   
-  // Previous month pane
-  var prevM = m - 1, prevY = y;
-  if(prevM < 0) { prevM = 11; prevY--; }
-  html += '<div class="streak-month-pane">' + generateMonthGrid(prevY, prevM) + '</div>';
-
-  // Current month pane
-  html += '<div class="streak-month-pane">' + generateMonthGrid(y, m) + '</div>';
-
-  // Next month pane
-  var nextM = m + 1, nextY = y;
-  if(nextM > 11) { nextM = 0; nextY++; }
-  html += '<div class="streak-month-pane">' + generateMonthGrid(nextY, nextM) + '</div>';
-
+  if(canGoBack) {
+    html += '<div class="cal-panel" data-ym="'+prevY+'-'+prevM+'">' + buildMonthGrid(prevY, prevM) + '</div>';
+  }
+  html += '<div class="cal-panel" data-ym="'+y+'-'+m+'">' + buildMonthGrid(y, m) + '</div>';
+  if(canGoFwd) {
+    html += '<div class="cal-panel" data-ym="'+nextY+'-'+nextM+'">' + buildMonthGrid(nextY, nextM) + '</div>';
+  }
+  
   html += '</div></div>';
   return html;
 }
+
 function changeCalMonth(dir) {
   ui.calMonth += dir;
   if (ui.calMonth > 11) { ui.calMonth = 0; ui.calYear++; }
   else if (ui.calMonth < 0) { ui.calMonth = 11; ui.calYear--; }
   render();
 }
-
 
 /* ---------- views ---------- */
 function renderHome(){
@@ -1188,7 +1191,7 @@ function renderDaily(){
     casualBody += songHtml ? '<ul class="check">'+songHtml+'</ul>' : '<p>All this tier\'s solos learned. \ud83c\udfb8</p>';
     html+=blk("casual",day,"Casual","15 min",casualBody,editable);
   }
-  else if(day==="Tue" || day === "Wed" || day === "Fri"){ 
+  else if(day==="Tue" || day==="Wed" || day==="Fri"){ 
     var actGate = Math.min(state.improvIndex, IMPROV_GATES.length - 1);
     var gateObj = IMPROV_GATES[actGate];
     var nextEx = null;
@@ -1279,11 +1282,11 @@ function renderLibrary(){
   html+='<p class="lede">Browse and check off any item, anytime - it all counts toward the same progress as Daily Practice.</p>';
   
   // 1. SHRED ROADMAP (Essential Skills + 5 Phases)
-  html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="shredroadmap"><b>Shred Roadmap <span class="tag">Essential Skills &amp; Phases</span></b><span class="chev'+(ui.lib.shredroadmap?" open":"")+'">&#8250;</span></div>';
+  html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="shredroadmap"><b>Shred Roadmap</b><span class="acc-right"><span class="acc-sub">Essential Skills &amp; Phases</span><span class="chev'+(ui.lib.shredroadmap?" open":"")+'">&#8250;</span></span></div>';
   if(ui.lib.shredroadmap){
     html+='<div class="accbody">';
     // Essential Skills sub-acc
-    html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="essentials"><b>Essential Skills</b><span class="chev'+(ui.lib.essentials?" open":"")+'">&#8250;</span></div>';
+    html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="essentials"><b>Essential Skills</b><span class="acc-right"><span class="chev'+(ui.lib.essentials?" open":"")+'">&#8250;</span></span></div>';
     if(ui.lib.essentials){ 
       html+='<div class="accbody"><div class="card"><ul class="check">'+Object.keys(ESSENTIAL).map(function(d){
         var label=ESSENTIAL[d], url=ESSENTIAL_URL[label];
@@ -1295,18 +1298,18 @@ function renderLibrary(){
     // 5 Phases
     PHASES.forEach(function(p,i){
       var open=!!ui.lib["p"+i],pct=phasePercent(i);
-      html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="p'+i+'"><b>'+p.label.toUpperCase()+' <span class="tag">Phase '+i+' &middot; '+p.short+'</span></b><span style="display:flex;align-items:center;gap:8px;"><span class="tag">'+pct+'%</span><span class="chev'+(open?" open":"")+'">&#8250;</span></span></div>';
+      html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="p'+i+'"><b>'+p.label.toUpperCase()+'</b><span class="acc-right"><span class="acc-sub">Phase '+i+' &middot; '+p.short+' ('+pct+'%)</span><span class="chev'+(open?" open":"")+'">&#8250;</span></span></div>';
       if(open){
         html+='<div class="accbody">';
         if(p.kind==="setup"){
-          html+='<div class="card"><h3>Prerequisites</h3><ul class="check">'+PREREQ.map(function(pr,j){return prereqItem(pr.t,k("p0","pre",j),pr.url);}).join("")+'</ul></div>';
-          html+='<div class="card"><h3>Warm-Up</h3><p>'+linked("Ultimate 5-Minute Warm-Up",WARMUP_URL)+'</p></div>';
+          html+='<div class="list-card"><h3>Prerequisites</h3><ul class="check">'+PREREQ.map(function(pr,j){return prereqItem(pr.t,k("p0","pre",j),pr.url);}).join("")+'</ul></div>';
+          html+='<div class="list-card"><h3>Warm-Up</h3><p>'+linked("Ultimate 5-Minute Warm-Up",WARMUP_URL)+'</p></div>';
         } else {
-          if(p.concept&&p.concept.length) html+='<div class="card"><h3>Concept Videos</h3><ul class="check">'+p.concept.map(function(t,j){return watchItem(t.t,k(p.id,"c",j),t.url);}).join("")+'</ul></div>';
-          html+='<div class="card"><h3>Exercises</h3><ul class="check">'+p.exercises.map(function(t,j){return checkItem(t.t,k(p.id,"e",j),t.url);}).join("")+'</ul></div>';
-          html+='<div class="card"><h3>Chop-Builders <span class="tag">target: Level '+p.target+'</span></h3>'+chopRow(p.target)+'</div>';
-          html+='<div class="card"><h3>Solos</h3><ul class="check">'+p.songs.map(function(t,j){return checkItem(t.t,k(p.id,"s",j),t.url);}).join("")+'</ul></div>';
-          html+='<div class="card"><h3>Phase Transition Test <span class="tag">target: Level '+p.testReq+'</span></h3>'+testRow(p.testReq)+'</div>';
+          if(p.concept&&p.concept.length) html+='<div class="list-card"><h3>Concept Videos</h3><ul class="check">'+p.concept.map(function(t,j){return watchItem(t.t,k(p.id,"c",j),t.url);}).join("")+'</ul></div>';
+          html+='<div class="list-card"><h3>Exercises</h3><ul class="check">'+p.exercises.map(function(t,j){return checkItem(t.t,k(p.id,"e",j),t.url);}).join("")+'</ul></div>';
+          html+='<div class="list-card"><h3>Chop-Builders <span class="tag">target: Level '+p.target+'</span></h3>'+chopRow(p.target)+'</div>';
+          html+='<div class="list-card"><h3>Solos</h3><ul class="check">'+p.songs.map(function(t,j){return checkItem(t.t,k(p.id,"s",j),t.url);}).join("")+'</ul></div>';
+          html+='<div class="list-card"><h3>Phase Transition Test <span class="tag">target: Level '+p.testReq+'</span></h3>'+testRow(p.testReq)+'</div>';
         }
         html+='</div>';
       }
@@ -1317,7 +1320,7 @@ function renderLibrary(){
   html+='</div>';
 
   // 2. THEORY TRACK
-  html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="theory"><b>Theory Track</b><span class="chev'+(ui.lib.theory?" open":"")+'">&#8250;</span></div>';
+  html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="theory"><b>Theory Track</b><span class="acc-right"><span class="acc-sub">Ear, Modes &amp; Chords</span><span class="chev'+(ui.lib.theory?" open":"")+'">&#8250;</span></span></div>';
   if(ui.lib.theory) {
     html+='<div class="accbody">';
     html+='<div class="card"><ul class="check">';
@@ -1326,7 +1329,7 @@ function renderLibrary(){
     html+='</ul></div>';
 
     THEORY_GROUPS.forEach(function(g){
-      html+='<div class="card"><h3>'+g.title+'</h3><ul class="check">';
+      html+='<div class="list-card"><h3>'+g.title+'</h3><ul class="check">';
       if(g.docs) g.docs.forEach(function(d){ html+=docItem(d.t, d.url); });
       g.items.forEach(function(t){ html += watchItem(t.t, t.key, t.url); });
       html+='</ul></div>';
@@ -1336,12 +1339,12 @@ function renderLibrary(){
   html+='</div>';
 
   // 3. EXPRESSION TRACK (All 5 Gates)
-  html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="expression"><b>Expression Track <span class="tag">The 5 Gates</span></b><span class="chev'+(ui.lib.expression?" open":"")+'">&#8250;</span></div>';
+  html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="expression"><b>Expression Track</b><span class="acc-right"><span class="acc-sub">The 5 Gates</span><span class="chev'+(ui.lib.expression?" open":"")+'">&#8250;</span></span></div>';
   if(ui.lib.expression){
     html+='<div class="accbody purple-tree">';
     IMPROV_GATES.forEach(function(g, i){
       var gateOpen = !!ui.lib["libGate"+i];
-      html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="libGate'+i+'"><b style="color:var(--purple);">Gate '+(i+1)+': '+g.title+'</b><span class="chev'+(gateOpen?" open":"")+'">&#8250;</span></div>';
+      html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="libGate'+i+'"><b style="color:var(--purple);">Gate '+(i+1)+': '+g.title+'</b><span class="acc-right"><span class="chev'+(gateOpen?" open":"")+'">&#8250;</span></span></div>';
       if(gateOpen){
         html+='<div class="accbody">';
         html+='<p style="font-size:12px; margin-bottom:10px;">'+g.desc+'</p>';
@@ -1370,7 +1373,7 @@ function renderLibrary(){
   html+='</div>';
 
   // 4. LISTENING VAULT
-  html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="listening"><b>Listening Vault <span class="tag">Inspiration &amp; Refs</span></b><span class="chev'+(ui.lib.listening?" open":"")+'">&#8250;</span></div>';
+  html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="listening"><b>Listening Vault</b><span class="acc-right"><span class="acc-sub">Inspiration &amp; Refs</span><span class="chev'+(ui.lib.listening?" open":"")+'">&#8250;</span></span></div>';
   if(ui.lib.listening){
     html+='<div class="accbody">';
     LISTENING_VAULT.forEach(function(g){
@@ -1389,29 +1392,34 @@ function renderLibrary(){
   html+='</div>';
 
   // 5. CREATIVE
-  html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="creative"><b>Creative <span class="tag">Songwriting &amp; Production</span></b><span class="chev'+(ui.lib.creative?" open":"")+'">&#8250;</span></div>';
+  html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="creative"><b>Creative</b><span class="acc-right"><span class="acc-sub">Songwriting &amp; Production</span><span class="chev'+(ui.lib.creative?" open":"")+'">&#8250;</span></span></div>';
   if(ui.lib.creative){
-    html+='<div class="accbody"><div class="card"><h3>Songwriting</h3><ul class="check">'+CREATIVE.songwriting.map(function(t,j){return watchItem(t.t,"creative.sw."+j,t.url);}).join("")+'</ul></div>'+
-      '<div class="card"><h3>Production</h3><ul class="check">'+CREATIVE.production.map(function(t,j){return watchItem(t.t,"creative.pr."+j,t.url);}).join("")+'</ul></div></div>';
+    html+='<div class="accbody"><div class="list-card"><h3>Songwriting</h3><ul class="check">'+CREATIVE.songwriting.map(function(t,j){return watchItem(t.t,"creative.sw."+j,t.url);}).join("")+'</ul></div>'+
+      '<div class="list-card"><h3>Production</h3><ul class="check">'+CREATIVE.production.map(function(t,j){return watchItem(t.t,"creative.pr."+j,t.url);}).join("")+'</ul></div></div>';
   }
   html+='</div>';
 
   // 6. BONUS CONTENT
-  html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="bonuslib"><b>Bonus Content</b><span class="chev'+(ui.lib.bonuslib?" open":"")+'">&#8250;</span></div>';
-  if(ui.lib.bonuslib) html+='<div class="accbody"><div class="card">'+renderBonusList()+'</div></div>';
+  html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="bonuslib"><b>Bonus Content</b><span class="acc-right"><span class="acc-sub">Extras &amp; Workouts</span><span class="chev'+(ui.lib.bonuslib?" open":"")+'">&#8250;</span></span></div>';
+  if(ui.lib.bonuslib) html+='<div class="accbody"><div class="list-card">'+renderBonusList()+'</div></div>';
   html+='</div>';
   
   // Embedded Info Guide
 
 
   html+='<hr style="border:0; border-top:1px solid #23262f; margin:20px 0;">';
-  html+='<div class="h2" style="font-size:20px;margin-bottom:10px;">Guide &amp; Info</div>';
-  html+='<div class="card"><h3>How This Plan Works</h3><p style="margin-bottom:6px;text-align:justify;">Technique is sequential and full-coverage: start at Beginner regardless of ability, and work every exercise, chop-builder and solo in every tier before advancing.</p>'+
-    '<p style="margin-bottom:6px;text-align:justify;">To unlock the next phase, you must master all checklist items, hit your chop-builder targets, and reach the required level in all 6 categories of the <b>Phase Transition Test</b> (which includes the Ultimate Technique Workout).</p>'+
-    '<p style="margin-bottom:6px;text-align:justify;">Theory and Creative run on their own independent tracks - always available in Library, never gating a phase.</p></div>';
-  html+='<div class="card"><h3>Weekly Rhythm</h3><table class="info"><tr><th>Day</th><th>Focused</th><th>Casual / Improv</th></tr>'+
-    WEEKLY_RHYTHM.map(function(r){return '<tr><td class="day">'+r.day+'</td><td>'+r.focused+'</td><td>'+r.casual+'</td></tr>';}).join("")+'</table></div>';
-  html+='<div class="note" style="margin-top:4px;">This guide and app are based on <b>Bradley Hall\'s Guitar School</b> (BHGS) Official Roadmap. Improv module custom tailored for expression.</div>';
+  html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="guide"><b>Guide &amp; Info</b><span class="acc-right"><span class="acc-sub">App Instructions</span><span class="chev'+(ui.lib.guide?" open":"")+'">&#8250;</span></span></div>';
+  if(ui.lib.guide) {
+    html+='<div class="accbody">';
+    html+='<div class="list-card"><h3>How This Plan Works</h3><p style="margin-bottom:6px;text-align:justify;">Technique is sequential and full-coverage: start at Beginner regardless of ability, and work every exercise, chop-builder and solo in every tier before advancing.</p>'+
+      '<p style="margin-bottom:6px;text-align:justify;">To unlock the next phase, you must master all checklist items, hit your chop-builder targets, and reach the required level in all 6 categories of the <b>Phase Transition Test</b> (which includes the Ultimate Technique Workout).</p>'+
+      '<p style="margin-bottom:6px;text-align:justify;">Theory and Creative run on their own independent tracks - always available in Library, never gating a phase.</p></div>';
+    html+='<div class="list-card"><h3>Weekly Rhythm</h3><table class="info"><tr><th>Day</th><th>Focused</th><th>Casual / Improv</th></tr>'+
+      WEEKLY_RHYTHM.map(function(r){return '<tr><td class="day">'+r.day+'</td><td>'+r.focused+'</td><td>'+r.casual+'</td></tr>';}).join("")+'</table></div>';
+    html+='<div class="note" style="margin-top:4px;">This guide and app are based on <b>Bradley Hall\'s Guitar School</b> (BHGS) Official Roadmap. Improv module custom tailored for expression.</div>';
+    html+='</div>';
+  }
+  html+='</div>';
   return html;
 }
 
@@ -1517,6 +1525,15 @@ function navBtn(view,ic,label, customClass){
   return '<button data-action="go" data-view="'+view+'" class="'+cl+'"><span class="ic">'+ic+'</span>'+label+'</button>'; 
 }
 
+function initCalCarousel(){
+  var carousel = document.getElementById('cal-carousel');
+  if(carousel) {
+    var curPanel = carousel.querySelector('.cal-panel[data-ym="'+ui.calYear+'-'+ui.calMonth+'"]');
+    if(curPanel) {
+      carousel.scrollTo({left: curPanel.offsetLeft, behavior: 'instant'});
+    }
+  }
+}
 function render(){
   try {
     ensureDailyReset();
@@ -1546,6 +1563,7 @@ function render(){
     updateBotNav();
 
     document.querySelectorAll('.view-panel').forEach(function(p){ p.scrollTop = tops[p.id] || 0; });
+    initCalCarousel();
 
     var idx = APP_VIEWS.indexOf(ui.view);
     var carousel = document.getElementById('carousel');
@@ -1563,78 +1581,30 @@ function render(){
 
 
 
-let calTouchStartX = 0;
-let calCurrentTranslate = -33.333; // starting at current month pane index 1
-
-document.addEventListener("touchstart", function(e) {
-  var t = e.target.closest("#cal-swipe-area");
-  if(t) {
-    calTouchStartX = e.touches[0].screenX;
-    var track = document.getElementById("cal-track");
-    if(track) {
-      track.style.transition = "none";
-    }
-  }
-}, {passive: true});
-
-document.addEventListener("touchmove", function(e) {
-  var t = e.target.closest("#cal-swipe-area");
-  if(t && calTouchStartX !== undefined) {
-    var currentX = e.touches[0].screenX;
-    var dx = currentX - calTouchStartX;
-    var track = document.getElementById("cal-track");
-    if(track) {
-      var wrapperWidth = t.offsetWidth || 300;
-      var percentDx = (dx / wrapperWidth) * 33.3333;
-      var newTranslate = -33.3333 + percentDx;
-      track.style.transform = 'translateX(' + newTranslate + '%)';
-    }
-  }
-}, {passive: true});
-
-document.addEventListener("touchend", function(e) {
-  var t = e.target.closest("#cal-swipe-area");
-  if(t && calTouchStartX !== undefined) {
-    var endX = e.changedTouches[0].screenX;
-    var dx = endX - calTouchStartX;
-    var track = document.getElementById("cal-track");
-    var wrapperWidth = t.offsetWidth || 300;
-
-    if(track) {
-      track.style.transition = 'transform 0.25s cubic-bezier(0.25, 1, 0.5, 1)';
-    }
-
-    if (Math.abs(dx) > wrapperWidth * 0.25) {
-      var now = new Date();
-      var earliest = getEarliestYearMonth();
-      if (dx < 0) {
-        // Swiped left -> next month
-        var canGoFwd = (ui.calYear < now.getFullYear()) || (ui.calYear === now.getFullYear() && ui.calMonth < now.getMonth());
-        if(canGoFwd) {
-          if(track) track.style.transform = 'translateX(-66.666%)';
-          setTimeout(function(){ changeCalMonth(1); }, 250);
-          calTouchStartX = undefined;
-          return;
-        }
-      } else {
-        // Swiped right -> previous month
-        var canGoBack = (ui.calYear > earliest.y) || (ui.calYear === earliest.y && ui.calMonth > earliest.m);
-        if(canGoBack) {
-          if(track) track.style.transform = 'translateX(0%)';
-          setTimeout(function(){ changeCalMonth(-1); }, 250);
-          calTouchStartX = undefined;
-          return;
-        }
+// Calendar carousel scroll listener for fluid swiping and month preview
+document.addEventListener("scroll", function(e) {
+  if(e.target && e.target.id === "cal-carousel") {
+    var carousel = e.target;
+    var panels = carousel.querySelectorAll('.cal-panel');
+    var width = carousel.offsetWidth;
+    var scrollLeft = carousel.scrollLeft;
+    var index = Math.round(scrollLeft / width);
+    if(panels[index]) {
+      var ym = panels[index].getAttribute('data-ym').split('-');
+      var y = parseInt(ym[0], 10);
+      var m = parseInt(ym[1], 10);
+      if(ui.calYear !== y || ui.calMonth !== m) {
+        ui.calYear = y;
+        ui.calMonth = m;
+        var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        var tTitle = document.getElementById('cal-month-title');
+        var yTitle = document.getElementById('cal-year-title');
+        if(tTitle) tTitle.textContent = monthNames[m];
+        if(yTitle) yTitle.textContent = y;
       }
     }
-    
-    // Snap back if threshold not met or limit reached
-    if(track) {
-      track.style.transform = 'translateX(-33.3333%)';
-    }
-    calTouchStartX = undefined;
   }
-}, {passive: true});
+}, {capture: true, passive: true});
 
 
 document.addEventListener("click",function(e){
