@@ -260,6 +260,51 @@ table.info td.day{font-weight:700;white-space:nowrap;color:var(--accent2);}
 .infolist{list-style:none;padding:0;margin:0;}
 .infolist li{font-size:12px;color:var(--text);padding:6px 0;border-bottom:1px solid #23262f;}
 .infolist li:last-child{border-bottom:none;}
+
+/* --- THEORY DOJO CSS --- */
+.dojo-dash { display: flex; flex-direction: column; gap: 12px; }
+.xp-bar-container { background: var(--card2); border: 1px solid var(--border); border-radius: 8px; height: 16px; overflow: hidden; position: relative; }
+.xp-bar-fill { background: linear-gradient(90deg, var(--blue), var(--purple)); height: 100%; transition: width 0.3s ease; }
+.xp-text { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 9.5px; font-weight: 700; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.8); }
+
+.dojo-btn { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; text-align: left; display: flex; align-items: center; gap: 14px; color: var(--text); position: relative; overflow: hidden; }
+.dojo-btn .ic { font-size: 26px; }
+.dojo-btn .info { flex: 1; }
+.dojo-btn .info b { display: block; font-family: 'Oswald', sans-serif; font-size: 16px; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 2px; }
+.dojo-btn .info span { display: block; font-size: 11.5px; color: var(--muted); line-height: 1.3; }
+.dojo-btn.locked { opacity: 0.5; pointer-events: none; filter: grayscale(100%); }
+.dojo-btn.locked::after { content: '🔒 REQUIRES CODEX'; position: absolute; right: 12px; top: 12px; font-size: 9px; font-weight: bold; color: var(--accent); background: rgba(255,59,48,0.1); padding: 4px 8px; border-radius: 4px; }
+
+.game-area { display: none; flex-direction: column; height: 100%; }
+.game-area.active { display: flex; }
+.game-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.game-title { font-family: 'Oswald', sans-serif; font-size: 18px; color: var(--purple); text-transform: uppercase; }
+
+.fretboard-canvas { width: 100%; height: 140px; background: #2a1b15; border-radius: 8px; border: 2px solid #1a100c; touch-action: none; margin-bottom: 16px; }
+.question-box { background: var(--card2); border-left: 3px solid var(--blue); padding: 16px; border-radius: 0 8px 8px 0; margin-bottom: 16px; }
+.question-box h4 { font-size: 14px; margin-bottom: 8px; color: #fff; text-transform: none; font-family: 'Inter', sans-serif; line-height: 1.4; }
+
+.opt-btn { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 12px; color: var(--text); font-size: 13.5px; margin-bottom: 8px; width: 100%; text-align: left; transition: all 0.2s; }
+.opt-btn.correct { background: #123324; border-color: var(--green); color: var(--green); }
+.opt-btn.wrong { background: #3a1515; border-color: var(--accent); color: var(--accent); }
+
+.feedback-box { display: none; background: #1a1b26; border: 1px solid #2d3f66; padding: 16px; border-radius: 8px; margin-top: 16px; border-left: 4px solid var(--purple); }
+.feedback-box.show { display: block; animation: fadein 0.3s ease; }
+.feedback-box b { color: var(--purple); font-size: 13px; display: block; margin-bottom: 6px; }
+.feedback-box p { font-size: 12.5px; color: #d0d4dc; line-height: 1.5; }
+
+.codex-view { display: none; }
+.codex-view.active { display: block; }
+.codex-content { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+.codex-content h2 { font-size: 22px; color: var(--purple); margin-bottom: 12px; border-bottom: 1px solid #333; padding-bottom: 8px; }
+.codex-content h3 { font-size: 15px; color: #fff; margin-top: 16px; margin-bottom: 8px; }
+.codex-content p { font-size: 13.5px; margin-bottom: 12px; text-align: justify; color: #c4c8d4; line-height: 1.5; }
+.codex-content ul { margin: 0 0 16px 20px; padding: 0; color: #c4c8d4; font-size: 13.5px; }
+.codex-content li { margin-bottom: 6px; }
+.codex-item-btn { margin-bottom: 8px; background: #1a1a24; border: 1px solid #2a2a3c; }
+
+@keyframes fadein { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
 </style>
 <script>
   function forceRemoveSplash() {
@@ -628,10 +673,23 @@ const setupData = {
   }
 };
 
-const STORAGE_KEY="shredRoadmapState_v9";
+const STORAGE_KEY="shredRoadmapState_v10";
 
-function defaultState(){return {phaseIndex:0,chop:{alt:0,sweep:0,legato:0,econ:0,tap:0},testLevel:{alt:0,sweep:0,legato:0,econ:0,tap:0,ult:0},bonusLevel:{},checks:{},practiced:{},practicedDate:null,congratsDate:null,activeDayOverride:null,activeDayDate:null,streakDates:[],setupGuitar:"prs",setupTuning:"e_std",improvIndex:0,improvChecks:{}};}
-function loadState(){try{var raw=localStorage.getItem(STORAGE_KEY);if(raw){var d=JSON.parse(raw);return Object.assign(defaultState(),d,{chop:Object.assign(defaultState().chop,d.chop||{}),testLevel:Object.assign(defaultState().testLevel,d.testLevel||{}),bonusLevel:d.bonusLevel||{},checks:d.checks||{},practiced:d.practiced||{},streakDates:d.streakDates||[],setupGuitar:d.setupGuitar||"prs",setupTuning:d.setupTuning||"e_std",improvIndex:d.improvIndex||0,improvChecks:d.improvChecks||{}});}}catch(e){}return defaultState();}
+
+// Dojo State Additions
+function defaultDojoState() {
+  return {
+    xp: 0,
+    level: 1,
+    unlockedCodexes: [1], // Starts with Codex 1 open
+    readCodexes: [],
+    audioMuted: false
+  };
+}
+if(!state.dojo) state.dojo = defaultDojoState();
+
+function defaultState(){return {phaseIndex:0,chop:{alt:0,sweep:0,legato:0,econ:0,tap:0},testLevel:{alt:0,sweep:0,legato:0,econ:0,tap:0,ult:0},bonusLevel:{},checks:{},practiced:{},practicedDate:null,congratsDate:null,activeDayOverride:null,activeDayDate:null,streakDates:[],setupGuitar:"prs",setupTuning:"e_std",improvIndex:0,improvChecks:{}, dojo: defaultDojoState()};}
+function loadState(){try{var raw=localStorage.getItem(STORAGE_KEY);if(raw){var d=JSON.parse(raw);return Object.assign(defaultState(),d,{chop:Object.assign(defaultState().chop,d.chop||{}),testLevel:Object.assign(defaultState().testLevel,d.testLevel||{}),bonusLevel:d.bonusLevel||{},checks:d.checks||{},practiced:d.practiced||{},streakDates:d.streakDates||[],setupGuitar:d.setupGuitar||"prs",setupTuning:d.setupTuning||"e_std",improvIndex:d.improvIndex||0,improvChecks:d.improvChecks||{}, dojo: Object.assign(defaultDojoState(), d.dojo||{})});}}catch(e){}return defaultState();}
 
 function saveState(){
   try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}catch(e){}
@@ -642,7 +700,7 @@ function saveState(){
 
 let state=loadState();
 let ui={view:"home",lib:{},dayOverride:null,resetConfirm:false,phaseJumpPending:null};
-const APP_VIEWS = ["home", "daily", "improv", "library", "setup"];
+const APP_VIEWS = ["home", "daily", "improv", "dojo", "library", "setup"];
 
 function k(){return Array.prototype.slice.call(arguments).join(".");}
 function todayISO(){return new Date().toISOString().slice(0,10);}
@@ -821,6 +879,253 @@ function formatGauge(g){
     return s1 + '" - ' + s2 + '" (' + g + ')';
   }
   return g;
+}
+
+
+// --- THEORY DOJO LOGIC ---
+
+const DOJO_LEVELS = [
+  { l: 1, req: 0, title: "Fretboard Novice", codex: 1 },
+  { l: 2, req: 100, title: "Rhythm Apprentice", codex: 1 },
+  { l: 11, req: 1200, title: "Harmonic Journeyman", codex: 2 },
+  { l: 21, req: 3500, title: "The Prog Architect", codex: 3 },
+  { l: 31, req: 7000, title: "Polyrhythmic Master", codex: 4 },
+  { l: 41, req: 12000, title: "Audiation Grandmaster", codex: 5 }
+];
+
+const CODEX_DATA = {
+  1: {
+    title: "Módulo 1: Fundações do Braço e Síncope",
+    content: "<h3>Visão do Braço (Fretboard)</h3><p>Antes de construíres acordes complexos, tens de saber onde as notas moram. A guitarra não é linear como o piano. A mesma nota (ex: E4) existe em várias cordas.</p><h3>Síncope Básica</h3><p>No Metal, a agressividade não vem apenas da distorção, vem de tocar *fora* do tempo forte (off-beat). Se tocares sempre no 1, 2, 3, 4, soas a uma marcha militar. Se tocares no 'E' do 2, crias groove.</p><ul><li><b>Onde ouvir:</b> Riffs iniciais dos Metallica (ex: Master of Puppets). A mão direita faz *chugs* constantes, mas os acentos caem em síncope.</li></ul>"
+  },
+  2: {
+    title: "Módulo 2: Tensão Clássica e Modos Básicos",
+    content: "<h3>A Terça Menor e a Quinta Diminuta</h3><p>Estes dois intervalos são a espinha dorsal do Heavy Metal. A terça menor dá a tristeza. A 5ª diminuta (Trítono) dá o terror.</p><h3>Dórico vs Mixolídio</h3><p>Se estás a tocar Stoner Rock, o modo Dórico (menor com 6ª maior) é o teu melhor amigo. Dá aquele som do deserto aberto. Se estás no Classic Rock, o Mixolídio (Maior com 7ª menor) dá aquele swing de Blues sujo.</p><ul><li><b>Onde ouvir:</b> Black Sabbath para o trítono. AC/DC para o Mixolídio.</li></ul>"
+  },
+  3: {
+    title: "Módulo 3: O Lado Negro da Harmonia (Opeth & Gojira)",
+    content: "<h3>O Acorde 'Sus2' com Distorção</h3><p>Em vez de tocares um acorde Menor normal, retiras a 3ª e adicionas a 2ª Maior (9ª). Ficas com Tónica, 2ª e 5ª.</p><ul><li><b>Onde ouvir:</b> É a base de quase todos os riffs acústicos e abertos dos <b>Opeth</b> (ex: Ghost of Perdition). Soa melancólico e misterioso.</li></ul><h3>A Tensão Frígia (b2)</h3><p>Quando queres peso absoluto, usas o Modo Frígio. O intervalo de 2ª Menor (b2) logo acima da Tónica soa tão dissonante contra uma corda solta que o cérebro interpreta como 'peso extremo'.</p><ul><li><b>Onde ouvir:</b> <b>Gojira</b> (Toxic Garbage Island).</li></ul>"
+  }
+};
+
+let currentMinigame = null;
+let currentQuestion = null;
+
+function getDojoLevelInfo(xp) {
+  let cur = DOJO_LEVELS[0];
+  let next = DOJO_LEVELS[1];
+  for(let i=0; i<DOJO_LEVELS.length; i++) {
+    if(xp >= DOJO_LEVELS[i].req) {
+      cur = DOJO_LEVELS[i];
+      next = DOJO_LEVELS[i+1] || {req: 999999};
+    }
+  }
+  let pct = next.req === 999999 ? 100 : Math.floor(((xp - cur.req) / (next.req - cur.req)) * 100);
+  return { level: cur.l, title: cur.title, pct: pct, nextReq: next.req, codex: cur.codex };
+}
+
+function addXP(amount) {
+  state.dojo.xp += amount;
+  let info = getDojoLevelInfo(state.dojo.xp);
+  if(info.level > state.dojo.level) {
+    state.dojo.level = info.level;
+    showToast("⭐ Level Up! You are now a " + info.title);
+    if(info.codex > 1 && !state.dojo.unlockedCodexes.includes(info.codex)) {
+      state.dojo.unlockedCodexes.push(info.codex);
+      showToast("?? New Codex Unlocked!");
+    }
+  } else {
+    showToast("+" + amount + " XP!");
+  }
+  saveState();
+}
+
+function generateHarmonicQuestion() {
+  const lvl = state.dojo.level;
+  if (lvl < 11) {
+    return {
+      q: "Estás num riff pesado em E Standard. Queres invocar o som mais negro e dissonante (o 'Trítono' de Black Sabbath). O baixo está a tocar a nota E. Que nota tocas na guitarra?",
+      opts: ["A (4ª Perfeita)", "B (5ª Perfeita)", "Bb (5ª Diminuta)"],
+      ans: 2,
+      exp: "A nota Bb (Si bemol) é a 5ª diminuta de E. Este é o infame intervalo do trítono (Diabolus in Musica) que Tony Iommi popularizou no primeiro álbum de Black Sabbath. Cria uma tensão que exige resolução."
+    };
+  } else if (lvl < 21) {
+    return {
+      q: "Estás a escrever uma harmonia de guitarras em A Menor para um riff de Melodic Death Metal. A guitarra base toca um C (Terça menor). Queres harmonizar uma 3ª acima (dentro da escala menor natural). Que nota tocas?",
+      opts: ["E (Terça Maior de C)", "Eb (Terça Menor de C)", "D (Segunda de C)"],
+      ans: 0,
+      exp: "O E (Mi) é a Terça Maior em relação ao C. Ao tocares isto, crias aquele paralelismo melancólico e épico. Esta é a fórmula que In Flames e Dark Tranquillity usaram para o Som de Gotemburgo. Manter a nota dentro da armação original (A Menor) é crucial."
+    };
+  } else {
+    return {
+      q: "Estás num riff acústico em D. Queres o som sombrio, misterioso e sem género de Opeth. Não queres que o acorde soe definitivamente maior nem menor. Que acorde formas?",
+      opts: ["D minor 7", "D major 9", "D sus2"],
+      ans: 2,
+      exp: "O acorde D sus2 (D - E - A) omite a terça. Sem a terça, o acorde não tem 'género' (maior/menor). A tensão entre a tónica (D) e a 2ª maior (E) cria a melancolia aberta e flutuante clássica de Mikael Åkerfeldt."
+    };
+  }
+}
+
+// Very basic Fretboard visual rendering for the Canvas
+function drawFretboard(canvasId, targetNote) {
+  var c = document.getElementById(canvasId);
+  if(!c) return;
+  var ctx = c.getContext("2d");
+  var w = c.width = c.offsetWidth;
+  var h = c.height = c.offsetHeight;
+  
+  ctx.fillStyle = "#2a1b15";
+  ctx.fillRect(0,0,w,h);
+  
+  // Strings
+  ctx.fillStyle = "#aaa";
+  for(var i=0; i<6; i++) {
+    var y = 20 + i * ((h-40)/5);
+    ctx.fillRect(0, y-1, w, i<3? 1: 2); // Thicker wound strings
+  }
+  
+  // Frets
+  ctx.fillStyle = "#888";
+  for(var i=1; i<=12; i++) {
+    var x = i * (w/13);
+    ctx.fillRect(x-1, 0, 2, h);
+  }
+  
+  // Inlays
+  ctx.fillStyle = "rgba(255,255,255,0.4)";
+  [3,5,7,9].forEach(f => {
+    ctx.beginPath(); ctx.arc((f - 0.5)*(w/13), h/2, 6, 0, Math.PI*2); ctx.fill();
+  });
+  ctx.beginPath(); ctx.arc((12 - 0.5)*(w/13), h/2 - 15, 5, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc((12 - 0.5)*(w/13), h/2 + 15, 5, 0, Math.PI*2); ctx.fill();
+}
+
+// Web Audio API Metronome/Synth
+let audioCtx;
+function playRhythm(pattern) {
+  if (state.dojo.audioMuted) return;
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  
+  const time = audioCtx.currentTime;
+  const tempo = 120; 
+  const beatTime = 60 / tempo;
+  
+  pattern.forEach((note, i) => {
+    if(note === 1) { // Kick/Click
+      let osc = audioCtx.createOscillator();
+      let gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      
+      osc.frequency.setValueAtTime(150, time + i*beatTime);
+      osc.frequency.exponentialRampToValueAtTime(0.01, time + i*beatTime + 0.1);
+      
+      gain.gain.setValueAtTime(1, time + i*beatTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, time + i*beatTime + 0.1);
+      
+      osc.start(time + i*beatTime);
+      osc.stop(time + i*beatTime + 0.1);
+    }
+  });
+}
+
+function startArchitectGame() {
+  currentMinigame = "architect";
+  currentQuestion = generateHarmonicQuestion();
+  
+  let html = '<div class="game-header"><span class="game-title">??️ The Harmonic Architect</span><button class="tbtn" data-action="dojoback">Back</button></div>';
+  html += '<div class="question-box"><h4>' + currentQuestion.q + '</h4></div>';
+  
+  currentQuestion.opts.forEach((opt, idx) => {
+    html += '<button class="opt-btn" data-action="dojoans" data-ans="'+idx+'">' + opt + '</button>';
+  });
+  
+  html += '<div id="dojo-feedback" class="feedback-box"></div>';
+  document.getElementById('dojo-game-container').innerHTML = html;
+  
+  document.getElementById('dojo-dash-view').classList.remove('active');
+  document.getElementById('dojo-game-view').classList.add('active');
+}
+
+function handleDojoAnswer(idx) {
+  var btns = document.querySelectorAll('.opt-btn');
+  btns.forEach(b => b.style.pointerEvents = 'none'); // Lock answers
+  
+  var fbox = document.getElementById('dojo-feedback');
+  if(idx === currentQuestion.ans) {
+    btns[idx].classList.add('correct');
+    addXP(50);
+    fbox.innerHTML = '<b>✔️ Análise do Arquiteto (Correto!)</b><p>' + currentQuestion.exp + '</p><button class="tbtn primary" style="margin-top:12px;" data-action="dojonext">Próximo Cenário &rsaquo;</button>';
+  } else {
+    btns[idx].classList.add('wrong');
+    btns[currentQuestion.ans].classList.add('correct');
+    fbox.innerHTML = '<b>❌ Análise do Arquiteto (Incorreto)</b><p>' + currentQuestion.exp + '</p><button class="tbtn" style="margin-top:12px;" data-action="dojoback">Voltar ao Dojo</button>';
+  }
+  fbox.classList.add('show');
+}
+
+function renderDojoDashboard() {
+  let info = getDojoLevelInfo(state.dojo.xp);
+  let isMuted = state.dojo.audioMuted;
+  
+  let html = '<div class="eyebrow" style="color:var(--blue);">THEORY DOJO</div>';
+  html += '<div class="h2" style="font-size:22px; margin-bottom: 4px;">Nível ' + info.level + ' - ' + info.title + '</div>';
+  
+  html += '<div class="xp-bar-container" style="margin-bottom:16px;">';
+  html += '<div class="xp-bar-fill" style="width:'+info.pct+'%;"></div>';
+  html += '<div class="xp-text">' + state.dojo.xp + ' / ' + (info.nextReq === 999999 ? 'MAX' : info.nextReq) + ' XP</div>';
+  html += '</div>';
+  
+  html += '<div style="display:flex; justify-content:flex-end; margin-bottom:16px;">';
+  html += '<button class="tbtn" data-action="togglemute" style="padding:6px 12px; font-size:11px;">' + (isMuted ? '🔇 Commute Mode (Audio Off)' : '🔊 Studio Mode (Audio On)') + '</button>';
+  html += '</div>';
+  
+  html += '<div class="dojo-dash">';
+  
+  // Codex Library
+  html += '<button class="dojo-btn" style="border-color:var(--blue);" data-action="dojoopen" data-target="codex-list"><div class="ic">??</div><div class="info"><b>The Architect's Codex</b><span>Lê a teoria e o contexto antes de jogar. Novos módulos desbloqueiam ao subir de nível.</span></div></button>';
+  
+  // Games
+  let architectLocked = !state.dojo.readCodexes.includes(1); 
+  html += '<button class="dojo-btn" data-action="dojoplay" data-game="architect"><div class="ic">??️</div><div class="info"><b>The Harmonic Architect</b><span>Decisões de songwriting e tensão modal.</span></div></button>';
+  
+  html += '<button class="dojo-btn" data-action="dojoplay" data-game="fretboard"><div class="ic">??</div><div class="info"><b>The Fretboard Sniper</b><span>Mapeamento visual rápido no braço.</span></div></button>';
+  
+  if(!isMuted) {
+    html += '<button class="dojo-btn" data-action="dojoplay" data-game="rhythm"><div class="ic">??</div><div class="info"><b>The Rhythm Decryptor</b><span>Treino auditivo de compassos compostos.</span></div></button>';
+  }
+  
+  html += '</div>';
+  return html;
+}
+
+function renderCodexList() {
+  let html = '<div class="game-header"><span class="game-title">?? Library of the Architect</span><button class="tbtn" data-action="dojoback">Back</button></div>';
+  html += '<p class="lede">Lê estes pergaminhos teóricos contextualizados para desbloquear o verdadeiro poder nos minijogos.</p>';
+  
+  Object.keys(CODEX_DATA).forEach(k => {
+    let id = parseInt(k,10);
+    let unlocked = state.dojo.unlockedCodexes.includes(id);
+    let read = state.dojo.readCodexes.includes(id);
+    
+    if(unlocked) {
+      html += '<button class="navbtn dojo-btn codex-item-btn" data-action="readcodex" data-id="'+id+'"><div class="ic">'+(read?'✔️':'??')+'</div><div class="info"><b>' + CODEX_DATA[id].title + '</b></div></button>';
+    } else {
+      html += '<div class="navbtn dojo-btn codex-item-btn locked"><div class="ic">??</div><div class="info"><b>' + CODEX_DATA[id].title + '</b><span>Desbloqueia em níveis superiores.</span></div></div>';
+    }
+  });
+  
+  return html;
+}
+
+function renderDojoView() {
+  let html = `
+    <div id="dojo-dash-view" class="codex-view active">${renderDojoDashboard()}</div>
+    <div id="dojo-codex-list" class="codex-view"></div>
+    <div id="dojo-codex-reader" class="codex-view codex-content"></div>
+    <div id="dojo-game-view" class="codex-view game-area"><div id="dojo-game-container"></div></div>
+  `;
+  return html;
 }
 
 /* ---------- render helpers ---------- */
@@ -1537,6 +1842,7 @@ function initAppLayout() {
       <div class="view-panel" data-view-id="home" id="panel-home"></div>
       <div class="view-panel" data-view-id="daily" id="panel-daily"></div>
       <div class="view-panel" data-view-id="improv" id="panel-improv"></div>
+      <div class="view-panel" data-view-id="dojo" id="panel-dojo"></div>
       <div class="view-panel" data-view-id="library" id="panel-library"></div>
       <div class="view-panel" data-view-id="setup" id="panel-setup"></div>
     </div>
@@ -1602,6 +1908,7 @@ function render(){
     document.getElementById('panel-home').innerHTML = renderHome();
     document.getElementById('panel-daily').innerHTML = renderDaily();
     document.getElementById('panel-improv').innerHTML = renderImprov();
+    document.getElementById('panel-dojo').innerHTML = renderDojoView();
     document.getElementById('panel-library').innerHTML = renderLibrary();
     document.getElementById('panel-setup').innerHTML = renderSetup();
 
@@ -1722,6 +2029,43 @@ document.addEventListener("click",function(e){
   else if(a==="canceljump"){ cancelPhaseJumpBack(); }
   
   else if(a==="confirmjump"){ confirmPhaseJumpBack(); }
+  
+  else if(a==="togglemute"){ state.dojo.audioMuted = !state.dojo.audioMuted; saveState(); render(); }
+  else if(a==="dojoopen"){
+    document.querySelectorAll('.codex-view').forEach(e=>e.classList.remove('active'));
+    let t = document.getElementById('dojo-' + t.dataset.target);
+    if(t.dataset.target==='codex-list') t.innerHTML = renderCodexList();
+    t.classList.add('active');
+  }
+  else if(a==="dojoback"){
+    document.querySelectorAll('.codex-view').forEach(e=>e.classList.remove('active'));
+    document.getElementById('dojo-dash-view').classList.add('active');
+    render();
+  }
+  else if(a==="readcodex"){
+    let id = parseInt(t.dataset.id,10);
+    if(!state.dojo.readCodexes.includes(id)) {
+      state.dojo.readCodexes.push(id);
+      addXP(100); // Reward for reading
+    }
+    document.querySelectorAll('.codex-view').forEach(e=>e.classList.remove('active'));
+    let reader = document.getElementById('dojo-codex-reader');
+    reader.innerHTML = '<div class="game-header" style="margin-bottom:8px;"><button class="tbtn" data-action="dojoopen" data-target="codex-list">&lsaquo; Back</button></div>' + 
+      '<h2>' + CODEX_DATA[id].title + '</h2>' + CODEX_DATA[id].content + 
+      '<button class="tbtn primary" style="width:100%;margin-top:20px;" data-action="dojoback">✔️ Terminei a Leitura</button>';
+    reader.classList.add('active');
+  }
+  else if(a==="dojoplay"){
+    if(t.dataset.game === 'architect') startArchitectGame();
+    else showToast("Mini-game coming in next update!");
+  }
+  else if(a==="dojoans"){
+    handleDojoAnswer(parseInt(t.dataset.ans, 10));
+  }
+  else if(a==="dojonext"){
+    if(currentMinigame === 'architect') startArchitectGame();
+  }
+
   else if(a==="calprev"){ changeCalMonth(-1); }
   else if(a==="calnext"){ changeCalMonth(1); }
   else if(a==="caltoday"){ ui.calMonth = new Date().getMonth(); ui.calYear = new Date().getFullYear(); render(); }
