@@ -305,6 +305,12 @@ table.info td.day{font-weight:700;white-space:nowrap;color:var(--accent2);}
 
 @keyframes fadein { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
+
+.custom-toggle { display:flex; align-items:center; cursor:pointer; background:var(--card2); border:1px solid var(--border); border-radius:30px; padding:4px; width:48px; position:relative; transition:0.3s; box-sizing:border-box; }
+.custom-toggle.on { background:var(--blue); border-color:var(--blue); }
+.custom-toggle .knob { width:16px; height:16px; background:var(--muted); border-radius:50%; transition:0.3s; transform:translateX(0); }
+.custom-toggle.on .knob { background:#fff; transform:translateX(22px); }
+
 </style>
 <script>
   function forceRemoveSplash() {
@@ -894,16 +900,16 @@ const DOJO_LEVELS = [
 
 const CODEX_DATA = {
   1: {
-    title: "Módulo 1: Fundações do Braço e Síncope",
-    content: "<h3>Visão do Braço (Fretboard)</h3><p>Antes de construíres acordes complexos, tens de saber onde as notas moram. A guitarra não é linear como o piano. A mesma nota (ex: E4) existe em várias cordas.</p><h3>Síncope Básica</h3><p>No Metal, a agressividade não vem apenas da distorção, vem de tocar *fora* do tempo forte (off-beat). Se tocares sempre no 1, 2, 3, 4, soas a uma marcha militar. Se tocares no 'E' do 2, crias groove.</p><ul><li><b>Onde ouvir:</b> Riffs iniciais dos Metallica (ex: Master of Puppets). A mão direita faz *chugs* constantes, mas os acentos caem em síncope.</li></ul>"
+    title: "Module 1: Fretboard Foundations & Syncopation",
+    content: "<h3>Fretboard Vision</h3><p>Before building complex chords, you must know where the notes live. The guitar is not linear like a piano. The same note (e.g., E4) exists on multiple strings. Memorizing the fretboard horizontally is the foundation of all advanced improvisation.</p><h3>Basic Syncopation</h3><p>In Metal, aggression doesn't just come from distortion; it comes from playing *off* the strong beat (syncopation). If you always play on 1, 2, 3, 4, you sound like a military march. If you accent the 'and' of 2, you create groove.</p><ul><li><b>Where to listen:</b> Early Metallica riffs (e.g., Master of Puppets). The right hand chugs constantly, but the accents fall on syncopated off-beats.</li></ul>"
   },
   2: {
-    title: "Módulo 2: Tensão Clássica e Modos Básicos",
-    content: "<h3>A Terça Menor e a Quinta Diminuta</h3><p>Estes dois intervalos são a espinha dorsal do Heavy Metal. A terça menor dá a tristeza. A 5ª diminuta (Trítono) dá o terror.</p><h3>Dórico vs Mixolídio</h3><p>Se estás a tocar Stoner Rock, o modo Dórico (menor com 6ª maior) é o teu melhor amigo. Dá aquele som do deserto aberto. Se estás no Classic Rock, o Mixolídio (Maior com 7ª menor) dá aquele swing de Blues sujo.</p><ul><li><b>Onde ouvir:</b> Black Sabbath para o trítono. AC/DC para o Mixolídio.</li></ul>"
+    title: "Module 2: Classic Tension & Basic Modes",
+    content: "<h3>The Minor Third and Diminished Fifth</h3><p>These two intervals are the backbone of Heavy Metal. The minor third provides the sorrow. The diminished 5th (Tritone) provides the terror.</p><h3>Dorian vs. Mixolydian</h3><p>If you're playing Stoner Rock, the Dorian mode (minor with a major 6th) is your best friend. It gives that wide-open desert sound. If you're in Classic Rock, the Mixolydian (Major with a minor 7th) gives that dirty Blues swagger.</p><ul><li><b>Where to listen:</b> Black Sabbath for the tritone. AC/DC for the Mixolydian.</li></ul>"
   },
   3: {
-    title: "Módulo 3: O Lado Negro da Harmonia (Opeth & Gojira)",
-    content: "<h3>O Acorde 'Sus2' com Distorção</h3><p>Em vez de tocares um acorde Menor normal, retiras a 3ª e adicionas a 2ª Maior (9ª). Ficas com Tónica, 2ª e 5ª.</p><ul><li><b>Onde ouvir:</b> É a base de quase todos os riffs acústicos e abertos dos <b>Opeth</b> (ex: Ghost of Perdition). Soa melancólico e misterioso.</li></ul><h3>A Tensão Frígia (b2)</h3><p>Quando queres peso absoluto, usas o Modo Frígio. O intervalo de 2ª Menor (b2) logo acima da Tónica soa tão dissonante contra uma corda solta que o cérebro interpreta como 'peso extremo'.</p><ul><li><b>Onde ouvir:</b> <b>Gojira</b> (Toxic Garbage Island).</li></ul>"
+    title: "Module 3: The Dark Side of Harmony",
+    content: "<h3>The 'Sus2' Chord with Distortion</h3><p>Instead of playing a standard Minor chord, remove the 3rd and add the Major 2nd (9th). You get Root, 2nd, and 5th.</p><ul><li><b>Where to listen:</b> It's the basis of almost all acoustic and open-string riffs by <b>Opeth</b> (e.g., Ghost of Perdition). It sounds melancholic and mysterious, lacking a defined major/minor gender.</li></ul><h3>Phrygian Tension (b2)</h3><p>When you want absolute crushing weight, use the Phrygian Mode. The Minor 2nd (b2) interval right above the Root sounds so dissonant against an open string that the brain interprets it as 'extreme heaviness'.</p><ul><li><b>Where to listen:</b> <b>Gojira</b> (Toxic Garbage Island).</li></ul>"
   }
 };
 
@@ -931,7 +937,7 @@ function addXP(amount) {
     showToast("⭐ Level Up! You are now a " + info.title);
     if(info.codex > 1 && !state.dojo.unlockedCodexes.includes(info.codex)) {
       state.dojo.unlockedCodexes.push(info.codex);
-      showToast("📜 New Codex Unlocked!");
+      showToast("📜 📜 New Codex Unlocked!");
     }
   } else {
     showToast("+" + amount + " XP!");
@@ -939,30 +945,29 @@ function addXP(amount) {
   saveState();
 }
 
+const HARMONIC_QUESTIONS = [
+  { lvl: 1, q: "You are playing a heavy riff in E Standard. You want to invoke the darkest, most dissonant sound (the 'Tritone' of Black Sabbath). The bass is playing the note E. Which note do you play on the guitar?", opts: ["A (Perfect 4th)", "B (Perfect 5th)", "Bb (Diminished 5th)"], ans: 2, exp: "The note Bb is the diminished 5th of E. This is the infamous tritone interval (Diabolus in Musica) popularized by Tony Iommi. It creates immense tension that demands resolution." },
+  { lvl: 1, q: "You are writing a Melodic Death Metal harmony in A Minor. The rhythm guitar plays a C (Minor 3rd). You want to harmonize a 3rd above it (staying within the natural minor scale). Which note do you play?", opts: ["E (Major 3rd of C)", "Eb (Minor 3rd of C)", "D (Major 2nd of C)"], ans: 0, exp: "E is the Major 3rd in relation to C. This creates that epic, melancholic parallelism typical of the Gothenburg Sound (In Flames, Dark Tranquillity)." },
+  { lvl: 1, q: "You are ending a phrase in a bluesy hard rock solo in A minor. You want to bend a note to the root (A) for a powerful resolution. Which fret and string do you bend a full step?", opts: ["G string, 7th fret (D)", "G string, 12th fret (G)", "B string, 8th fret (G)"], ans: 2, exp: "Bending the G on the 8th fret of the B string a full step hits the A perfectly. This is a staple blues-rock resolution." },
+  { lvl: 1, q: "You want a chunky, tight, aggressive palm-muted rhythm tone for a thrash metal riff. What picking technique is most essential?", opts: ["Alternate picking every note", "Strict downpicking", "Economy picking"], ans: 1, exp: "Strict downpicking (like James Hetfield) provides a consistent, aggressive attack and uniform palm-muting that alternate picking cannot replicate perfectly." },
+  { lvl: 1, q: "You're playing in D minor and want a 'sad but epic' passing chord before returning to the D minor root. Which chord works best?", opts: ["Bb Major", "E Major", "G minor"], ans: 0, exp: "Bb Major is the VI chord in D minor. The movement from VI to i (Bb to Dm) is one of the most powerful and epic cadences in metal." },
+  { lvl: 11, q: "You're playing a clean acoustic riff in D. You want the dark, mysterious, genre-less sound of Opeth. You don't want the chord to sound definitively major or minor. Which chord do you build?", opts: ["D minor 7", "D major 9", "D sus2"], ans: 2, exp: "The D sus2 (D - E - A) omits the 3rd. Without the 3rd, the chord lacks a 'gender' (major/minor). The tension between the root (D) and major 2nd (E) creates a floating, melancholic atmosphere." },
+  { lvl: 11, q: "You want to write a sludgy, oppressive doom riff (Electric Wizard style). The root is A. You decide to use the Phrygian mode. Which interval gives you that crushing dissonant flavor?", opts: ["The Minor 3rd (C)", "The Minor 2nd (Bb)", "The Major 7th (G#)"], ans: 1, exp: "The Minor 2nd (b2), which is Bb in the key of A, creates maximum dissonance against the root. It's the hallmark of the Phrygian mode." },
+  { lvl: 11, q: "You are playing a desert stoner rock solo over an E minor groove. You want a spatial, floating, slightly psychedelic feel. Which mode should you primarily use?", opts: ["E Phrygian", "E Dorian", "E Aeolian"], ans: 1, exp: "E Dorian (minor with a major 6th - C#) provides that open, floating desert vibe. The major 6th prevents it from sounding too purely sad or dark." },
+  { lvl: 11, q: "To create a frantic, chaotic shred run, you want to use a symmetrical scale consisting solely of minor 3rds. Which scale/arpeggio is this?", opts: ["Fully Diminished", "Harmonic Minor", "Whole Tone"], ans: 0, exp: "A fully diminished arpeggio stacks minor thirds infinitely. It repeats every 3 frets and sounds perfectly evil and unstable." },
+  { lvl: 11, q: "You're playing a modern metalcore breakdown in Drop C. The progression is heavily syncopated. To maximize the 'bounce' and groove, where should your heaviest accents land?", opts: ["Directly on beats 1 and 3", "On the 16th-note off-beats (the 'e' and 'a')", "On the downbeat of every measure"], ans: 1, exp: "Modern groove and djent rely on displacing the accents to the 16th-note subdivisions between the main beats to create that bouncing, unpredictable feel." },
+  { lvl: 21, q: "You're writing a progressive metal piece (Dream Theater style). You want to change the time signature from 4/4 to something that feels slightly 'cut short' and urgent. Which meter works best?", opts: ["6/8", "7/8", "5/4"], ans: 1, exp: "7/8 feels like a standard 4/4 measure with the final 8th note chopped off. It creates a rushing, stumbling urgency." },
+  { lvl: 21, q: "You are playing a jazzy fusion solo (Guthrie Govan style) over an A7 chord. You want to create outside tension before resolving to the D major chord. Which scale works perfectly over the A7?", opts: ["A Altered (Super Locrian)", "A Mixolydian", "A Dorian"], ans: 0, exp: "The Altered Scale provides every possible alteration (b9, #9, #11, b13) while keeping the root, 3rd, and b7. It creates maximum tension that resolves beautifully to the I chord." },
+  { lvl: 21, q: "You're employing a 'chromatic enclosure' to land on the target note G (on the D string, 5th fret). What sequence of notes might you play immediately before the G?", opts: ["A, F, G", "G#, F#, G", "E, F, G"], ans: 1, exp: "A chromatic enclosure surrounds the target note from a half-step above and a half-step below before resolving to it." },
+  { lvl: 21, q: "You are writing a cinematic, sci-fi intro. You decide to use the Lydian mode over a C drone. Which note gives Lydian its unique, floating, alien quality?", opts: ["F# (Augmented 4th / #11)", "Bb (Minor 7th)", "Ab (Minor 6th)"], ans: 0, exp: "The #4 (or #11) is the defining interval of the Lydian mode, pushing away from the resolution of a perfect 4th and creating an endless, floating sensation." },
+  { lvl: 21, q: "To execute a flawless, lightning-fast ascending run across all 6 strings without changing your pick angle constantly, which picking strategy is most efficient?", opts: ["Strict Alternate Picking", "Economy Picking / Sweep-picking", "Inside Picking only"], ans: 1, exp: "Economy picking (sweeping across string changes in the direction of the travel) minimizes right-hand movement and allows for maximum fluidity." }
+];
+
 function generateHarmonicQuestion() {
-  const lvl = state.dojo.level;
-  if (lvl < 11) {
-    return {
-      q: "Estás num riff pesado em E Standard. Queres invocar o som mais negro e dissonante (o 'Trítono' de Black Sabbath). O baixo está a tocar a nota E. Que nota tocas na guitarra?",
-      opts: ["A (4ª Perfeita)", "B (5ª Perfeita)", "Bb (5ª Diminuta)"],
-      ans: 2,
-      exp: "A nota Bb (Si bemol) é a 5ª diminuta de E. Este é o infame intervalo do trítono (Diabolus in Musica) que Tony Iommi popularizou no primeiro álbum de Black Sabbath. Cria uma tensão que exige resolução."
-    };
-  } else if (lvl < 21) {
-    return {
-      q: "Estás a escrever uma harmonia de guitarras em A Menor para um riff de Melodic Death Metal. A guitarra base toca um C (Terça menor). Queres harmonizar uma 3ª acima (dentro da escala menor natural). Que nota tocas?",
-      opts: ["E (Terça Maior de C)", "Eb (Terça Menor de C)", "D (Segunda de C)"],
-      ans: 0,
-      exp: "O E (Mi) é a Terça Maior em relação ao C. Ao tocares isto, crias aquele paralelismo melancólico e épico. Esta é a fórmula que In Flames e Dark Tranquillity usaram para o Som de Gotemburgo. Manter a nota dentro da armação original (A Menor) é crucial."
-    };
-  } else {
-    return {
-      q: "Estás num riff acústico em D. Queres o som sombrio, misterioso e sem género de Opeth. Não queres que o acorde soe definitivamente maior nem menor. Que acorde formas?",
-      opts: ["D minor 7", "D major 9", "D sus2"],
-      ans: 2,
-      exp: "O acorde D sus2 (D - E - A) omite a terça. Sem a terça, o acorde não tem 'género' (maior/menor). A tensão entre a tónica (D) e a 2ª maior (E) cria a melancolia aberta e flutuante clássica de Mikael Åkerfeldt."
-    };
-  }
+  let available = HARMONIC_QUESTIONS.filter(q => q.lvl <= state.dojo.level);
+  if(available.length === 0) available = HARMONIC_QUESTIONS;
+  let r = Math.floor(Math.random() * available.length);
+  return available[r];
 }
 
 function startArchitectGame() {
@@ -991,11 +996,11 @@ function handleDojoAnswer(idx) {
   if(idx === currentQuestion.ans) {
     btns[idx].classList.add('correct');
     addXP(50);
-    fbox.innerHTML = '<b>✔️ Análise do Arquiteto (Correto!)</b><p>' + currentQuestion.exp + '</p><button class="tbtn primary" style="margin-top:12px;" data-action="dojonext">Próximo Cenário &rsaquo;</button>';
+    fbox.innerHTML = '<b>✔️ Architect's Analysis (Correct!)</b><p>' + currentQuestion.exp + '</p><button class="tbtn primary" style="margin-top:12px;" data-action="dojonext">Next Scenario &rsaquo;</button>';
   } else {
     btns[idx].classList.add('wrong');
     btns[currentQuestion.ans].classList.add('correct');
-    fbox.innerHTML = '<b>❌ Análise do Arquiteto (Incorreto)</b><p>' + currentQuestion.exp + '</p><button class="tbtn" style="margin-top:12px;" data-action="dojoback">Voltar ao Dojo</button>';
+    fbox.innerHTML = '<b>❌ Architect's Analysis (Incorrect)</b><p>' + currentQuestion.exp + '</p><button class="tbtn" style="margin-top:12px;" data-action="dojoback">Back to Dojo</button>';
   }
   fbox.classList.add('show');
 }
@@ -1005,29 +1010,30 @@ function renderDojoDashboard() {
   let isMuted = state.dojo.audioMuted;
   
   let html = '<div class="eyebrow" style="color:var(--blue);">THEORY DOJO</div>';
-  html += '<div class="h2" style="font-size:22px; margin-bottom: 4px;">Nível ' + info.level + ' - ' + info.title + '</div>';
+  html += '<div class="h2" style="font-size:22px; margin-bottom: 4px;">Level ' + info.level + ' - ' + info.title + '</div>';
   
   html += '<div class="xp-bar-container" style="margin-bottom:16px;">';
   html += '<div class="xp-bar-fill" style="width:'+info.pct+'%;"></div>';
   html += '<div class="xp-text">' + state.dojo.xp + ' / ' + (info.nextReq === 999999 ? 'MAX' : info.nextReq) + ' XP</div>';
   html += '</div>';
   
-  html += '<div style="display:flex; justify-content:flex-end; margin-bottom:16px;">';
-  html += '<button class="tbtn" data-action="togglemute" style="padding:6px 12px; font-size:11px;">' + (isMuted ? '🔇 Commute Mode (Audio Off)' : '🔊 Studio Mode (Audio On)') + '</button>';
+  html += '<div style="display:flex; justify-content:flex-end; margin-bottom:16px; align-items:center; gap:8px;">';
+  html += '<span style="font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase;">Audio: '+(isMuted?'OFF':'ON')+'</span>';
+  html += '<div class="custom-toggle '+(isMuted?'':'on')+'" data-action="togglemute"><div class="knob"></div></div>';
   html += '</div>';
   
   html += '<div class="dojo-dash">';
   
   // Codex Library
-  html += '<button class="dojo-btn" style="border-color:var(--blue);" data-action="dojoopen" data-target="codex-list"><div class="ic">📜</div><div class="info"><b>The Architect&apos;s Codex</b><span>Lê a teoria e o contexto antes de jogar. Novos módulos desbloqueiam ao subir de nível.</span></div></button>';
+  html += '<button class="dojo-btn" style="border-color:var(--blue);" data-action="dojoopen" data-target="codex-list"><div class="ic">📜</div><div class="info"><b>The Architect&apos;s Codex</b><span>Read the theory and context before playing. New modules unlock as you level up.</span></div></button>';
   
   // Games
-  html += '<button class="dojo-btn" data-action="dojoplay" data-game="architect"><div class="ic">🏛️</div><div class="info"><b>The Harmonic Architect</b><span>Decisões de songwriting e tensão modal.</span></div></button>';
+  html += '<button class="dojo-btn" data-action="dojoplay" data-game="architect"><div class="ic">🏛️</div><div class="info"><b>The Harmonic Architect</b><span>Songwriting decisions and modal tension.</span></div></button>';
   
-  html += '<button class="dojo-btn" data-action="dojoplay" data-game="fretboard"><div class="ic">🎯</div><div class="info"><b>The Fretboard Sniper</b><span>Mapeamento visual rápido no braço.</span></div></button>';
+  html += '<button class="dojo-btn" data-action="dojoplay" data-game="fretboard"><div class="ic">🎯</div><div class="info"><b>The Fretboard Sniper</b><span>Rapid visual mapping on the neck.</span></div></button>';
   
   if(!isMuted) {
-    html += '<button class="dojo-btn" data-action="dojoplay" data-game="rhythm"><div class="ic">🥁</div><div class="info"><b>The Rhythm Decryptor</b><span>Treino auditivo de compassos compostos.</span></div></button>';
+    html += '<button class="dojo-btn" data-action="dojoplay" data-game="rhythm"><div class="ic">🥁</div><div class="info"><b>The Rhythm Decryptor</b><span>Ear training for odd time signatures.</span></div></button>';
   }
   
   html += '</div>';
@@ -1036,7 +1042,7 @@ function renderDojoDashboard() {
 
 function renderCodexList() {
   let html = '<div class="game-header"><span class="game-title">📜 Library of the Architect</span><button class="tbtn" data-action="dojoback">Back</button></div>';
-  html += '<p class="lede">Lê estes pergaminhos teóricos contextualizados para desbloquear o verdadeiro poder nos minijogos.</p>';
+  html += '<p class="lede">Read these contextualized theory scrolls to unlock your true power in the mini-games.</p>';
   
   Object.keys(CODEX_DATA).forEach(k => {
     let id = parseInt(k,10);
@@ -1046,7 +1052,7 @@ function renderCodexList() {
     if(unlocked) {
       html += '<button class="navbtn dojo-btn codex-item-btn" data-action="readcodex" data-id="'+id+'"><div class="ic">'+(read?'✔️':'📖')+'</div><div class="info"><b>' + CODEX_DATA[id].title + '</b></div></button>';
     } else {
-      html += '<div class="navbtn dojo-btn codex-item-btn locked"><div class="ic">🔒</div><div class="info"><b>' + CODEX_DATA[id].title + '</b><span>Desbloqueia em níveis superiores.</span></div></div>';
+      html += '<div class="navbtn dojo-btn codex-item-btn locked"><div class="ic">🔒</div><div class="info"><b>' + CODEX_DATA[id].title + '</b><span>Unlocks at higher levels.</span></div></div>';
     }
   });
   
@@ -1985,9 +1991,8 @@ document.addEventListener("click",function(e){
     }
     document.querySelectorAll('.codex-view').forEach(e=>e.classList.remove('active'));
     let reader = document.getElementById('dojo-codex-reader');
-    reader.innerHTML = '<div class="game-header" style="margin-bottom:8px;"><button class="tbtn" data-action="dojoopen" data-target="codex-list">&lsaquo; Back</button></div>' + 
-      '<h2>' + CODEX_DATA[id].title + '</h2>' + CODEX_DATA[id].content + 
-      '<button class="tbtn primary" style="width:100%;margin-top:20px;" data-action="dojoback">✔️ Terminei a Leitura</button>';
+    reader.innerHTML = '<div class="game-header" style="margin-bottom:8px;"><button class="tbtn" data-action="dojoopen" data-target="codex-list">&lsaquo; Back to Library</button></div>' + 
+      '<h2>' + CODEX_DATA[id].title + '</h2>' + CODEX_DATA[id].content;
     reader.classList.add('active');
   }
   else if(a==="dojoplay"){
