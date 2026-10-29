@@ -267,7 +267,7 @@ table.info td.day{font-weight:700;white-space:nowrap;color:var(--accent2);}
 .xp-bar-fill { background: linear-gradient(90deg, var(--blue), var(--purple)); height: 100%; transition: width 0.3s ease; }
 .xp-text { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 9.5px; font-weight: 700; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.8); }
 
-.dojo-btn { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; text-align: left; display: flex; align-items: center; gap: 14px; color: var(--text); position: relative; overflow: hidden; }
+.dojo-btn { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; text-align: left; display: flex; align-items: center; gap: 14px; color: var(--text); position: relative; overflow: hidden; width: 100%; }
 .dojo-btn .ic { font-size: 26px; }
 .dojo-btn .info { flex: 1; }
 .dojo-btn .info b { display: block; font-family: 'Oswald', sans-serif; font-size: 16px; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 2px; }
@@ -676,19 +676,18 @@ const setupData = {
 const STORAGE_KEY="shredRoadmapState_v10";
 
 
-// Dojo State Additions
 function defaultDojoState() {
   return {
     xp: 0,
     level: 1,
-    unlockedCodexes: [1], // Starts with Codex 1 open
+    unlockedCodexes: [1],
     readCodexes: [],
     audioMuted: false
   };
 }
-if(!state.dojo) state.dojo = defaultDojoState();
 
-function defaultState(){return {phaseIndex:0,chop:{alt:0,sweep:0,legato:0,econ:0,tap:0},testLevel:{alt:0,sweep:0,legato:0,econ:0,tap:0,ult:0},bonusLevel:{},checks:{},practiced:{},practicedDate:null,congratsDate:null,activeDayOverride:null,activeDayDate:null,streakDates:[],setupGuitar:"prs",setupTuning:"e_std",improvIndex:0,improvChecks:{}, dojo: defaultDojoState()};}
+function defaultState(){
+return {phaseIndex:0,chop:{alt:0,sweep:0,legato:0,econ:0,tap:0},testLevel:{alt:0,sweep:0,legato:0,econ:0,tap:0,ult:0},bonusLevel:{},checks:{},practiced:{},practicedDate:null,congratsDate:null,activeDayOverride:null,activeDayDate:null,streakDates:[],setupGuitar:"prs",setupTuning:"e_std",improvIndex:0,improvChecks:{}, dojo: defaultDojoState()};}
 function loadState(){try{var raw=localStorage.getItem(STORAGE_KEY);if(raw){var d=JSON.parse(raw);return Object.assign(defaultState(),d,{chop:Object.assign(defaultState().chop,d.chop||{}),testLevel:Object.assign(defaultState().testLevel,d.testLevel||{}),bonusLevel:d.bonusLevel||{},checks:d.checks||{},practiced:d.practiced||{},streakDates:d.streakDates||[],setupGuitar:d.setupGuitar||"prs",setupTuning:d.setupTuning||"e_std",improvIndex:d.improvIndex||0,improvChecks:d.improvChecks||{}, dojo: Object.assign(defaultDojoState(), d.dojo||{})});}}catch(e){}return defaultState();}
 
 function saveState(){
@@ -932,7 +931,7 @@ function addXP(amount) {
     showToast("⭐ Level Up! You are now a " + info.title);
     if(info.codex > 1 && !state.dojo.unlockedCodexes.includes(info.codex)) {
       state.dojo.unlockedCodexes.push(info.codex);
-      showToast("?? New Codex Unlocked!");
+      showToast("📜 New Codex Unlocked!");
     }
   } else {
     showToast("+" + amount + " XP!");
@@ -966,74 +965,11 @@ function generateHarmonicQuestion() {
   }
 }
 
-// Very basic Fretboard visual rendering for the Canvas
-function drawFretboard(canvasId, targetNote) {
-  var c = document.getElementById(canvasId);
-  if(!c) return;
-  var ctx = c.getContext("2d");
-  var w = c.width = c.offsetWidth;
-  var h = c.height = c.offsetHeight;
-  
-  ctx.fillStyle = "#2a1b15";
-  ctx.fillRect(0,0,w,h);
-  
-  // Strings
-  ctx.fillStyle = "#aaa";
-  for(var i=0; i<6; i++) {
-    var y = 20 + i * ((h-40)/5);
-    ctx.fillRect(0, y-1, w, i<3? 1: 2); // Thicker wound strings
-  }
-  
-  // Frets
-  ctx.fillStyle = "#888";
-  for(var i=1; i<=12; i++) {
-    var x = i * (w/13);
-    ctx.fillRect(x-1, 0, 2, h);
-  }
-  
-  // Inlays
-  ctx.fillStyle = "rgba(255,255,255,0.4)";
-  [3,5,7,9].forEach(f => {
-    ctx.beginPath(); ctx.arc((f - 0.5)*(w/13), h/2, 6, 0, Math.PI*2); ctx.fill();
-  });
-  ctx.beginPath(); ctx.arc((12 - 0.5)*(w/13), h/2 - 15, 5, 0, Math.PI*2); ctx.fill();
-  ctx.beginPath(); ctx.arc((12 - 0.5)*(w/13), h/2 + 15, 5, 0, Math.PI*2); ctx.fill();
-}
-
-// Web Audio API Metronome/Synth
-let audioCtx;
-function playRhythm(pattern) {
-  if (state.dojo.audioMuted) return;
-  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  
-  const time = audioCtx.currentTime;
-  const tempo = 120; 
-  const beatTime = 60 / tempo;
-  
-  pattern.forEach((note, i) => {
-    if(note === 1) { // Kick/Click
-      let osc = audioCtx.createOscillator();
-      let gain = audioCtx.createGain();
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      
-      osc.frequency.setValueAtTime(150, time + i*beatTime);
-      osc.frequency.exponentialRampToValueAtTime(0.01, time + i*beatTime + 0.1);
-      
-      gain.gain.setValueAtTime(1, time + i*beatTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, time + i*beatTime + 0.1);
-      
-      osc.start(time + i*beatTime);
-      osc.stop(time + i*beatTime + 0.1);
-    }
-  });
-}
-
 function startArchitectGame() {
   currentMinigame = "architect";
   currentQuestion = generateHarmonicQuestion();
   
-  let html = '<div class="game-header"><span class="game-title">??️ The Harmonic Architect</span><button class="tbtn" data-action="dojoback">Back</button></div>';
+  let html = '<div class="game-header"><span class="game-title">🏛️ The Harmonic Architect</span><button class="tbtn" data-action="dojoback">Back</button></div>';
   html += '<div class="question-box"><h4>' + currentQuestion.q + '</h4></div>';
   
   currentQuestion.opts.forEach((opt, idx) => {
@@ -1049,7 +985,7 @@ function startArchitectGame() {
 
 function handleDojoAnswer(idx) {
   var btns = document.querySelectorAll('.opt-btn');
-  btns.forEach(b => b.style.pointerEvents = 'none'); // Lock answers
+  btns.forEach(b => b.style.pointerEvents = 'none');
   
   var fbox = document.getElementById('dojo-feedback');
   if(idx === currentQuestion.ans) {
@@ -1083,16 +1019,15 @@ function renderDojoDashboard() {
   html += '<div class="dojo-dash">';
   
   // Codex Library
-  html += '<button class="dojo-btn" style="border-color:var(--blue);" data-action="dojoopen" data-target="codex-list"><div class="ic">??</div><div class="info"><b>The Architect's Codex</b><span>Lê a teoria e o contexto antes de jogar. Novos módulos desbloqueiam ao subir de nível.</span></div></button>';
+  html += '<button class="dojo-btn" style="border-color:var(--blue);" data-action="dojoopen" data-target="codex-list"><div class="ic">📜</div><div class="info"><b>The Architect&apos;s Codex</b><span>Lê a teoria e o contexto antes de jogar. Novos módulos desbloqueiam ao subir de nível.</span></div></button>';
   
   // Games
-  let architectLocked = !state.dojo.readCodexes.includes(1); 
-  html += '<button class="dojo-btn" data-action="dojoplay" data-game="architect"><div class="ic">??️</div><div class="info"><b>The Harmonic Architect</b><span>Decisões de songwriting e tensão modal.</span></div></button>';
+  html += '<button class="dojo-btn" data-action="dojoplay" data-game="architect"><div class="ic">🏛️</div><div class="info"><b>The Harmonic Architect</b><span>Decisões de songwriting e tensão modal.</span></div></button>';
   
-  html += '<button class="dojo-btn" data-action="dojoplay" data-game="fretboard"><div class="ic">??</div><div class="info"><b>The Fretboard Sniper</b><span>Mapeamento visual rápido no braço.</span></div></button>';
+  html += '<button class="dojo-btn" data-action="dojoplay" data-game="fretboard"><div class="ic">🎯</div><div class="info"><b>The Fretboard Sniper</b><span>Mapeamento visual rápido no braço.</span></div></button>';
   
   if(!isMuted) {
-    html += '<button class="dojo-btn" data-action="dojoplay" data-game="rhythm"><div class="ic">??</div><div class="info"><b>The Rhythm Decryptor</b><span>Treino auditivo de compassos compostos.</span></div></button>';
+    html += '<button class="dojo-btn" data-action="dojoplay" data-game="rhythm"><div class="ic">🥁</div><div class="info"><b>The Rhythm Decryptor</b><span>Treino auditivo de compassos compostos.</span></div></button>';
   }
   
   html += '</div>';
@@ -1100,7 +1035,7 @@ function renderDojoDashboard() {
 }
 
 function renderCodexList() {
-  let html = '<div class="game-header"><span class="game-title">?? Library of the Architect</span><button class="tbtn" data-action="dojoback">Back</button></div>';
+  let html = '<div class="game-header"><span class="game-title">📜 Library of the Architect</span><button class="tbtn" data-action="dojoback">Back</button></div>';
   html += '<p class="lede">Lê estes pergaminhos teóricos contextualizados para desbloquear o verdadeiro poder nos minijogos.</p>';
   
   Object.keys(CODEX_DATA).forEach(k => {
@@ -1109,9 +1044,9 @@ function renderCodexList() {
     let read = state.dojo.readCodexes.includes(id);
     
     if(unlocked) {
-      html += '<button class="navbtn dojo-btn codex-item-btn" data-action="readcodex" data-id="'+id+'"><div class="ic">'+(read?'✔️':'??')+'</div><div class="info"><b>' + CODEX_DATA[id].title + '</b></div></button>';
+      html += '<button class="navbtn dojo-btn codex-item-btn" data-action="readcodex" data-id="'+id+'"><div class="ic">'+(read?'✔️':'📖')+'</div><div class="info"><b>' + CODEX_DATA[id].title + '</b></div></button>';
     } else {
-      html += '<div class="navbtn dojo-btn codex-item-btn locked"><div class="ic">??</div><div class="info"><b>' + CODEX_DATA[id].title + '</b><span>Desbloqueia em níveis superiores.</span></div></div>';
+      html += '<div class="navbtn dojo-btn codex-item-btn locked"><div class="ic">🔒</div><div class="info"><b>' + CODEX_DATA[id].title + '</b><span>Desbloqueia em níveis superiores.</span></div></div>';
     }
   });
   
@@ -1119,12 +1054,10 @@ function renderCodexList() {
 }
 
 function renderDojoView() {
-  let html = `
-    <div id="dojo-dash-view" class="codex-view active">${renderDojoDashboard()}</div>
-    <div id="dojo-codex-list" class="codex-view"></div>
-    <div id="dojo-codex-reader" class="codex-view codex-content"></div>
-    <div id="dojo-game-view" class="codex-view game-area"><div id="dojo-game-container"></div></div>
-  `;
+  let html = '<div id="dojo-dash-view" class="codex-view active">' + renderDojoDashboard() + '</div>' +
+    '<div id="dojo-codex-list" class="codex-view"></div>' +
+    '<div id="dojo-codex-reader" class="codex-view codex-content"></div>' +
+    '<div id="dojo-game-view" class="codex-view game-area"><div id="dojo-game-container"></div></div>';
   return html;
 }
 
@@ -1867,6 +1800,7 @@ function updateBotNav() {
     navBtn("home","\ud83c\udfe0","Home") + 
     navBtn("daily","\ud83c\udfaf","Daily") + 
     navBtn("improv","\ud83e\udde0","Improv", "improv-nav") + 
+    navBtn("dojo","⚔️","Dojo", "dojo-nav") + 
     navBtn("library","\ud83d\udcda","Library") + 
     navBtn("setup","\ud83d\udee0\ufe0f","Setup") + '</div>';
 }
@@ -2033,9 +1967,10 @@ document.addEventListener("click",function(e){
   else if(a==="togglemute"){ state.dojo.audioMuted = !state.dojo.audioMuted; saveState(); render(); }
   else if(a==="dojoopen"){
     document.querySelectorAll('.codex-view').forEach(e=>e.classList.remove('active'));
-    let t = document.getElementById('dojo-' + t.dataset.target);
-    if(t.dataset.target==='codex-list') t.innerHTML = renderCodexList();
-    t.classList.add('active');
+    let targetId = t.dataset.target;
+    let targetElem = document.getElementById('dojo-' + targetId);
+    if(targetId === 'codex-list') targetElem.innerHTML = renderCodexList();
+    targetElem.classList.add('active');
   }
   else if(a==="dojoback"){
     document.querySelectorAll('.codex-view').forEach(e=>e.classList.remove('active'));
@@ -2046,7 +1981,7 @@ document.addEventListener("click",function(e){
     let id = parseInt(t.dataset.id,10);
     if(!state.dojo.readCodexes.includes(id)) {
       state.dojo.readCodexes.push(id);
-      addXP(100); // Reward for reading
+      addXP(100);
     }
     document.querySelectorAll('.codex-view').forEach(e=>e.classList.remove('active'));
     let reader = document.getElementById('dojo-codex-reader');
