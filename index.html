@@ -996,11 +996,11 @@ function handleDojoAnswer(idx) {
   if(idx === currentQuestion.ans) {
     btns[idx].classList.add('correct');
     addXP(50);
-    fbox.innerHTML = '<b>✔️ Architect's Analysis (Correct!)</b><p>' + currentQuestion.exp + '</p><button class="tbtn primary" style="margin-top:12px;" data-action="dojonext">Next Scenario &rsaquo;</button>';
+    fbox.innerHTML = '<b>✔️ Architect&apos;s Analysis (Correct!)</b><p>' + currentQuestion.exp + '</p><button class="tbtn primary" style="margin-top:12px;" data-action="dojonext">Next Scenario &rsaquo;</button>';
   } else {
     btns[idx].classList.add('wrong');
     btns[currentQuestion.ans].classList.add('correct');
-    fbox.innerHTML = '<b>❌ Architect's Analysis (Incorrect)</b><p>' + currentQuestion.exp + '</p><button class="tbtn" style="margin-top:12px;" data-action="dojoback">Back to Dojo</button>';
+    fbox.innerHTML = '<b>❌ Architect&apos;s Analysis (Incorrect)</b><p>' + currentQuestion.exp + '</p><button class="tbtn" style="margin-top:12px;" data-action="dojoback">Back to Dojo</button>';
   }
   fbox.classList.add('show');
 }
