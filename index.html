@@ -12,10 +12,12 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="SHRED">
 
-<link rel="preconnect" href="[https://fonts.googleapis.com](https://fonts.googleapis.com)">
-<link rel="preconnect" href="[https://fonts.gstatic.com](https://fonts.gstatic.com)" crossorigin>
-<link href="[https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=block](https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=block)" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@500;600;700&display=swap');
+
 :root{
   --bg:#101217;--card:#1b1e27;--card2:#1e222c;--border:#2a2e38;--accent:#ff3b30;--accent2:#ff5a4e;
   --amber:#f5a623;--text:#eef0f4;--muted:#9aa0ac;--blue:#6fa8ff;--green:#63d69a;--purple:#b052ff;
@@ -66,12 +68,12 @@ a{color:inherit;}
 }
 #splash{position:fixed;inset:0;background:#000;display:flex;align-items:center;justify-content:center;z-index:100;}
 .splashinner{display:flex;flex-direction:column;align-items:center;}
-.splashtitle{font-family:'Oswald';font-weight:700;font-size:26px;letter-spacing:2px;text-align:center;line-height:1.15;color:#fff;margin-top:16px;}
+.splashtitle{font-family:'Oswald', sans-serif;font-weight:700;font-size:26px;letter-spacing:2px;text-align:center;line-height:1.15;color:#fff;margin-top:16px;}
 .splashtitle span{color:var(--accent);}
 
 .topbar{position:fixed;top:0;left:0;right:0;z-index:50;background:#101217;padding:calc(12px + env(safe-area-inset-top,0px)) 16px 10px;border-bottom:1px solid var(--border);}
 .topbar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 10px; max-width: 520px; margin-left: auto; margin-right: auto;}
-.brand { font-family: 'Oswald'; font-weight: 700; font-size: 15px; letter-spacing: 1px; flex: 1; margin-bottom: 0; }
+.brand { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 15px; letter-spacing: 1px; flex: 1; margin-bottom: 0; }
 .brand span { color: var(--accent); }
 .auth-container { display: flex; align-items: center; gap: 8px; }
 .user-email { font-size: 9.5px; color: var(--muted); font-family: 'Inter', system-ui, sans-serif; }
@@ -109,14 +111,14 @@ a{color:inherit;}
 .plabels{display:flex;gap:4px;}
 .plabels span{flex:1;text-align:center;font-size:8.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
 .plabels span.cur{color:var(--accent2);font-weight:700;}
-.bignum{font-family:'Oswald';font-size:30px;font-weight:700;}
+.bignum{font-family:'Oswald', sans-serif;font-size:30px;font-weight:700;}
 .statrow{display:flex;gap:10px;margin-bottom:12px;}
 .stat{flex:1;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center;}
 .stat .lbl{font-size:9.5px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:2px;}
 
 .navbtn{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:10px;width:100%;text-align:left;color:var(--text);}
 .navbtn .ic{font-size:22px;}
-.navbtn b{display:block;font-family:'Oswald';font-size:15px;text-transform:uppercase;letter-spacing:.5px;}
+.navbtn b{display:block;font-family:'Oswald', sans-serif;font-size:15px;text-transform:uppercase;letter-spacing:.5px;}
 .navbtn span{font-size:11.5px;color:var(--muted);}
 .navbtn.accent{border-color:#4a2226;background:#211316;}
 .navbtn.blue{border-color:#263049;background:#161b26;}
@@ -155,7 +157,7 @@ ul.check li.mrow:last-child{border-bottom:none;}
 .chop .nm b{display:block;font-size:9.5px;color:var(--muted);font-weight:500;}
 .stepper{display:flex;align-items:center;gap:8px;flex:0 0 auto;}
 .stepper button{width:26px;height:26px;border-radius:7px;background:var(--card2);border:1px solid var(--border);color:var(--text);font-size:14px;line-height:1;}
-.stepper .lvl{font-family:'Oswald';font-size:14px;min-width:34px;text-align:center;}
+.stepper .lvl{font-family:'Oswald', sans-serif;font-size:14px;min-width:34px;text-align:center;}
 .lvl.hit{color:var(--green);}
 
 .blk{border-left:3px solid var(--accent);background:var(--card);border-radius:0 12px 12px 0;padding:12px 14px;margin-bottom:10px;transition:opacity .2s;}
@@ -163,7 +165,7 @@ ul.check li.mrow:last-child{border-bottom:none;}
 .blk.done-today{border-left-color:var(--green);opacity:.62;}
 .blk.improv.done-today{border-left-color:var(--green);}
 .blk .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:8px;}
-.blk .nm{font-family:'Oswald';font-weight:700;font-size:13.5px;text-transform:uppercase;}
+.blk .nm{font-family:'Oswald', sans-serif;font-weight:700;font-size:13.5px;text-transform:uppercase;}
 .blk .topright{display:flex;align-items:center;gap:10px;}
 .blk .min{font-size:10.5px;color:var(--muted);white-space:nowrap;}
 .blkcheck{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;font-weight:700;cursor:pointer;white-space:nowrap;}
@@ -224,7 +226,7 @@ ul.check li.mrow:last-child{border-bottom:none;}
 
 .acc{margin-bottom:10px;}
 .acchead{display:flex;justify-content:space-between;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;gap:10px;} .acchead b{flex:1;} .acc-sub{font-size:10.5px;color:var(--muted);text-transform:none;letter-spacing:0;font-weight:500;text-align:right;} .acc-right{display:flex;align-items:center;gap:8px;}
-.acchead b{font-family:'Oswald';font-size:13px;text-transform:uppercase;}
+.acchead b{font-family:'Oswald', sans-serif;font-size:13px;text-transform:uppercase;}
 .accbody{padding:10px 4px 2px 14px; margin-left:6px; border-left:1px solid rgba(255,255,255,0.18); position:relative;}
 .chev{color:var(--muted);font-size:11px;transition:transform .2s;}
 .chev.open{transform:rotate(90deg);}
@@ -243,7 +245,7 @@ ul.check li.mrow:last-child{border-bottom:none;}
   appearance:none;
   -webkit-appearance:none;
   outline:none;
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)' viewBox='0 0 24 24' fill='none' stroke='%239aa0ac' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239aa0ac' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 10px center;
   background-size: 14px;
@@ -260,12 +262,26 @@ table.info td.day{font-weight:700;white-space:nowrap;color:var(--accent2);}
 .infolist li:last-child{border-bottom:none;}
 </style>
 <script>
-  window.addEventListener('DOMContentLoaded', function() {
-    setTimeout(function() {
-      var sp = document.getElementById("splash");
-      if(sp) sp.remove();
-    }, 1500);
-  });
+  function forceRemoveSplash() {
+    var sp = document.getElementById("splash");
+    if (sp) {
+      sp.style.opacity = "0";
+      sp.style.transition = "opacity 0.4s ease";
+      setTimeout(function() {
+        if (sp && sp.parentNode) sp.parentNode.removeChild(sp);
+      }, 400);
+    }
+  }
+
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    setTimeout(forceRemoveSplash, 500);
+  } else {
+    document.addEventListener('DOMContentLoaded', function() {
+      setTimeout(forceRemoveSplash, 500);
+    });
+  }
+
+  setTimeout(forceRemoveSplash, 2000);
 </script>
 </head>
 <body>
@@ -285,9 +301,9 @@ table.info td.day{font-weight:700;white-space:nowrap;color:var(--accent2);}
 <div id="toast" class="toast"></div>
 
 <script type="module">
-import { initializeApp } from "[https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js](https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js)";
-import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "[https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js](https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js)";
-import { getFirestore, doc, setDoc, getDoc, initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from "[https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js](https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js)";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc, initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDO-7ovvVwmowSa6KIoPwglO93nnp2kS4Y",
@@ -440,20 +456,20 @@ const IMPROV_GATES = [
 const PHASES=[
  {id:"p0",label:"Setup",short:"Setup & Baseline",kind:"setup"},
  {id:"p1",label:"Beginner",short:"Levels 1 - 2",target:3,testReq:2,
-   concept:[I("Alt Picking Pt. 1","[https://tinyurl.com/2na6k9kj](https://tinyurl.com/2na6k9kj)"),I("Sweep Picking Guide","[https://tinyurl.com/2p94rrf2](https://tinyurl.com/2p94rrf2)"),I("Economy Picking Guide","[https://tinyurl.com/bdfs3ptn](https://tinyurl.com/bdfs3ptn)"),I("Arpeggio Masterclass","[https://tinyurl.com/57t8dup4](https://tinyurl.com/57t8dup4)")],
-   exercises:[I("Simple Alt Picking Exercise","[https://tinyurl.com/4zckb2nt](https://tinyurl.com/4zckb2nt)"),I("Melodic vs Shred Soloing (melodic)","[https://tinyurl.com/4mttk257](https://tinyurl.com/4mttk257)"),I("Simple vs Complex Soloing (simple)","[https://tinyurl.com/yd3pumbx](https://tinyurl.com/yd3pumbx)"),I("Tornado Of Souls (simplified)","[https://tinyurl.com/mpaes6yj](https://tinyurl.com/mpaes6yj)")],
-   songs:[I("Psycho (System Of A Down)","[https://tinyurl.com/4hy7vacm](https://tinyurl.com/4hy7vacm)"),I("Paranoid (Black Sabbath)","[https://tinyurl.com/aa5u3azt](https://tinyurl.com/aa5u3azt)"),I("Ace Of Spades (Motörhead)","[https://tinyurl.com/ydkwndkb](https://tinyurl.com/ydkwndkb)"),I("Heartwork (Carcass)","[https://tinyurl.com/3wbrb8vs](https://tinyurl.com/3wbrb8vs)"),I("Fade To Black (Metallica)","[https://tinyurl.com/yja86djw](https://tinyurl.com/yja86djw)")]},
+   concept:[I("Alt Picking Pt. 1","https://tinyurl.com/2na6k9kj"),I("Sweep Picking Guide","https://tinyurl.com/2p94rrf2"),I("Economy Picking Guide","https://tinyurl.com/bdfs3ptn"),I("Arpeggio Masterclass","https://tinyurl.com/57t8dup4")],
+   exercises:[I("Simple Alt Picking Exercise","https://tinyurl.com/4zckb2nt"),I("Melodic vs Shred Soloing (melodic)","https://tinyurl.com/4mttk257"),I("Simple vs Complex Soloing (simple)","https://tinyurl.com/yd3pumbx"),I("Tornado Of Souls (simplified)","https://tinyurl.com/mpaes6yj")],
+   songs:[I("Psycho (System Of A Down)","https://tinyurl.com/4hy7vacm"),I("Paranoid (Black Sabbath)","https://tinyurl.com/aa5u3azt"),I("Ace Of Spades (Motörhead)","https://tinyurl.com/ydkwndkb"),I("Heartwork (Carcass)","https://tinyurl.com/3wbrb8vs"),I("Fade To Black (Metallica)","https://tinyurl.com/yja86djw")]},
  {id:"p2",label:"Intermediate",short:"Level 3",target:6,testReq:3,
-   concept:[I("Alt Picking Pt. 2","[https://tinyurl.com/3yj5fw7n](https://tinyurl.com/3yj5fw7n)"),I("Pick-Slanting Masterclass","[http://tinyurl.com/yppc9rsk](http://tinyurl.com/yppc9rsk)"),I("Hand Sync Masterclass","[https://tinyurl.com/yc8kkmvr](https://tinyurl.com/yc8kkmvr)"),I("Vibrato Masterclass","[https://tinyurl.com/35vrckd8](https://tinyurl.com/35vrckd8)")],
-   exercises:[I("Alt Picking Endurance Test","[https://tinyurl.com/ykvr6ay4](https://tinyurl.com/ykvr6ay4)"),I("ABBA Neoclassical (solo)","[https://tinyurl.com/5n7fftb4](https://tinyurl.com/5n7fftb4)"),I("Ultimate Bending Workout","[https://tinyurl.com/5yn8yzw5](https://tinyurl.com/5yn8yzw5)"),I("Intermediate Challenge","[https://tinyurl.com/yvdf8han](https://tinyurl.com/yvdf8han)")],
-   songs:[I("Crystal Mountain (Death)","[http://tinyurl.com/yth44h56](http://tinyurl.com/yth44h56)"),I("Bed Of Razors (Children of Bodom)","[https://tinyurl.com/522r8529](https://tinyurl.com/522r8529)"),I("The Trooper (Iron Maiden)","[https://tinyurl.com/2fz9ktbr](https://tinyurl.com/2fz9ktbr)"),I("Electric Crown (Testament)","[https://tinyurl.com/3x2kwpwn](https://tinyurl.com/3x2kwpwn)"),I("Mr Crowley (Ozzy Osbourne)","[https://tinyurl.com/29v67k8r](https://tinyurl.com/29v67k8r)")]},
+   concept:[I("Alt Picking Pt. 2","https://tinyurl.com/3yj5fw7n"),I("Pick-Slanting Masterclass","http://tinyurl.com/yppc9rsk"),I("Hand Sync Masterclass","https://tinyurl.com/yc8kkmvr"),I("Vibrato Masterclass","https://tinyurl.com/35vrckd8")],
+   exercises:[I("Alt Picking Endurance Test","https://tinyurl.com/ykvr6ay4"),I("ABBA Neoclassical (solo)","https://tinyurl.com/5n7fftb4"),I("Ultimate Bending Workout","https://tinyurl.com/5yn8yzw5"),I("Intermediate Challenge","https://tinyurl.com/yvdf8han")],
+   songs:[I("Crystal Mountain (Death)","http://tinyurl.com/yth44h56"),I("Bed Of Razors (Children of Bodom)","https://tinyurl.com/522r8529"),I("The Trooper (Iron Maiden)","https://tinyurl.com/2fz9ktbr"),I("Electric Crown (Testament)","https://tinyurl.com/3x2kwpwn"),I("Mr Crowley (Ozzy Osbourne)","https://tinyurl.com/29v67k8r")]},
  {id:"p3",label:"Advanced",short:"Level 4",target:8,testReq:4,
-   concept:[I("Picking Speed Builder","[https://tinyurl.com/bdpzvn69](https://tinyurl.com/bdpzvn69)"),I("Sweeping Speed Builder","[https://tinyurl.com/4cxbx9nw](https://tinyurl.com/4cxbx9nw)"),I("Hand Strength Builder","[https://tinyurl.com/d6237w33](https://tinyurl.com/d6237w33)"),I("Speed Picking Hack","[https://tinyurl.com/y2pfv5vx](https://tinyurl.com/y2pfv5vx)")],
-   exercises:[I("10 Sick Neoclassical Licks","[https://tinyurl.com/3rhfwuzr](https://tinyurl.com/3rhfwuzr)"),I("Eruption Sweeping Workout","[http://tinyurl.com/yy5jv45v](http://tinyurl.com/yy5jv45v)"),I("20 Scales In 1 Solo","[https://tinyurl.com/43924kfz](https://tinyurl.com/43924kfz)"),I("Melodic vs Shred Soloing (shred)","[https://tinyurl.com/4mttk257](https://tinyurl.com/4mttk257)"),I("Simple vs Complex Soloing (complex)","[https://tinyurl.com/yd3pumbx](https://tinyurl.com/yd3pumbx)")],
-   songs:[I("Hail To The King (Avenged Sevenfold)","[https://tinyurl.com/4zjmkpxz](https://tinyurl.com/4zjmkpxz)"),I("Bark At The Moon (Ozzy Osbourne)","[https://tinyurl.com/4p4vwebc](https://tinyurl.com/4p4vwebc)"),I("Play With Me (Extreme)","[https://tinyurl.com/ykhckrvf](https://tinyurl.com/ykhckrvf)"),I("Domination (Pantera)","[https://tinyurl.com/3atm4xdd](https://tinyurl.com/3atm4xdd)"),I("Tornado Of Souls (Megadeth)","[https://tinyurl.com/52s7ape4](https://tinyurl.com/52s7ape4)")]},
+   concept:[I("Picking Speed Builder","https://tinyurl.com/bdpzvn69"),I("Sweeping Speed Builder","https://tinyurl.com/4cxbx9nw"),I("Hand Strength Builder","https://tinyurl.com/d6237w33"),I("Speed Picking Hack","https://tinyurl.com/y2pfv5vx")],
+   exercises:[I("10 Sick Neoclassical Licks","https://tinyurl.com/3rhfwuzr"),I("Eruption Sweeping Workout","http://tinyurl.com/yy5jv45v"),I("20 Scales In 1 Solo","https://tinyurl.com/43924kfz"),I("Melodic vs Shred Soloing (shred)","https://tinyurl.com/4mttk257"),I("Simple vs Complex Soloing (complex)","https://tinyurl.com/yd3pumbx")],
+   songs:[I("Hail To The King (Avenged Sevenfold)","https://tinyurl.com/4zjmkpxz"),I("Bark At The Moon (Ozzy Osbourne)","https://tinyurl.com/4p4vwebc"),I("Play With Me (Extreme)","https://tinyurl.com/ykhckrvf"),I("Domination (Pantera)","https://tinyurl.com/3atm4xdd"),I("Tornado Of Souls (Megadeth)","https://tinyurl.com/52s7ape4")]},
  {id:"p4",label:"Pro",short:"Level 5",target:10,testReq:5,concept:[],
-   exercises:[I("Heavenly Arpeggios","[https://tinyurl.com/27ha3u7z](https://tinyurl.com/27ha3u7z)"),I("Ultimate Soloing Challenge","[https://tinyurl.com/432hkhmp](https://tinyurl.com/432hkhmp)"),I("Quintuplets Workout","[https://tinyurl.com/5n7psubr](https://tinyurl.com/5n7psubr)"),I("Thrash Metal Workout","[https://tinyurl.com/57f7e6nc](https://tinyurl.com/57f7e6nc)"),I("Ultimate Neoclassical Workout","[https://tinyurl.com/5a4n28wm](https://tinyurl.com/5a4n28wm)"),I("Serrana Arpeggios","[https://tinyurl.com/2z4m6c49](https://tinyurl.com/2z4m6c49)")],
-   songs:[I("Sea Of Lies (Symphony X)","[https://tinyurl.com/3v4u8jca](https://tinyurl.com/3v4u8jca)"),I("Kissing The Shadows (Children of Bodom)","[https://tinyurl.com/yyzf6bp7](https://tinyurl.com/yyzf6bp7)"),I("Under A Glass Moon (Dream Theater)","[https://tinyurl.com/yh3k2j3x](https://tinyurl.com/yh3k2j3x)"),I("Winter Madness (Wintersun)","[https://tinyurl.com/mupsw5u3](https://tinyurl.com/mupsw5u3)"),I("Nobody (Avenged Sevenfold)","[https://tinyurl.com/4uak28u2](https://tinyurl.com/4uak28u2)"),I("Dawn Of The Dragonstar (Twilight Force)","[https://tinyurl.com/3yvsmm3f](https://tinyurl.com/3yvsmm3f)")]}
+   exercises:[I("Heavenly Arpeggios","https://tinyurl.com/27ha3u7z"),I("Ultimate Soloing Challenge","https://tinyurl.com/432hkhmp"),I("Quintuplets Workout","https://tinyurl.com/5n7psubr"),I("Thrash Metal Workout","https://tinyurl.com/57f7e6nc"),I("Ultimate Neoclassical Workout","https://tinyurl.com/5a4n28wm"),I("Serrana Arpeggios","https://tinyurl.com/2z4m6c49")],
+   songs:[I("Sea Of Lies (Symphony X)","https://tinyurl.com/3v4u8jca"),I("Kissing The Shadows (Children of Bodom)","https://tinyurl.com/yyzf6bp7"),I("Under A Glass Moon (Dream Theater)","https://tinyurl.com/yh3k2j3x"),I("Winter Madness (Wintersun)","https://tinyurl.com/mupsw5u3"),I("Nobody (Avenged Sevenfold)","https://tinyurl.com/4uak28u2"),I("Dawn Of The Dragonstar (Twilight Force)","https://tinyurl.com/3yvsmm3f")]}
 ];
 
 const LISTENING_VAULT = [
@@ -500,8 +516,8 @@ const LISTENING_VAULT = [
 ];
 
 const CREATIVE={
- songwriting:[I("Riff Writing Masterclass","[https://tinyurl.com/59wr7y4x](https://tinyurl.com/59wr7y4x)"),I("Solo Writing Masterclass","[https://tinyurl.com/ym69pkmv](https://tinyurl.com/ym69pkmv)"),I("Metal Songwriting Masterclass","[https://tinyurl.com/45du76rt](https://tinyurl.com/45du76rt)"),I("Harmonize Guitars","[https://tinyurl.com/dkds5aey](https://tinyurl.com/dkds5aey)")],
- production:[I("Guitar Transcribing","[https://tinyurl.com/2t3d6n4p](https://tinyurl.com/2t3d6n4p)"),I("Home Recording Guide","[https://tinyurl.com/nfkp288a](https://tinyurl.com/nfkp288a)"),I("MIDI Drums","[http://tinyurl.com/23uj5xd9](http://tinyurl.com/23uj5xd9)"),I("Mixing Guide","[https://tinyurl.com/3ujtsn7f](https://tinyurl.com/3ujtsn7f)")]
+ songwriting:[I("Riff Writing Masterclass","https://tinyurl.com/59wr7y4x"),I("Solo Writing Masterclass","https://tinyurl.com/ym69pkmv"),I("Metal Songwriting Masterclass","https://tinyurl.com/45du76rt"),I("Harmonize Guitars","https://tinyurl.com/dkds5aey")],
+ production:[I("Guitar Transcribing","https://tinyurl.com/2t3d6n4p"),I("Home Recording Guide","https://tinyurl.com/nfkp288a"),I("MIDI Drums","http://tinyurl.com/23uj5xd9"),I("Mixing Guide","https://tinyurl.com/3ujtsn7f")]
 };
 const PHASE_BLURB={p0:"Get the prerequisites and warm-up in place, then run the baseline test for your own tracking - you start at Phase 1 regardless of the result.",
  p1:"Foundational technique - alternate picking, sweep picking and economy picking form the backbone everything later builds on.",
@@ -509,14 +525,14 @@ const PHASE_BLURB={p0:"Get the prerequisites and warm-up in place, then run the 
  p3:"Raw speed and dexterity get built on purpose here. Expect this tier to take real patience.",
  p4:"The toughest material in the Roadmap. Completing it clears the entire BHGS technique curriculum."};
  
-const CHOP=[{key:"alt",label:"10 Levels Of Alternate Picking",url:"[https://tinyurl.com/4anrfje9](https://tinyurl.com/4anrfje9)"},{key:"sweep",label:"10 Levels Of Sweep Picking",url:"[https://tinyurl.com/nzcv65ux](https://tinyurl.com/nzcv65ux)"},{key:"legato",label:"10 Levels Of Legato",url:"[https://tinyurl.com/54fc68fm](https://tinyurl.com/54fc68fm)"},{key:"econ",label:"10 Levels Of Economy Picking",url:"[https://tinyurl.com/3v5xt6ne](https://tinyurl.com/3v5xt6ne)"},{key:"tap",label:"10 Levels Of Tapping",url:"[https://tinyurl.com/yw4ex5ma](https://tinyurl.com/yw4ex5ma)"}];
+const CHOP=[{key:"alt",label:"10 Levels Of Alternate Picking",url:"https://tinyurl.com/4anrfje9"},{key:"sweep",label:"10 Levels Of Sweep Picking",url:"https://tinyurl.com/nzcv65ux"},{key:"legato",label:"10 Levels Of Legato",url:"https://tinyurl.com/54fc68fm"},{key:"econ",label:"10 Levels Of Economy Picking",url:"https://tinyurl.com/3v5xt6ne"},{key:"tap",label:"10 Levels Of Tapping",url:"https://tinyurl.com/yw4ex5ma"}];
 const TESTCATS=[
-  {key:"alt",label:"Alternate Picking",url:"[https://tinyurl.com/yacufunh](https://tinyurl.com/yacufunh)"},
-  {key:"sweep",label:"Sweep Picking",url:"[https://tinyurl.com/bdcr5cxj](https://tinyurl.com/bdcr5cxj)"},
-  {key:"legato",label:"Legato",url:"[https://tinyurl.com/3dh7ec3v](https://tinyurl.com/3dh7ec3v)"},
-  {key:"econ",label:"Economy Picking",url:"[https://tinyurl.com/37nbdr6f](https://tinyurl.com/37nbdr6f)"},
-  {key:"tap",label:"Tapping",url:"[https://tinyurl.com/yv89y98j](https://tinyurl.com/yv89y98j)"},
-  {key:"ult",label:"Ultimate Technique Workout",emoji:"👑",url:"[https://www.patreon.com/bradleyhallguitar/posts/ultimate-workout-140924626](https://www.patreon.com/bradleyhallguitar/posts/ultimate-workout-140924626)"}
+  {key:"alt",label:"Alternate Picking",url:"https://tinyurl.com/yacufunh"},
+  {key:"sweep",label:"Sweep Picking",url:"https://tinyurl.com/bdcr5cxj"},
+  {key:"legato",label:"Legato",url:"https://tinyurl.com/3dh7ec3v"},
+  {key:"econ",label:"Economy Picking",url:"https://tinyurl.com/37nbdr6f"},
+  {key:"tap",label:"Tapping",url:"https://tinyurl.com/yv89y98j"},
+  {key:"ult",label:"Ultimate Technique Workout",emoji:"👑",url:"https://www.patreon.com/bradleyhallguitar/posts/ultimate-workout-140924626"}
 ];
 
 const THEORY_DOCS=[
@@ -525,36 +541,36 @@ const THEORY_DOCS=[
 ];
 
 const THEORY_ROOT_ITEMS = [
-  {t:"7 Tips For Better Playing",url:"[https://www.patreon.com/bradleyhallguitar/posts/7-tips-to-make-171204771?collection=1442331](https://www.patreon.com/bradleyhallguitar/posts/7-tips-to-make-171204771?collection=1442331)", key:"theory.12"},
-  {t:"Phrasing Masterclass",url:"[https://tinyurl.com/478mfx4v](https://tinyurl.com/478mfx4v)", key:"theory.8"}
+  {t:"7 Tips For Better Playing",url:"https://www.patreon.com/bradleyhallguitar/posts/7-tips-to-make-171204771?collection=1442331", key:"theory.12"},
+  {t:"Phrasing Masterclass",url:"https://tinyurl.com/478mfx4v", key:"theory.8"}
 ];
 
 const THEORY_GROUPS = [
   {
     title: "Ear Training",
     items: [
-      {t:"Ear Training Pt. 1",url:"[https://tinyurl.com/ycxndyxn](https://tinyurl.com/ycxndyxn)", key:"theory.0"},
-      {t:"Ear Training Pt. 2",url:"[https://tinyurl.com/2vexwxsr](https://tinyurl.com/2vexwxsr)", key:"theory.1"},
-      {t:"Intervals in Iconic Metal Songs",url:"[https://www.patreon.com/bradleyhallguitar/posts/learn-intervals-153454864?collection=1442331](https://www.patreon.com/bradleyhallguitar/posts/learn-intervals-153454864?collection=1442331)", key:"theory.9"}
+      {t:"Ear Training Pt. 1",url:"https://tinyurl.com/ycxndyxn", key:"theory.0"},
+      {t:"Ear Training Pt. 2",url:"https://tinyurl.com/2vexwxsr", key:"theory.1"},
+      {t:"Intervals in Iconic Metal Songs",url:"https://www.patreon.com/bradleyhallguitar/posts/learn-intervals-153454864?collection=1442331", key:"theory.9"}
     ]
   },
   {
     title: "Modes",
-    docs: [ {t:"Modes Cheat Sheet",url:"[https://docs.google.com/document/d/1KcuhTsbICaqTGmbfqeeHl9k7KNtvagfhpwTmny9NRMc/edit?tab=t.0](https://docs.google.com/document/d/1KcuhTsbICaqTGmbfqeeHl9k7KNtvagfhpwTmny9NRMc/edit?tab=t.0)"} ],
+    docs: [ {t:"Modes Cheat Sheet",url:"https://docs.google.com/document/d/1KcuhTsbICaqTGmbfqeeHl9k7KNtvagfhpwTmny9NRMc/edit?tab=t.0"} ],
     items: [
-      {t:"Modes Course Pt. 1",url:"[https://tinyurl.com/5n7p9d92](https://tinyurl.com/5n7p9d92)", key:"theory.2"},
-      {t:"Modes Course Pt. 2",url:"[https://www.patreon.com/bradleyhallguitar/posts/learning-modes-2-78518637](https://www.patreon.com/bradleyhallguitar/posts/learning-modes-2-78518637)", key:"theory.3"},
-      {t:"Modes Course Pt. 3",url:"[https://www.patreon.com/bradleyhallguitar/posts/learning-modes-3-79514177](https://www.patreon.com/bradleyhallguitar/posts/learning-modes-3-79514177)", key:"theory.4"},
-      {t:"Modes Course Pt. 4",url:"[https://www.patreon.com/bradleyhallguitar/posts/learning-modes-4-90144406](https://www.patreon.com/bradleyhallguitar/posts/learning-modes-4-90144406)", key:"theory.5"},
-      {t:"Modes in Iconic Metal Songs",url:"[https://www.patreon.com/bradleyhallguitar/posts/learn-modes-with-151999721?collection=1442331](https://www.patreon.com/bradleyhallguitar/posts/learn-modes-with-151999721?collection=1442331)", key:"theory.11"}
+      {t:"Modes Course Pt. 1",url:"https://tinyurl.com/5n7p9d92", key:"theory.2"},
+      {t:"Modes Course Pt. 2",url:"https://www.patreon.com/bradleyhallguitar/posts/learning-modes-2-78518637", key:"theory.3"},
+      {t:"Modes Course Pt. 3",url:"https://www.patreon.com/bradleyhallguitar/posts/learning-modes-3-79514177", key:"theory.4"},
+      {t:"Modes Course Pt. 4",url:"https://www.patreon.com/bradleyhallguitar/posts/learning-modes-4-90144406", key:"theory.5"},
+      {t:"Modes in Iconic Metal Songs",url:"https://www.patreon.com/bradleyhallguitar/posts/learn-modes-with-151999721?collection=1442331", key:"theory.11"}
     ]
   },
   {
     title: "Chords & Soloing",
     items: [
-      {t:"Soloing Over Changes Pt. 1",url:"[http://tinyurl.com/4zb3dp48](http://tinyurl.com/4zb3dp48)", key:"theory.6"},
-      {t:"Soloing Over Changes Pt. 2",url:"[https://tinyurl.com/4cm982ta](https://tinyurl.com/4cm982ta)", key:"theory.7"},
-      {t:"Chords in Iconic Metal Songs",url:"[https://www.patreon.com/bradleyhallguitar/posts/learn-chords-152062372?collection=1442331](https://www.patreon.com/bradleyhallguitar/posts/learn-chords-152062372?collection=1442331)", key:"theory.10"}
+      {t:"Soloing Over Changes Pt. 1",url:"http://tinyurl.com/4zb3dp48", key:"theory.6"},
+      {t:"Soloing Over Changes Pt. 2",url:"https://tinyurl.com/4cm982ta", key:"theory.7"},
+      {t:"Chords in Iconic Metal Songs",url:"https://www.patreon.com/bradleyhallguitar/posts/learn-chords-152062372?collection=1442331", key:"theory.10"}
     ]
   }
 ];
@@ -564,21 +580,21 @@ THEORY_GROUPS.forEach(function(g){ THEORY_ITEMS = THEORY_ITEMS.concat(g.items); 
 
 const ESSENTIAL={Mon:"Ear Training",Tue:"Rhythm",Wed:"Time Signatures",Thu:"Sight-Reading",Fri:"Reinforce Weakest"};
 const DAY_FULL={Mon:"Monday",Tue:"Tuesday",Wed:"Wednesday",Thu:"Thursday",Fri:"Friday",Sat:"Saturday",Sun:"Sunday"};
-const ESSENTIAL_URL={"Ear Training":"[https://tinyurl.com/mu6ka36m](https://tinyurl.com/mu6ka36m)","Rhythm":"[https://tinyurl.com/2mt96kef](https://tinyurl.com/2mt96kef)","Time Signatures":"[https://tinyurl.com/76hdskpt](https://tinyurl.com/76hdskpt)","Sight-Reading":"[https://tinyurl.com/2xdf6ky2](https://tinyurl.com/2xdf6ky2)"};
+const ESSENTIAL_URL={"Ear Training":"https://tinyurl.com/mu6ka36m","Rhythm":"https://tinyurl.com/2mt96kef","Time Signatures":"https://tinyurl.com/76hdskpt","Sight-Reading":"https://tinyurl.com/2xdf6ky2"};
 const BONUS=[
- {t:"10 Levels Of Metal Licks",url:"[https://tinyurl.com/sz8nkke9](https://tinyurl.com/sz8nkke9)",slider:{key:"metalLicks",max:10}},
- {t:"10 Levels Of Guitar Solo",url:"[https://tinyurl.com/4ue66ax9](https://tinyurl.com/4ue66ax9)",slider:{key:"guitarSolo",max:10}},
- {t:"Play Like 10 Iconic Shredders",url:"[https://tinyurl.com/2p8u4wfh](https://tinyurl.com/2p8u4wfh)",slider:{key:"shredders",max:10}},
- {t:"5 Levels Of Pentatonics",url:"[https://tinyurl.com/mr2s63ac](https://tinyurl.com/mr2s63ac)",slider:{key:"pentatonics",max:5}},
- {t:"Official Lick Pack",url:"[https://tinyurl.com/52tb79xt](https://tinyurl.com/52tb79xt)"},
- {t:"Hybrid Picking Workout",url:"[https://tinyurl.com/5n6pp7kc](https://tinyurl.com/5n6pp7kc)"},
- {t:"Whammy Bar Workout",url:"[https://tinyurl.com/se8e6act](https://tinyurl.com/se8e6act)"}
+ {t:"10 Levels Of Metal Licks",url:"https://tinyurl.com/sz8nkke9",slider:{key:"metalLicks",max:10}},
+ {t:"10 Levels Of Guitar Solo",url:"https://tinyurl.com/4ue66ax9",slider:{key:"guitarSolo",max:10}},
+ {t:"Play Like 10 Iconic Shredders",url:"https://tinyurl.com/2p8u4wfh",slider:{key:"shredders",max:10}},
+ {t:"5 Levels Of Pentatonics",url:"https://tinyurl.com/mr2s63ac",slider:{key:"pentatonics",max:5}},
+ {t:"Official Lick Pack",url:"https://tinyurl.com/52tb79xt"},
+ {t:"Hybrid Picking Workout",url:"https://tinyurl.com/5n6pp7kc"},
+ {t:"Whammy Bar Workout",url:"https://tinyurl.com/se8e6act"}
 ];
 const PREREQ=[
-  {t:"Learn The Fretboard",url:"[http://tinyurl.com/43r5c8v7](http://tinyurl.com/43r5c8v7)"},
-  {t:"Ultimate Guide To Practising",url:"[https://tinyurl.com/dn8f7sm9](https://tinyurl.com/dn8f7sm9)"}
+  {t:"Learn The Fretboard",url:"http://tinyurl.com/43r5c8v7"},
+  {t:"Ultimate Guide To Practising",url:"https://tinyurl.com/dn8f7sm9"}
 ];
-const WARMUP_URL="[https://tinyurl.com/3zdum9xb](https://tinyurl.com/3zdum9xb)";
+const WARMUP_URL="https://tinyurl.com/3zdum9xb";
 const WEEKLY_RHYTHM=[
  {day:"Mon",focused:"Concept video + exercises in rotation + 5-min Ear Training micro-dose",casual:"Current solo, in order"},
  {day:"Tue",focused:"Exercises in rotation + chop-builders (picking) + 5-min Rhythm micro-dose",casual:"Riff writing / improv"},
@@ -1476,7 +1492,7 @@ function renderSetup(){
 
   html+='<div class="card"><h3>8. Adjust Pickup Height</h3><p style="text-align:justify;">Fret the highest note ('+(isPrs?'24th':'22nd')+' fret). Adjust the height screws on either side of the pickups. Set the bass side to <b>2.5 mm</b> below the strings, and the treble side to <b>1.5 mm</b>. In high-gain and shred contexts, keeping the bass side slightly lower prevents the low-end from becoming muddy (stratitis), while the higher treble side keeps your pick attack aggressive and cuts through the mix.</p></div>';
 
-  var vidUrl = isPrs ? '[https://www.youtube.com/watch?v=wmoc9ksdZdE](https://www.youtube.com/watch?v=wmoc9ksdZdE)' : '[https://www.youtube.com/watch?v=3Dhn56ybQHg](https://www.youtube.com/watch?v=3Dhn56ybQHg)';
+  var vidUrl = isPrs ? 'https://www.youtube.com/watch?v=wmoc9ksdZdE' : 'https://www.youtube.com/watch?v=3Dhn56ybQHg';
   var vidTitle = isPrs ? 'Official PRS Setup Guide' : 'Epiphone Les Paul Setup Guide';
 
   html+='<button class="tbtn primary" style="width:100%; margin-bottom: 20px; display:flex; justify-content:center; align-items:center; gap:8px;" onclick="window.open(\''+vidUrl+'\', \'_blank\')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33 2.78 2.78 0 0 0 1.94 2c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.33 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg> '+vidTitle+'</button>';
@@ -1698,10 +1714,12 @@ window.addEventListener('wheel', function(e) {
 
 ensureDailyReset();
 render();
-setTimeout(function(){
-  var sp=document.getElementById("splash");
-  if(sp) sp.remove();
-},1200);
+if (typeof forceRemoveSplash === 'function') {
+  forceRemoveSplash();
+} else {
+  var sp = document.getElementById("splash");
+  if (sp) sp.remove();
+}
 </script>
 </body>
 </html>
