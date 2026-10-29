@@ -1232,6 +1232,35 @@ function renderImprov(){
   var actGate = Math.min(state.improvIndex, IMPROV_GATES.length - 1);
   var allDone = state.improvIndex >= IMPROV_GATES.length;
 
+  var IMPROV_KEYS = [
+    {k:"E minor", t:"Classic Heavy / Thrash"},
+    {k:"B minor", t:"Prog / Melodic Death"},
+    {k:"C# minor", t:"Sabbath / Doom Core"},
+    {k:"C minor", t:"Sludge / Heavy Drop"},
+    {k:"A minor", t:"Neoclassical / Classic Rock"},
+    {k:"D minor", t:"Opeth / Dark Prog"},
+    {k:"G minor", t:"Groove Metal"},
+    {k:"F# minor", t:"Technical / Prog"},
+    {k:"Bb minor", t:"Drop Bb Death Metal"},
+    {k:"Eb minor", t:"Hendrix / Dark Blues"},
+    {k:"G# minor", t:"Modern Metal"},
+    {k:"F minor", t:"Moody / Symphonic"}
+  ];
+  // Use a predictable day index so it changes at midnight local time
+  var d = new Date();
+  var dayOfYear = Math.floor((Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) - Date.UTC(d.getFullYear(), 0, 0)) / 24 / 60 / 60 / 1000);
+  var dayIndex = dayOfYear % IMPROV_KEYS.length;
+  var tKey = IMPROV_KEYS[dayIndex];
+
+  if (!allDone) {
+    html+='<div class="note purple" style="text-align:center; margin-bottom:16px; padding:12px;">'+
+          '<div style="font-size:10.5px; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px; color:#d8b8ff;">Daily Transposition Target</div>'+
+          '<b style="font-size:16px;">'+tKey.k+'</b> <span style="font-size:12px; opacity:0.8;">('+tKey.t+')</span>'+
+          '<div style="font-size:11.5px; margin-top:8px; color:#eef0f4; font-weight:normal; line-height:1.4;">Read the exercises below in their example keys, but <b>force yourself to transpose and play them in '+tKey.k+' today</b>. This breaks vertical habits and builds true neck mastery.</div>'+
+          '</div>';
+  }
+
+
   if(allDone){
     html+='<div class="note purple" style="text-align:center;"><b>\ud83c\udfc6 YOU HAVE MASTERED THE 5 GATES!</b><br>You are now a free player. Keep using these tools in your daily jams.</div>';
   }
