@@ -37,7 +37,9 @@ The Project Master Document is the authority for the product vision, requirement
 
 **Status:** COMPLETE — TESTED AND APPROVED
 
-**Development branch:** `phase-1-ui`
+**Initial development branch:** `phase-1-ui`
+
+**Integration branch:** `phase-1-integration`
 
 **Objective:** Establish a polished responsive design and navigation foundation before implementing the new educational modules.
 
@@ -72,17 +74,19 @@ Tests included:
 - Existing small navigation typography is acceptable.
 - Browser zoom must remain enabled.
 
-**Outcome:** Phase 1 approved.
+**Outcome:** Phase 1 approved and integrated into `main`. The original implementation was developed in `phase-1-ui`. To introduce the approved implementation into the then-current `main`, the user created `phase-1-integration` from `main`, copied the approved Phase 1 `index.html` into that branch, and merged its Pull Request into `main`. The user explicitly confirmed that the Pull Request was merged.
 
-**Next action:** Merge `phase-1-ui` into `main` through a Pull Request. Preserve `baseline-original` unchanged.
+**Integration status:** COMPLETE. Do not repeat this merge. Preserve `baseline-original` unchanged.
 
 ---
 
 ## Phase 2 — DOJO Information Architecture and Compendium Shell
 
-**Status:** READY TO START
+**Status:** NEXT — PREPARATION / IMPLEMENTATION CONVERSATION CREATED
 
-**Development branch:** `phase-2-dojo-shell` (to be created from the updated `main` after the Phase 1 merge).
+**Development branch:** `phase-2-dojo-shell` (must be created from the current `main` if it has not already been created; do not use an outdated branch or baseline).
+
+**ChatGPT:** A dedicated Phase 2 conversation has been created. The project documents must be refreshed in that conversation before implementation proceeds.
 
 **Objective:** Build the new DOJO framework and curriculum map without rushing the educational content.
 
@@ -155,8 +159,8 @@ Do not claim that interactive tools are implemented until they actually exist.
 - Reusable chapter page template.
 - Proposed curriculum and user-progress data schema.
 - Change log.
-- Modified functions, styles and state fields.
-- Migration notes, if applicable.
+- List of modified functions, styles and state fields.
+- Migration notes, if any.
 - Manual test checklist.
 - Known limitations.
 
