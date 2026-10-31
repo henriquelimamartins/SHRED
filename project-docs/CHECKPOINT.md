@@ -1,125 +1,331 @@
-# THE SHRED ROADMAP — PROJECT CHECKPOINT
+# THE SHRED ROADMAP
+## PROJECT CHECKPOINT — PHASE 1 APPROVED / PHASE 2 NEXT
 
-**Last updated:** 31 October 2026  
-**Current stage:** Phase 1 — review of Gemini implementation  
-**Approval status:** NOT APPROVED YET
+**Current status:** Phase 1 completed, tested and approved. Phase 2 is ready to begin.
 
-## Current GitHub setup
+**Last completed phase:** Phase 1 — Responsive UI and Navigation Foundation  
+**Next phase:** Phase 2 — DOJO Information Architecture and Compendium Shell
 
-- Repository: https://github.com/henriquelimamartins/SHRED
-- Public repository; GitHub Pages: https://henriquelimamartins.github.io/SHRED/
-- `main` is the deployment branch, using `.github/workflows/static.yml`.
-- The Gemini Phase 1 `index.html` was uploaded to `main` for testing and may be live.
-- `phase-1-ui` was created from the then-current `main`; it is therefore a snapshot of the Gemini Phase 1 version, not the original baseline.
-- The original baseline has not yet been preserved in a dedicated branch.
+---
 
-## Source files and references
+## 1. Purpose of this document
 
-| Role | File / location | Status |
+This checkpoint is the portable handover document for The Shred Roadmap.
+
+It records the product vision, technical safeguards, current implementation status, completed work and exact next actions. It should allow the project to continue in a new ChatGPT conversation without relying on the full chat history.
+
+The Project Master Document remains the ultimate authority for the product vision, requirements and full phase plan.
+
+---
+
+## 2. Project identity and goal
+
+The Shred Roadmap is a premium, comprehensive music-learning web application.
+
+Its purpose is to develop broad musicianship first and guitar-specific fluency second, covering:
+
+- Music theory and musical literacy.
+- Harmonic analysis.
+- Fretboard knowledge and fluency.
+- Improvisation and phrasing.
+- Composition and genre literacy.
+
+This must be a serious, long-term learning platform, not a shallow quiz application.
+
+### Confirmed product principles
+
+- The app and curriculum are in English.
+- Desktop and mobile have equal priority.
+- The visual identity should remain dark, modern and distinctive.
+- The app should support both a recommended learning path and free exploration.
+- Learning content must never be locked behind XP or artificial progression requirements.
+- General music theory is the foundation; guitar applications are a separate practical layer.
+- Content should be academically substantial, accurate and progressively disclosed.
+- Preserve useful existing functionality and user data.
+
+---
+
+## 3. Existing application and technical foundations
+
+The original application was a single-file HTML/CSS/JavaScript application.
+
+The original authoritative baseline is `index (9).html`, preserved separately in the `baseline-original` branch.
+
+The application has six top-level areas:
+
+1. HOME
+2. DAILY
+3. DOJO
+4. IMPROV
+5. LIBRARY
+6. SETUP
+
+Important existing technical foundations:
+
+- localStorage key: `shredRoadmapState_v10`
+- Optional Google Authentication through Firebase.
+- Firestore user document path: `users/{uid}`.
+- Existing daily routines, checklists, progress and streak tracking.
+- Five existing IMPROV_GATES and their progress.
+- Existing guitar and tuning setup utilities.
+
+The original baseline must remain available as a recovery and comparison reference.
+
+### Technical safeguards
+
+- Do not remove unrelated functionality.
+- Do not overwrite the original baseline.
+- Do not change Firebase project configuration, authentication behaviour or Firestore paths without explicit justification and a migration plan.
+- Preserve existing user data and local persistence.
+- Keep static curriculum definitions separate from user-specific progress.
+- Prefer additive, versioned changes to the user-state schema.
+- Do not claim Firebase security rules are secure unless they have actually been inspected.
+- Do not introduce XP-based content locks.
+- Do not deliver partial HTML or placeholders in place of a complete working file.
+
+---
+
+## 4. Branch strategy and current repository status
+
+Repository: `https://github.com/henriquelimamartins/SHRED`
+
+GitHub Pages:
+`https://henriquelimamartins.github.io/SHRED/`
+
+Branches and their intended roles:
+
+| Branch | Purpose |
+|---|---|
+| `main` | Approved/stable application and canonical project documentation |
+| `baseline-original` | Untouched original application reference |
+| `phase-1-ui` | Phase 1 implementation; approved after testing |
+| `phase-2-dojo-shell` | Next development branch |
+
+### Phase 1 approval and merge
+
+The user confirmed that all Phase 1 tests passed successfully.
+
+Phase 1 is therefore approved.
+
+The Phase 1 implementation should now be merged from `phase-1-ui` into `main`, preferably through a Pull Request.
+
+The `baseline-original` branch must remain untouched.
+
+The next development branch, `phase-2-dojo-shell`, should be created from the updated `main` after the Phase 1 merge.
+
+Do not begin Phase 2 from the original baseline or from an outdated copy of the application.
+
+---
+
+## 5. Phase 1 — Responsive UI and Navigation Foundation
+
+**Status: COMPLETE — TESTED AND APPROVED**
+
+The Phase 1 implementation was produced by Gemini in the `phase-1-ui` branch.
+
+The user manually tested the implementation and confirmed that all tests passed successfully.
+
+The test coverage included:
+
+- Responsive layouts at desktop, tablet and mobile sizes.
+- Navigation between the six main sections.
+- Active navigation indicators.
+- Desktop and mobile scrolling.
+- DAILY functionality and task interactions.
+- IMPROV Gates and exercise completion.
+- DOJO navigation and existing modules.
+- LIBRARY navigation.
+- SETUP controls.
+- Local persistence after refreshing.
+- Authentication and synchronisation tests where applicable.
+
+The user reported successful completion of all tests.
+
+Phase 1 is approved and may be merged into `main`.
+
+The following design decisions were explicitly accepted:
+
+- Global scrollbars remain hidden as an intentional design choice.
+- Existing small navigation typography is acceptable and should not be enlarged unnecessarily.
+- Browser zoom must remain enabled.
+
+---
+
+## 6. DOJO — confirmed structure and requirements
+
+The DOJO is being rebuilt as the central educational area of the application.
+
+Its three connected areas are:
+
+### 6.1 Music Theory Compendium
+
+A comprehensive, structured reference and learning resource covering music theory from foundational to advanced concepts.
+
+It should include:
+
+- Definitions and terminology.
+- Derivations and construction methods.
+- Classifications and variations.
+- Relationships between concepts.
+- Musical effects and applications.
+- Historical context where relevant.
+- Exceptions and misconceptions.
+- Worked examples.
+- Guitar applications.
+- Varied exercises and solutions.
+- Links to related chapters.
+
+### 6.2 Fretboard Mastery
+
+A practical and theoretical learning area covering:
+
+- Notes and their locations.
+- Intervals and string relationships.
+- Scales and positions.
+- Triads and inversions.
+- Arpeggios and chord voicings.
+- CAGED and alternative systems.
+- Connecting shapes to keys and harmonic functions.
+- Target notes and phrase resolution.
+
+The objective is to understand the theory behind the fretboard, not simply memorise shapes.
+
+### 6.3 Harmonic Analysis Lab
+
+A guided environment for analysing harmony, including:
+
+- Tonal centres and Roman numerals.
+- Diatonic and non-diatonic chords.
+- Harmonic functions and cadences.
+- Secondary dominants.
+- Modal interchange and borrowed chords.
+- Modulation and tonicisation.
+- Pedal tones and drones.
+- Ambiguous harmony.
+- Harmonic rhythm.
+
+Alternative interpretations should be explained when a progression allows more than one valid analysis.
+
+---
+
+## 7. Confirmed curriculum decisions
+
+- Use note letters (A, B, C), chord symbols and Roman numerals.
+- Formal staff reading is not required.
+- Key signatures and accidentals remain important.
+- Theory should be genre-general.
+- Relevant examples should include stoner, doom, sludge, progressive metal, death metal, thrash and blues. Classic rock is useful but lower priority.
+- Exercises should include construction, identification, analysis, diagnosis, comparison, transposition, application and problem-solving.
+- Avoid repetitive multiple-choice quiz banks.
+- Do not fabricate musical examples, analyses or references.
+
+### IMPROV — five Gates
+
+1. The Horizontal Prison
+2. The Chord Tone Architect
+3. The Rhythmic Displacer
+4. The Modal Alchemist
+5. Total Audiation
+
+### LIBRARY — Listening Vault
+
+The Listening Vault will eventually become a searchable and filterable listening and analysis resource with:
+
+- Tracks and relevant passages.
+- Musical context.
+- Listening objectives.
+- Harmonic, melodic, rhythmic and phrasing analysis.
+- Guitar applications.
+- Links to DOJO chapters and IMPROV Gates.
+- Bookmarks and personal notes.
+
+Do not fabricate timestamps, progressions, analyses or URLs.
+
+---
+
+## 8. Phase plan and status
+
+| Phase | Description | Status |
 |---|---|---|
-| Original baseline | `index (9).html` | Original source of truth from Phase 0; keep untouched |
-| Gemini Phase 1 | `index.html` in `main` and `phase-1-ui` | Uploaded; awaiting full audit |
-| Requirements | `project-docs/MASTERPLAN.md` | This Markdown conversion |
-| Live checkpoint | `project-docs/CHECKPOINT.md` | This document |
-| Phase history | `project-docs/PHASE_LOG.md` | Record approvals and decisions |
+| 0 | Audit and Architecture | COMPLETE |
+| 1 | Responsive UI and Navigation Foundation | COMPLETE — APPROVED |
+| 2 | DOJO Information Architecture and Compendium Shell | NEXT |
+| 3 | Compendium Foundations and Harmony | NOT STARTED |
+| 4 | Advanced Theory Compendium | NOT STARTED |
+| 5 | Interactive Fretboard Mastery | NOT STARTED |
+| 6 | Harmonic Analysis Lab | NOT STARTED |
+| 7 | IMPROV Redesign and Five Gates | NOT STARTED |
+| 8 | Listening Vault Redesign | NOT STARTED |
+| 9 | Learning Path, Exercises, Assessment and Review | NOT STARTED |
+| 10 | Integration, Regression and Release Audit | NOT STARTED |
 
-## Project identity
+Only one implementation phase should be active at a time.
 
-A premium, comprehensive musicianship-learning application. General music theory is the foundation; guitar applications are a separate practical layer. App language is English. Desktop and mobile have equal priority. The learning experience must be substantial and academically informed, not a shallow quiz app.
+Do not begin the next phase until the current phase has been reviewed, tested and approved.
 
-## Phase 0 audited baseline
+---
 
-- Six areas: HOME, DAILY, IMPROV, DOJO, LIBRARY and SETUP.
-- Preserve DAILY routines, checklists, phase progression and streak tracking.
-- Preserve the five IMPROV Gates and user progress during Phase 1.
-- LIBRARY includes roadmap/resources, Expression Track, Listening Vault, Creative, Bonus Content and Guide.
-- SETUP contains guitar/tuning and maintenance utilities.
-- DOJO will be substantially rebuilt in later phases; Phase 1 must not start that rebuild.
-- Original architecture: single-file HTML/CSS/JS.
-- Observed localStorage key: `shredRoadmapState_v10`.
-- Firebase Google Authentication and Firestore sync were present; observed path: `users/{uid}`.
-- Firestore security rules have not been inspected. Do not claim they are secure.
+## 9. Next action — Phase 2
 
-These are historical audit observations. Re-verify against the actual source before modifying code.
+**PHASE 2 — DOJO INFORMATION ARCHITECTURE AND COMPENDIUM SHELL**
 
-## Non-negotiable safeguards
+The objective is to build the new DOJO framework and curriculum map without rushing the educational content.
 
-1. Keep the untouched original HTML baseline.
-2. Never develop directly on `main`.
-3. Preserve existing features and user data unless a phase explicitly authorises a change with a migration plan.
-4. During Phase 1, preserve `shredRoadmapState_v10`, Firebase configuration, Google Auth, Firestore path `users/{uid}` and the state schema.
-5. Preserve local persistence and cloud synchronisation.
-6. Keep static curriculum content separate from user-specific progress.
-7. Use additive, versioned migrations for future schema changes.
-8. Do not gate learning content behind XP.
-9. Require complete HTML deliverables, not snippets or “rest unchanged”.
-10. Distinguish static code inspection from actual browser/Firebase testing.
-11. Never publish an unapproved development version to `main`.
+Phase 2 should:
 
-## Phase plan
+1. Rebuild the DOJO learning experience from scratch.
+2. Create the three main areas: Music Theory Compendium, Fretboard Mastery and Harmonic Analysis Lab.
+3. Create the Compendium's hierarchical syllabus.
+4. Establish categories, chapters, subchapters and prerequisites.
+5. Support recommended progression and free exploration.
+6. Add chapter search/filtering and progress states.
+7. Create a reusable chapter page template.
+8. Create coherent landing pages for Fretboard Mastery and Harmonic Analysis Lab.
+9. Separate static curriculum definitions from per-user progress.
+10. Preserve all unrelated application functionality and existing user data.
 
-| Phase | Scope | Status |
-|---|---|---|
-| 0 | Audit and architecture | COMPLETE |
-| 1 | Responsive UI and navigation | IN REVIEW — not approved |
-| 2 | DOJO shell and syllabus | Pending |
-| 3 | Compendium foundations and harmony | Pending |
-| 4 | Advanced theory Compendium | Pending |
-| 5 | Interactive Fretboard Mastery | Pending |
-| 6 | Harmonic Analysis Lab | Pending |
-| 7 | IMPROV redesign and five Gates | Pending |
-| 8 | Listening Vault redesign | Pending |
-| 9 | Learning path, exercises, assessment and review | Pending |
-| 10 | Integration, regression and release audit | Pending |
+Do not attempt to write the entire encyclopaedia or implement the detailed interactive fretboard and harmonic analysis tools in this phase.
 
-## Phase 1 review scope
+### Files to provide to Gemini
 
-Phase 1 covers responsive UI and navigation only. Do not implement new educational content or rebuild learning systems.
+- The latest complete `index.html` from the approved Phase 1 implementation.
+- The Project Master Document.
+- The Phase 2 prompt.
 
-Acceptance checks:
-- Six sections remain accessible.
-- Desktop/tablet/mobile work at 1440, 1024, 768, 390 and 360 px.
-- No horizontal overflow; browser zoom remains available.
-- DAILY, IMPROV, LIBRARY and SETUP functionality and progress remain intact.
-- DOJO remains accessible, with no new XP locks.
-- localStorage key, state schema, Firebase config/auth and Firestore path remain unchanged.
-- No unrelated feature is removed or simplified.
-- Complete HTML and a truthful test report are delivered.
+### Required Gemini deliverables
 
-Initial static review points to verify, not yet final defects:
-- Global search appeared to be a placeholder.
-- Mobile navigation labels appeared very small (about 8.5 px).
-- Scrollbars appeared globally hidden.
+- Complete updated `index.html`.
+- Syllabus tree and chapter hierarchy.
+- Reusable chapter page template.
+- Proposed data schema for curriculum and user progress.
+- Change log.
+- List of modified functions, styles and state fields.
+- Migration notes, if any.
+- Manual test checklist.
+- Known limitations and unfinished work.
 
-## Immediate next actions
+The resulting implementation must be reviewed and tested before merging into `main`.
 
-1. Keep `phase-1-ui`; do not delete it.
-2. Open the `index.html` commit history: https://github.com/henriquelimamartins/SHRED/commits/main/index.html
-3. Identify the commit immediately before the Gemini Phase 1 upload.
-4. Create `baseline-original` from that exact commit, not from current `main`.
-5. Share the branch/commit link for confirmation.
-6. Audit `phase-1-ui/index.html` against the original baseline and this Masterplan.
-7. Classify the result as PASS, PASS WITH WARNINGS or NEEDS FIXES.
-8. Correct issues on the development branch and re-audit.
-9. Merge into `main` through a Pull Request only after approval.
-10. Do not begin Phase 2 until Phase 1 is approved.
+---
 
-## Branch policy
+## 10. Instructions for continuing in a new ChatGPT conversation
 
-- `main`: approved stable version only.
-- `phase-1-ui`, `phase-2-dojo`, etc.: phase-specific development branches.
-- `baseline-original`: immutable reference branch at the original baseline commit.
-- Download and retain a local copy of every complete Gemini deliverable.
-- Start each new phase from the latest approved `main`.
+We are continuing The Shred Roadmap.
 
-## Roles
+Read this checkpoint and the Project Master Document before making recommendations.
 
-**Gemini Pro:** implements only the requested phase; inspects the current full HTML; returns complete HTML, changelog, changed functions/state, migration notes, test results and limitations.
+The Project Master Document is the authority for the product vision and requirements.
 
-**ChatGPT:** protects project intent, reviews code and reports, identifies regressions and prepares correction prompts. It must not claim tests it has not run.
+Current status:
 
-**User:** owns the project, keeps backups, downloads Gemini deliverables, uploads to the correct branch, runs requested manual tests and approves releases.
+- Phase 0 is complete.
+- Phase 1 has passed all user-reported tests and is approved.
+- The Phase 1 implementation is in `phase-1-ui`.
+- The next step is to merge Phase 1 into `main`, then create `phase-2-dojo-shell` from the updated `main`.
+- Phase 2 is ready for implementation.
 
-## Recovery prompt for a new ChatGPT conversation
+The next task is to help prepare, review and guide the Phase 2 implementation.
 
-We are continuing The Shred Roadmap. Read `project-docs/MASTERPLAN.md`, `project-docs/CHECKPOINT.md` and `project-docs/PHASE_LOG.md` from https://github.com/henriquelimamartins/SHRED. The Masterplan is authoritative for product requirements; the Checkpoint records current execution; the Phase Log records history. Phase 1 is under review. `phase-1-ui` was created from current `main` after the Gemini Phase 1 file had already been uploaded to `main`, so it is not the original baseline. The original commit still needs to be identified and preserved as `baseline-original`. Do not approve Phase 1 or proceed to Phase 2 until the full code has been compared with the original and requirements. Explain technical steps simply.
+Do not assume that Gemini's output is correct merely because it follows the prompt. Review the complete source, compare it with the requirements and distinguish static inspection from actual browser testing.
+
+Preserve the project's scope, depth, architecture and safeguards. Do not simplify the product or remove existing functionality.
