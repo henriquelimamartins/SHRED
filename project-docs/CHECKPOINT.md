@@ -1,7 +1,7 @@
 # THE SHRED ROADMAP
 ## PROJECT CHECKPOINT — PHASE 1 APPROVED / PHASE 2 NEXT
 
-**Current status:** Phase 1 completed, tested and approved. Phase 2 is ready to begin.
+**Current status:** Phase 1 completed, tested, approved and integrated into `main`. Phase 2 is the next implementation phase.
 
 **Last completed phase:** Phase 1 — Responsive UI and Navigation Foundation  
 **Next phase:** Phase 2 — DOJO Information Architecture and Compendium Shell
@@ -98,8 +98,9 @@ Branches and their intended roles:
 |---|---|
 | `main` | Approved/stable application and canonical project documentation |
 | `baseline-original` | Untouched original application reference |
-| `phase-1-ui` | Phase 1 implementation; approved after testing |
-| `phase-2-dojo-shell` | Next development branch |
+| `phase-1-ui` | Original Phase 1 development branch; retained as implementation history |
+| `phase-1-integration` | Integration branch created from `main` to introduce the approved Phase 1 implementation; its Pull Request was merged |
+| `phase-2-dojo-shell` | Phase 2 development branch; create from the current `main` if not already created |
 
 ### Phase 1 approval and merge
 
@@ -107,13 +108,13 @@ The user confirmed that all Phase 1 tests passed successfully.
 
 Phase 1 is therefore approved.
 
-The Phase 1 implementation should now be merged from `phase-1-ui` into `main`, preferably through a Pull Request.
+The original Phase 1 implementation was developed in `phase-1-ui`. Because the contents of `main` had diverged from the approved implementation, an integration branch named `phase-1-integration` was created from the then-current `main`, and the approved Phase 1 `index.html` was introduced there. The user confirmed that the Pull Request from `phase-1-integration` was merged into `main`.
+
+Therefore, Phase 1 integration into `main` is COMPLETE. Do not repeat that merge.
 
 The `baseline-original` branch must remain untouched.
 
-The next development branch, `phase-2-dojo-shell`, should be created from the updated `main` after the Phase 1 merge.
-
-Do not begin Phase 2 from the original baseline or from an outdated copy of the application.
+The Phase 2 development branch, `phase-2-dojo-shell`, must be created from the current `main` if it has not already been created. Do not begin Phase 2 from the original baseline or from an outdated copy of the application.
 
 ---
 
@@ -121,7 +122,7 @@ Do not begin Phase 2 from the original baseline or from an outdated copy of the 
 
 **Status: COMPLETE — TESTED AND APPROVED**
 
-The Phase 1 implementation was produced by Gemini in the `phase-1-ui` branch.
+The Phase 1 implementation was initially produced by Gemini in the `phase-1-ui` branch. It was subsequently introduced into the then-current `main` through the `phase-1-integration` branch.
 
 The user manually tested the implementation and confirmed that all tests passed successfully.
 
@@ -141,7 +142,7 @@ The test coverage included:
 
 The user reported successful completion of all tests.
 
-Phase 1 is approved and may be merged into `main`.
+Phase 1 is approved and its integration into `main` through the `phase-1-integration` Pull Request is COMPLETE, as confirmed by the user.
 
 The following design decisions were explicitly accepted:
 
@@ -320,12 +321,13 @@ Current status:
 
 - Phase 0 is complete.
 - Phase 1 has passed all user-reported tests and is approved.
-- The Phase 1 implementation is in `phase-1-ui`.
-- The next step is to merge Phase 1 into `main`, then create `phase-2-dojo-shell` from the updated `main`.
-- Phase 2 is ready for implementation.
+- The Phase 1 implementation was initially developed in `phase-1-ui`.
+- The approved implementation was introduced through `phase-1-integration`, and the user confirmed that its Pull Request was merged into `main`. Do not repeat this merge.
+- Phase 2 is the next implementation phase. A dedicated ChatGPT conversation has been created for Phase 2.
+- Create `phase-2-dojo-shell` from the current `main` if it has not already been created. Attach the latest approved complete `index.html`, the Project Master Document and the Phase 2 prompt before implementation.
 
 The next task is to help prepare, review and guide the Phase 2 implementation.
 
 Do not assume that Gemini's output is correct merely because it follows the prompt. Review the complete source, compare it with the requirements and distinguish static inspection from actual browser testing.
 
-Preserve the project's scope, depth, architecture and safeguards. Do not simplify the product or remove existing functionality.
+Preserve the project's scope, depth, architecture and safeguards.
