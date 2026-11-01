@@ -242,6 +242,77 @@ The Listening Vault will eventually become a searchable and filterable listening
 
 Do not fabricate timestamps, progressions, analyses or URLs.
 
+
+## 7A. Additional pedagogical requirements — Functional Harmony and Musical Independence
+
+### Functional Harmony and Chord Functions
+
+Functional harmony is an established part of the approved product vision and Compendium syllabus.
+
+The curriculum must teach more than chord construction and Roman-numeral identification. It must explain how chords relate to one another and how they function within a harmonic context.
+
+The learner should progressively understand:
+- Tonic, predominant and dominant functions.
+- Diatonic harmony in major and minor tonalities.
+- Relationships between scale degrees, chord construction and harmonic roles.
+- Functional progressions and cadences.
+- Roman-numeral analysis.
+- Harmonic rhythm, bass movement and voice leading.
+- Seventh chords and their functional behaviour.
+- Secondary dominants and tonicisation.
+- Modal interchange and borrowed chords.
+- Chromatic harmony, modulation and ambiguous progressions.
+- The distinction between functional, modal and non-functional harmonic contexts.
+
+This knowledge must connect to practical guitar applications, including chord voicings, triads, arpeggios, guide tones, target notes and fretboard navigation.
+
+It must also connect to harmonic analysis, improvisation and real musical examples.
+
+### Musical Context and Application
+
+The Compendium should combine rigorous theoretical explanations with practical and musical understanding.
+
+Where relevant, chapters should address:
+- Theoretical construction and derivation.
+- Conceptual relationships and comparisons.
+- Characteristic sounds, notes, tensions and resolutions.
+- Harmonic context and chord compatibility.
+- Practical guitar application.
+- Musical references and guided listening.
+- Exercises and original application.
+
+The user's preferred reference styles may include stoner, doom, sludge, progressive music, death metal, thrash, blues and selected classic rock.
+
+These styles are examples and sources of context, not limits on the curriculum. General music theory must remain comprehensive and genre-independent.
+
+Real musical references must be treated accurately. Distinguish verified analysis, stylistic association and suggested listening. Never fabricate musical details or references.
+
+### Phase 7 — Musical Independence
+
+IMPROV must be redesigned as the practical application layer of DOJO, with the long-term objective of developing Musical Independence.
+
+The five Gates retain their identities:
+
+1. The Horizontal Prison — Fretboard Independence.
+2. The Chord Tone Architect — Harmonic Independence.
+3. The Rhythmic Displacer — Rhythmic Independence.
+4. The Modal Alchemist — Modal and Melodic Independence.
+5. Total Audiation — Integrated Musical Independence.
+
+The guiding principle is:
+
+**No Shape → Understand → Locate → Hear → Choose → Execute → Create**
+
+The learner should progress beyond memorised patterns towards understanding musical relationships, navigating the fretboard, responding to harmonic and rhythmic contexts, making deliberate choices and creating coherent musical phrases.
+
+Detailed exercises, progression, assessment and implementation remain part of Phase 7.
+
+### Cross-phase dependency
+
+Phases 2–6 should establish the theoretical, fretboard and harmonic foundations needed by the future IMPROV redesign.
+
+This is an architectural and pedagogical compatibility requirement. It does not authorise implementation of IMPROV features before Phase 7.
+
 ---
 
 ## 8. Phase plan and status
@@ -284,6 +355,24 @@ Phase 2 should:
 8. Create coherent landing pages for Fretboard Mastery and Harmonic Analysis Lab.
 9. Separate static curriculum definitions from per-user progress.
 10. Preserve all unrelated application functionality and existing user data.
+
+### Future Phase 7 compatibility constraint
+
+Phase 2 must ensure that the DOJO curriculum architecture can optionally represent explicit relationships between relevant chapters/concepts and the five existing IMPROV Gates.
+
+This may be supported through stable identifiers or lightweight curriculum relationships.
+
+This requirement is for future compatibility only. It does not expand Phase 2 implementation scope.
+
+Do not:
+- Redesign or modify existing IMPROV behaviour.
+- Implement Gate content or exercises.
+- Implement Gate progression or assessment.
+- Create new IMPROV interfaces.
+- Introduce a global exercise or mastery system.
+- Change Firebase configuration, authentication or database paths.
+
+The full IMPROV redesign remains exclusively within Phase 7, after Phases 3–6 have established the relevant theoretical, fretboard and harmonic foundations.
 
 Do not attempt to write the entire encyclopaedia or implement the detailed interactive fretboard and harmonic analysis tools in this phase.
 
