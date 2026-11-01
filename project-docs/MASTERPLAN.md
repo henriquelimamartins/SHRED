@@ -188,19 +188,136 @@ Interactive guitar-focused application: note locations; interval relationships; 
 
 A practical workspace for analysing progressions, riffs and excerpts: tonal centres; Roman-numeral analysis; diatonic and non-diatonic chords; modal interchange; secondary dominants; pedal tones and drones; ambiguous harmony; modulations; harmonic rhythm; genre-specific devices; and explanations of why a progression creates a particular effect. Provide guided examples and structured analysis tasks.
 
+
 ### Improv: five Gates
 
-The Horizontal Prison — Break dependence on fixed box/shape thinking; connect positions, phrases and the neck.
+IMPROV must be developed as the practical musicianship and musical-independence layer of The Shred Roadmap.
 
-The Chord Tone Architect — Target chord tones, outline harmony, connect lines to changes and use voice leading.
+Its purpose is not simply to teach scale patterns, licks or improvisational vocabulary. It must develop the learner's ability to understand musical relationships, navigate the guitar fretboard freely, make intentional melodic and rhythmic decisions, and translate musical ideas into coherent performance.
 
-The Rhythmic Displacer — Develop rhythmic variation, displacement, subdivisions, odd meters and phrase placement.
+The five Gates must retain their identities while being substantially redesigned:
 
-The Modal Alchemist — Understand modal colour, scale/chord relationships and controlled modal application.
+1. **The Horizontal Prison — Fretboard Independence**
+   - Break dependence on fixed box patterns and memorised positions.
+   - Locate notes and intervals across strings and fretboard regions.
+   - Connect scales, arpeggios, intervals and positions.
+   - Develop horizontal and vertical fretboard navigation.
+   - Transfer phrases across strings, positions and octaves.
+   - Explore alternative ways of playing the same musical idea.
 
-Total Audiation — Develop internal musical conception and coherent melodic direction; adapt activities to avoid duplicating the user's separate ear-training tools.
+2. **The Chord Tone Architect — Harmonic Independence**
+   - Understand and target chord tones within changing harmony.
+   - Apply triads, seventh chords, arpeggios and guide tones.
+   - Connect melodic lines to chord progressions.
+   - Develop voice leading between successive chords.
+   - Understand stability, tension and resolution.
+   - Construct melodies that meaningfully reflect the underlying harmony.
 
-Each Gate should have a clear purpose, prerequisites, progressive levels, substantial explanations, practical tasks, feedback/rubrics and links to relevant Dojo chapters. Avoid turning the Gates into a sequence of shallow multiple-choice quizzes.
+3. **The Rhythmic Displacer — Rhythmic Independence**
+   - Understand subdivisions, rhythmic groupings and accents.
+   - Develop syncopation, displacement and phrase variation.
+   - Work with odd meters and changing rhythmic structures.
+   - Manipulate rests, note duration, density and rhythmic space.
+   - Transform motifs through rhythmic variation.
+   - Develop control over groove, phrasing and rhythmic intention.
+
+4. **The Modal Alchemist — Modal and Melodic Independence**
+   - Understand the interval structure and characteristic notes of scales and modes.
+   - Compare different modes over the same tonic.
+   - Relate modal choices to chords, tonal centres and harmonic contexts.
+   - Identify characteristic tones, tensions and resolutions.
+   - Apply modal colour to riffs, progressions and improvisation.
+   - Understand the difference between theoretical compatibility and convincing musical application.
+
+5. **Total Audiation — Integrated Musical Independence**
+   - Develop the ability to conceive coherent musical ideas internally.
+   - Build phrases using motifs, repetition, variation and transformation.
+   - Apply call-and-response, melodic direction and structured development.
+   - Control tension, resolution, dynamics, density and space.
+   - Translate internally conceived ideas into deliberate guitar performance.
+   - Avoid unnecessary duplication of the user's separate ear-training tools.
+
+### Core pedagogical principle
+
+The Gates should progressively develop the following capabilities:
+
+**No Shape → Understand → Locate → Hear → Choose → Execute → Create**
+
+This is a guiding pedagogical principle rather than a rigid sequence that every exercise must follow.
+
+The learner should progressively move beyond memorised shapes and patterns towards understanding the musical relationships behind them, locating those relationships on the fretboard, making deliberate musical choices and creating original phrases.
+
+### Relationship with DOJO
+
+IMPROV must function as the practical application layer of DOJO.
+
+Its activities should connect directly to relevant concepts from:
+
+- Music Theory Compendium.
+- Fretboard Mastery.
+- Harmonic Analysis Lab.
+
+A learner should be able to move between theoretical understanding and practical application without treating them as disconnected subjects.
+
+Relevant chapters, concepts and practical exercises should be explicitly linked wherever appropriate.
+
+### Exercise and assessment principles
+
+Each Gate should contain:
+
+- A clear learning objective.
+- Prerequisites and links to relevant DOJO concepts.
+- Progressive levels of difficulty.
+- Substantial explanations and demonstrations.
+- Varied practical tasks.
+- Clear success criteria and feedback.
+- Opportunities for repetition, review and application.
+- Exercises that combine multiple musical skills as the learner progresses.
+
+Exercises should include, where appropriate:
+
+- Construction and identification.
+- Fretboard location and navigation.
+- Harmonic and melodic analysis.
+- Transposition.
+- Rhythmic transformation.
+- Target-note selection.
+- Phrase development.
+- Practical guitar execution.
+- Integrated creative challenges.
+
+Do not reduce the Gates to repetitive multiple-choice quizzes or arbitrary random-key exercises.
+
+Distinguish between completing an exercise and demonstrating genuine mastery.
+
+Do not claim that a learner's physical performance, timing, tone or musical execution has been verified unless the application actually receives and evaluates the relevant performance data.
+
+Do not use artificial XP restrictions to prevent access to educational content.
+
+### Musical Context and Application
+
+IMPROV should use meaningful musical situations and examples drawn from a broad range of styles.
+
+Priority reference worlds may include stoner, doom, sludge, progressive music, death metal, thrash, blues and selected classic rock, without restricting the curriculum to these genres.
+
+Real musical references should be used where they genuinely help explain a concept. Distinguish verified musical analysis from stylistic association and suggested listening.
+
+The objective is to help the learner understand how musical concepts function in real music and how to apply them independently.
+
+### Definition of success
+
+The redesign should be judged by the learner's developing musical independence.
+
+A successful learner should increasingly be able to:
+
+- Understand the musical relationships behind patterns and shapes.
+- Navigate the fretboard without depending exclusively on memorised positions.
+- Recognise and respond to harmonic and rhythmic context.
+- Choose notes and phrases intentionally.
+- Connect theoretical knowledge to practical guitar performance.
+- Develop and execute coherent musical ideas.
+
+The objective is not simply to increase the number of scales, licks or exercises completed.
 
 ### Listening Vault
 
