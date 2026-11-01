@@ -563,4 +563,54 @@ These decisions must be documented before implementation if they materially affe
 
 ---
 
-**Owner approval required before this document becomes the authoritative Phase 2 implementation specification.**
+## Addendum A — Visual Learning and Educational Resources
+
+The Compendium must not become a text-only learning experience.
+
+**Visual Learning Principle:** Every substantial theoretical concept must use visual representations whenever they materially improve understanding, clarify relationships or demonstrate musical structure.
+
+Depending on the subject, educational resources may include:
+
+- Circle of Fifths and key-signature diagrams.
+- Note, interval, scale and chord construction diagrams.
+- Guitar fretboard maps and position diagrams.
+- Harmonic progression and functional relationship diagrams.
+- Voice-leading and chord-transition visualisations.
+- Rhythm, subdivision and meter diagrams.
+- Comparative modal and scale diagrams.
+- Conceptual flowcharts and structured musical examples.
+
+Visual resources must appear within the relevant chapter sections, close to the explanations they support.
+
+Distinguish between:
+
+1. **Static educational diagrams:** visual explanations and reference material.
+2. **Interactive visual tools:** components that allow the learner to manipulate or explore musical information.
+
+Interactivity should be implemented when it provides meaningful educational value. Do not introduce unnecessary complexity merely to make a diagram interactive.
+
+The visual system should be reusable, responsive, legible and consistent with the application's design language.
+
+## Addendum B — IMPROV Naming and Editorial Language
+
+**IMPROV** is the official name of the application section.
+
+Use `IMPROV` consistently in:
+- Navigation.
+- Headers and section titles.
+- Progress indicators.
+- Cards and interface labels.
+- The MUSICAL DEVELOPMENT subdivision.
+- The five Gate identities.
+
+In explanatory prose and educational content, use natural English expressions according to context, including:
+
+- "the improvisation track"
+- "the improvisation learning path"
+- "improvisation exercises"
+- "improvisational skills"
+- "improvisational development"
+
+Do not force the word `IMPROV` into grammatical contexts where natural English would use "improvisation" or "improvisational".
+
+The distinction is intentional: `IMPROV` is the product and navigation identity; natural improvisation terminology is used in editorial and educational writing.
