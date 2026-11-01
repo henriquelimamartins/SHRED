@@ -195,6 +195,29 @@ Every substantial chapter should explain:
 
 Do not attempt to fill the entire advanced syllabus in one pass.
 
+### Specific editorial requirement — Functional Harmony
+
+The foundational and harmonic content must establish a substantial understanding of functional harmony.
+
+This includes:
+- Chord construction and identification.
+- Scale-degree relationships and Roman numerals.
+- Tonic, predominant and dominant functions.
+- Diatonic progressions in major and minor tonalities.
+- Functional relationships and common harmonic movements.
+- Cadences and harmonic rhythm.
+- Voice leading and bass movement.
+- The relationship between chord function, inversions and voicings.
+- Practical progression construction and analysis.
+
+The content must explain why chords function as they do within a musical context, rather than relying on memorised chord labels.
+
+Where relevant, include practical guitar applications and grounded examples from varied musical styles.
+
+Advanced topics such as secondary dominants, modal interchange, chromatic harmony and modulation should be developed further in the appropriate chapters and later phases.
+
+The curriculum must also explain when functional tonal analysis is insufficient or inappropriate, including modal and non-functional harmonic contexts.
+
 ---
 
 ## Phase 4 — Advanced Theory Compendium
