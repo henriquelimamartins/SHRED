@@ -614,3 +614,187 @@ In explanatory prose and educational content, use natural English expressions ac
 Do not force the word `IMPROV` into grammatical contexts where natural English would use "improvisation" or "improvisational".
 
 The distinction is intentional: `IMPROV` is the product and navigation identity; natural improvisation terminology is used in editorial and educational writing.
+
+## Addendum C — Navigation and Visual Experience Blueprint
+
+### 1. Global Header and Progress Architecture
+
+The existing application header remains the foundation.
+
+The header must contain:
+
+- Existing brand and authentication controls.
+- Existing search area, to be developed according to the approved search scope.
+- Two independent progress systems beneath the header controls.
+
+#### Desktop layout
+
+Display the two progress systems side by side.
+
+**TECHNIQUE ROADMAP**
+- Preserve the existing segmented red progress bar.
+- Preserve phase labels and existing calculations.
+- Add the explicit `TECHNIQUE ROADMAP` label.
+- Do not alter phase data or progression logic.
+
+**MUSICAL DEVELOPMENT**
+- Display one global musical development indicator.
+- Show DOJO and IMPROV as distinct subdivisions.
+- Provide a clear distinction between global development and each area's contribution.
+- Do not display percentages, completion values or mastery claims without valid practical activity records and an approved calculation model.
+
+#### Mobile layout
+
+Stack the two progress systems compactly.
+
+Preserve readability and avoid reducing the main navigation or authentication controls to unusable sizes.
+
+If no valid musical development data exists, display a neutral empty state explaining that progress will appear as practical activity is recorded.
+
+### 2. DOJO Hub
+
+The DOJO landing page presents three primary learning destinations:
+
+1. Music Theory Compendium
+2. Fretboard Mastery
+3. Harmonic Analysis Lab
+
+Each destination should include:
+
+- Clear title.
+- Short editorial description.
+- Learning purpose.
+- Relevant visual identity.
+- Direct navigation action.
+- Relevant relationships with the other DOJO areas.
+
+Desktop may use a three-column card layout where sufficient space exists.
+
+Mobile should use vertically stacked, touch-friendly destination cards.
+
+Avoid XP, levels, locked educational material and decorative gamification.
+
+### 3. Compendium Explorer
+
+#### Desktop
+
+Use a two-area layout:
+
+**Curriculum navigation**
+- Persistent category navigation.
+- Clear selected-category state.
+- Recommended-path indication.
+- Search and available filters.
+
+**Main exploration area**
+- Selected category title and introduction.
+- Chapter list with concise descriptions.
+- Difficulty or learning-stage indication where useful.
+- Prerequisite and related-topic information.
+- Direct chapter navigation.
+
+The internal navigation must adapt to the available viewport width. Do not force a narrow content column by retaining an oversized sidebar on smaller screens.
+
+#### Mobile
+
+Use a dedicated category-selection experience.
+
+The mobile Explorer should provide:
+- Prominent search.
+- Clear visual category selection.
+- Chapter lists after category selection.
+- Simple back navigation.
+- No deep accordion hierarchy.
+
+The desktop sidebar must not simply be compressed into a narrow mobile column.
+
+### 4. Chapter Reader
+
+#### Desktop
+
+Use a focused editorial reading layout.
+
+- Chapter contents/navigation index on the side.
+- Main article in a readable central column.
+- Clear chapter title and introduction.
+- Consistent section hierarchy.
+- Related chapters and practical applications integrated into the article.
+
+The reader may use a wider content container than the existing generic application panels when necessary.
+
+#### Mobile
+
+Use a single-column reading experience.
+
+- Compact chapter index control.
+- Clear section headings.
+- Comfortable paragraph width and spacing.
+- Diagrams scaled to the available viewport.
+- No permanent desktop-style sidebar.
+
+### 5. Visual Educational Resource System
+
+Educational diagrams must be treated as part of the chapter architecture, not as optional decoration.
+
+The reusable visual system should support:
+
+- Circle of Fifths.
+- Key-signature and accidental diagrams.
+- Interval and scale structures.
+- Chord construction and inversion diagrams.
+- Guitar fretboard maps.
+- Harmonic progression diagrams.
+- Functional harmony and resolution maps.
+- Voice-leading visualisations.
+- Rhythm and subdivision diagrams.
+- Comparative modal and scale diagrams.
+
+#### Implementation principles
+
+- Prefer reusable HTML, CSS and SVG-based components where appropriate.
+- Keep diagram data separate from presentation logic where practical.
+- Provide clear labels, legends and captions.
+- Ensure diagrams remain legible on mobile.
+- Do not rely on colour alone to communicate musical information.
+- Provide text explanations alongside visual representations.
+- Avoid unnecessary external libraries.
+
+Static educational diagrams and interactive tools must remain distinct component types.
+
+Phase 2 should establish the visual component conventions and demonstrate at least one representative educational diagram within the chapter-reader environment.
+
+This demonstration is a foundation, not a claim that the full interactive visual-tool library has been completed.
+
+### 6. Visual hierarchy and consistency
+
+Retain the existing Phase 1 design system as the source of visual identity.
+
+The new DOJO experience should combine:
+
+- Modern navigation.
+- Editorial reading.
+- Clear information hierarchy.
+- Consistent educational diagram styling.
+- Responsive layouts.
+- Restrained use of colour and decorative effects.
+
+Avoid turning every section into a card. Cards are appropriate for navigation and concise summaries; long-form educational content should remain readable as an article.
+
+### 7. Navigation and interaction consistency
+
+Use consistent interaction patterns for:
+
+- Opening a learning area.
+- Selecting a curriculum category.
+- Opening a chapter.
+- Navigating chapter sections.
+- Returning to the Explorer.
+- Following related theory and practical links.
+
+The user should always understand:
+- Which learning area is open.
+- Which category or chapter is selected.
+- How to return to the previous navigation level.
+- Which related concepts or practical activities are available.
+
+Do not introduce navigation patterns that behave differently without a clear usability reason.
