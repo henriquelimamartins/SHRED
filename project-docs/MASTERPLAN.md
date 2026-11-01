@@ -353,6 +353,106 @@ Exercises — varied task types, progressive difficulty, answer explanations and
 
 Further study — related chapters, references and suggested next steps.
 
+## 5A. Musical Context, Application and Functional Harmony
+
+### Musical Context and Application
+
+The Compendium must teach both the theoretical structure of music and its practical meaning.
+
+Substantial chapters should integrate the following dimensions where relevant:
+
+1. **Theory** — definitions, terminology, construction, derivation and notation.
+2. **Conceptual Understanding** — relationships, classifications, variations, comparisons and exceptions.
+3. **Sound and Musical Identity** — characteristic intervals, notes, tensions, resolutions, stability, colour and expressive effect.
+4. **Harmonic Context** — chord compatibility, harmonic functions, progressions, tonal relationships and relevant tensions.
+5. **Practical Application** — guitar examples, riffs, chord voicings, arpeggios, target notes, phrasing and other relevant applications.
+6. **Musical Context and Listening** — real artists, recordings, tracks, passages and stylistic situations, with clear source and evidence distinctions.
+7. **Creation and Practice** — exercises and challenges that require the learner to apply the concept independently.
+
+These dimensions form a flexible editorial framework. They are not mandatory sections of identical length in every chapter. Their inclusion must depend on the subject and learning objectives.
+
+A useful guiding sequence is:
+
+**Theory → Understanding → Sound → Application → Musical Context → Creation**
+
+Where relevant, comparisons should isolate the musical variable being studied. For example, comparing E Aeolian, E Dorian and E Phrygian over the same tonic can help demonstrate how characteristic intervals change the musical identity.
+
+Explain characteristic notes, target notes, tensions and resolutions rather than presenting scales as collections of shapes.
+
+Musical references should be classified clearly:
+
+- **Verified Analysis** — a specific musical passage or recording has been examined and the stated analysis is supported.
+- **Stylistic Association** — the example illustrates a broader stylistic tendency but is not presented as proof of a specific theoretical analysis.
+- **Suggested Listening** — a recommendation intended to help the learner recognise or explore a concept.
+
+Never invent track details, timestamps, progressions, quotations or analytical claims.
+
+### Functional Harmony and Chord Functions
+
+Functional harmony must be a substantial and progressively developed component of the Music Theory Compendium.
+
+The learner must understand not only how chords are constructed, but also how chords behave and relate to one another within a tonal context.
+
+The curriculum should cover, progressively and in appropriate depth:
+
+- The concept of harmonic function.
+- Tonic, predominant and dominant functions.
+- The relationship between scale degrees, chord construction and harmonic roles.
+- Diatonic chord functions in major and minor tonalities.
+- Roman-numeral analysis and chord-symbol interpretation.
+- Functional relationships between chords.
+- Common harmonic progressions and their underlying logic.
+- Cadences and their structural and expressive roles.
+- Harmonic rhythm and phrase structure.
+- Chord inversions, bass movement and voice leading.
+- Seventh chords and their functional behaviour.
+- Secondary dominants and tonicisation.
+- Leading-tone chords and applied dominant relationships.
+- Modal mixture and borrowed chords.
+- Modal and non-functional harmonic contexts.
+- Chromatic harmony and altered harmonic relationships.
+- Modulation and larger-scale tonal organisation.
+- Ambiguous progressions and alternative analytical interpretations.
+
+The curriculum must explain the distinction between:
+
+- How a chord is constructed.
+- What scale degree or root it represents.
+- What harmonic function it may fulfil.
+- How its position, voicing, bass movement and surrounding chords affect its behaviour.
+- How the same chord can behave differently depending on context.
+
+Do not teach harmonic function as a rigid label assigned to every chord independently of context. Explain the importance of tonal centre, voice leading, phrase position, harmonic motion and musical style.
+
+### Functional Harmony in Practical Music
+
+Functional harmony must be connected to practical musical understanding.
+
+Where relevant, chapters and exercises should include:
+
+- Building progressions from harmonic functions.
+- Analysing progressions using Roman numerals.
+- Comparing alternative progressions that use similar chords but create different effects.
+- Identifying harmonic goals and points of arrival.
+- Understanding why dominant motion creates expectation and how that expectation may be fulfilled, delayed or avoided.
+- Reharmonising simple progressions.
+- Applying inversions and voice leading to create smoother or more deliberate movement.
+- Relating chord functions to guitar voicings, triads, arpeggios and fretboard navigation.
+- Analysing real riffs, progressions and musical passages where reliable references are available.
+
+Examples should draw from varied musical styles, including the user's preferred reference worlds, without making any genre a limit on the curriculum.
+
+### Relationship with the Other Learning Areas
+
+Functional harmony must connect to:
+
+- **Fretboard Mastery:** locating chord roots, thirds, fifths, sevenths, guide tones, inversions and voice-leading options across the neck.
+- **Harmonic Analysis Lab:** identifying tonal centres, functions, cadences, non-diatonic events, tonicisation, modulation and alternative interpretations.
+- **IMPROV:** targeting chord tones, following harmonic movement, resolving tensions and creating melodies that reflect chord changes.
+- **Listening Vault:** recognising functional movement and its expressive effect in real musical examples.
+
+The aim is to develop an integrated understanding of harmony rather than a collection of disconnected theoretical definitions.
+
 ## 6. Learning path, assessment and progress
 
 Support two modes at the same time: a recommended sequential path for learners who want guidance, and free exploration where all appropriate reference content can be opened directly. Do not lock essential knowledge behind XP or arbitrary level gates.
