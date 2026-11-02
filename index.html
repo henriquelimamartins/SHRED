@@ -28,28 +28,13 @@
 * { -ms-overflow-style: none; scrollbar-width: none; }
 
 html{
-  margin:0;
-  padding:0;
-  width:100%;
-  height:100%;
-  min-height:100vh;
-  background:var(--bg);
-  overflow:hidden;
+  margin:0; padding:0; width:100%; height:100%; min-height:100vh; background:var(--bg); overflow:hidden;
 }
 body{
-  margin:0;
-  padding:0;
-  width:100%;
-  min-height:100vh;
-  height:100%;
-  background:var(--bg);
-  touch-action:manipulation;
-  overflow:hidden;
-  font-family:'Inter',system-ui,sans-serif;color:var(--text);-webkit-tap-highlight-color:transparent;
+  margin:0; padding:0; width:100%; min-height:100vh; height:100%; background:var(--bg); touch-action:manipulation;
+  overflow:hidden; font-family:'Inter',system-ui,sans-serif;color:var(--text);-webkit-tap-highlight-color:transparent;
 }
-@media all and (display-mode: standalone){
-  html,body{min-height:100vh;}
-}
+@media all and (display-mode: standalone){ html,body{min-height:100vh;} }
 button,a,img{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;}
 h1,h2,h3,h4{font-family:'Oswald',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin:0;}
 p{margin:0;line-height:1.5;color:var(--muted);font-size:14px;}
@@ -62,11 +47,9 @@ button:focus-visible, a:focus-visible, select:focus-visible { outline: 2px solid
 .splashtitle{font-family:'Oswald', sans-serif;font-weight:700;font-size:26px;letter-spacing:2px;text-align:center;line-height:1.15;color:#fff;margin-top:16px;}
 .splashtitle span{color:var(--accent);}
 
-/* --- NEW RESPONSIVE SHELL LAYOUT --- */
+/* --- RESPONSIVE SHELL LAYOUT --- */
 #root{
-  position:fixed; inset:0;
-  display:flex; flex-direction:row;
-  width:100%; height:100vh; max-width:100%;
+  position:fixed; inset:0; display:flex; flex-direction:row; width:100%; height:100vh; max-width:100%;
   margin:0; background:var(--bg); overflow:hidden;
 }
 
@@ -84,17 +67,14 @@ button:focus-visible, a:focus-visible, select:focus-visible { outline: 2px solid
 .sidebar-nav button:hover { background:var(--card); color:var(--text); }
 .sidebar-nav button.active { background:var(--card2); color:var(--accent2); }
 .sidebar-nav button.active.improv-nav { color:var(--purple); }
-.sidebar-nav button.active.dojo-nav { color:var(--blue); }
 
-.main-area {
-  flex:1; display:flex; flex-direction:column; position:relative; overflow:hidden; height:100%;
-}
+.main-area { flex:1; display:flex; flex-direction:column; position:relative; overflow:hidden; height:100%; }
 
 .topbar {
   background:#101217; padding:calc(12px + env(safe-area-inset-top,0px)) 16px 10px;
   border-bottom:1px solid var(--border); z-index:50; flex:0 0 auto;
 }
-.topbar-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; gap:10px; max-width:800px; margin-left:auto; margin-right:auto;}
+.topbar-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; gap:10px; max-width:1000px; margin-left:auto; margin-right:auto;}
 .brand { font-family:'Oswald', sans-serif; font-weight:700; font-size:15px; letter-spacing:1px; flex:1; margin-bottom:0; }
 .brand span { color:var(--accent); }
 .mobile-brand { display:block; }
@@ -109,16 +89,13 @@ button:focus-visible, a:focus-visible, select:focus-visible { outline: 2px solid
 .shell-search:hover { border-color:var(--muted); color:var(--text); }
 .shell-search .ic { font-size:12px; }
 
-.views-container {
-  flex:1; position:relative; overflow:hidden; background:var(--bg);
-}
-
+.views-container { flex:1; position:relative; overflow:hidden; background:var(--bg); }
 .view-panel {
   display:none; width:100%; height:100%; overflow-y:auto; -webkit-overflow-scrolling:touch;
   padding:20px 16px calc(90px + env(safe-area-inset-bottom, 0px));
 }
 .view-panel.active { display:block; animation:fadein 0.25s ease; }
-.panel-content { max-width:800px; margin:0 auto; width:100%; }
+.panel-content { max-width:1000px; margin:0 auto; width:100%; }
 
 .botnav {
   position:fixed; bottom:0; left:0; right:0; background:#15171e; border-top:1px solid var(--border);
@@ -133,7 +110,6 @@ button:focus-visible, a:focus-visible, select:focus-visible { outline: 2px solid
 .botnav button .ic { font-size:16px; }
 .botnav button.active { color:var(--accent2); }
 .botnav button.active.improv-nav { color:var(--purple); }
-.botnav button.active.dojo-nav { color:var(--blue); }
 
 @media (min-width: 768px) {
   .sidebar { display:flex; }
@@ -156,20 +132,31 @@ button:focus-visible, a:focus-visible, select:focus-visible { outline: 2px solid
 .card h3 .tag{text-align:right;}
 .tag{color:var(--muted);font-size:11px;text-transform:none;letter-spacing:0;font-weight:500;}
 
-.phasebar-wrapper { max-width:800px; margin:0 auto; }
+/* HEADER PROGRESS STYLES */
+.header-progress-grid { display:flex; gap:16px; margin-bottom:12px; max-width:1000px; margin-left:auto; margin-right:auto; }
+.prog-col { flex:1; background:#15171e; border:1px solid var(--border); border-radius:10px; padding:12px; min-width:0; }
+.prog-title { font-size:10.5px; color:var(--muted); text-transform:uppercase; font-weight:700; letter-spacing:1px; margin-bottom:8px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.md-box { display:flex; gap:6px; margin-bottom:6px; }
+.md-sub { flex:1; background:var(--card2); border:1px solid var(--border); border-radius:6px; padding:6px 0; text-align:center; font-size:9.5px; color:var(--muted); text-transform:uppercase; font-weight:700; letter-spacing:0.5px;}
+.md-label { font-size:10.5px; color:var(--muted); font-style:italic; text-align:center; margin-top:6px; }
+@media (max-width:767px) { .header-progress-grid { flex-direction:column; gap:8px; } }
+
+.phasebar-wrapper { width:100%; margin:0; }
 .phasebar{display:flex;gap:4px;margin-bottom:4px;}
 .pseg{flex:1;height:8px;border-radius:5px;background:var(--card2);border:1px solid var(--border);overflow:hidden;}
 .pseg i{display:block;height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent));border-radius:5px;}
 .plabels{display:flex;gap:4px;}
-.plabels span{flex:1;text-align:center;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+.plabels span{flex:1;text-align:center;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
 .plabels span.cur{color:var(--accent2);font-weight:700;}
+
 .bignum{font-family:'Oswald', sans-serif;font-size:32px;font-weight:700;}
 .statrow{display:flex;gap:12px;margin-bottom:16px;}
 .stat{flex:1;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center;}
 .stat .lbl{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:4px;}
 
-.navbtn{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 20px;margin-bottom:12px;width:100%;text-align:left;color:var(--text);transition:transform 0.1s;}
+.navbtn{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 20px;margin-bottom:12px;width:100%;text-align:left;color:var(--text);transition:transform 0.1s, border-color 0.2s;}
 .navbtn:active{transform:scale(0.98);}
+.navbtn:hover{border-color:var(--muted);}
 .navbtn .ic{font-size:24px;}
 .navbtn b{display:block;font-family:'Oswald', sans-serif;font-size:16px;text-transform:uppercase;letter-spacing:.5px;}
 .navbtn span{font-size:12px;color:var(--muted);}
@@ -184,7 +171,7 @@ ul.check li{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bo
 ul.check li:last-child{border-bottom:none;}
 .box{flex:0 0 20px;height:20px;border-radius:5px;border:1.5px solid #565a66;margin-top:1px;display:flex;align-items:center;justify-content:center;background:transparent;}
 .box.on{background:var(--accent);border-color:var(--accent);}
-.box.on:after{content:'\2713';color:#fff;font-size:12px;font-weight:700;}
+.box.on:after{content:'\\2713';color:#fff;font-size:12px;font-weight:700;}
 .box.purple.on{background:var(--purple);border-color:var(--purple);}
 
 .itxt{flex:1;font-size:13.5px;color:var(--text);line-height:1.4;}
@@ -263,7 +250,6 @@ ul.check li.mrow:last-child{border-bottom:none;}
 
 .note{border-left:3px solid var(--amber);background:#241f14;padding:12px 14px;border-radius:0 10px 10px 0;font-size:13px;color:#e6d9b8;margin-bottom:14px;}
 .note.purple{border-left-color:var(--purple); background:#1e1428; color:#d8b8ff;}
-.note.blue{border-left-color:var(--blue); background:#161b26; color:#a6c8ff;}
 .tbtn{background:var(--card2);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:12px 18px;font-size:14px;font-weight:600;transition:0.2s;}
 .tbtn:hover{background:var(--card); border-color:var(--muted);}
 .tbtn.primary{background:var(--accent);border-color:var(--accent);color:#fff;}
@@ -272,8 +258,6 @@ ul.check li.mrow:last-child{border-bottom:none;}
 .tbtn.danger:hover{background:#3a191c;}
 .tbtn.purple{background:#522878;border-color:#6c379e;color:#fff;}
 .tbtn.purple:hover{background:#6c379e;}
-.tbtn.blue{background:#233559;border-color:#364e80;color:#fff;}
-.tbtn.blue:hover{background:#364e80;}
 
 .toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--accent);color:#fff;padding:12px 20px;border-radius:30px;font-size:13.5px;font-weight:600;z-index:9999;box-shadow:0 6px 20px rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .25s, transform .25s;max-width:88%;text-align:center;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(-6px);}
@@ -305,68 +289,44 @@ table.info th{text-align:left;font-size:10px;text-transform:uppercase;color:var(
 table.info td{font-size:13px;color:var(--text);padding:8px 6px;border-bottom:1px solid #23262f;vertical-align:top;}
 table.info td.day{font-weight:700;white-space:nowrap;color:var(--accent2);}
 
-/* --- THEORY DOJO & COMPENDIUM CSS --- */
-.dojo-dash { display:flex; flex-direction:column; gap:14px; }
-.xp-bar-container { background:var(--card2); border:1px solid var(--border); border-radius:8px; height:18px; overflow:hidden; position:relative; }
-.xp-bar-fill { background:linear-gradient(90deg, var(--blue), var(--purple)); height:100%; transition:width 0.3s ease; }
-.xp-text { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; color:#fff; text-shadow:0 1px 2px rgba(0,0,0,0.8); }
-
-.dojo-btn { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px; text-align:left; display:flex; align-items:center; gap:16px; color:var(--text); position:relative; overflow:hidden; width:100%; transition:0.2s;}
-.dojo-btn:hover:not(.locked){ border-color:var(--muted); }
-.dojo-btn .ic { font-size:28px; }
-.dojo-btn .info { flex:1; }
-.dojo-btn .info b { display:block; font-family:'Oswald', sans-serif; font-size:17px; letter-spacing:0.5px; text-transform:uppercase; margin-bottom:4px; }
-.dojo-btn .info span { display:block; font-size:12.5px; color:var(--muted); line-height:1.4; }
-.dojo-btn.locked { opacity:0.5; pointer-events:none; filter:grayscale(100%); }
-.dojo-btn.locked::after { content:'🔒 REQUIRES CODEX'; position:absolute; right:12px; top:12px; font-size:10px; font-weight:bold; color:var(--accent); background:rgba(255,59,48,0.1); padding:4px 8px; border-radius:4px; }
-
-.game-area { display:none; flex-direction:column; height:100%; }
-.game-area.active { display:flex; }
-.game-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; gap: 10px; }
-.game-title { font-family:'Oswald', sans-serif; font-size:20px; color:var(--blue); text-transform:uppercase; line-height:1.2; }
-.game-title.purple { color:var(--purple); }
-
-.question-box { background:var(--card2); border-left:4px solid var(--blue); padding:18px; border-radius:0 10px 10px 0; margin-bottom:18px; }
-.question-box h4 { font-size:15px; margin-bottom:8px; color:#fff; text-transform:none; font-family:'Inter', sans-serif; line-height:1.4; }
-
-.opt-btn { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:14px; color:var(--text); font-size:14.5px; margin-bottom:10px; width:100%; text-align:left; transition:all 0.2s; }
-.opt-btn:hover { border-color:var(--muted); }
-.opt-btn.correct { background:#123324; border-color:var(--green); color:var(--green); }
-.opt-btn.wrong { background:#3a1515; border-color:var(--accent); color:var(--accent); }
-
-.feedback-box { display:none; background:#1a1b26; border:1px solid #2d3f66; padding:18px; border-radius:10px; margin-top:18px; border-left:4px solid var(--purple); }
-.feedback-box.show { display:block; animation:fadein 0.3s ease; }
-.feedback-box b { color:var(--purple); font-size:14px; display:block; margin-bottom:8px; }
-.feedback-box p { font-size:13.5px; color:#d0d4dc; line-height:1.5; }
-
-.codex-view { display:none; }
-.codex-view.active { display:block; animation:fadein 0.25s ease; }
-.codex-content { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:24px; }
-.codex-content h2 { font-size:24px; color:var(--blue); margin-bottom:14px; border-bottom:1px solid #333; padding-bottom:10px; font-family:'Oswald', sans-serif; text-transform:uppercase;}
-.codex-content h3 { font-size:16px; color:#fff; margin-top:20px; margin-bottom:10px; }
-.codex-content p { font-size:14px; margin-bottom:14px; text-align:justify; color:#c4c8d4; line-height:1.5; }
-.codex-content ul { margin:0 0 16px 20px; padding:0; color:#c4c8d4; font-size:14px; }
-.codex-content li { margin-bottom:8px; }
-.codex-item-btn { margin-bottom:10px; background:#1a1a24; border:1px solid #2a2a3c; }
-
-.status-icon { display:inline-block; font-size:13px; min-width:20px; text-align:center; }
-.ch-studied .status-icon { color: var(--green); }
-.ch-inprogress .status-icon { color: var(--blue); }
-.ch-unread .status-icon { color: var(--muted); opacity:0.5; }
-.ch-item { display:flex; align-items:flex-start; gap:10px; padding:10px 0; border-bottom:1px solid #23262f; cursor:pointer; }
-.ch-item:hover .itxt { color: #fff; }
-.ch-item:last-child { border-bottom:none; }
-.ch-badge { font-size:9px; text-transform:uppercase; letter-spacing:0.5px; padding:2px 6px; border-radius:4px; font-weight:700; margin-left:8px; }
-.ch-badge.b { background: #16233a; color: var(--blue); }
-.ch-badge.i { background: #231535; color: var(--purple); }
-.ch-badge.a { background: #3a1515; color: var(--accent); }
-
 @keyframes fadein { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:translateY(0); } }
 
-.custom-toggle { display:flex; align-items:center; cursor:pointer; background:var(--card2); border:1px solid var(--border); border-radius:30px; padding:4px; width:52px; position:relative; transition:0.3s; box-sizing:border-box; }
-.custom-toggle.on { background:var(--blue); border-color:var(--blue); }
-.custom-toggle .knob { width:18px; height:18px; background:var(--muted); border-radius:50%; transition:0.3s; transform:translateX(0); }
-.custom-toggle.on .knob { background:#fff; transform:translateX(24px); }
+/* --- THEORY DOJO NEW CSS --- */
+.dojo-explorer { display:flex; gap:20px; height:100%; min-height:500px; }
+.dojo-sidebar { flex:0 0 240px; display:flex; flex-direction:column; gap:8px; border-right:1px solid var(--border); padding-right:16px; }
+.dojo-content { flex:1; display:flex; flex-direction:column; }
+@media (max-width:767px) { 
+  .dojo-explorer { flex-direction:column; } 
+  .dojo-sidebar { flex:none; border-right:none; border-bottom:1px solid var(--border); padding-bottom:16px; margin-bottom:16px; padding-right:0; } 
+}
+.cat-btn { text-align:left; background:transparent; border:1px solid transparent; padding:8px 12px; border-radius:8px; color:var(--muted); font-weight:600; font-size:13px; cursor:pointer; transition:0.2s; }
+.cat-btn:hover { background:var(--card2); color:var(--text); }
+.cat-btn.active { background:var(--card); border-color:var(--border); color:var(--accent2); }
+
+.chapter-list { display:flex; flex-direction:column; gap:8px; overflow-y:auto; padding-bottom:40px;}
+.chapter-card { background:var(--card); border:1px solid var(--border); padding:16px; border-radius:12px; cursor:pointer; transition:0.2s; }
+.chapter-card:hover { border-color:var(--muted); }
+.chapter-card h4 { font-family:'Inter',sans-serif; color:var(--text); font-size:15px; font-weight:600; text-transform:none; margin-bottom:4px; }
+
+.reader-layout { display:flex; gap:24px; }
+.reader-article { flex:1; max-width:680px; }
+.reader-article p { font-size:15px; color:#c4c8d4; line-height:1.6; margin-bottom:16px; text-align:justify; }
+.reader-article h1 { font-size:28px; color:var(--text); text-transform:none; margin-bottom:24px; font-family:'Inter',sans-serif; font-weight:700; }
+.reader-article h2 { font-size:20px; color:#fff; text-transform:none; margin:32px 0 12px; font-family:'Inter',sans-serif; font-weight:600; }
+.reader-article h3 { font-size:16px; color:#fff; text-transform:none; margin:24px 0 12px; font-family:'Inter',sans-serif; font-weight:600; }
+.reader-index { flex:0 0 200px; position:sticky; top:20px; align-self:start; border-left:1px solid var(--border); padding-left:16px; }
+.reader-index a { display:block; font-size:12px; color:var(--muted); padding:6px 0; text-decoration:none; transition:0.2s;}
+.reader-index a:hover { color:var(--accent2); }
+@media (max-width:767px) { 
+  .reader-layout { flex-direction:column-reverse; } 
+  .reader-index { flex:none; border-left:none; border-bottom:1px solid var(--border); padding-left:0; padding-bottom:16px; position:static; } 
+}
+
+.theory-diagram { background:#15171e; border:1px solid #2a2e38; border-radius:12px; padding:24px; margin:24px 0; text-align:center; }
+.diagram-caption { font-size:12px; color:var(--muted); margin-top:16px; font-style:italic; }
+
+.conflict-modal { position:fixed; inset:0; background:rgba(16,18,23,0.9); z-index:99999; display:flex; align-items:center; justify-content:center; padding:20px; }
+.conflict-box { background:var(--card); border:1px solid var(--accent); border-radius:12px; padding:24px; max-width:400px; width:100%; text-align:center; box-shadow:0 10px 30px rgba(0,0,0,0.5); }
 
 </style>
 <script>
@@ -406,6 +366,7 @@ table.info td.day{font-weight:700;white-space:nowrap;color:var(--accent2);}
 </div>
 <div id="root"></div>
 <div id="toast" class="toast"></div>
+<div id="conflict-layer"></div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -424,7 +385,30 @@ const firebaseConfig = {
 
 const hasFirebase = !!firebaseConfig.apiKey;
 let auth, db, googleProvider, currentUser = null;
-let cloudWriteLock = hasFirebase; // Phase 2 Sync Safety Lock
+
+const STORAGE_KEY="shredRoadmapState_v10";
+const LOCAL_SCHEMA_VERSION = 1;
+let sessionGeneration = Date.now();
+let cloudWriteLock = false;
+let writeQueue = Promise.resolve();
+let isSyncing = false;
+let mutationCount = 0;
+let ui = { view: "home", lib: {}, dayOverride: null, resetConfirm: false, phaseJumpPending: null, conflictData: null, dojoView: "hub", dojoCat: "c13", dojoChap: null };
+
+function validateSchema(data) {
+   if(!data || typeof data !== 'object' || Array.isArray(data)) return false;
+   if(data.schemaVersion !== undefined) {
+      if(typeof data.schemaVersion !== 'number' || data.schemaVersion < 0 || !Number.isInteger(data.schemaVersion)) return false;
+      if(data.schemaVersion > LOCAL_SCHEMA_VERSION) return false;
+   }
+   if(data.phaseIndex !== undefined && (!Number.isInteger(data.phaseIndex) || data.phaseIndex < 0 || data.phaseIndex > PHASES.length)) return false;
+   if(data.chop !== undefined && typeof data.chop !== 'object') return false;
+   if(data.testLevel !== undefined && typeof data.testLevel !== 'object') return false;
+   if(data.dojo !== undefined && typeof data.dojo !== 'object') return false;
+   // Unknown fields in dojo are tolerated (e.g. legacy level/xp), but if present, types should be somewhat safe.
+   // We won't strictly fail on unknown legacy fields to preserve them.
+   return true;
+}
 
 if(hasFirebase) {
   try {
@@ -434,156 +418,78 @@ if(hasFirebase) {
     db = initializeFirestore(app, { localCache: persistentLocalCache({tabManager: persistentMultipleTabManager()}) });
 
     onAuthStateChanged(auth, async (user) => {
+      sessionGeneration = Date.now();
+      const mySession = sessionGeneration;
       currentUser = user;
       if(user) {
         try {
+          isSyncing = true; render();
           const docSnap = await getDoc(doc(db, "users", user.uid));
+          if(mySession !== sessionGeneration) return;
           if(docSnap.exists()){
-            let cloudData = docSnap.data();
-            let mergedState = Object.assign(defaultState(), cloudData);
-            
-            // Reconcile DOJO to protect new schemas and nested data
-            mergedState.dojo = Object.assign(defaultDojoState(), cloudData.dojo || {});
-            
-            let localDojoProg = (state.dojo && state.dojo.compendiumProgress) ? state.dojo.compendiumProgress : defaultDojoState().compendiumProgress;
-            let cloudDojoProg = (cloudData.dojo && cloudData.dojo.compendiumProgress) ? cloudData.dojo.compendiumProgress : null;
-            
-            mergedState.dojo.compendiumProgress = reconcileCompendiumProgress(localDojoProg, cloudDojoProg);
-            
-            state = mergedState;
-            state.setupGuitar = state.setupGuitar || "prs";
-            state.setupTuning = state.setupTuning || "e_std";
-            state.improvIndex = state.improvIndex || 0;
-            state.improvChecks = state.improvChecks || {};
-            
-            cloudWriteLock = false; // Successfully read & reconciled, writes unlocked
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-            showToast("Progress synced from cloud!");
+            const cloudData = docSnap.data();
+            if(!validateSchema(cloudData)) {
+              cloudWriteLock = true;
+              showToast("Cloud schema mismatch or unsupported version. Writes locked.");
+            } else {
+              if (state.unsynced) {
+                ui.conflictData = cloudData;
+                isSyncing = false;
+                render();
+                return;
+              } else {
+                state = Object.assign(defaultState(), cloudData, {unsynced: false});
+                try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e){}
+                showToast("Progress synced from cloud!");
+              }
+            }
           } else {
-            cloudWriteLock = false; // New cloud document, allowed to write
-            await setDoc(doc(db, "users", user.uid), state);
-            showToast("Local progress saved to cloud!");
+            if(!cloudWriteLock) saveState(); // Initial user doc
           }
         } catch(e) { 
-          console.error("Sync error:", e); 
-          cloudWriteLock = true; // Lock writes on read failure
-          showToast("Cloud sync failed. Offline mode active.");
+          cloudWriteLock = true;
+          console.error("Cloud read failed, writes locked to prevent overwrite.", e);
+        } finally {
+          isSyncing = false;
+          render();
         }
       } else {
-        cloudWriteLock = true; // Logged out
+        isSyncing = false;
+        render();
       }
-      render();
     });
-  } catch(e) { 
-    console.error("Firebase init error:", e);
-    cloudWriteLock = true;
-  }
-} else {
-    cloudWriteLock = false; // Allow local saves to proceed smoothly if firebase is completely disabled
+  } catch(e) { console.error("Firebase init error:", e); }
 }
 
 function I(t,url){return {t:t,url:url};}
 
 const IMPROV_GATES = [
-  {
-    title: "The Horizontal Prison",
-    desc: "Destroy the vertical pentatonic boxes and force expressiveness. Stop 'going up and down' and start playing melodies.",
-    exercises: [
-      { t: "1. One-String Doom",
-        desc: "<b>Key:</b> E minor<br><b>Track:</b> Heavy Stoner/Doom drone<br><b>Rule:</b> You can ONLY use the G string for 3 full minutes. Focus on finding E, G, B, D horizontally. Force yourself to use slides to connect notes instead of crossing strings.",
-        listen: "<b>Tony Iommi (Black Sabbath)</b><br>'Snowblind' solo. Notice how he squeezes huge emotion out of horizontal slides and trills on single strings." },
-      { t: "2. The 4-Fret Box",
-        desc: "<b>Key:</b> B minor<br><b>Track:</b> Slow minor blues vamp<br><b>Rule:</b> Stay strictly between frets 7 and 10. Use all 6 strings, but your hand cannot shift up or down the neck. Use intense bends to reach pitches that aren't physically under your fingers.",
-        listen: "<b>David Gilmour (Pink Floyd)</b><br>'Comfortably Numb' (1st solo). He stays almost entirely in one tiny box, extracting pure gold via perfectly pitched 1.5-step bends." },
-      { t: "3. The Singing Acoustic Slide",
-        desc: "<b>Key:</b> D minor (Dm - Bb - C)<br><b>Track:</b> Clean/Acoustic fingerpicked vamp<br><b>Rule:</b> Pick the string only once per beat. Every other note MUST be generated by sliding or hammering-on/pulling-off.",
-        listen: "<b>Mikael Åkerfeldt (Opeth)</b><br>'Windowpane' or 'To Bid You Farewell' solos. Pay attention to his fluid, vocal-like slides between chord tones on clean tones." },
-      { t: "4. Pre-Bending the Fuzz",
-        desc: "<b>Key:</b> C# minor<br><b>Track:</b> Massive Fuzz Stoner track<br><b>Rule:</b> Every phrase you play must START with a pre-bend (bend the string silently, strike it, and release it down to the target note).",
-        listen: "<b>Nick DiSalvo (Elder)</b><br>'Lore'. Notice the crying, microtonal tension he creates by bending into and out of notes with heavy fuzz." }
-    ]
-  },
-  {
-    title: "The Chord Tone Architect",
-    desc: "Eliminate the 4-second mental lag. Train your ear and fingers to land on the changes exactly as they happen.",
-    exercises: [
-      { t: "1. The Target 3rd",
-        desc: "<b>Key:</b> A minor (Am - F - C - G)<br><b>Track:</b> Prog ballad loop<br><b>Rule:</b> You must land on the 3rd of the chord EXACTLY on Beat 1. (Am -> C, F -> A, C -> E, G -> B). Play freely in between, but nail that target.",
-        listen: "<b>John Petrucci (Dream Theater)</b><br>'The Spirit Carries On'. Notice how his fastest, most chaotic runs always resolve perfectly on the major or minor 3rd exactly on the downbeat." },
-      { t: "2. Chromatic Enclosures",
-        desc: "<b>Key:</b> D minor (Dm - Bb - Gm - A7)<br><b>Track:</b> Backing track matching the progression<br><b>Rule:</b> Before landing on your target note on Beat 1, you must play the note one fret above it, and one fret below it, on the 'and' of Beat 4.",
-        listen: "<b>Guthrie Govan</b><br>Listen to any of his fusion tracks or clinic solos. He uses chromatic enclosures constantly to 'surround' a note before landing on it safely." },
-      { t: "3. Arpeggio Outlining",
-        desc: "<b>Key:</b> E minor (Em - C - B7 - Em)<br><b>Track:</b> Heavy mid-tempo<br><b>Rule:</b> NO SWEEPING. You must alternate-pick arpeggiated lines that explicitly spell out the chord underneath. When the B7 hits, you must emphasize the D#.",
-        listen: "<b>Chuck Schuldiner (Death)</b><br>'Crystal Mountain' solo. Hear how he meticulously alternate-picks the underlying triads, completely avoiding bluesy pentatonic habits." },
-      { t: "4. The Vocal Orchestration",
-        desc: "<b>Key:</b> A Major (A - D - E)<br><b>Track:</b> Epic rock ballad<br><b>Rule:</b> Do not play 'licks'. Imagine you are a singer. Play a distinct verse melody, leave a gap for a breath, and then play a chorus melody. Keep it singable.",
-        listen: "<b>Brian May (Queen)</b><br>'Bohemian Rhapsody' or 'Killer Queen'. He literally plays compositions within compositions. Every solo is a memorable, hummable vocal line." },
-      { t: "5. The Sludge to Dominant Turn",
-        desc: "<b>Key:</b> C minor (C5 - Bb5 - Ab5 - G7)<br><b>Track:</b> Classic Doom turnaround<br><b>Rule:</b> Play absolute filthy pentatonic sludge over the first 3 chords. When the G7 hits, switch instantly to C Harmonic Minor (target the B natural).",
-        listen: "<b>Matt Pike (High on Fire) / Brent Hinds (Mastodon)</b><br>Listen to how they inject sudden, jarring harmonic minor or Middle Eastern scales at the very end of a dirty riff." }
-    ]
-  },
-  {
-    title: "The Rhythmic Displacer",
-    desc: "Break the 'square' playing. Stop ending phrases where the ear expects them to end. Inject groove.",
-    exercises: [
-      { t: "1. The Groove Metal Shift",
-        desc: "<b>Key:</b> E minor<br><b>Track:</b> 90bpm Groove Metal (Pantera style)<br><b>Rule:</b> Write a heavy 4-note lick. In Bar 1, start it on Beat 1. In Bar 2, force yourself to start the exact same lick on the 'and' of Beat 2. In Bar 3, start it on Beat 4.",
-        listen: "<b>Dimebag Darrell / James Hetfield</b><br>Listen to the main riff of 'I\'m Broken' or 'Master of Puppets'. The aggression comes from syncopation and starting riffs on off-beats." },
-      { t: "2. Sustain Beyond the Barline",
-        desc: "<b>Key:</b> B Standard<br><b>Track:</b> 50bpm Sludge/Doom<br><b>Rule:</b> Play a slow phrase but NEVER end it on Beat 4 or Beat 1. Hold your final bent note (or let it feedback) across the bar line into Beat 2 or 3 of the next bar.",
-        listen: "<b>Monolord / Sleep</b><br>Let the fuzz do the work. Listen to how they strike a chord or bend and let it ring across multiple measures to build oppressive weight." },
-      { t: "3. The Texas Drag",
-        desc: "<b>Key:</b> E Blues<br><b>Track:</b> Slow Blues shuffle<br><b>Rule:</b> Play entirely in triplets, but deliberately play slightly 'behind the beat' (late). Don't rush. Make the backing track wait for you.",
-        listen: "<b>Stevie Ray Vaughan / Jimi Hendrix</b><br>'Texas Flood' or 'Red House'. The swagger comes from them dragging their phrasing slightly behind the snare drum." },
-      { t: "4. Odd-Meter Survival",
-        desc: "<b>Meter:</b> 7/8<br><b>Track:</b> Prog Metal<br><b>Rule:</b> Improvise without getting lost. Count 1-2-3-4-1-2-3. Force yourself to land your heavy vibrato notes on the 1 of every other bar.",
-        listen: "<b>Leprous / Dream Theater</b><br>'The Dance of Eternity'. Listen to how Petrucci makes weird time signatures feel natural and groovy by emphasizing the strong beats." }
-    ]
-  },
-  {
-    title: "The Modal Alchemist",
-    desc: "Translate theory directly into emotion. Command specific colors without leaving the key.",
-    exercises: [
-      { t: "1. Desert Rock Dorian",
-        desc: "<b>Key:</b> D Dorian (Dm - G)<br><b>Track:</b> Vamp matching the progression<br><b>Rule:</b> Focus purely on the Dorian Major 6th (B natural). Alternate between minor pentatonic dirt and floating, spacey Dorian melodies.",
-        listen: "<b>All Them Witches / King Buffalo</b><br>Listen to how they use the Dorian mode over simple two-chord vamps to create a vast, desert-highway atmosphere." },
-      { t: "2. Death Metal Dominant",
-        desc: "<b>Key:</b> A Harmonic Minor (Am - E)<br><b>Track:</b> Vamp matching the progression<br><b>Rule:</b> Over the Am, play normal minor. The millisecond the E hits, play an E dominant or G# diminished arpeggio. Focus on the sinister drop from A to G#.",
-        listen: "<b>Chuck Schuldiner (Death)</b><br>'Voice of the Soul'. The entire emotional weight of the track hinges on the tragic pull between the minor 6th and the perfect 5th." },
-      { t: "3. Oppressive Phrygian/Locrian",
-        desc: "<b>Key:</b> A minor<br><b>Track:</b> Heavy A pedal chug<br><b>Rule:</b> Abuse the minor 2nd (Bb) and the flat 5th (Eb). Create the most dissonant, terrifying atmosphere possible without sounding 'wrong'.",
-        listen: "<b>Gojira / Electric Wizard</b><br>'Toxic Garbage Island' or 'Dopethrone'. The crushing darkness comes directly from exploiting the Phrygian b2 interval against open strings." },
-      { t: "4. Mixolydian Classic Rock",
-        desc: "<b>Key:</b> A Mixolydian (A7 - D7)<br><b>Track:</b> Vamp matching the progression<br><b>Rule:</b> Mix the Major 3rd (C#) and the minor 3rd (C natural) constantly. Bend the minor 3rd slightly sharp to get that classic blues-rock tension.",
-        listen: "<b>Eric Clapton / Eddie Van Halen</b><br>'Crossroads' or 'Panama'. They seamlessly blur the line between major and minor by manipulating the 3rd." },
-      { t: "5. The Opeth Diminished Run",
-        desc: "<b>Key:</b> E minor<br><b>Track:</b> Dark prog metal in E<br><b>Rule:</b> Use fully diminished arpeggios (minor 3rd intervals stacked) to transition between two heavy riffs. Build speed gradually.",
-        listen: "<b>Fredrik Åkesson (Opeth)</b><br>'Heir Apparent'. Notice his terrifyingly clean diminished runs that connect the ultra-heavy sections." },
-      { t: "6. Space Rock Lydian",
-        desc: "<b>Key:</b> C Lydian<br><b>Track:</b> Ambient C major drone<br><b>Rule:</b> Target the #4 (F#) exclusively. Let notes ring out with heavy delay and reverb. Create a sci-fi, floating sensation.",
-        listen: "<b>Blood Incantation</b><br>Listen to their ambient/synth sections or the outro solos on 'Hidden History of the Human Race' for that cosmic Lydian expansion." }
-    ]
-  },
-  {
-    title: "Total Audiation",
-    desc: "The Master Level. The brain commands, the fingers obey. No more muscle memory dictating your solos.",
-    exercises: [
-      { t: "1. The Slash Sing-Along",
-        desc: "<b>Key:</b> Any<br><b>Track:</b> Any melodic backing track<br><b>Rule:</b> Put the pick down. Sing/hum a 2-bar melody. Pick up the guitar and find those exact notes on the very first try. Repeat.",
-        listen: "<b>Slash / Guthrie Govan</b><br>Both players have a 1:1 connection between their inner ear and their fretboard. What they hear in their head is instantly translated to the hands." },
-      { t: "2. Vocal Call & Response",
-        desc: "<b>Key:</b> Any Blues Key<br><b>Track:</b> Slow Blues<br><b>Rule:</b> Play a lick. Then, attempt to sing a 'response' to that lick. Then play that response on the guitar. Keep the conversation going.",
-        listen: "<b>Eric Clapton / John Mayer</b><br>Listen to how their guitar solos mimic a lead vocalist breathing, pausing, and answering themselves." },
-      { t: "3. Unaccompanied Soloing",
-        desc: "<b>Key:</b> Free<br><b>Track:</b> NONE<br><b>Rule:</b> Play for 3 minutes with no backing track. You must keep the rhythm, the chord changes, and the melody entirely clear to the listener just by your playing.",
-        listen: "<b>Eddie Van Halen</b><br>'Eruption' or 'Spanish Fly'. The ultimate masterclass in carrying the entire song (harmony, rhythm, melody) alone." },
-      { t: "4. The Free Expression Flow",
-        desc: "<b>Key:</b> Shifting<br><b>Track:</b> 10-minute complex Prog track<br><b>Rule:</b> Improvise freely. Incorporate Dorian 6ths, Harmonic Minor 7ths, chromatic approaches, and rhythmic displacement seamlessly without stopping to think.",
-        listen: "<b>The Legends</b><br>You are combining the brain of Petrucci, the darkness of Opeth, the soul of Gilmour, and the riff-power of Sabbath. Just play." }
-    ]
-  }
+  { title: "The Horizontal Prison", desc: "Destroy the vertical pentatonic boxes and force expressiveness. Stop 'going up and down' and start playing melodies.", exercises: [ { t: "1. One-String Doom", desc: "<b>Key:</b> E minor<br><b>Track:</b> Heavy Stoner/Doom drone<br><b>Rule:</b> You can ONLY use the G string for 3 full minutes. Focus on finding E, G, B, D horizontally. Force yourself to use slides to connect notes instead of crossing strings.", listen: "<b>Tony Iommi (Black Sabbath)</b><br>'Snowblind' solo. Notice how he squeezes huge emotion out of horizontal slides and trills on single strings." }, { t: "2. The 4-Fret Box", desc: "<b>Key:</b> B minor<br><b>Track:</b> Slow minor blues vamp<br><b>Rule:</b> Stay strictly between frets 7 and 10. Use all 6 strings, but your hand cannot shift up or down the neck. Use intense bends to reach pitches that aren't physically under your fingers.", listen: "<b>David Gilmour (Pink Floyd)</b><br>'Comfortably Numb' (1st solo). He stays almost entirely in one tiny box, extracting pure gold via perfectly pitched 1.5-step bends." }, { t: "3. The Singing Acoustic Slide", desc: "<b>Key:</b> D minor (Dm - Bb - C)<br><b>Track:</b> Clean/Acoustic fingerpicked vamp<br><b>Rule:</b> Pick the string only once per beat. Every other note MUST be generated by sliding or hammering-on/pulling-off.", listen: "<b>Mikael Åkerfeldt (Opeth)</b><br>'Windowpane' or 'To Bid You Farewell' solos. Pay attention to his fluid, vocal-like slides between chord tones on clean tones." }, { t: "4. Pre-Bending the Fuzz", desc: "<b>Key:</b> C# minor<br><b>Track:</b> Massive Fuzz Stoner track<br><b>Rule:</b> Every phrase you play must START with a pre-bend (bend the string silently, strike it, and release it down to the target note).", listen: "<b>Nick DiSalvo (Elder)</b><br>'Lore'. Notice the crying, microtonal tension he creates by bending into and out of notes with heavy fuzz." } ] },
+  { title: "The Chord Tone Architect", desc: "Eliminate the 4-second mental lag. Train your ear and fingers to land on the changes exactly as they happen.", exercises: [ { t: "1. The Target 3rd", desc: "<b>Key:</b> A minor (Am - F - C - G)<br><b>Track:</b> Prog ballad loop<br><b>Rule:</b> You must land on the 3rd of the chord EXACTLY on Beat 1. (Am -> C, F -> A, C -> E, G -> B). Play freely in between, but nail that target.", listen: "<b>John Petrucci (Dream Theater)</b><br>'The Spirit Carries On'. Notice how his fastest, most chaotic runs always resolve perfectly on the major or minor 3rd exactly on the downbeat." }, { t: "2. Chromatic Enclosures", desc: "<b>Key:</b> D minor (Dm - Bb - Gm - A7)<br><b>Track:</b> Backing track matching the progression<br><b>Rule:</b> Before landing on your target note on Beat 1, you must play the note one fret above it, and one fret below it, on the 'and' of Beat 4.", listen: "<b>Guthrie Govan</b><br>Listen to any of his fusion tracks or clinic solos. He uses chromatic enclosures constantly to 'surround' a note before landing on it safely." }, { t: "3. Arpeggio Outlining", desc: "<b>Key:</b> E minor (Em - C - B7 - Em)<br><b>Track:</b> Heavy mid-tempo<br><b>Rule:</b> NO SWEEPING. You must alternate-pick arpeggiated lines that explicitly spell out the chord underneath. When the B7 hits, you must emphasize the D#.", listen: "<b>Chuck Schuldiner (Death)</b><br>'Crystal Mountain' solo. Hear how he meticulously alternate-picks the underlying triads, completely avoiding bluesy pentatonic habits." }, { t: "4. The Vocal Orchestration", desc: "<b>Key:</b> A Major (A - D - E)<br><b>Track:</b> Epic rock ballad<br><b>Rule:</b> Do not play 'licks'. Imagine you are a singer. Play a distinct verse melody, leave a gap for a breath, and then play a chorus melody. Keep it singable.", listen: "<b>Brian May (Queen)</b><br>'Bohemian Rhapsody' or 'Killer Queen'. He literally plays compositions within compositions. Every solo is a memorable, hummable vocal line." }, { t: "5. The Sludge to Dominant Turn", desc: "<b>Key:</b> C minor (C5 - Bb5 - Ab5 - G7)<br><b>Track:</b> Classic Doom turnaround<br><b>Rule:</b> Play absolute filthy pentatonic sludge over the first 3 chords. When the G7 hits, switch instantly to C Harmonic Minor (target the B natural).", listen: "<b>Matt Pike (High on Fire) / Brent Hinds (Mastodon)</b><br>Listen to how they inject sudden, jarring harmonic minor or Middle Eastern scales at the very end of a dirty riff." } ] },
+  { title: "The Rhythmic Displacer", desc: "Break the 'square' playing. Stop ending phrases where the ear expects them to end. Inject groove.", exercises: [ { t: "1. The Groove Metal Shift", desc: "<b>Key:</b> E minor<br><b>Track:</b> 90bpm Groove Metal (Pantera style)<br><b>Rule:</b> Write a heavy 4-note lick. In Bar 1, start it on Beat 1. In Bar 2, force yourself to start the exact same lick on the 'and' of Beat 2. In Bar 3, start it on Beat 4.", listen: "<b>Dimebag Darrell / James Hetfield</b><br>Listen to the main riff of 'I\\'m Broken' or 'Master of Puppets'. The aggression comes from syncopation and starting riffs on off-beats." }, { t: "2. Sustain Beyond the Barline", desc: "<b>Key:</b> B Standard<br><b>Track:</b> 50bpm Sludge/Doom<br><b>Rule:</b> Play a slow phrase but NEVER end it on Beat 4 or Beat 1. Hold your final bent note (or let it feedback) across the bar line into Beat 2 or 3 of the next bar.", listen: "<b>Monolord / Sleep</b><br>Let the fuzz do the work. Listen to how they strike a chord or bend and let it ring across multiple measures to build oppressive weight." }, { t: "3. The Texas Drag", desc: "<b>Key:</b> E Blues<br><b>Track:</b> Slow Blues shuffle<br><b>Rule:</b> Play entirely in triplets, but deliberately play slightly 'behind the beat' (late). Don't rush. Make the backing track wait for you.", listen: "<b>Stevie Ray Vaughan / Jimi Hendrix</b><br>'Texas Flood' or 'Red House'. The swagger comes from them dragging their phrasing slightly behind the snare drum." }, { t: "4. Odd-Meter Survival", desc: "<b>Meter:</b> 7/8<br><b>Track:</b> Prog Metal<br><b>Rule:</b> Improvise without getting lost. Count 1-2-3-4-1-2-3. Force yourself to land your heavy vibrato notes on the 1 of every other bar.", listen: "<b>Leprous / Dream Theater</b><br>'The Dance of Eternity'. Listen to how Petrucci makes weird time signatures feel natural and groovy by emphasizing the strong beats." } ] },
+  { title: "The Modal Alchemist", desc: "Translate theory directly into emotion. Command specific colors without leaving the key.", exercises: [ { t: "1. Desert Rock Dorian", desc: "<b>Key:</b> D Dorian (Dm - G)<br><b>Track:</b> Vamp matching the progression<br><b>Rule:</b> Focus purely on the Dorian Major 6th (B natural). Alternate between minor pentatonic dirt and floating, spacey Dorian melodies.", listen: "<b>All Them Witches / King Buffalo</b><br>Listen to how they use the Dorian mode over simple two-chord vamps to create a vast, desert-highway atmosphere." }, { t: "2. Death Metal Dominant", desc: "<b>Key:</b> A Harmonic Minor (Am - E)<br><b>Track:</b> Vamp matching the progression<br><b>Rule:</b> Over the Am, play normal minor. The millisecond the E hits, play an E dominant or G# diminished arpeggio. Focus on the sinister drop from A to G#.", listen: "<b>Chuck Schuldiner (Death)</b><br>'Voice of the Soul'. The entire emotional weight of the track hinges on the tragic pull between the minor 6th and the perfect 5th." }, { t: "3. Oppressive Phrygian/Locrian", desc: "<b>Key:</b> A minor<br><b>Track:</b> Heavy A pedal chug<br><b>Rule:</b> Abuse the minor 2nd (Bb) and the flat 5th (Eb). Create the most dissonant, terrifying atmosphere possible without sounding 'wrong'.", listen: "<b>Gojira / Electric Wizard</b><br>'Toxic Garbage Island' or 'Dopethrone'. The crushing darkness comes directly from exploiting the Phrygian b2 interval against open strings." }, { t: "4. Mixolydian Classic Rock", desc: "<b>Key:</b> A Mixolydian (A7 - D7)<br><b>Track:</b> Vamp matching the progression<br><b>Rule:</b> Mix the Major 3rd (C#) and the minor 3rd (C natural) constantly. Bend the minor 3rd slightly sharp to get that classic blues-rock tension.", listen: "<b>Eric Clapton / Eddie Van Halen</b><br>'Crossroads' or 'Panama'. They seamlessly blur the line between major and minor by manipulating the 3rd." }, { t: "5. The Opeth Diminished Run", desc: "<b>Key:</b> E minor<br><b>Track:</b> Dark prog metal in E<br><b>Rule:</b> Use fully diminished arpeggios (minor 3rd intervals stacked) to transition between two heavy riffs. Build speed gradually.", listen: "<b>Fredrik Åkesson (Opeth)</b><br>'Heir Apparent'. Notice his terrifyingly clean diminished runs that connect the ultra-heavy sections." }, { t: "6. Space Rock Lydian", desc: "<b>Key:</b> C Lydian<br><b>Track:</b> Ambient C major drone<br><b>Rule:</b> Target the #4 (F#) exclusively. Let notes ring out with heavy delay and reverb. Create a sci-fi, floating sensation.", listen: "<b>Blood Incantation</b><br>Listen to their ambient/synth sections or the outro solos on 'Hidden History of the Human Race' for that cosmic Lydian expansion." } ] },
+  { title: "Total Audiation", desc: "The Master Level. The brain commands, the fingers obey. No more muscle memory dictating your solos.", exercises: [ { t: "1. The Slash Sing-Along", desc: "<b>Key:</b> Any<br><b>Track:</b> Any melodic backing track<br><b>Rule:</b> Put the pick down. Sing/hum a 2-bar melody. Pick up the guitar and find those exact notes on the very first try. Repeat.", listen: "<b>Slash / Guthrie Govan</b><br>Both players have a 1:1 connection between their inner ear and their fretboard. What they hear in their head is instantly translated to the hands." }, { t: "2. Vocal Call & Response", desc: "<b>Key:</b> Any Blues Key<br><b>Track:</b> Slow Blues<br><b>Rule:</b> Play a lick. Then, attempt to sing a 'response' to that lick. Then play that response on the guitar. Keep the conversation going.", listen: "<b>Eric Clapton / John Mayer</b><br>Listen to how their guitar solos mimic a lead vocalist breathing, pausing, and answering themselves." }, { t: "3. Unaccompanied Soloing", desc: "<b>Key:</b> Free<br><b>Track:</b> NONE<br><b>Rule:</b> Play for 3 minutes with no backing track. You must keep the rhythm, the chord changes, and the melody entirely clear to the listener just by your playing.", listen: "<b>Eddie Van Halen</b><br>'Eruption' or 'Spanish Fly'. The ultimate masterclass in carrying the entire song (harmony, rhythm, melody) alone." }, { t: "4. The Free Expression Flow", desc: "<b>Key:</b> Shifting<br><b>Track:</b> 10-minute complex Prog track<br><b>Rule:</b> Improvise freely. Incorporate Dorian 6ths, Harmonic Minor 7ths, chromatic approaches, and rhythmic displacement seamlessly without stopping to think.", listen: "<b>The Legends</b><br>You are combining the brain of Petrucci, the darkness of Opeth, the soul of Gilmour, and the riff-power of Sabbath. Just play." } ] }
+];
+
+const COMPENDIUM_CATEGORIES = [
+  {id: 'c1', title: '1. Fundamentals'}, {id: 'c2', title: '2. Notes and Pitch'}, {id: 'c3', title: '3. Accidentals and Enharmonic Spelling'},
+  {id: 'c4', title: '4. Intervals'}, {id: 'c5', title: '5. Key Signatures and Circle of Fifths'}, {id: 'c6', title: '6. Scales'},
+  {id: 'c7', title: '7. Modes'}, {id: 'c8', title: '8. Triads'}, {id: 'c9', title: '9. Seventh Chords'},
+  {id: 'c10', title: '10. Extensions and Alterations'}, {id: 'c11', title: '11. Inversions and Voicings'}, {id: 'c12', title: '12. Diatonic Harmony'},
+  {id: 'c13', title: '13. Functional Harmony', chapters: [
+    {id: 'ch1', title: 'Understanding Harmonic Function'},
+    {id: 'ch2', title: 'Tonic, Predominant and Dominant Functions'},
+    {id: 'ch3', title: 'Diatonic Functions in Major Keys'},
+    {id: 'ch4', title: 'Diatonic Functions in Minor Keys'},
+    {id: 'ch5', title: 'Functional Progressions and Harmonic Goals'},
+    {id: 'ch6', title: 'Functional Behaviour of Seventh Chords'},
+    {id: 'ch7', title: 'Chord Function in Context'},
+    {id: 'ch8', title: 'Harmonic Rhythm and Phrase Structure'},
+    {id: 'ch9', title: 'Limits of Functional Analysis'}
+  ]},
+  {id: 'c14', title: '14. Cadences'}, {id: 'c15', title: '15. Secondary Dominants'}, {id: 'c16', title: '16. Modal Interchange'},
+  {id: 'c17', title: '17. Modulation'}, {id: 'c18', title: '18. Chromatic Harmony'}, {id: 'c19', title: '19. Voice Leading'},
+  {id: 'c20', title: '20. Counterpoint'}, {id: 'c21', title: '21. Rhythm and Meter'}, {id: 'c22', title: '22. Musical Form and Composition'}
 ];
 
 const PHASES=[
@@ -606,57 +512,17 @@ const PHASES=[
 ];
 
 const LISTENING_VAULT = [
-  {
-    category: "Stoner, Doom & Sludge",
-    items: [
-      {t: "Tony Iommi (Black Sabbath)", desc: "'Snowblind', 'Sabbath Bloody Sabbath', 'Into the Void'. Notice horizontal slides, trills on single strings, and hitting dominant chord tones for sudden tension."},
-      {t: "Matt Pike (Sleep / High on Fire)", desc: "'Dragonaut', 'Dopesmoker', 'Snakes for the Divine'. Milking single strings for maximum fuzz sustain; injecting sudden harmonic minor scales into aggressive sludge."},
-      {t: "Jus Oborn (Electric Wizard)", desc: "'Funeralopolis', 'Dopethrone', 'Return Trip'. Colossal horizontal doom sliding; exploiting pure Locrian/Phrygian sludge with overwhelming volume."},
-      {t: "Nick DiSalvo (Elder)", desc: "'Lore', 'Reflections of a Floating World', 'Dead Roots Stirring'. Crying, microtonal tension by bending into and out of notes with heavy fuzz; brilliant use of Lydian and Dorian."},
-      {t: "Monolord", desc: "'Empress Rising', 'Rust', 'Audhumbla'. Letting fuzzy chords and slow bends ring across multiple measures to build oppressive weight and hypnotic repetition."},
-      {t: "All Them Witches / King Buffalo", desc: "'Blood and Sand', 'Red Star Pt. 1 & 2'. Using the Dorian mode over simple two-chord vamps to create a vast, psychedelic desert-highway atmosphere."}
-    ]
-  },
-  {
-    category: "Prog, Odd Meters & Harmony",
-    items: [
-      {t: "John Petrucci (Dream Theater)", desc: "'The Spirit Carries On', 'Lines in the Sand', 'The Dance of Eternity'. Resolving fast runs perfectly on the downbeat 3rd; wide, emotional vibrato in tight positions; surviving odd-meters."},
-      {t: "Opeth (Mikael Åkerfeldt / Fredrik Åkesson)", desc: "'Windowpane', 'Ghost of Perdition', 'Heir Apparent'. Vocal-like clean slides; targeting minor 3rds over odd-meter riffs; terrifyingly clean diminished connecting runs."},
-      {t: "Guthrie Govan", desc: "'Regret #9', 'Fives', 'Sevens'. Uncanny vocal-like sliding; chromatic enclosures to 'surround' target notes safely; making 7/8 feel like a standard pop song."},
-      {t: "Leprous", desc: "'The Price', 'From the Flame'. Syncopated stabs in odd meters that somehow feel groovy and heavily rhythmic."}
-    ]
-  },
-  {
-    category: "Death Metal, Sludge & Groove",
-    items: [
-      {t: "Death (Chuck Schuldiner)", desc: "'Crystal Mountain', 'Voice of the Soul', 'Symbolic'. Meticulous alternate-picked triads; tragic pull of harmonic minor; seamless chromatic passing tones."},
-      {t: "Mastodon (Brent Hinds / Bill Kelliher)", desc: "'Blood and Thunder', 'Leviathan', 'Crack the Skye'. Sludge-infused progressive metal riffing; intricate dual-guitar harmony lines; heavy use of minor/major pentatonic shred blended with open-string sludge."},
-      {t: "Pantera (Dimebag Darrell)", desc: "'I'm Broken', 'Walk', 'Domination'. Aggression through syncopation, starting riffs on off-beats, and wild wide-stretch symmetrical licks."},
-      {t: "Gojira", desc: "'Toxic Garbage Island', 'Stranded', 'Silvera'. Exploiting the Phrygian b2 interval for crushing darkness; rhythmic displacement and pick scrapes over simple groove riffs."},
-      {t: "Blood Incantation", desc: "'Hidden History of the Human Race'. Cosmic Lydian expansion in a death metal context, especially in ambient sections and sprawling outro solos."}
-    ]
-  },
-  {
-    category: "Classic Rock, Blues & Soul",
-    items: [
-      {t: "David Gilmour (Pink Floyd)", desc: "'Comfortably Numb', 'Shine On You Crazy Diamond', 'Time'. 1.5-step bends in tiny boxes; perfectly intonated pre-bends; treating guitar exactly like a lead vocalist."},
-      {t: "Slash (Guns N' Roses)", desc: "'November Rain', 'Sweet Child O' Mine'. Epic symphonies built within tight minor pentatonic boxes; a direct 1:1 connection between the inner ear and the hands."},
-      {t: "Brian May (Queen)", desc: "'Bohemian Rhapsody', 'Somebody to Love', 'Killer Queen'. Compositions within compositions; every solo maps perfectly to the underlying chord progression's 3rds."},
-      {t: "Stevie Ray Vaughan", desc: "'Texas Flood', 'Lenny'. Dragging phrasing slightly behind the snare drum for ultimate swagger; aggressive microtonal blues bends."},
-      {t: "Eddie Van Halen", desc: "'Eruption', 'Panama', 'I'm the One'. Carrying the entire song's harmony alone; a unique, happy and aggressive Mixolydian swing."}
-    ]
-  }
+  { category: "Stoner, Doom & Sludge", items: [ {t: "Tony Iommi (Black Sabbath)", desc: "'Snowblind', 'Sabbath Bloody Sabbath', 'Into the Void'. Notice horizontal slides, trills on single strings, and hitting dominant chord tones for sudden tension."}, {t: "Matt Pike (Sleep / High on Fire)", desc: "'Dragonaut', 'Dopesmoker', 'Snakes for the Divine'. Milking single strings for maximum fuzz sustain; injecting sudden harmonic minor scales into aggressive sludge."}, {t: "Jus Oborn (Electric Wizard)", desc: "'Funeralopolis', 'Dopethrone', 'Return Trip'. Colossal horizontal doom sliding; exploiting pure Locrian/Phrygian sludge with overwhelming volume."}, {t: "Nick DiSalvo (Elder)", desc: "'Lore', 'Reflections of a Floating World', 'Dead Roots Stirring'. Crying, microtonal tension by bending into and out of notes with heavy fuzz; brilliant use of Lydian and Dorian."}, {t: "Monolord", desc: "'Empress Rising', 'Rust', 'Audhumbla'. Letting fuzzy chords and slow bends ring across multiple measures to build oppressive weight and hypnotic repetition."}, {t: "All Them Witches / King Buffalo", desc: "'Blood and Sand', 'Red Star Pt. 1 & 2'. Using the Dorian mode over simple two-chord vamps to create a vast, psychedelic desert-highway atmosphere."} ] },
+  { category: "Prog, Odd Meters & Harmony", items: [ {t: "John Petrucci (Dream Theater)", desc: "'The Spirit Carries On', 'Lines in the Sand', 'The Dance of Eternity'. Resolving fast runs perfectly on the downbeat 3rd; wide, emotional vibrato in tight positions; surviving odd-meters."}, {t: "Opeth (Mikael Åkerfeldt / Fredrik Åkesson)", desc: "'Windowpane', 'Ghost of Perdition', 'Heir Apparent'. Vocal-like clean slides; targeting minor 3rds over odd-meter riffs; terrifyingly clean diminished connecting runs."}, {t: "Guthrie Govan", desc: "'Regret #9', 'Fives', 'Sevens'. Uncanny vocal-like sliding; chromatic enclosures to 'surround' target notes safely; making 7/8 feel like a standard pop song."}, {t: "Leprous", desc: "'The Price', 'From the Flame'. Syncopated stabs in odd meters that somehow feel groovy and heavily rhythmic."} ] },
+  { category: "Death Metal, Sludge & Groove", items: [ {t: "Death (Chuck Schuldiner)", desc: "'Crystal Mountain', 'Voice of the Soul', 'Symbolic'. Meticulous alternate-picked triads; tragic pull of harmonic minor; seamless chromatic passing tones."}, {t: "Mastodon (Brent Hinds / Bill Kelliher)", desc: "'Blood and Thunder', 'Leviathan', 'Crack the Skye'. Sludge-infused progressive metal riffing; intricate dual-guitar harmony lines; heavy use of minor/major pentatonic shred blended with open-string sludge."}, {t: "Pantera (Dimebag Darrell)", desc: "'I\\'m Broken', 'Walk', 'Domination'. Aggression through syncopation, starting riffs on off-beats, and wild wide-stretch symmetrical licks."}, {t: "Gojira", desc: "'Toxic Garbage Island', 'Stranded', 'Silvera'. Exploiting the Phrygian b2 interval for crushing darkness; rhythmic displacement and pick scrapes over simple groove riffs."}, {t: "Blood Incantation", desc: "'Hidden History of the Human Race'. Cosmic Lydian expansion in a death metal context, especially in ambient sections and sprawling outro solos."} ] },
+  { category: "Classic Rock, Blues & Soul", items: [ {t: "David Gilmour (Pink Floyd)", desc: "'Comfortably Numb', 'Shine On You Crazy Diamond', 'Time'. 1.5-step bends in tiny boxes; perfectly intonated pre-bends; treating guitar exactly like a lead vocalist."}, {t: "Slash (Guns N' Roses)", desc: "'November Rain', 'Sweet Child O\\' Mine'. Epic symphonies built within tight minor pentatonic boxes; a direct 1:1 connection between the inner ear and the hands."}, {t: "Brian May (Queen)", desc: "'Bohemian Rhapsody', 'Somebody to Love', 'Killer Queen'. Compositions within compositions; every solo maps perfectly to the underlying chord progression's 3rds."}, {t: "Stevie Ray Vaughan", desc: "'Texas Flood', 'Lenny'. Dragging phrasing slightly behind the snare drum for ultimate swagger; aggressive microtonal blues bends."}, {t: "Eddie Van Halen", desc: "'Eruption', 'Panama', 'I\\'m the One'. Carrying the entire song's harmony alone; a unique, happy and aggressive Mixolydian swing."} ] }
 ];
 
 const CREATIVE={
  songwriting:[I("Riff Writing Masterclass","https://tinyurl.com/59wr7y4x"),I("Solo Writing Masterclass","https://tinyurl.com/ym69pkmv"),I("Metal Songwriting Masterclass","https://tinyurl.com/45du76rt"),I("Harmonize Guitars","https://tinyurl.com/dkds5aey")],
  production:[I("Guitar Transcribing","https://tinyurl.com/2t3d6n4p"),I("Home Recording Guide","https://tinyurl.com/nfkp288a"),I("MIDI Drums","http://tinyurl.com/23uj5xd9"),I("Mixing Guide","https://tinyurl.com/3ujtsn7f")]
 };
-const PHASE_BLURB={p0:"Get the prerequisites and warm-up in place, then run the baseline test for your own tracking - you start at Phase 1 regardless of the result.",
- p1:"Foundational technique - alternate picking, sweep picking and economy picking form the backbone everything later builds on.",
- p2:"Endurance, precision and expressive control (vibrato, bending). Fundamentals are assumed solid by now.",
- p3:"Raw speed and dexterity get built on purpose here. Expect this tier to take real patience.",
- p4:"The toughest material in the Roadmap. Completing it clears the entire BHGS technique curriculum."};
+const PHASE_BLURB={p0:"Get the prerequisites and warm-up in place, then run the baseline test for your own tracking - you start at Phase 1 regardless of the result.", p1:"Foundational technique - alternate picking, sweep picking and economy picking form the backbone everything later builds on.", p2:"Endurance, precision and expressive control (vibrato, bending). Fundamentals are assumed solid by now.", p3:"Raw speed and dexterity get built on purpose here. Expect this tier to take real patience.", p4:"The toughest material in the Roadmap. Completing it clears the entire BHGS technique curriculum."};
  
 const CHOP=[{key:"alt",label:"10 Levels Of Alternate Picking",url:"https://tinyurl.com/4anrfje9"},{key:"sweep",label:"10 Levels Of Sweep Picking",url:"https://tinyurl.com/nzcv65ux"},{key:"legato",label:"10 Levels Of Legato",url:"https://tinyurl.com/54fc68fm"},{key:"econ",label:"10 Levels Of Economy Picking",url:"https://tinyurl.com/3v5xt6ne"},{key:"tap",label:"10 Levels Of Tapping",url:"https://tinyurl.com/yw4ex5ma"}];
 const TESTCATS=[
@@ -679,33 +545,9 @@ const THEORY_ROOT_ITEMS = [
 ];
 
 const THEORY_GROUPS = [
-  {
-    title: "Ear Training",
-    items: [
-      {t:"Ear Training Pt. 1",url:"https://tinyurl.com/ycxndyxn", key:"theory.0"},
-      {t:"Ear Training Pt. 2",url:"https://tinyurl.com/2vexwxsr", key:"theory.1"},
-      {t:"Intervals in Iconic Metal Songs",url:"https://www.patreon.com/bradleyhallguitar/posts/learn-intervals-153454864?collection=1442331", key:"theory.9"}
-    ]
-  },
-  {
-    title: "Modes",
-    docs: [ {t:"Modes Cheat Sheet",url:"https://docs.google.com/document/d/1KcuhTsbICaqTGmbfqeeHl9k7KNtvagfhpwTmny9NRMc/edit?tab=t.0"} ],
-    items: [
-      {t:"Modes Course Pt. 1",url:"https://tinyurl.com/5n7p9d92", key:"theory.2"},
-      {t:"Modes Course Pt. 2",url:"https://www.patreon.com/bradleyhallguitar/posts/learning-modes-2-78518637", key:"theory.3"},
-      {t:"Modes Course Pt. 3",url:"https://www.patreon.com/bradleyhallguitar/posts/learning-modes-3-79514177", key:"theory.4"},
-      {t:"Modes Course Pt. 4",url:"https://www.patreon.com/bradleyhallguitar/posts/learning-modes-4-90144406", key:"theory.5"},
-      {t:"Modes in Iconic Metal Songs",url:"https://www.patreon.com/bradleyhallguitar/posts/learn-modes-with-151999721?collection=1442331", key:"theory.11"}
-    ]
-  },
-  {
-    title: "Chords & Soloing",
-    items: [
-      {t:"Soloing Over Changes Pt. 1",url:"http://tinyurl.com/4zb3dp48", key:"theory.6"},
-      {t:"Soloing Over Changes Pt. 2",url:"https://tinyurl.com/4cm982ta", key:"theory.7"},
-      {t:"Chords in Iconic Metal Songs",url:"https://www.patreon.com/bradleyhallguitar/posts/learn-chords-152062372?collection=1442331", key:"theory.10"}
-    ]
-  }
+  { title: "Ear Training", items: [ {t:"Ear Training Pt. 1",url:"https://tinyurl.com/ycxndyxn", key:"theory.0"}, {t:"Ear Training Pt. 2",url:"https://tinyurl.com/2vexwxsr", key:"theory.1"}, {t:"Intervals in Iconic Metal Songs",url:"https://www.patreon.com/bradleyhallguitar/posts/learn-intervals-153454864?collection=1442331", key:"theory.9"} ] },
+  { title: "Modes", docs: [ {t:"Modes Cheat Sheet",url:"https://docs.google.com/document/d/1KcuhTsbICaqTGmbfqeeHl9k7KNtvagfhpwTmny9NRMc/edit?tab=t.0"} ], items: [ {t:"Modes Course Pt. 1",url:"https://tinyurl.com/5n7p9d92", key:"theory.2"}, {t:"Modes Course Pt. 2",url:"https://www.patreon.com/bradleyhallguitar/posts/learning-modes-2-78518637", key:"theory.3"}, {t:"Modes Course Pt. 3",url:"https://www.patreon.com/bradleyhallguitar/posts/learning-modes-3-79514177", key:"theory.4"}, {t:"Modes Course Pt. 4",url:"https://www.patreon.com/bradleyhallguitar/posts/learning-modes-4-90144406", key:"theory.5"}, {t:"Modes in Iconic Metal Songs",url:"https://www.patreon.com/bradleyhallguitar/posts/learn-modes-with-151999721?collection=1442331", key:"theory.11"} ] },
+  { title: "Chords & Soloing", items: [ {t:"Soloing Over Changes Pt. 1",url:"http://tinyurl.com/4zb3dp48", key:"theory.6"}, {t:"Soloing Over Changes Pt. 2",url:"https://tinyurl.com/4cm982ta", key:"theory.7"}, {t:"Chords in Iconic Metal Songs",url:"https://www.patreon.com/bradleyhallguitar/posts/learn-chords-152062372?collection=1442331", key:"theory.10"} ] }
 ];
 
 let THEORY_ITEMS = [].concat(THEORY_ROOT_ITEMS);
@@ -719,9 +561,7 @@ const BONUS=[
  {t:"10 Levels Of Guitar Solo",url:"https://tinyurl.com/4ue66ax9",slider:{key:"guitarSolo",max:10}},
  {t:"Play Like 10 Iconic Shredders",url:"https://tinyurl.com/2p8u4wfh",slider:{key:"shredders",max:10}},
  {t:"5 Levels Of Pentatonics",url:"https://tinyurl.com/mr2s63ac",slider:{key:"pentatonics",max:5}},
- {t:"Official Lick Pack",url:"https://tinyurl.com/52tb79xt"},
- {t:"Hybrid Picking Workout",url:"https://tinyurl.com/5n6pp7kc"},
- {t:"Whammy Bar Workout",url:"https://tinyurl.com/se8e6act"}
+ {t:"Official Lick Pack",url:"https://tinyurl.com/52tb79xt"}, {t:"Hybrid Picking Workout",url:"https://tinyurl.com/5n6pp7kc"}, {t:"Whammy Bar Workout",url:"https://tinyurl.com/se8e6act"}
 ];
 const PREREQ=[
   {t:"Learn The Fretboard",url:"http://tinyurl.com/43r5c8v7"},
@@ -761,69 +601,68 @@ const setupData = {
   }
 };
 
-const STORAGE_KEY="shredRoadmapState_v10";
-
 function defaultDojoState() {
-  return {
-    xp: 0, level: 1, unlockedCodexes: [1], readCodexes: [], audioMuted: false,
-    compendiumProgress: { schemaVersion: 1, chapters: {} }
-  };
-}
-
-function reconcileCompendiumProgress(localProg, cloudProg) {
-  if (!cloudProg) return localProg;
-  if (!cloudProg.schemaVersion) cloudProg.schemaVersion = 1;
-  
-  if (cloudProg.schemaVersion > localProg.schemaVersion) {
-      // Future schema detected: Adopt cloud object entirely to prevent flattening future properties when setDoc runs
-      return cloudProg;
-  }
-  
-  let merged = { schemaVersion: localProg.schemaVersion, chapters: {} };
-  let localChaps = localProg.chapters || {};
-  let cloudChaps = cloudProg.chapters || {};
-  let allKeys = new Set([...Object.keys(localChaps), ...Object.keys(cloudChaps)]);
-  
-  allKeys.forEach(k => {
-      let l = localChaps[k];
-      let c = cloudChaps[k];
-      if (l && !c) merged.chapters[k] = l;
-      else if (!l && c) merged.chapters[k] = c;
-      else {
-          let lStat = (l.status === 'studied' || l.status === 'completed') ? 'studied' : 'inProgress';
-          let cStat = (c.status === 'studied' || c.status === 'completed') ? 'studied' : 'inProgress';
-          let finalStat = (lStat === 'studied' || cStat === 'studied') ? 'studied' : 'inProgress';
-          
-          let lTime = parseInt(l.lastViewedAt, 10); if (isNaN(lTime)) lTime = 0;
-          let cTime = parseInt(c.lastViewedAt, 10); if (isNaN(cTime)) cTime = 0;
-          let finalTime = Math.max(lTime, cTime);
-          
-          merged.chapters[k] = Object.assign({}, c, l, { status: finalStat, lastViewedAt: finalTime });
-      }
-  });
-  
-  // Preserve unknown root properties from cloud (deep merge root)
-  return Object.assign({}, cloudProg, merged);
+  return {};
 }
 
 function defaultState(){
-return {phaseIndex:0,chop:{alt:0,sweep:0,legato:0,econ:0,tap:0},testLevel:{alt:0,sweep:0,legato:0,econ:0,tap:0,ult:0},bonusLevel:{},checks:{},practiced:{},practicedDate:null,congratsDate:null,activeDayOverride:null,activeDayDate:null,streakDates:[],setupGuitar:"prs",setupTuning:"e_std",improvIndex:0,improvChecks:{}, dojo: defaultDojoState()};}
-function loadState(){try{var raw=localStorage.getItem(STORAGE_KEY);if(raw){var d=JSON.parse(raw);return Object.assign(defaultState(),d,{chop:Object.assign(defaultState().chop,d.chop||{}),testLevel:Object.assign(defaultState().testLevel,d.testLevel||{}),bonusLevel:d.bonusLevel||{},checks:d.checks||{},practiced:d.practiced||{},streakDates:d.streakDates||[],setupGuitar:d.setupGuitar||"prs",setupTuning:d.setupTuning||"e_std",improvIndex:d.improvIndex||0,improvChecks:d.improvChecks||{}, dojo: Object.assign(defaultDojoState(), d.dojo||{})});}}catch(e){}return defaultState();}
+  return {phaseIndex:0,chop:{alt:0,sweep:0,legato:0,econ:0,tap:0},testLevel:{alt:0,sweep:0,legato:0,econ:0,tap:0,ult:0},bonusLevel:{},checks:{},practiced:{},practicedDate:null,congratsDate:null,activeDayOverride:null,activeDayDate:null,streakDates:[],setupGuitar:"prs",setupTuning:"e_std",improvIndex:0,improvChecks:{}, dojo: defaultDojoState()};
+}
+
+function loadState(){
+  try{
+    var raw=localStorage.getItem(STORAGE_KEY);
+    if(raw){
+      var d=JSON.parse(raw);
+      if(d.dojo && d.dojo.compendiumProgress) delete d.dojo.compendiumProgress;
+      var isLegacySync = (d.unsynced === undefined);
+      var st = Object.assign(defaultState(),d,{
+        chop:Object.assign(defaultState().chop,d.chop||{}),
+        testLevel:Object.assign(defaultState().testLevel,d.testLevel||{}),
+        bonusLevel:d.bonusLevel||{},
+        checks:d.checks||{},
+        practiced:d.practiced||{},
+        streakDates:d.streakDates||[],
+        setupGuitar:d.setupGuitar||"prs",
+        setupTuning:d.setupTuning||"e_std",
+        improvIndex:d.improvIndex||0,
+        improvChecks:d.improvChecks||{},
+        dojo: Object.assign(defaultDojoState(), d.dojo||{})
+      });
+      if(isLegacySync) { st.unsynced = true; localStorage.setItem(STORAGE_KEY, JSON.stringify(st)); }
+      return st;
+    }
+  }catch(e){}
+  return defaultState();
+}
+
+function markDirty() {
+   state.unsynced = true;
+   mutationCount++;
+   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e){}
+}
 
 function saveState(){
-  try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}catch(e){}
-  if(hasFirebase && currentUser && db) {
-    if(cloudWriteLock) {
-       console.warn("Cloud sync blocked: read pending, failed, or schema mismatch.");
-       return;
-    }
-    setDoc(doc(db, "users", currentUser.uid), state).catch(e => console.error("Firebase save err", e));
-  }
+  markDirty();
+  if(cloudWriteLock || !hasFirebase || !currentUser || !db) return;
+  const capturedMutation = mutationCount;
+  const payload = JSON.parse(JSON.stringify(state));
+  delete payload.unsynced;
+  payload.schemaVersion = LOCAL_SCHEMA_VERSION;
+  const mySession = sessionGeneration;
+
+  writeQueue = writeQueue.then(() => {
+     if (mySession !== sessionGeneration || cloudWriteLock) return;
+     return setDoc(doc(db, "users", currentUser.uid), payload).then(() => {
+        if (mutationCount === capturedMutation) {
+           state.unsynced = false;
+           try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e){}
+        }
+     });
+  }).catch(e => { console.error("Cloud write queued fail:", e); });
 }
 
 let state=loadState();
-let ui={view:"home",lib:{},dayOverride:null,resetConfirm:false,phaseJumpPending:null, dojoView:"hub", activeChapter:null};
-const APP_VIEWS = ["home", "daily", "improv", "dojo", "library", "setup"];
 
 function k(){return Array.prototype.slice.call(arguments).join(".");}
 function todayISO(){return new Date().toISOString().slice(0,10);}
@@ -865,19 +704,13 @@ function phasePercent(idx){
 }
 
 function totalStreak(){return (state.streakDates||[]).length;}
-
 function updateStreakStatus(){
   var t = todayISO();
   var hasPracticed = Object.keys(state.practiced).some(function(k){ return state.practiced[k]; });
   var idx = state.streakDates.indexOf(t);
-  
-  if (hasPracticed && idx === -1) {
-    state.streakDates.push(t);
-  } else if (!hasPracticed && idx !== -1 && state.practicedDate === t) {
-    state.streakDates.splice(idx, 1);
-  }
+  if (hasPracticed && idx === -1) { state.streakDates.push(t); } 
+  else if (!hasPracticed && idx !== -1 && state.practicedDate === t) { state.streakDates.splice(idx, 1); }
 }
-
 function currentStreak(){
   var dates = state.streakDates.slice().sort().reverse();
   if(dates.length===0) return 0;
@@ -888,14 +721,9 @@ function currentStreak(){
   var yestStr = checkDate.toISOString().slice(0,10);
   
   var dStart = new Date();
-  if(dates.indexOf(todayStr) !== -1) {
-     streak = 1; 
-  } else if(dates.indexOf(yestStr) !== -1) {
-     streak = 1;
-     dStart.setDate(dStart.getDate() - 1);
-  } else {
-     return 0;
-  }
+  if(dates.indexOf(todayStr) !== -1) { streak = 1; } 
+  else if(dates.indexOf(yestStr) !== -1) { streak = 1; dStart.setDate(dStart.getDate() - 1); } 
+  else { return 0; }
   
   for(var i=1; i<=1000; i++){
      dStart.setDate(dStart.getDate() - 1);
@@ -984,12 +812,18 @@ function showToast(msg){var t=document.getElementById("toast");t.textContent=msg
 function handleReset(){ ui.resetConfirm=true; render(); }
 function cancelReset(){ ui.resetConfirm=false; render(); }
 function confirmReset(){
-  localStorage.removeItem(STORAGE_KEY);
-  state=defaultState();
-  if(hasFirebase && currentUser && db) { setDoc(doc(db, "users", currentUser.uid), state).catch(e => console.error(e)); }
+  if(cloudWriteLock) { showToast("Cloud locked. Cannot reset."); return; }
   ui.resetConfirm=false;
+  const resetSt = defaultState();
+  resetSt.dojo = state.dojo || {}; // Keep dojo unknowns
+  if(resetSt.dojo.compendiumProgress) delete resetSt.dojo.compendiumProgress;
+  resetSt.unsynced = true;
+  mutationCount++;
+  state = resetSt;
+  try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}catch(e){}
+  saveState(); 
   render();
-  showToast("Everything has been reset.");
+  showToast("Progress has been reset.");
 }
 
 function formatGauge(g){
@@ -1004,434 +838,24 @@ function formatGauge(g){
   return g;
 }
 
-// --- LEGACY THEORY DOJO FUNCTIONS (Kept for integration/safety) ---
-const DOJO_LEVELS = [
-  { l: 1, req: 0, title: "Fretboard Novice", codex: 1 },
-  { l: 2, req: 100, title: "Rhythm Apprentice", codex: 1 },
-  { l: 11, req: 1200, title: "Harmonic Journeyman", codex: 2 },
-  { l: 21, req: 3500, title: "The Prog Architect", codex: 3 },
-  { l: 31, req: 7000, title: "Polyrhythmic Master", codex: 4 },
-  { l: 41, req: 12000, title: "Audiation Grandmaster", codex: 5 }
-];
-
-const CODEX_DATA = {
-  1: { title: "Module 1", content: "..." },
-  2: { title: "Module 2", content: "..." },
-  3: { title: "Module 3", content: "..." }
-};
-
-let currentMinigame = null;
-let currentQuestion = null;
-
-function getDojoLevelInfo(xp) {
-  let cur = DOJO_LEVELS[0];
-  let next = DOJO_LEVELS[1];
-  for(let i=0; i<DOJO_LEVELS.length; i++) {
-    if(xp >= DOJO_LEVELS[i].req) {
-      cur = DOJO_LEVELS[i];
-      next = DOJO_LEVELS[i+1] || {req: 999999};
-    }
-  }
-  let pct = next.req === 999999 ? 100 : Math.floor(((xp - cur.req) / (next.req - cur.req)) * 100);
-  return { level: cur.l, title: cur.title, pct: pct, nextReq: next.req, codex: cur.codex };
-}
-
-function addXP(amount) {
-  state.dojo.xp += amount;
-  let info = getDojoLevelInfo(state.dojo.xp);
-  if(info.level > state.dojo.level) {
-    state.dojo.level = info.level;
-    showToast("⭐ Level Up! You are now a " + info.title);
-    if(info.codex > 1 && !state.dojo.unlockedCodexes.includes(info.codex)) {
-      state.dojo.unlockedCodexes.push(info.codex);
-      showToast("📜 📜 New Codex Unlocked!");
-    }
-  } else {
-    showToast("+" + amount + " XP!");
-  }
-  saveState();
-}
-
-function generateHarmonicQuestion() { return { lvl: 1, q: "Placeholder", opts: ["A", "B"], ans: 0, exp: "Placeholder" }; }
-function startArchitectGame() {}
-function handleDojoAnswer(idx) {}
-function renderDojoDashboard() { return ""; }
-function renderCodexList() { return ""; }
-
-
-// --- NEW COMPENDIUM ARCHITECTURE ---
-
-const COMPENDIUM_SYLLABUS = [
-  {
-    id: "cat1", title: "1. Fundamentals", level: "B",
-    chapters: [
-      { id: "c1_1", title: "Ch.1: General Music Fundamentals" },
-      { id: "c1_2", title: "Ch.2: Standard Tuning Mechanics" },
-      { id: "c1_3", title: "Ch.3: Fretboard Layout and Navigation" }
-    ]
-  },
-  {
-    id: "cat2", title: "2. Notes and Pitch", level: "B",
-    chapters: [
-      { id: "c2_1", title: "Ch.1: The Musical Alphabet and Pitch Classes" },
-      { id: "c2_2", title: "Ch.2: Organization and Identification of Notes" },
-      { id: "c2_3", title: "Ch.3: Octaves and Registers" }
-    ]
-  },
-  {
-    id: "cat3", title: "3. Accidentals and Enharmonic Spelling", level: "B",
-    chapters: [
-      { id: "c3_1", title: "Ch.1: Sharps, Flats and Naturals" },
-      { id: "c3_2", title: "Ch.2: Enharmonic Equivalence" },
-      { id: "c3_3", title: "Ch.3: Contextual Spelling" }
-    ]
-  },
-  {
-    id: "cat4", title: "4. Intervals", level: "I",
-    chapters: [
-      { id: "c4_1", title: "Ch.1: Measuring Distance" },
-      { id: "c4_2", title: "Ch.2: Perfect, Major and Minor Intervals" },
-      { id: "c4_3", title: "Ch.3: Augmented and Diminished Intervals" },
-      { id: "c4_4", title: "Ch.4: Inverted Intervals" },
-      { id: "c4_5", title: "Ch.5: Fretboard Shapes for Intervals" }
-    ]
-  },
-  {
-    id: "cat5", title: "5. Key Signatures and Circle of Fifths", level: "I",
-    chapters: [
-      { id: "c5_1", title: "Ch.1: Concept of a Key" },
-      { id: "c5_2", title: "Ch.2: The Circle of Fifths" },
-      { id: "c5_3", title: "Ch.3: Relative Major and Minor" }
-    ]
-  },
-  {
-    id: "cat6", title: "6. Scales", level: "I",
-    chapters: [
-      { id: "c6_1", title: "Ch.1: Major and Natural Minor" },
-      { id: "c6_2", title: "Ch.2: Scale Degrees, Relationships and Tonality" },
-      { id: "c6_3", title: "Ch.3: Pentatonic (Major/Minor)" },
-      { id: "c6_4", title: "Ch.4: Harmonic and Melodic Minor" },
-      { id: "c6_5", title: "Ch.5: Symmetrical Scales" }
-    ]
-  },
-  {
-    id: "cat7", title: "7. Modes", level: "I",
-    chapters: [
-      { id: "c7_1", title: "Ch.1: Derivative vs. Parallel Approach" },
-      { id: "c7_2", title: "Ch.2: Ionian, Dorian, Phrygian" },
-      { id: "c7_3", title: "Ch.3: Lydian, Mixolydian" },
-      { id: "c7_4", title: "Ch.4: Aeolian, Locrian" },
-      { id: "c7_5", title: "Ch.5: Modes of Harmonic Minor (Advanced)" }
-    ]
-  },
-  {
-    id: "cat8", title: "8. Triads", level: "I",
-    chapters: [
-      { id: "c8_1", title: "Ch.1: Major and Minor Construction" },
-      { id: "c8_2", title: "Ch.2: Diminished and Augmented Construction" },
-      { id: "c8_3", title: "Ch.3: Triad Fretboard Fingerings" }
-    ]
-  },
-  {
-    id: "cat9", title: "9. Seventh Chords", level: "I",
-    chapters: [
-      { id: "c9_1", title: "Ch.1: Major 7 and Minor 7" },
-      { id: "c9_2", title: "Ch.2: Dominant 7" },
-      { id: "c9_3", title: "Ch.3: Half-diminished and Fully-diminished 7" }
-    ]
-  },
-  {
-    id: "cat10", title: "10. Extensions and Alterations", level: "I",
-    chapters: [
-      { id: "c10_1", title: "Ch.1: 9ths, 11ths, and 13ths" },
-      { id: "c10_2", title: "Ch.2: Altered Dominants (b9, #9, #11, b13)" },
-      { id: "c10_3", title: "Ch.3: Omissions and Practical Voicings" }
-    ]
-  },
-  {
-    id: "cat11", title: "11. Inversions and Voicings", level: "I",
-    chapters: [
-      { id: "c11_1", title: "Ch.1: Bass Inversions (1st, 2nd, 3rd)" },
-      { id: "c11_2", title: "Ch.2: Drop 2 and Drop 3 Voicings" }
-    ]
-  },
-  {
-    id: "cat12", title: "12. Diatonic Harmony", level: "A",
-    chapters: [
-      { id: "c12_1", title: "Ch.1: Harmonizing the Major Scale" },
-      { id: "c12_2", title: "Ch.2: Harmonizing the Minor Scale" },
-      { id: "c12_3", title: "Ch.3: Roman Numeral Analysis" }
-    ]
-  },
-  {
-    id: "cat13", title: "13. Functional Harmony", level: "A",
-    chapters: [
-      { id: "c13_1", title: "Ch.1: Understanding Harmonic Function" },
-      { id: "c13_2", title: "Ch.2: Tonic, Predominant and Dominant Functions" },
-      { id: "c13_3", title: "Ch.3: Diatonic Functions in Major Keys" },
-      { id: "c13_4", title: "Ch.4: Diatonic Functions in Minor Keys" },
-      { id: "c13_5", title: "Ch.5: Functional Progressions and Harmonic Goals" },
-      { id: "c13_6", title: "Ch.6: Functional Behaviour of Seventh Chords" },
-      { id: "c13_7", title: "Ch.7: Chord Function in Context" },
-      { id: "c13_8", title: "Ch.8: Harmonic Rhythm and Phrase Structure" },
-      { id: "c13_9", title: "Ch.9: Limits of Functional Analysis" }
-    ]
-  },
-  {
-    id: "cat14", title: "14. Cadences", level: "A",
-    chapters: [
-      { id: "c14_1", title: "Ch.1: Authentic and Half Cadences" },
-      { id: "c14_2", title: "Ch.2: Plagal and Deceptive Cadences" }
-    ]
-  },
-  {
-    id: "cat15", title: "15. Secondary Dominants", level: "A",
-    chapters: [
-      { id: "c15_1", title: "Ch.1: Tonicization vs. Modulation" },
-      { id: "c15_2", title: "Ch.2: V7 of V and Extended Chains" }
-    ]
-  },
-  {
-    id: "cat16", title: "16. Modal Interchange", level: "A",
-    chapters: [
-      { id: "c16_1", title: "Ch.1: Borrowing from the Parallel Minor" },
-      { id: "c16_2", title: "Ch.2: Common Borrowed Chords (bVI, bVII)" }
-    ]
-  },
-  {
-    id: "cat17", title: "17. Modulation", level: "A",
-    chapters: [
-      { id: "c17_1", title: "Ch.1: Pivot Chords" },
-      { id: "c17_2", title: "Ch.2: Direct and Phrase Modulation" }
-    ]
-  },
-  {
-    id: "cat18", title: "18. Chromatic Harmony", level: "A",
-    chapters: [
-      { id: "c18_1", title: "Ch.1: Neapolitan and Augmented Sixth Chords" },
-      { id: "c18_2", title: "Ch.2: Tritone Substitution" }
-    ]
-  },
-  {
-    id: "cat19", title: "19. Voice Leading", level: "A",
-    chapters: [
-      { id: "c19_1", title: "Ch.1: Parallel and contrary motion" },
-      { id: "c19_2", title: "Ch.2: Voice crossing and independence" },
-      { id: "c19_3", title: "Ch.3: Resolving tendency tones on the fretboard" }
-    ]
-  },
-  {
-    id: "cat20", title: "20. Counterpoint", level: "A",
-    chapters: [
-      { id: "c20_1", title: "Ch.1: First species (note against note)" },
-      { id: "c20_2", title: "Ch.2: Oblique motion and pedal points" },
-      { id: "c20_3", title: "Ch.3: Two-part Guitar Polyphony" }
-    ]
-  },
-  {
-    id: "cat21", title: "21. Rhythm and Meter", level: "I",
-    chapters: [
-      { id: "c21_1", title: "Ch.1: Simple vs. Compound Meter" },
-      { id: "c21_2", title: "Ch.2: Syncopation and Displacement" },
-      { id: "c21_3", title: "Ch.3: Odd Time Signatures and Polyrhythms" }
-    ]
-  },
-  {
-    id: "cat22", title: "22. Musical Form and Composition", level: "A",
-    chapters: [
-      { id: "c22_1", title: "Ch.1: Motif and Development" },
-      { id: "c22_2", title: "Ch.2: Binary, Ternary, and Song Structures" },
-      { id: "c22_3", title: "Ch.3: Sonata-Allegro and Advanced Structures" }
-    ]
-  }
-];
-
-const COMPENDIUM_SECTIONS = [
-  { key: "overview", label: "Overview" },
-  { key: "prereq", label: "Prerequisites" },
-  { key: "def", label: "Definitions" },
-  { key: "const", label: "Construction" },
-  { key: "var", label: "Variants" },
-  { key: "rel", label: "Relationships" },
-  { key: "effect", label: "Musical Effect" },
-  { key: "examples", label: "Examples" },
-  { key: "guitar", label: "Guitar Application" },
-  { key: "mistakes", label: "Common Mistakes" },
-  { key: "worked", label: "Worked Examples" },
-  { key: "exercises", label: "Exercises" },
-  { key: "study", label: "Further Study" }
-];
-
-function markChapterViewed(id) {
-  let cp = state.dojo.compendiumProgress.chapters;
-  if (!cp[id]) {
-      cp[id] = { status: 'inProgress', lastViewedAt: Date.now() };
-  } else {
-      cp[id].lastViewedAt = Date.now();
-  }
-  saveState();
-}
-
-function markChapterStudied(id) {
-  let cp = state.dojo.compendiumProgress.chapters;
-  if (!cp[id]) {
-      cp[id] = { status: 'studied', lastViewedAt: Date.now() };
-  } else { 
-      cp[id].status = 'studied'; 
-      cp[id].lastViewedAt = Date.now(); 
-  }
-  saveState();
-  render();
-  showToast("Chapter marked as studied!");
-}
-
-function renderDojoHub() {
-  let info = getDojoLevelInfo(state.dojo.xp);
-  let html = '<div class="eyebrow" style="color:var(--blue);">DOJO TERMINAL</div>';
-  html += '<div class="h2" style="font-size:24px; margin-bottom:4px;">Level ' + info.level + ' - ' + info.title + '</div>';
-  
-  html += '<div class="xp-bar-container" style="margin-bottom:24px;">';
-  html += '<div class="xp-bar-fill" style="width:'+info.pct+'%;"></div>';
-  html += '<div class="xp-text">' + state.dojo.xp + ' / ' + (info.nextReq === 999999 ? 'MAX' : info.nextReq) + ' XP</div>';
-  html += '</div>';
-
-  html += '<button class="navbtn dojo-btn" style="border-color:var(--blue);" data-action="dojonav" data-view="syllabus"><div class="ic">📜</div><div class="info"><b>Music Theory Compendium</b><span>Complete structural syllabus of all theory and diatonic harmony.</span></div></button>';
-  
-  html += '<button class="navbtn dojo-btn" data-action="dojonav" data-view="fretboard"><div class="ic">🎯</div><div class="info"><b>Fretboard Mastery</b><span>Access the fretboard vision tools and mapping mechanics.</span></div></button>';
-  
-  html += '<button class="navbtn dojo-btn" data-action="dojonav" data-view="analysis"><div class="ic">🏛️</div><div class="info"><b>Harmonic Analysis Lab</b><span>Deconstruct chord progressions and Roman Numeral analysis.</span></div></button>';
-
-  return html;
-}
-
-function renderDojoSyllabus() {
-  let html = '<div class="game-header"><span class="game-title">📜 The Compendium</span><button class="tbtn" data-action="dojonav" data-view="hub">Back</button></div>';
-  html += '<p class="lede">The complete structural roadmap of music theory, designed for absolute mastery on the fretboard.</p>';
-  
-  COMPENDIUM_SYLLABUS.forEach((cat) => {
-    let open = !!ui.lib[cat.id];
-    let catStatus = "";
-    // Future: calculate overall category completion % based on chapters
-    
-    html += '<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="'+cat.id+'"><b>'+cat.title+'</b><span class="acc-right"><span class="ch-badge ' + cat.level.toLowerCase() + '">' + (cat.level === 'B' ? 'Beginner' : cat.level === 'I' ? 'Intermediate' : 'Advanced') + '</span><span class="chev'+(open?" open":"")+'">&#8250;</span></span></div>';
-    
-    if (open) {
-      html += '<div class="accbody">';
-      cat.chapters.forEach(ch => {
-        let rec = state.dojo.compendiumProgress.chapters[ch.id];
-        let stat = rec ? rec.status : 'unread';
-        let ic = stat === 'studied' ? '✔️' : stat === 'inProgress' ? '📖' : '◦';
-        let cls = stat === 'studied' ? 'ch-studied' : stat === 'inProgress' ? 'ch-inprogress' : 'ch-unread';
-        
-        html += '<div class="ch-item ' + cls + '" data-action="dojonav" data-view="chapter" data-ch="'+ch.id+'"><span class="status-icon">'+ic+'</span><div class="itxt"><b>'+ch.title+'</b></div></div>';
-      });
-      html += '</div>';
-    }
-    html += '</div>';
-  });
-
-  return html;
-}
-
-function renderDojoChapter() {
-  let chId = ui.activeChapter;
-  let chapter = null, catTitle = "";
-  
-  for(let c of COMPENDIUM_SYLLABUS) {
-    let f = c.chapters.find(x => x.id === chId);
-    if (f) { chapter = f; catTitle = c.title; break; }
-  }
-  
-  if(!chapter) return '<div class="game-header"><span class="game-title">Error</span><button class="tbtn" data-action="dojonav" data-view="syllabus">Back</button></div><p>Chapter not found.</p>';
-  
-  let rec = state.dojo.compendiumProgress.chapters[chId];
-  let isStudied = rec && rec.status === 'studied';
-
-  let html = '<div class="game-header" style="align-items:flex-start; margin-bottom:24px;"><div><div style="font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">'+catTitle+'</div><span class="game-title" style="font-size:18px;">'+chapter.title+'</span></div><button class="tbtn" data-action="dojonav" data-view="syllabus">Back</button></div>';
-
-  COMPENDIUM_SECTIONS.forEach((sec) => {
-    let key = "ch_" + chId + "_" + sec.key;
-    let open = !!ui.lib[key];
-    html += '<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="'+key+'"><b style="color:var(--text);">'+sec.label+'</b><span class="acc-right"><span class="chev'+(open?" open":"")+'">&#8250;</span></span></div>';
-    if(open) {
-      html += '<div class="accbody"><p style="color:var(--muted); font-size:13px; text-align:justify;">Content for <b>'+sec.label+'</b> will be loaded in a future phase.</p></div>';
-    }
-    html += '</div>';
-  });
-
-  if (isStudied) {
-     let dateStr = new Date(rec.lastViewedAt).toLocaleDateString();
-     html += '<div class="note blue" style="text-align:center; margin-top:24px;"><b>✔️ Marked as Studied</b><br><span style="font-size:12px; opacity:0.8;">Last reviewed on '+dateStr+'</span></div>';
-  } else {
-     html += '<button class="tbtn blue" style="width:100%; margin-top:24px;" data-action="markstudied" data-ch="'+chId+'">Mark as Studied</button>';
-     html += '<p style="font-size:11px; color:var(--muted); text-align:center; margin-top:8px;">Marking as studied tracks your reading progress. It does not imply mastery of exercises.</p>';
-  }
-
-  return html;
-}
-
-function renderFretboardPlaceholder() {
-  let html = '<div class="game-header"><span class="game-title">🎯 Fretboard Mastery</span><button class="tbtn" data-action="dojonav" data-view="hub">Back</button></div>';
-  html += '<p class="lede">This interactive module for fretboard vision and mapping is locked. The mechanics require foundational knowledge.</p>';
-  html += '<div class="card" style="border-color:var(--blue);">';
-  html += '<h3 style="color:var(--blue);">Preparatory Theory</h3>';
-  html += '<p style="font-size:13.5px; margin-bottom:12px;">Before entering the mapping lab, ensure you have studied the layout and intervals.</p>';
-  html += '<button class="tbtn" style="width:100%; margin-bottom:8px; text-align:left;" data-action="dojonav" data-view="chapter" data-ch="c1_3">📖 Read: Fretboard Layout and Navigation</button>';
-  html += '<button class="tbtn" style="width:100%; text-align:left;" data-action="dojonav" data-view="chapter" data-ch="c4_5">📖 Read: Fretboard Shapes for Intervals</button>';
-  html += '</div>';
-  return html;
-}
-
-function renderAnalysisPlaceholder() {
-  let html = '<div class="game-header"><span class="game-title">🏛️ Harmonic Analysis Lab</span><button class="tbtn" data-action="dojonav" data-view="hub">Back</button></div>';
-  html += '<p class="lede">The engine for deconstructing chord progressions and Roman Numeral analysis is locked pending theory foundation.</p>';
-  html += '<div class="card" style="border-color:var(--blue);">';
-  html += '<h3 style="color:var(--blue);">Preparatory Theory</h3>';
-  html += '<p style="font-size:13.5px; margin-bottom:12px;">This lab requires understanding of diatonic and functional harmony.</p>';
-  html += '<button class="tbtn" style="width:100%; margin-bottom:8px; text-align:left;" data-action="dojonav" data-view="chapter" data-ch="c12_3">📖 Read: Roman Numeral Analysis</button>';
-  html += '<button class="tbtn" style="width:100%; text-align:left;" data-action="dojonav" data-view="chapter" data-ch="c13_1">📖 Read: Understanding Harmonic Function</button>';
-  html += '</div>';
-  return html;
-}
-
-function renderDojoView() {
-  let view = ui.dojoView || 'hub';
-  let html = '<div class="codex-view active">';
-  
-  if (view === 'hub') html += renderDojoHub();
-  else if (view === 'syllabus') html += renderDojoSyllabus();
-  else if (view === 'chapter') html += renderDojoChapter();
-  else if (view === 'fretboard') html += renderFretboardPlaceholder();
-  else if (view === 'analysis') html += renderAnalysisPlaceholder();
-  
-  html += '</div>';
-  return html;
-}
-
 /* ---------- render helpers ---------- */
 function linked(label,url){ return url? '<a href="'+url+'" target="_blank" rel="noopener">'+label+'</a>' : label; }
 function checkItem(label,key,url,editable){
   if(editable===undefined) editable=true;
   var c=!!state.checks[key];
-  var btn = editable
-    ? '<button class="mbtn'+(c?" on":"")+'" data-action="togm" data-key="'+key+'">'+(c?"\u2713 Mastered":"Unmastered")+'</button>'
-    : '<button class="mbtn ro'+(c?" on":"")+'">'+(c?"\u2713 Mastered":"Unmastered")+'</button>';
+  var btn = editable ? '<button class="mbtn'+(c?" on":"")+'" data-action="togm" data-key="'+key+'">'+(c?"\u2713 Mastered":"Unmastered")+'</button>' : '<button class="mbtn ro'+(c?" on":"")+'">'+(c?"\u2713 Mastered":"Unmastered")+'</button>';
   return '<li class="mrow"><div class="itxt'+(c?" done":"")+'">'+linked(label,url)+'</div>'+btn+'</li>';
 }
 function watchItem(label,key,url,editable){
   if(editable===undefined) editable=true;
   var c=!!state.checks[key];
-  var btn = editable
-    ? '<button class="mbtn blue'+(c?" on":"")+'" data-action="togm" data-key="'+key+'">'+(c?"\u2713 Watched":"Unwatched")+'</button>'
-    : '<button class="mbtn ro blue'+(c?" on":"")+'">'+(c?"\u2713 Watched":"Unwatched")+'</button>';
+  var btn = editable ? '<button class="mbtn blue'+(c?" on":"")+'" data-action="togm" data-key="'+key+'">'+(c?"\u2713 Watched":"Unwatched")+'</button>' : '<button class="mbtn ro blue'+(c?" on":"")+'">'+(c?"\u2713 Watched":"Unwatched")+'</button>';
   return '<li class="mrow"><div class="itxt'+(c?" done":"")+'">'+linked(label,url)+'</div>'+btn+'</li>';
 }
 function prereqItem(label,key,url,editable){
   if(editable===undefined) editable=true;
   var c=!!state.checks[key];
-  var btn = editable
-    ? '<button class="mbtn blue'+(c?" on":"")+'" data-action="togm" data-key="'+key+'">'+(c?"\u2713 Completed":"Incomplete")+'</button>'
-    : '<button class="mbtn ro blue'+(c?" on":"")+'">'+(c?"\u2713 Completed":"Incomplete")+'</button>';
+  var btn = editable ? '<button class="mbtn blue'+(c?" on":"")+'" data-action="togm" data-key="'+key+'">'+(c?"\u2713 Completed":"Incomplete")+'</button>' : '<button class="mbtn ro blue'+(c?" on":"")+'">'+(c?"\u2713 Completed":"Incomplete")+'</button>';
   return '<li class="mrow"><div class="itxt'+(c?" done":"")+'">'+linked(label,url)+'</div>'+btn+'</li>';
 }
 function docItem(label,url){ return '<li class="docli"><div class="docic">\ud83d\udcd6</div><div class="itxt">'+linked(label,url)+'</div></li>'; }
@@ -1468,14 +892,21 @@ function renderBonusList(){
     return '<div class="chop"><div class="nm">'+linked(b.t,b.url)+'</div></div>';
   }).join("");
 }
-function progressBar(){
+function renderHeaderProgress(){
   var segs="",labels="";
   PHASES.forEach(function(p,i){
     var pct=phasePercent(i);
     segs+='<div class="pseg"><i style="width:'+pct+'%"></i></div>';
     labels+='<span class="'+(i===state.phaseIndex?"cur":"")+'">Phase '+i+'</span>';
   });
-  return '<div class="phasebar-wrapper"><div class="phasebar">'+segs+'</div><div class="plabels">'+labels+'</div></div>';
+  var phaseHtml = '<div class="phasebar-wrapper"><div class="phasebar">'+segs+'</div><div class="plabels">'+labels+'</div></div>';
+
+  return '<div class="header-progress-grid">' +
+         '<div class="prog-col"><div class="prog-title">TECHNIQUE ROADMAP</div>' + phaseHtml + '</div>' +
+         '<div class="prog-col"><div class="prog-title">MUSICAL DEVELOPMENT</div>' +
+         '<div class="md-box"><div class="md-sub">DOJO</div><div class="md-sub">IMPROV</div></div>' +
+         '<div class="md-label">Measurement model pending</div></div>' +
+         '</div>';
 }
 function dayPicker(selectedDay){
   var today=todayName(), act=activeDay();
@@ -1572,14 +1003,12 @@ function renderStreakCalendar(){
   var m = ui.calMonth;
   var y = ui.calYear;
   var earliest = getEarliestYearMonth();
-
   var prevM = m - 1, prevY = y;
   if(prevM < 0) { prevM = 11; prevY--; }
   var nextM = m + 1, nextY = y;
   if(nextM > 11) { nextM = 0; nextY++; }
 
   var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-
   var canGoBack = (y > earliest.y) || (y === earliest.y && m > earliest.m);
   var canGoFwd = (y < now.getFullYear()) || (y === now.getFullYear() && m < now.getMonth());
 
@@ -1598,14 +1027,9 @@ function renderStreakCalendar(){
 
   html += '<div class="streak-wrapper" id="cal-swipe-area">';
   html += '<div class="cal-carousel" id="cal-carousel">';
-  
-  if(canGoBack) {
-    html += '<div class="cal-panel" data-ym="'+prevY+'-'+prevM+'">' + buildMonthGrid(prevY, prevM) + '</div>';
-  }
+  if(canGoBack) { html += '<div class="cal-panel" data-ym="'+prevY+'-'+prevM+'">' + buildMonthGrid(prevY, prevM) + '</div>'; }
   html += '<div class="cal-panel" data-ym="'+y+'-'+m+'">' + buildMonthGrid(y, m) + '</div>';
-  if(canGoFwd) {
-    html += '<div class="cal-panel" data-ym="'+nextY+'-'+nextM+'">' + buildMonthGrid(nextY, nextM) + '</div>';
-  }
+  if(canGoFwd) { html += '<div class="cal-panel" data-ym="'+nextY+'-'+nextM+'">' + buildMonthGrid(nextY, nextM) + '</div>'; }
   
   html += '</div></div>';
   return html;
@@ -1616,6 +1040,13 @@ function changeCalMonth(dir) {
   if (ui.calMonth > 11) { ui.calMonth = 0; ui.calYear++; }
   else if (ui.calMonth < 0) { ui.calMonth = 11; ui.calYear--; }
   render();
+}
+
+function renderConflict() {
+  return '<div class="conflict-modal"><div class="conflict-box"><h3>\\u26a0\\ufe0f Sync Conflict</h3>' +
+         '<p style="margin:16px 0; color:var(--text); line-height:1.5;">You have local changes that haven\\'t been saved to the cloud, but the cloud also has data.</p>' +
+         '<button class="tbtn primary" style="width:100%;margin-bottom:12px;" data-action="resolveLocal">Keep Local Data (Overwrite Cloud)</button>' +
+         '<button class="tbtn danger" style="width:100%;" data-action="resolveCloud">Keep Cloud Data (Overwrite Local)</button></div></div>';
 }
 
 /* ---------- views ---------- */
@@ -1745,10 +1176,7 @@ function renderDaily(){
     focusBody+='<p style="margin:8px 0;">Chop-builders (picking) - protect ~15 min:</p>'+chopRow(p.target,["alt","sweep"]);
   } else if(day==="Wed"){
     var theoryHtml = "";
-    THEORY_DOCS.forEach(function(docItemObj){
-      theoryHtml += docItem(docItemObj.t, docItemObj.url);
-    });
-    
+    THEORY_DOCS.forEach(function(docItemObj){ theoryHtml += docItem(docItemObj.t, docItemObj.url); });
     var activeItem = null, activeGroup = null;
     for(var i=0; i<THEORY_GROUPS.length; i++){
       var g = THEORY_GROUPS[i];
@@ -1760,17 +1188,9 @@ function renderDaily(){
       }
       if(activeItem) break;
     }
-    
-    if(activeGroup && activeGroup.docs) {
-      activeGroup.docs.forEach(function(d){ theoryHtml += docItem(d.t, d.url); });
-    }
-
+    if(activeGroup && activeGroup.docs) { activeGroup.docs.forEach(function(d){ theoryHtml += docItem(d.t, d.url); }); }
     var theorySeq = getDailyActiveSequence(THEORY_ITEMS, "theory", editable, true);
-    if(theorySeq) {
-      theoryHtml += theorySeq;
-    } else {
-      theoryHtml += '<p style="margin-top:8px;color:var(--muted);">All theory items completed!</p>';
-    }
+    if(theorySeq) { theoryHtml += theorySeq; } else { theoryHtml += '<p style="margin-top:8px;color:var(--muted);">All theory items completed!</p>'; }
     focusBody+='<p style="margin-bottom:8px;">Theory in rotation:</p><ul class="check">'+theoryHtml+'</ul>';
   } else if(day==="Thu"){
     focusBody+='<p style="margin-bottom:8px;">Chop-builders (legato/economy/tapping):</p>'+chopRow(p.target,["legato","econ","tap"]);
@@ -1816,18 +1236,10 @@ function renderImprov(){
   var allDone = state.improvIndex >= IMPROV_GATES.length;
 
   var IMPROV_KEYS = [
-    {k:"E minor", t:"Classic Heavy / Thrash"},
-    {k:"B minor", t:"Prog / Melodic Death"},
-    {k:"C# minor", t:"Sabbath / Doom Core"},
-    {k:"C minor", t:"Sludge / Heavy Drop"},
-    {k:"A minor", t:"Neoclassical / Classic Rock"},
-    {k:"D minor", t:"Opeth / Dark Prog"},
-    {k:"G minor", t:"Groove Metal"},
-    {k:"F# minor", t:"Technical / Prog"},
-    {k:"Bb minor", t:"Drop Bb Death Metal"},
-    {k:"Eb minor", t:"Hendrix / Dark Blues"},
-    {k:"G# minor", t:"Modern Metal"},
-    {k:"F minor", t:"Moody / Symphonic"}
+    {k:"E minor", t:"Classic Heavy / Thrash"}, {k:"B minor", t:"Prog / Melodic Death"}, {k:"C# minor", t:"Sabbath / Doom Core"},
+    {k:"C minor", t:"Sludge / Heavy Drop"}, {k:"A minor", t:"Neoclassical / Classic Rock"}, {k:"D minor", t:"Opeth / Dark Prog"},
+    {k:"G minor", t:"Groove Metal"}, {k:"F# minor", t:"Technical / Prog"}, {k:"Bb minor", t:"Drop Bb Death Metal"},
+    {k:"Eb minor", t:"Hendrix / Dark Blues"}, {k:"G# minor", t:"Modern Metal"}, {k:"F minor", t:"Moody / Symphonic"}
   ];
   var d = new Date();
   var dayOfYear = Math.floor((Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) - Date.UTC(d.getFullYear(), 0, 0)) / 24 / 60 / 60 / 1000);
@@ -1841,7 +1253,6 @@ function renderImprov(){
           '<div style="font-size:12.5px; margin-top:10px; color:#eef0f4; font-weight:normal; line-height:1.5;">Read the exercises below in their example keys, but <b>force yourself to transpose and play them in '+tKey.k+' today</b>. This breaks vertical habits and builds true neck mastery.</div>'+
           '</div>';
   }
-
 
   if(allDone){
     html+='<div class="note purple" style="text-align:center;"><b>\ud83c\udfc6 YOU HAVE MASTERED THE 5 GATES!</b><br>You are now a free player. Keep using these tools in your daily jams.</div>';
@@ -1861,9 +1272,7 @@ function renderImprov(){
       html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="improvG'+i+'"><b style="color:var(--purple);">\u2713 GATE '+(i+1)+': '+g.title.toUpperCase()+'</b><span class="chev'+(ui.lib["improvG"+i]?" open":"")+'">\u203a</span></div>';
       if(ui.lib["improvG"+i]){
         html+='<div class="accbody">';
-        g.exercises.forEach(function(ex){
-          html+='<p style="font-size:13px; margin-bottom:10px; color:var(--muted);">\u2713 '+ex.t+'</p>';
-        });
+        g.exercises.forEach(function(ex){ html+='<p style="font-size:13px; margin-bottom:10px; color:var(--muted);">\u2713 '+ex.t+'</p>'; });
         html+='</div>';
       }
       html+='</div>';
@@ -1901,6 +1310,99 @@ function renderImprov(){
   });
 
   return html;
+}
+
+function renderDojoHub() {
+  return '<div class="eyebrow" style="color:var(--blue);">DOJO HUB</div>' +
+         '<div class="h2" style="font-size:24px; margin-bottom:24px;">Learning Centre</div>' +
+         '<button class="navbtn" style="border-color:var(--blue);" data-action="dojonav" data-dest="compendium"><div class="ic">📜</div><div class="info"><b>Music Theory Compendium</b><span style="display:block; margin-top:4px;">Explore theory, harmony, and rhythm from fundamentals to advanced.</span></div></button>' +
+         '<button class="navbtn" data-action="dojonav" data-dest="fretboard"><div class="ic">🎯</div><div class="info"><b>Fretboard Mastery</b><span style="display:block; margin-top:4px;">Practical navigation and visualization across the neck.</span></div></button>' +
+         '<button class="navbtn" data-action="dojonav" data-dest="analysis"><div class="ic">🏛️</div><div class="info"><b>Harmonic Analysis Lab</b><span style="display:block; margin-top:4px;">Analyze progressions, functional relationships, and musical context.</span></div></button>';
+}
+
+function renderDojoLanding(title, desc) {
+  return '<div class="game-header" style="margin-bottom:16px;"><button class="tbtn" data-action="dojonav" data-dest="hub">&lsaquo; Back to Hub</button></div>' +
+         '<div class="card" style="text-align:center; padding:40px 20px;"><div class="ic" style="font-size:48px; margin-bottom:16px;">⏳</div>' +
+         '<h3 style="display:block; font-size:20px;">'+title+'</h3><p>'+desc+'</p>' +
+         '<p style="margin-top:16px; font-style:italic; font-size:13px;">Interactive tools are assigned to a future phase.</p>' +
+         '<button class="tbtn primary" style="margin-top:24px;" data-action="dojonav" data-dest="compendium">Explore Theory Compendium instead</button></div>';
+}
+
+function renderCompendium() {
+  var html = '<div class="game-header" style="margin-bottom:16px;"><button class="tbtn" data-action="dojonav" data-dest="hub">&lsaquo; Dojo Hub</button></div>';
+  html += '<div class="dojo-explorer">';
+  html += '<div class="dojo-sidebar">';
+  html += '<div class="shell-search" style="margin:0 0 12px 0; max-width:100%; border-radius:8px;"><span class="ic">🔍</span><span class="srch-txt">Search curriculum...</span></div>';
+  COMPENDIUM_CATEGORIES.forEach(function(c) {
+     var active = ui.dojoCat === c.id ? " active" : "";
+     html += '<button class="cat-btn' + active + '" data-action="dojocat" data-id="' + c.id + '">' + c.title + '</button>';
+  });
+  html += '</div>';
+
+  var cat = COMPENDIUM_CATEGORIES.find(function(c){ return c.id === ui.dojoCat; });
+  html += '<div class="dojo-content"><h3 style="font-size:22px; color:var(--text); margin-bottom:12px;">' + (cat ? cat.title : 'Select a Category') + '</h3>';
+  if(cat && cat.chapters && cat.chapters.length) {
+     html += '<p class="lede" style="margin-bottom:24px;">Select a chapter to begin reading. Theory reading does not require progression or XP.</p>';
+     html += '<div class="chapter-list">';
+     cat.chapters.forEach(function(ch) {
+        html += '<div class="chapter-card" data-action="dojochap" data-ch="'+ch.id+'"><h4>'+ch.title+'</h4><p style="font-size:12.5px;">Theoretical foundation and practical context.</p></div>';
+     });
+     html += '</div>';
+  } else {
+     html += '<p style="color:var(--muted); margin-top:10px;">Chapters for this category will be populated in a future phase.</p>';
+  }
+  html += '</div></div>';
+  return html;
+}
+
+function renderChapterReader() {
+  var cat = COMPENDIUM_CATEGORIES.find(function(c){ return c.id === ui.dojoCat; });
+  var ch = cat.chapters.find(function(c) { return c.id === ui.dojoChap; });
+  var html = '<div class="game-header" style="margin-bottom:16px;"><button class="tbtn" data-action="dojonav" data-dest="compendium">&lsaquo; Back to ' + cat.title + '</button></div>';
+  html += '<div class="reader-layout">';
+  html += '<div class="reader-article">';
+  html += '<div class="eyebrow" style="color:var(--blue);">' + cat.title + '</div>';
+  html += '<h1>' + ch.title + '</h1>';
+  
+  html += '<p>The concept of harmonic function explains how chords behave, relate to one another, and create a sense of movement or resolution within a tonal center. It is not enough to simply spell a chord; we must understand its job in the progression.</p>';
+
+  html += '<h2>Visualizing Relationships</h2>';
+  html += '<p>The Circle of Fifths is a fundamental diagram for visualizing key signatures, relative minors, and diatonic relationships.</p>';
+  
+  html += '<div class="theory-diagram">' +
+          '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style="max-width:300px; width:100%; height:auto;">' +
+          '<circle cx="100" cy="100" r="90" fill="none" stroke="#2a2e38" stroke-width="2"/>' +
+          '<text x="100" y="30" fill="#fff" font-size="16" text-anchor="middle" font-family="Inter,sans-serif" font-weight="700">C</text>' +
+          '<text x="170" y="105" fill="#fff" font-size="16" text-anchor="middle" font-family="Inter,sans-serif" font-weight="700">G</text>' +
+          '<text x="100" y="180" fill="#fff" font-size="16" text-anchor="middle" font-family="Inter,sans-serif" font-weight="700">F#</text>' +
+          '<text x="30" y="105" fill="#fff" font-size="16" text-anchor="middle" font-family="Inter,sans-serif" font-weight="700">F</text>' +
+          '<text x="100" y="105" fill="#6fa8ff" font-size="12" text-anchor="middle" font-family="Inter,sans-serif">Am</text>' +
+          '</svg>' +
+          '<div class="diagram-caption">Representative diagram: Circle of Fifths (abridged for demonstration)</div>' +
+          '</div>';
+
+  html += '<h2>Practical Application</h2>';
+  html += '<p>When applying this to the fretboard, target the 3rd and 7th of the functioning chord to clearly outline the harmonic movement without relying on full barre chords.</p>';
+  html += '</div>';
+
+  html += '<div class="reader-index">';
+  html += '<div style="font-size:11.5px; text-transform:uppercase; font-weight:700; color:var(--text); margin-bottom:12px;">Chapter Index</div>';
+  html += '<a href="#">Overview & Objectives</a>';
+  html += '<a href="#">Visualizing Relationships</a>';
+  html += '<a href="#">Practical Application</a>';
+  html += '<a href="#">Exercises</a>';
+  html += '</div>';
+
+  html += '</div>';
+  return html;
+}
+
+function renderDojoView() {
+  if (ui.dojoView === 'compendium') return renderCompendium();
+  if (ui.dojoView === 'reader') return renderChapterReader();
+  if (ui.dojoView === 'fretboard') return renderDojoLanding('Fretboard Mastery', 'Practical navigation and visualization across the neck.');
+  if (ui.dojoView === 'analysis') return renderDojoLanding('Harmonic Analysis Lab', 'Analyze progressions, functional relationships, and musical context.');
+  return renderDojoHub();
 }
 
 function renderLibrary(){
@@ -2148,24 +1650,29 @@ function initCalCarousel(){
   var carousel = document.getElementById('cal-carousel');
   if(carousel) {
     var curPanel = carousel.querySelector('.cal-panel[data-ym="'+ui.calYear+'-'+ui.calMonth+'"]');
-    if(curPanel) {
-      carousel.scrollTo({left: curPanel.offsetLeft, behavior: 'instant'});
-    }
+    if(curPanel) { carousel.scrollTo({left: curPanel.offsetLeft, behavior: 'instant'}); }
   }
 }
+
 function render(){
   try {
     ensureDailyReset();
     if(!document.getElementById("views-container")) initAppLayout();
+
+    var cLayer = document.getElementById('conflict-layer');
+    if (ui.view === 'conflict' || ui.conflictData) {
+       cLayer.innerHTML = renderConflict();
+       return; 
+    } else {
+       cLayer.innerHTML = '';
+    }
 
     var tops = {};
     document.querySelectorAll('.view-panel').forEach(function(p){ tops[p.id] = p.scrollTop; });
 
     var topbarHTML = '<div class="topbar-header">';
     topbarHTML += '<div class="brand mobile-brand">THE <span>SHRED</span> ROADMAP</div>';
-    
-    // Future search integration
-    topbarHTML += '<div class="shell-search" onclick="showToast(\'Global search coming in a future phase\')"><span class="ic">🔍</span><span class="srch-txt">Search...</span></div>';
+    topbarHTML += '<div class="shell-search" onclick="showToast(\\'Global search coming in a future phase\\')"><span class="ic">🔍</span><span class="srch-txt">Search...</span></div>';
     
     if(hasFirebase){
       topbarHTML += '<div class="auth-container">';
@@ -2175,7 +1682,7 @@ function render(){
       }
       topbarHTML += '<button id="authBtn" class="dchip2" style="padding:7px 12px; margin:0; border-color:var(--border); color:var(--text);">' + (currentUser ? "Logout" : "Login") + '</button></div>';
     }
-    topbarHTML += '</div>' + progressBar();
+    topbarHTML += '</div>' + renderHeaderProgress();
     document.getElementById('topbar').innerHTML = topbarHTML;
 
     document.getElementById('panel-home').innerHTML = '<div class="panel-content">' + renderHome() + '</div>';
@@ -2188,11 +1695,8 @@ function render(){
     updateNav();
 
     document.querySelectorAll('.view-panel').forEach(function(p){
-       if(p.id === 'panel-' + ui.view) {
-           p.classList.add('active');
-       } else {
-           p.classList.remove('active');
-       }
+       if(p.id === 'panel-' + ui.view) { p.classList.add('active'); } 
+       else { p.classList.remove('active'); }
        p.scrollTop = tops[p.id] || 0;
     });
     
@@ -2205,7 +1709,6 @@ function render(){
   }
 }
 
-// Calendar carousel scroll listener for fluid swiping and month preview
 document.addEventListener("scroll", function(e) {
   if(e.target && e.target.id === "cal-carousel") {
     var carousel = e.target;
@@ -2230,25 +1733,40 @@ document.addEventListener("scroll", function(e) {
   }
 }, {capture: true, passive: true});
 
-
 document.addEventListener("click",function(e){
-
-  if(e.target.closest("a")) return;
+  if(e.target.closest("a") && !e.target.closest(".reader-index")) return;
   var t=e.target.closest("[data-action],[data-toggle],#authBtn,.shell-search");
   if(!t) return;
 
-  if(t.id === "authBtn"){
+  var a = t.dataset.action || t.dataset.toggle;
+  if(t.id === "authBtn") a = "authBtn";
+
+  if (isSyncing) return;
+  if (ui.conflictData && a !== "resolveLocal" && a !== "resolveCloud") return;
+
+  if(a === "resolveLocal") {
+     state.unsynced = true;
+     ui.conflictData = null;
+     ui.view = 'home';
+     saveState();
+     render(); return;
+  }
+  if(a === "resolveCloud") {
+     state = Object.assign(defaultState(), ui.conflictData, {unsynced: false});
+     try{localStorage.setItem(STORAGE_KEY, JSON.stringify(state));}catch(e){}
+     ui.conflictData = null;
+     ui.view = 'home';
+     render(); return;
+  }
+
+  if(a === "authBtn"){
     if(currentUser){ signOut(auth).then(() => { showToast("Logged out"); render(); }); } 
     else { signInWithPopup(auth, googleProvider).catch(err => showToast("Login failed")); }
     return;
   }
-  if(t.classList.contains("shell-search")){
-    showToast("Global search coming in a future phase");
-    return;
-  }
+  if(t.classList.contains("shell-search")){ showToast("Global search coming in a future phase"); return; }
 
   if(t.dataset.toggle){ toggleCheck(t.dataset.toggle); return; }
-  var a=t.dataset.action;
   
   if(a==="go"){
     ui.view=t.dataset.view;
@@ -2280,55 +1798,44 @@ document.addEventListener("click",function(e){
   else if(a==="resetactiveday"){ resetActiveDay(); }
   else if(a==="cloudsave"){ 
     if(!currentUser) { showToast("Please login first to save to cloud."); return; }
-    if(cloudWriteLock) { showToast("Cloud save blocked (sync pending or locked)."); return; }
-    setDoc(doc(db, "users", currentUser.uid), state).then(() => showToast("Progress manually saved to cloud!")).catch(() => showToast("Error saving to cloud."));
+    if(cloudWriteLock) { showToast("Cloud locked. Cannot save."); return; }
+    saveState();
+    showToast("Progress manually queued to cloud!");
   }
   else if(a==="cloudload"){ 
     if(!currentUser) { showToast("Please login first to load from cloud."); return; }
-    cloudWriteLock = true; // Lock while parsing
     getDoc(doc(db, "users", currentUser.uid)).then(docSnap => {
       if(docSnap.exists()){
-        let cloudData = docSnap.data();
-        let mergedState = Object.assign(defaultState(), cloudData);
-        mergedState.dojo = Object.assign(defaultDojoState(), cloudData.dojo || {});
-        let localDojoProg = (state.dojo && state.dojo.compendiumProgress) ? state.dojo.compendiumProgress : defaultDojoState().compendiumProgress;
-        let cloudDojoProg = (cloudData.dojo && cloudData.dojo.compendiumProgress) ? cloudData.dojo.compendiumProgress : null;
-        mergedState.dojo.compendiumProgress = reconcileCompendiumProgress(localDojoProg, cloudDojoProg);
-        
-        state = mergedState;
-        state.setupGuitar = state.setupGuitar || "prs";
-        state.setupTuning = state.setupTuning || "e_std";
-        state.improvIndex = state.improvIndex || 0;
-        state.improvChecks = state.improvChecks || {};
-        cloudWriteLock = false; // unlock on success
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-        render();
-        showToast("Progress loaded from cloud!");
-      } else {
-        cloudWriteLock = false;
-        showToast("No cloud data found.");
-      }
-    }).catch(() => {
-        cloudWriteLock = true; // Stay locked
-        showToast("Error loading from cloud.");
-    });
+        const cloudData = docSnap.data();
+        if(!validateSchema(cloudData)) {
+            showToast("Cloud version incompatible.");
+        } else {
+            state = Object.assign(defaultState(), cloudData, {unsynced: false});
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            render();
+            showToast("Progress loaded from cloud!");
+        }
+      } else { showToast("No cloud data found."); }
+    }).catch(() => showToast("Error loading from cloud."));
   }
   else if(a==="reset"){ handleReset(); }
   else if(a==="cancelreset"){ cancelReset(); }
   else if(a==="confirmreset"){ confirmReset(); }
   else if(a==="canceljump"){ cancelPhaseJumpBack(); }
   else if(a==="confirmjump"){ confirmPhaseJumpBack(); }
-  else if(a==="togglemute"){ state.dojo.audioMuted = !state.dojo.audioMuted; saveState(); render(); }
   else if(a==="dojonav"){
-    ui.dojoView = t.dataset.view;
-    if(t.dataset.ch) {
-      ui.activeChapter = t.dataset.ch;
-      markChapterViewed(t.dataset.ch);
-    }
+    ui.dojoView = t.dataset.dest;
     render();
   }
-  else if(a==="markstudied") {
-    markChapterStudied(t.dataset.ch);
+  else if(a==="dojocat"){
+    ui.dojoCat = t.dataset.id;
+    ui.dojoView = 'compendium';
+    render();
+  }
+  else if(a==="dojochap"){
+    ui.dojoChap = t.dataset.ch;
+    ui.dojoView = 'reader';
+    render();
   }
   else if(a==="calprev"){ changeCalMonth(-1); }
   else if(a==="calnext"){ changeCalMonth(1); }
