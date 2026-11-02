@@ -1,241 +1,439 @@
 # THE SHRED ROADMAP — PROJECT MASTERPLAN
 
-> Faithful Markdown conversion of the approved Project Master Document (Version 1.0, 30 October 2026). Technical observations describe the audited original version and must be re-verified against the current HTML before coding.
+> **Version 1.2 — 2 November 2026**
+>
+> Updated from the complete Version 1.0/1.1 project document. This revision preserves the existing product vision, curriculum, technical safeguards, phase sequence and implementation prompts, while incorporating the decisions approved during the Phase 2 specification process.
+>
+> This document is the durable source of product requirements and project context. Historical technical observations must always be verified against the latest approved application source before implementation.
 
-THE SHRED ROADMAP
+# THE SHRED ROADMAP
 
-Project Master Document
+**Project Master Document**
 
-Product vision • Technical context • Architecture • Gemini implementation prompts
+Product vision • Technical context • Architecture • Curriculum • Gemini implementation prompts
 
-Version 1.0  |  30 October 2026
+**Version 1.2 | 2 November 2026**
 
 A durable handover document for continuing the project across conversations and development sessions.
 
+---
+
 ## How to use this document
 
-This document is the project’s durable source of context. It records the product decisions, the known characteristics of the original app, the intended redesign, the implementation sequence, and copy-ready prompts for Gemini. It is also designed to be re-uploaded into a future ChatGPT conversation if project context is lost.
+This document is the project's durable source of context. It records product decisions, the intended application architecture, curriculum requirements, technical safeguards, implementation sequence and prompts for Gemini.
 
-Keep the original index (9).html unchanged as the reference baseline. Make a separate working copy before any code changes.
+It is designed to be re-uploaded into future ChatGPT conversations if project context is lost.
 
-Give Gemini the latest complete index.html plus only the prompt for the current phase.
+### Source of truth
 
-Do not ask Gemini to implement multiple large phases in one operation.
+Use the following hierarchy:
 
-After each phase, download and preserve the complete updated HTML as a named checkpoint.
+1. `MASTERPLAN.md` — authoritative product vision, permanent requirements and project principles.
+2. `CHECKPOINT.md` — current implementation status, immediate next steps and active risks.
+3. `PHASE_LOG.md` — implementation history, approvals, completed work and phase status.
+4. Latest approved complete `index.html` from `main` — authoritative application code.
+5. Current approved phase specification — exact implementation scope and acceptance criteria for the active phase.
 
-Run the acceptance checks before moving to the next phase.
+If these sources conflict, identify the discrepancy explicitly. Do not silently choose whichever version is more convenient.
 
-If Gemini cannot safely complete a phase in one response, ask it to stop at a clear checkpoint rather than omit code or silently simplify features.
+### Development rules
 
-Important provenance note: the technical inventory below reflects the earlier inspection of the original file and the project context available during this planning conversation. Before implementation, Gemini must verify all function names, selectors, data fields, Firebase paths, and dependencies against the actual file. Do not treat this document as proof that every listed implementation detail is still present in a later version.
+- Keep `baseline-original` unchanged as the historical reference.
+- For new implementation work, use the latest approved complete `index.html` from `main`.
+- Never use an older local attachment or an unapproved generated file as the application baseline.
+- Develop only on the authorised phase-specific branch.
+- Give Gemini the latest approved complete `index.html` and only the specification or prompt for the current phase.
+- Do not ask Gemini to implement multiple large phases in one operation.
+- After each phase, preserve the complete updated HTML as a named checkpoint.
+- Run the applicable acceptance checks before moving to the next phase.
+- Do not merge a phase into `main` before the owner has reviewed and approved the implementation.
+- If Gemini cannot safely complete a phase in one response, require it to stop at a clear checkpoint rather than omit code or silently simplify features.
+- Never claim that a browser, Firebase, authentication, synchronisation or cross-device test passed unless it was actually performed.
 
-## 1. Executive project brief
+### Documentation relationship
 
-The Shred Roadmap is intended to become a comprehensive, long-term music-learning and musicianship platform. It should feel like a premium, carefully edited music-theory compendium and practical learning environment, not a shallow quiz app. The user is a musician first and a guitarist second: general music theory is the foundation, with guitar-specific applications presented clearly as a separate practical layer.
+The Masterplan is not intended to duplicate the detailed implementation history.
 
-### Confirmed product decisions
+- Permanent product decisions and requirements belong here.
+- Actual implementation events, approvals, test results and branch history belong in `PHASE_LOG.md`.
+- Immediate project status and next actions belong in `CHECKPOINT.md`.
+- Detailed phase-specific requirements belong in the corresponding approved phase specification.
+
+Historical prompts and decisions may remain in this document for context, but they must be clearly identified as historical or superseded whenever they no longer represent the current requirements.
+
+---
+
+# 1. Executive project brief
+
+The Shred Roadmap is intended to become a comprehensive, long-term music-learning and musicianship platform.
+
+It should feel like a premium, carefully edited music-theory compendium and practical learning environment, not a shallow quiz app or an XP-driven game.
+
+The user is a musician first and a guitarist second. General music theory and musicianship form the foundation, with guitar-specific applications presented clearly as a practical layer.
+
+The application must combine academic depth, practical musical understanding, meaningful exercises, a coherent learning path and freedom to explore the complete educational library.
+
+## Confirmed product decisions
 
 | Decision | Confirmed requirement |
+|---|---|
+| Learning model | A recommended progressive learning path and unrestricted free exploration must coexist. |
+| Language | English throughout the application, curriculum and code comments. |
+| Platforms | Desktop and mobile have equal priority. Responsive design is required. |
+| Information density | Comprehensive depth, presented through clear hierarchy and controlled information density. |
+| Navigation | Hybrid visual categories, search and filters; persistent desktop category sidebar; simplified mobile category selection; continuous chapter reader. |
+| Visual learning | Visual representations are integral whenever they materially improve understanding. Static diagrams and interactive tools must be distinguished. |
+| Original application | Preserve useful functionality, technical foundations and recognisable visual identity. |
+| DOJO | Rebuild the educational experience around the approved three-area structure. Old educational UI and obsolete game architecture may be replaced. |
+| IMPROV | Substantially redesign the five Gates as a practical musicianship and musical-independence curriculum. |
+| Listening Vault | Redesign and expand it into an active listening, reference and analysis library. |
+| Theory progression | Reading theory never generates progress, XP, completion or mastery status. |
+| Practical progression | Progression is based exclusively on meaningful practical exercises and work. |
+| Progress indicators | Maintain two independent systems: `TECHNIQUE ROADMAP` and `MUSICAL DEVELOPMENT`. |
+| DAILY | Preserve its existing functionality. Phase 2 must not redesign or repurpose it. |
 
-| --- | --- |
+## The two progression systems
 
-| Learning model | Both a progressive recommended learning path and free exploration of the full library. |
+The application has two independent progression systems.
 
-| Language | English throughout the app and learning content. |
+**TECHNIQUE ROADMAP**
 
-| Platforms | Desktop and mobile have equal priority; responsive design is required. |
+The existing phase-based technique progression.
 
-| Information density | Comprehensive depth, but avoid showing too much at once. |
+Its calculations, phase segmentation, red visual treatment and established behaviour must be preserved unless a future explicitly approved phase authorises a change.
 
-| Navigation | Clear hierarchy, expandable chapters and subchapters, strong search/discovery. |
+Its visible label must be:
 
-| Visual learning | Interactive diagrams and visual tools are essential. |
+`TECHNIQUE ROADMAP`
 
-| Original app | Respect the original format, identity, core structure and useful functionality. |
+**MUSICAL DEVELOPMENT**
 
-| Dojo | Rebuild the learning experience from scratch; existing Dojo content/mini-games can be treated as disposable. |
+A separate global practical-learning progression system.
 
-| Improv | Substantially redesign the existing Improv area and its five Gates. |
+It contains two subdivisions:
 
-| Listening Vault | Substantially redesign and expand it into an active reference and analysis library. |
+- DOJO
+- IMPROV
 
-## 2. Learning goals and scope
+It must reflect meaningful evidence from practical exercises and work completed in those two learning areas.
 
-The app should help the user achieve all of the following:
+It must not be an arbitrary sum of XP, a decorative percentage or a measure of how many theory chapters have been opened.
 
-Dominate music theory at an advanced level.
+The two indicators must remain conceptually and technically independent.
 
-Know the fretboard deeply and navigate it without hesitation.
+---
 
-Understand harmony and analyse complex music.
+# 2. Learning goals and scope
 
-Improvise freely without depending exclusively on memorised shapes.
+The application should help the learner achieve all of the following:
 
-Compose riffs, progressions, solos and complete pieces.
+- Develop advanced understanding of music theory.
+- Know the fretboard deeply and navigate it without hesitation.
+- Understand harmony and analyse complex music.
+- Improvise freely without depending exclusively on memorised shapes.
+- Compose riffs, progressions, solos and complete pieces.
+- Build a broad theoretical foundation applicable to many musical genres.
+- Connect theoretical understanding to listening, musical decisions and practical execution.
+- Develop genuine musical independence rather than simply accumulating completed lessons.
 
-Build a broad theoretical foundation that can be applied to many genres.
+## Depth and editorial standard
 
-### Depth and editorial standard
+The desired depth is encyclopaedic and almost academic, while remaining readable and practical.
 
-The desired depth is encyclopaedic and almost academic, while remaining readable and practical. A chapter should explain concepts, definitions, construction, terminology, classifications, exceptions, relationships, historical context where useful, examples, musical effects, practical applications, common misconceptions and exercises. Avoid superficial one-paragraph explanations.
+A substantial chapter should explain concepts, definitions, construction, terminology, classifications, exceptions, relationships, historical context where useful, examples, musical effects, practical applications, common misconceptions and exercises.
 
-### Exercise preferences
+Avoid superficial one-paragraph explanations.
 
-Prioritise harmonic analysis, phrasing, fretboard construction and fluency.
+The Compendium should be a reliable long-term reference, not merely a sequence of short lessons.
 
-Use practical theory tasks: construct, identify, analyse, diagnose, compare, transpose, apply and solve.
+## Exercise preferences
 
-Do not make formal staff-reading a prerequisite; simplified chord-symbol and Roman-numeral notation is appropriate.
+Prioritise:
 
-Ear-training drills and open-ended creative composition exercises are not essential because the user has separate tools for these.
+- Harmonic analysis.
+- Phrasing.
+- Fretboard construction and fluency.
+- Understanding chord tones and harmonic movement.
+- Practical application of theoretical concepts.
+- Musical decision-making and problem-solving.
 
-Do not rely on randomised tonalities with an unchanged question template. Vary the cognitive task and the musical context.
+Use practical theory tasks such as:
 
-### Visual requirements
+- Construct.
+- Identify.
+- Analyse.
+- Diagnose.
+- Compare.
+- Classify.
+- Transpose.
+- Apply.
+- Explain.
+- Create.
 
-Interactive guitar fretboard with selectable notes, intervals, scales, chords, arpeggios and positions.
+Do not make formal staff-reading a prerequisite. Simplified chord-symbol and Roman-numeral notation is appropriate.
 
-Interval and scale diagrams.
+Ear-training drills and open-ended creative composition exercises are not essential as isolated activities because the user has separate tools for some of these purposes. However, internal musical conception and practical musical decision-making remain relevant, especially in IMPROV.
 
-Circle of fifths and key-signature visualisation, including accidentals.
+Do not rely on randomised tonalities with an unchanged question template. Vary the cognitive task and musical context.
 
-Chord construction, inversions, extensions and voicing visuals.
+## Visual requirements
 
-Progression and harmonic-analysis visualisations.
+Visual learning is a core part of the educational experience.
 
-Side-by-side mode and scale comparisons.
+Use diagrams and visual representations wherever they materially improve understanding, clarify relationships or demonstrate musical structure.
 
-Rhythm and subdivision diagrams.
+Examples include:
 
-Simplified harmonic notation using chord letters (A, B, C...) and Roman numerals (I, ii, iii, IV, V...).
+- Interactive guitar fretboard with selectable notes, intervals, scales, chords, arpeggios and positions.
+- Interval and scale diagrams.
+- Circle of Fifths and key-signature visualisation, including accidentals.
+- Chord construction, inversions, extensions and voicing diagrams.
+- Progression and harmonic-analysis visualisations.
+- Harmonic function and resolution diagrams.
+- Side-by-side mode and scale comparisons.
+- Voice-leading visualisations.
+- Rhythm, meter and subdivision diagrams.
+- Simplified harmonic notation using chord letters (A, B, C...) and Roman numerals (I, ii, iii, IV, V...).
 
-### Genre context
+Visuals should appear close to the explanations they support, not only in a separate gallery at the end of a chapter.
 
-The theory must remain general rather than being restricted to a genre. Use grounded musical examples and explain where a concept appears, why it works and what effect it creates. Priority reference worlds: stoner, doom, sludge, progressive music, death metal, thrash, blues and selected classic rock.
+Prefer reusable HTML/CSS/SVG implementations where appropriate. Avoid unnecessary dependencies.
 
-## 3. Original application: baseline inventory
+Static educational diagrams and interactive learning tools are different things. Interaction should be added when it provides genuine educational value.
 
-The reference file identified in the project is index (9).html (approximately 130 KB and 2,038 lines at the time it was inspected). It is the authoritative baseline. A separate Gemini-generated file index(1).html was previously judged incomplete and must not be used as the foundation.
+## Genre context
 
-### Existing top-level areas
+The theory must remain general rather than being restricted to a genre.
+
+Use grounded musical examples and explain where a concept appears, why it works and what effect it creates.
+
+Priority reference worlds include:
+
+- Stoner.
+- Doom.
+- Sludge.
+- Progressive music.
+- Death metal.
+- Thrash.
+- Blues.
+- Selected classic rock.
+
+These are preferred contexts for examples, not limits on the curriculum.
+
+---
+
+# 3. Original application: baseline inventory
+
+## Authoritative application baseline
+
+The authoritative application baseline for new work is the latest approved complete `index.html` in the repository's `main` branch.
+
+`baseline-original` must remain unchanged as the historical reference and recovery point.
+
+Older local files, previous Gemini outputs and unapproved branch implementations must not be treated as the current baseline.
+
+The original technical audit identified a single-file web application, but all technical characteristics must be re-verified against the current approved source before coding.
+
+## Existing top-level areas
 
 | Area | Current role / known content | Decision |
+|---|---|---|
+| HOME | Dashboard, roadmap overview, progress and access to app areas. | Preserve and improve. |
+| DAILY | Daily practice plan, tasks, completion, calendar/streak concepts. | Preserve existing behaviour. |
+| IMPROV | Five original Gates and related exercises/references. | Redesign deeply; retain the five-Gate identity. |
+| DOJO | Previously XP/levels, Codex and small learning games/quizzes. | Rebuild the educational experience around the approved structure. |
+| LIBRARY | Roadmap/resources, Creative material, Listening Vault and extra information. | Reorganise and preserve useful material. |
+| SETUP | Guitar setup/configuration and maintenance companion. | Preserve as an independent useful tool. |
 
-| --- | --- | --- |
+## Known technical characteristics — verify in source
 
-| Home | Dashboard, roadmap overview, progress and access to app areas. | Preserve and improve. |
+The earlier audit identified the following characteristics. They are audit leads, not guarantees about the current implementation.
 
-| Daily | Daily practice plan, tasks, completion, calendar/streak concepts. | Preserve core behaviour. |
+- Single-file web app: HTML, CSS and JavaScript integrated in one `index.html`.
+- Interface and views rendered or updated through JavaScript.
+- Interaction using delegated events and `data-action` attributes.
+- State held in a central JavaScript state object.
+- `localStorage` used for local persistence; a key observed during the earlier audit was `shredRoadmapState_v10`.
+- Firebase Authentication with Google sign-in and Cloud Firestore used for optional account login and cross-device synchronisation.
+- A user document path observed during the earlier audit was `users/{uid}`.
+- The original app included the five IMPROV Gates:
+  - The Horizontal Prison.
+  - The Chord Tone Architect.
+  - The Rhythmic Displacer.
+  - The Modal Alchemist.
+  - Total Audiation.
+- The Listening Vault included genre/reference groupings around Stoner/Doom/Sludge, Prog/Odd Meters, Death Metal/Groove and Classic Rock/Blues.
+- Artists represented in the earlier reference material included Tony Iommi, David Gilmour, Mikael Åkerfeldt, John Petrucci, Guthrie Govan, Chuck Schuldiner, Dimebag Darrell and Nick DiSalvo.
 
-| Improv | Five original Gates and related exercises/references. | Redesign deeply; retain the five-Gate identity. |
+The application source must be re-inspected before implementation.
 
-| Dojo | XP/levels, Codex and small learning games/quizzes; current pedagogy considered disposable. | Rebuild learning experience from scratch. |
+Do not assume that old function names, selectors, data fields, Firebase paths, libraries or layouts are still present.
 
-| Library | Roadmap/resources, Creative material, Listening Vault and extra information. | Reorganise; preserve useful material. |
+Gemini must report discrepancies and preserve all unrelated working functionality.
 
-| Setup | Guitar setup/configuration and maintenance companion. | Preserve as an independent useful tool. |
+## Phase 1 baseline
 
-### Known technical characteristics (verify in source)
+Phase 1 established the current responsive UI and navigation foundation.
 
-Single-file web app: HTML, CSS and JavaScript integrated in one index.html.
+The latest approved Phase 1 `index.html` in `main` is the source of truth for the current visual and technical implementation.
 
-Interface and views are rendered/updated through JavaScript; interaction uses delegated events and data-action attributes.
+The project has since approved additional Phase 2 requirements that extend the interface, particularly the two progression indicators and the new DOJO navigation and reading experience.
 
-State is held in a central JavaScript state object.
+These additions must respect the Phase 1 design system rather than introduce an unrelated visual language.
 
-localStorage is used for local persistence; a key observed during the audit was shredRoadmapState_v10.
+---
 
-Firebase Authentication with Google sign-in and Cloud Firestore are used for optional account login and cross-device synchronisation.
+# 4. Target information architecture
 
-A user document path observed during the audit was users/{uid}; verify exact read/write logic and security assumptions.
+## Top-level navigation
 
-The interface observed during the audit was constrained to roughly 520 px and used a horizontal carousel-like navigation. Reassess rather than assume this is the only layout mechanism.
+The six official application areas are:
 
-The original app included the five Improv Gates: The Horizontal Prison; The Chord Tone Architect; The Rhythmic Displacer; The Modal Alchemist; Total Audiation.
+**HOME** — personal dashboard, current learning path, recommended next step, recent activity and progress.
 
-The Listening Vault included genre/reference groupings around Stoner/Doom/Sludge, Prog/odd meters, Death Metal/Groove and Classic Rock/Blues, with artists including Tony Iommi, David Gilmour, Mikael Åkerfeldt, John Petrucci, Guthrie Govan, Chuck Schuldiner, Dimebag Darrell and Nick DiSalvo.
+**DAILY** — practice schedule and tasks, retaining existing useful behaviour.
 
-The original source file must be re-inspected before coding. Treat the technical details in this section as audit leads, not permission to guess. Gemini must report discrepancies and preserve all unrelated features.
+**DOJO** — learning centre with:
+1. Music Theory Compendium.
+2. Fretboard Mastery.
+3. Harmonic Analysis Lab.
 
-## 4. Target information architecture
+**IMPROV** — five deep learning Gates focused on practical melodic, rhythmic, harmonic and improvisational independence.
 
-### Top-level navigation
+**LIBRARY** — Listening Vault, technical roadmap, Creative resources and other reference material.
 
-HOME — personal dashboard, current learning path, recommended next step, recent activity and progress.
+**SETUP** — guitar configuration and maintenance companion.
 
-DAILY — practice schedule and tasks, retaining existing useful behaviour.
+`IMPROV` is the official product and navigation label. Use it consistently in navigation, headers, cards, progress indicators, Gates and subdivision labels.
 
-DOJO — new learning centre with Music Theory Compendium, Fretboard Mastery and Harmonic Analysis Lab.
+In ordinary explanatory English, use natural grammatical forms such as “the improvisation track”, “improvisation exercises” and “improvisational development”. Do not force the product label into grammatically unnatural sentences.
 
-IMPROV — five deep learning Gates focused on practical melodic and improvisational language.
+## DOJO: three connected learning areas
 
-LIBRARY — Listening Vault, technical roadmap, Creative resources and other reference material.
+### A. Music Theory Compendium
 
-SETUP — guitar configuration and maintenance companion.
+A structured encyclopaedia from fundamentals to advanced theory.
 
-### Dojo: three connected learning areas
+The curriculum should include:
 
-#### A. Music Theory Compendium
+- Sound and pitch concepts.
+- Notes and enharmonic spelling.
+- Intervals.
+- Accidentals and key signatures.
+- Scales.
+- Modes.
+- Diatonic harmony.
+- Triads.
+- Seventh chords.
+- Extensions and alterations.
+- Inversions.
+- Chord symbols.
+- Functional harmony.
+- Cadences.
+- Secondary dominants.
+- Modal interchange.
+- Modulation.
+- Chromatic harmony.
+- Voice leading.
+- Counterpoint.
+- Rhythmic concepts.
+- Form and composition.
 
-A structured encyclopaedia from fundamentals to advanced theory: sound and pitch concepts; notes and enharmonic spelling; intervals; accidentals and key signatures; scales; modes; diatonic harmony; triads; seventh chords; extensions and alterations; inversions; chord symbols; functional harmony; cadences; secondary dominants; modal interchange; modulation; chromatic harmony; voice leading; counterpoint; rhythmic concepts; form and composition. The final syllabus should be sequenced and reviewed for gaps.
+The final syllabus must be sequenced and reviewed for gaps.
 
-#### B. Fretboard Mastery
+The Compendium supports both a recommended learning path and unrestricted free exploration.
 
-Interactive guitar-focused application: note locations; interval relationships; string tuning and string-to-string relationships; scale patterns and positions; triads and inversions; arpeggios; chord voicings; CAGED and alternative visualisation systems; mapping shapes to keys and harmonic functions; target notes and phrase resolution. It should explain the underlying theory rather than teach shapes in isolation.
+Theory chapters must always be accessible. There are no XP locks, reading completion requirements or theory-reading progress states.
 
-#### C. Harmonic Analysis Lab
+### B. Fretboard Mastery
 
-A practical workspace for analysing progressions, riffs and excerpts: tonal centres; Roman-numeral analysis; diatonic and non-diatonic chords; modal interchange; secondary dominants; pedal tones and drones; ambiguous harmony; modulations; harmonic rhythm; genre-specific devices; and explanations of why a progression creates a particular effect. Provide guided examples and structured analysis tasks.
+Interactive guitar-focused application:
 
+- Note locations.
+- Interval relationships.
+- String tuning and string-to-string relationships.
+- Scale patterns and positions.
+- Triads and inversions.
+- Arpeggios.
+- Chord voicings.
+- CAGED and alternative visualisation systems.
+- Mapping shapes to keys and harmonic functions.
+- Target notes and phrase resolution.
 
-### Improv: five Gates
+It should explain the underlying theory rather than teach shapes in isolation.
 
-IMPROV must be developed as the practical musicianship and musical-independence layer of The Shred Roadmap.
+### C. Harmonic Analysis Lab
+
+A practical workspace for analysing progressions, riffs and excerpts.
+
+It should address:
+
+- Tonal centres.
+- Roman-numeral analysis.
+- Diatonic and non-diatonic chords.
+- Modal interchange.
+- Secondary dominants.
+- Pedal tones and drones.
+- Ambiguous harmony.
+- Modulations.
+- Harmonic rhythm.
+- Genre-specific devices.
+- Explanations of why a progression creates a particular effect.
+
+Provide guided examples and structured analysis tasks.
+
+## IMPROV: five Gates
+
+IMPROV is the practical musicianship and musical-independence layer of The Shred Roadmap.
 
 Its purpose is not simply to teach scale patterns, licks or improvisational vocabulary. It must develop the learner's ability to understand musical relationships, navigate the guitar fretboard freely, make intentional melodic and rhythmic decisions, and translate musical ideas into coherent performance.
 
-The five Gates must retain their identities while being substantially redesigned:
+The five Gates retain their identities while being substantially redesigned.
 
-1. **The Horizontal Prison — Fretboard Independence**
-   - Break dependence on fixed box patterns and memorised positions.
-   - Locate notes and intervals across strings and fretboard regions.
-   - Connect scales, arpeggios, intervals and positions.
-   - Develop horizontal and vertical fretboard navigation.
-   - Transfer phrases across strings, positions and octaves.
-   - Explore alternative ways of playing the same musical idea.
+### 1. The Horizontal Prison — Fretboard Independence
 
-2. **The Chord Tone Architect — Harmonic Independence**
-   - Understand and target chord tones within changing harmony.
-   - Apply triads, seventh chords, arpeggios and guide tones.
-   - Connect melodic lines to chord progressions.
-   - Develop voice leading between successive chords.
-   - Understand stability, tension and resolution.
-   - Construct melodies that meaningfully reflect the underlying harmony.
+- Break dependence on fixed box patterns and memorised positions.
+- Locate notes and intervals across strings and fretboard regions.
+- Connect scales, arpeggios, intervals and positions.
+- Develop horizontal and vertical fretboard navigation.
+- Transfer phrases across strings, positions and octaves.
+- Explore alternative ways of playing the same musical idea.
 
-3. **The Rhythmic Displacer — Rhythmic Independence**
-   - Understand subdivisions, rhythmic groupings and accents.
-   - Develop syncopation, displacement and phrase variation.
-   - Work with odd meters and changing rhythmic structures.
-   - Manipulate rests, note duration, density and rhythmic space.
-   - Transform motifs through rhythmic variation.
-   - Develop control over groove, phrasing and rhythmic intention.
+### 2. The Chord Tone Architect — Harmonic Independence
 
-4. **The Modal Alchemist — Modal and Melodic Independence**
-   - Understand the interval structure and characteristic notes of scales and modes.
-   - Compare different modes over the same tonic.
-   - Relate modal choices to chords, tonal centres and harmonic contexts.
-   - Identify characteristic tones, tensions and resolutions.
-   - Apply modal colour to riffs, progressions and improvisation.
-   - Understand the difference between theoretical compatibility and convincing musical application.
+- Understand and target chord tones within changing harmony.
+- Apply triads, seventh chords, arpeggios and guide tones.
+- Connect melodic lines to chord progressions.
+- Develop voice leading between successive chords.
+- Understand stability, tension and resolution.
+- Construct melodies that meaningfully reflect the underlying harmony.
 
-5. **Total Audiation — Integrated Musical Independence**
-   - Develop the ability to conceive coherent musical ideas internally.
-   - Build phrases using motifs, repetition, variation and transformation.
-   - Apply call-and-response, melodic direction and structured development.
-   - Control tension, resolution, dynamics, density and space.
-   - Translate internally conceived ideas into deliberate guitar performance.
-   - Avoid unnecessary duplication of the user's separate ear-training tools.
+### 3. The Rhythmic Displacer — Rhythmic Independence
+
+- Understand subdivisions, rhythmic groupings and accents.
+- Develop syncopation, displacement and phrase variation.
+- Work with odd meters and changing rhythmic structures.
+- Manipulate rests, note duration, density and rhythmic space.
+- Transform motifs through rhythmic variation.
+- Develop control over groove, phrasing and rhythmic intention.
+
+### 4. The Modal Alchemist — Modal and Melodic Independence
+
+- Understand the interval structure and characteristic notes of scales and modes.
+- Compare different modes over the same tonic.
+- Relate modal choices to chords, tonal centres and harmonic contexts.
+- Identify characteristic tones, tensions and resolutions.
+- Apply modal colour to riffs, progressions and improvisation.
+- Understand the difference between theoretical compatibility and convincing musical application.
+
+### 5. Total Audiation — Integrated Musical Independence
+
+- Develop the ability to conceive coherent musical ideas internally.
+- Build phrases using motifs, repetition, variation and transformation.
+- Apply call-and-response, melodic direction and structured development.
+- Control tension, resolution, dynamics, density and space.
+- Translate internally conceived ideas into deliberate guitar performance.
+- Avoid unnecessary duplication of the user's separate ear-training tools.
 
 ### Core pedagogical principle
 
@@ -292,15 +490,15 @@ Distinguish between completing an exercise and demonstrating genuine mastery.
 
 Do not claim that a learner's physical performance, timing, tone or musical execution has been verified unless the application actually receives and evaluates the relevant performance data.
 
-Do not use artificial XP restrictions to prevent access to educational content.
-
 ### Musical Context and Application
 
 IMPROV should use meaningful musical situations and examples drawn from a broad range of styles.
 
 Priority reference worlds may include stoner, doom, sludge, progressive music, death metal, thrash, blues and selected classic rock, without restricting the curriculum to these genres.
 
-Real musical references should be used where they genuinely help explain a concept. Distinguish verified musical analysis from stylistic association and suggested listening.
+Real musical references should be used where they genuinely help explain a concept.
+
+Distinguish verified musical analysis from stylistic association and suggested listening.
 
 The objective is to help the learner understand how musical concepts function in real music and how to apply them independently.
 
@@ -319,55 +517,104 @@ A successful learner should increasingly be able to:
 
 The objective is not simply to increase the number of scales, licks or exercises completed.
 
-### Listening Vault
+## Relationship between DOJO and IMPROV
 
-Transform the current reference collection into an active listening and analysis library. Each entry may include artist/work/track or passage, genre/context, concepts to notice, harmonic or melodic analysis, rhythmic/phrasing observations, guitar application, links to relevant chapters and personal study notes. Do not invent track timestamps, musical claims or quotations; require verification or mark them as editorial suggestions awaiting review.
+DOJO establishes theoretical understanding and structured practical knowledge.
 
-## 5. Chapter editorial template
+IMPROV develops the ability to apply that understanding in musical situations.
 
-Use this template as the default quality bar for substantial Compendium chapters. Not every section must be equally long, but no chapter should be a shallow definition plus quiz.
+The two areas must be connected through explicit references and exercise relationships.
 
-Overview — what the subject is, why it matters and what the learner will be able to do.
+The learning experience should allow movement in both directions:
 
-Prerequisites — concepts that should already be understood, with links back to chapters.
+- A theory chapter should identify relevant practical exercises or tools where appropriate.
+- A practical exercise should link back to the theory that explains the musical concept.
+- An exercise may require concepts from multiple chapters or learning areas.
+- Practical progression must be based on exercise evidence, not on opening or reading reference material.
 
-Definitions and terminology — precise language and notation.
+## Listening Vault
 
-Construction / derivation — show how the concept is built, not merely the result.
+Transform the current reference collection into an active listening and analysis library.
 
-Classifications and variants — types, categories, exceptions and edge cases.
+Each entry may include:
 
-Relationships — links to scales, chords, keys, functions, rhythm or other relevant concepts.
+- Artist/work/track or passage.
+- Genre/context.
+- Concepts to notice.
+- Harmonic or melodic analysis.
+- Rhythmic and phrasing observations.
+- Guitar application.
+- Links to relevant chapters.
+- Personal study notes.
 
-Musical effect — sound, tension, colour, stability, ambiguity and expressive consequences.
+Do not invent track timestamps, musical claims or quotations. Require verification or mark them as editorial suggestions awaiting review.
 
-Context and examples — use examples from varied genres, explaining why they work.
+---
 
-Guitar application — a clearly separated practical section, where relevant.
+# 5. Chapter editorial template
 
-Common mistakes — misconceptions, spelling errors, analytical traps and oversimplifications.
+Use this template as the default quality bar for substantial Compendium chapters.
 
-Worked examples — step-by-step reasoning, not just final answers.
+Not every section must be equally long, but no chapter should be a shallow definition plus quiz.
 
-Exercises — varied task types, progressive difficulty, answer explanations and hints.
+1. **Overview** — what the subject is, why it matters and what the learner will be able to do.
+2. **Prerequisites** — concepts that should already be understood, with links back to chapters.
+3. **Definitions and terminology** — precise language and notation.
+4. **Construction / derivation** — show how the concept is built, not merely the result.
+5. **Classifications and variants** — types, categories, exceptions and edge cases.
+6. **Relationships** — links to scales, chords, keys, functions, rhythm or other relevant concepts.
+7. **Musical effect** — sound, tension, colour, stability, ambiguity and expressive consequences.
+8. **Context and examples** — use examples from varied genres, explaining why they work.
+9. **Guitar application** — a clearly separated practical section, where relevant.
+10. **Common mistakes** — misconceptions, spelling errors, analytical traps and oversimplifications.
+11. **Worked examples** — step-by-step reasoning, not just final answers.
+12. **Exercises** — varied task types, progressive difficulty, answer explanations and hints.
+13. **Further study** — related chapters, references and suggested next steps.
 
-Further study — related chapters, references and suggested next steps.
+The template is an editorial standard, not a rigid requirement to create identical chapter structures regardless of subject.
 
-## 5A. Musical Context, Application and Functional Harmony
+## Visual integration
 
-### Musical Context and Application
+Visuals must be embedded close to the explanation they support.
+
+Examples include:
+
+- Circle of Fifths and key signatures.
+- Interval and scale diagrams.
+- Chord construction and inversion diagrams.
+- Fretboard maps.
+- Harmonic progressions and function diagrams.
+- Voice-leading examples.
+- Rhythmic structures and subdivisions.
+- Modal comparisons.
+
+Each visual should have a clear educational purpose.
+
+Use appropriate labels, legends and captions. Ensure readability on mobile and do not rely on colour alone to communicate musical information.
+
+---
+
+# 5A. Musical Context, Application and Functional Harmony
+
+## Musical Context and Application
 
 The Compendium must teach both the theoretical structure of music and its practical meaning.
 
 Substantial chapters should integrate the following dimensions where relevant:
 
-1. **Theory** — definitions, terminology, construction, derivation and notation.
-2. **Conceptual Understanding** — relationships, classifications, variations, comparisons and exceptions.
-3. **Sound and Musical Identity** — characteristic intervals, notes, tensions, resolutions, stability, colour and expressive effect.
-4. **Harmonic Context** — chord compatibility, harmonic functions, progressions, tonal relationships and relevant tensions.
-5. **Practical Application** — guitar examples, riffs, chord voicings, arpeggios, target notes, phrasing and other relevant applications.
-6. **Musical Context and Listening** — real artists, recordings, tracks, passages and stylistic situations, with clear source and evidence distinctions.
-7. **Creation and Practice** — exercises and challenges that require the learner to apply the concept independently.
+**Theory** — definitions, terminology, construction, derivation and notation.
+
+**Conceptual Understanding** — relationships, classifications, variations, comparisons and exceptions.
+
+**Sound and Musical Identity** — characteristic intervals, notes, tensions, resolutions, stability, colour and expressive effect.
+
+**Harmonic Context** — chord compatibility, harmonic functions, progressions, tonal relationships and relevant tensions.
+
+**Practical Application** — guitar examples, riffs, chord voicings, arpeggios, target notes, phrasing and other relevant applications.
+
+**Musical Context and Listening** — real artists, recordings, tracks, passages and stylistic situations, with clear source and evidence distinctions.
+
+**Creation and Practice** — exercises and challenges that require the learner to apply the concept independently.
 
 These dimensions form a flexible editorial framework. They are not mandatory sections of identical length in every chapter. Their inclusion must depend on the subject and learning objectives.
 
@@ -379,6 +626,8 @@ Where relevant, comparisons should isolate the musical variable being studied. F
 
 Explain characteristic notes, target notes, tensions and resolutions rather than presenting scales as collections of shapes.
 
+### Musical reference classification
+
 Musical references should be classified clearly:
 
 - **Verified Analysis** — a specific musical passage or recording has been examined and the stated analysis is supported.
@@ -387,7 +636,7 @@ Musical references should be classified clearly:
 
 Never invent track details, timestamps, progressions, quotations or analytical claims.
 
-### Functional Harmony and Chord Functions
+## Functional Harmony and Chord Functions
 
 Functional harmony must be a substantial and progressively developed component of the Music Theory Compendium.
 
@@ -422,7 +671,9 @@ The curriculum must explain the distinction between:
 - How its position, voicing, bass movement and surrounding chords affect its behaviour.
 - How the same chord can behave differently depending on context.
 
-Do not teach harmonic function as a rigid label assigned to every chord independently of context. Explain the importance of tonal centre, voice leading, phrase position, harmonic motion and musical style.
+Do not teach harmonic function as a rigid label assigned to every chord independently of context.
+
+Explain the importance of tonal centre, voice leading, phrase position, harmonic motion and musical style.
 
 ### Functional Harmony in Practical Music
 
@@ -446,60 +697,291 @@ Examples should draw from varied musical styles, including the user's preferred 
 
 Functional harmony must connect to:
 
-- **Fretboard Mastery:** locating chord roots, thirds, fifths, sevenths, guide tones, inversions and voice-leading options across the neck.
-- **Harmonic Analysis Lab:** identifying tonal centres, functions, cadences, non-diatonic events, tonicisation, modulation and alternative interpretations.
-- **IMPROV:** targeting chord tones, following harmonic movement, resolving tensions and creating melodies that reflect chord changes.
-- **Listening Vault:** recognising functional movement and its expressive effect in real musical examples.
+**Fretboard Mastery:** locating chord roots, thirds, fifths, sevenths, guide tones, inversions and voice-leading options across the neck.
+
+**Harmonic Analysis Lab:** identifying tonal centres, functions, cadences, non-diatonic events, tonicisation, modulation and alternative interpretations.
+
+**IMPROV:** targeting chord tones, following harmonic movement, resolving tensions and creating melodies that reflect chord changes.
+
+**Listening Vault:** recognising functional movement and its expressive effect in real musical examples.
 
 The aim is to develop an integrated understanding of harmony rather than a collection of disconnected theoretical definitions.
 
-## 6. Learning path, assessment and progress
+---
 
-Support two modes at the same time: a recommended sequential path for learners who want guidance, and free exploration where all appropriate reference content can be opened directly. Do not lock essential knowledge behind XP or arbitrary level gates.
+# 6. Learning path, assessment and progress
 
-Each chapter has status such as not started, in progress, studied and mastery demonstrated; define the exact state model during architecture.
+## Learning modes
 
-Track lesson completion separately from exercise performance.
+Support two modes at the same time:
 
-Support bookmarks/favourites, personal notes and recently viewed chapters if feasible.
+1. A recommended sequential path for learners who want guidance.
+2. Free exploration where all appropriate reference content can be opened directly.
 
-Assess mastery through different task formats: construct, identify, classify, analyse, diagnose, compare, transpose, apply and explain.
+The recommended path is guidance, not a lock.
 
-Show explanations and worked solutions after attempts; avoid unexplained right/wrong feedback.
+It may explain prerequisites and suggest next steps, while free exploration remains available.
 
-Use spaced review or revision recommendations only if implemented transparently and reliably.
+Theory content must always remain accessible without XP, level gates or completion requirements.
 
-Keep progress data compact and separate from static lesson content.
+## Theory reading and progression
 
-## 7. UX and visual direction
+Reading theory does not generate progress.
+
+Do not:
+
+- Track chapter reading as completion.
+- Track chapter reading as studied status.
+- Track chapter reading as mastery.
+- Provide a “Mark as Studied” action.
+- Introduce an equivalent action under another name.
+- Award XP for reading theory.
+- Use theory reading to populate progression indicators.
+- Lock theory content behind practical progress requirements.
+
+Opening, browsing or finishing a theory chapter must not contribute to progression indicators.
+
+A chapter may be opened, revisited or read in any order without creating a theory-reading progress record.
+
+Bookmarks, personal notes and preferences may be supported as separate user features, but they must not be confused with learning achievement.
+
+## Practical progression
+
+Practical progression belongs exclusively to exercises and demonstrated practical work in DOJO and IMPROV.
+
+The intended global indicator is:
+
+`MUSICAL DEVELOPMENT`
+
+Its two subdivisions are:
+
+- DOJO.
+- IMPROV.
+
+It must remain independent of:
+
+`TECHNIQUE ROADMAP`
+
+Do not implement arbitrary XP totals or display invented percentages.
+
+The underlying evidence model, competency dimensions, weighting, difficulty treatment and mastery thresholds must be defined transparently before meaningful progress is displayed.
+
+Until reliable exercise records and criteria exist, show an honest neutral/empty state rather than fabricated progress.
+
+The global indicator must not imply that physical performance has been assessed unless the application actually receives and evaluates the relevant performance data.
+
+The exact practical scoring and competency model remains an open design decision for a future approved phase.
+
+## TECHNIQUE ROADMAP
+
+The existing TECHNIQUE ROADMAP is a separate, phase-based progression system.
+
+Its calculations, phase segmentation, red visual treatment and behaviour must remain unchanged during Phase 2.
+
+Its visible label must be:
+
+`TECHNIQUE ROADMAP`
+
+The addition of MUSICAL DEVELOPMENT must not replace, merge with or modify this system.
+
+## DAILY
+
+DAILY routines, task completion and existing behaviour must remain untouched by Phase 2.
+
+Daily activity must not silently become a source of MUSICAL DEVELOPMENT unless a future approved specification explicitly defines a practical exercise record and its relationship to that system.
+
+## Future assessment principles
+
+When the practical exercise system is implemented in later phases, assess demonstrated work through varied task formats:
+
+- Construct.
+- Identify.
+- Classify.
+- Analyse.
+- Diagnose.
+- Compare.
+- Transpose.
+- Apply.
+- Explain.
+
+Track attempts and mastery separately from theory reading.
+
+Show explanations and worked solutions after attempts. Avoid unexplained right/wrong feedback.
+
+Do not claim competence from a single quiz response.
+
+Distinguish between:
+
+- Opening educational material.
+- Attempting an exercise.
+- Completing an exercise.
+- Repeated successful application.
+- Demonstrated mastery, where the system has sufficient evidence to support that conclusion.
+
+Keep static curriculum definitions separate from user-specific practical exercise records, assessment evidence and preferences.
+
+---
+
+# 7. UX and visual direction
 
 Premium, professional, editorial feel; strong typography and consistent spacing.
 
-Dark visual direction may build on the current app identity, but preserve readability and contrast.
+Retain the Phase 1 visual design system and existing dark visual identity.
 
-Desktop: use available width effectively, with clear persistent navigation and a readable content column.
+The experience should combine modern, discoverable navigation with an editorial, readable learning environment.
 
-Mobile: compact navigation, touch-friendly controls and diagrams that remain usable without horizontal overflow.
+Avoid excessive cards, fragmented panels, deep accordion navigation and unnecessary visual clutter.
 
-Use progressive disclosure: expandable chapters, subchapters, accordions and optional advanced detail.
+## 7.1 Global header and progression
 
-Keep a clear visual distinction between theory explanation, worked example, guitar application, exercise and reference.
+The header contains two independent progress indicators.
 
-Provide global search across chapters and learning tools where feasible.
+### TECHNIQUE ROADMAP
 
-Interactive diagrams should have labels, legends, accessible controls and a useful static fallback.
+- Existing red, phase-segmented technique progression.
+- Preserve its existing calculation and behaviour.
+- Keep its established red visual treatment.
+- Display the explicit label `TECHNIQUE ROADMAP`.
 
-Avoid visual clutter, excessive cards, gamification noise and giant unbroken walls of text.
+### MUSICAL DEVELOPMENT
 
-## 8. Data, persistence and compatibility principles
+- New global practical-learning indicator.
+- Contains DOJO and IMPROV subdivisions.
+- Driven only by meaningful practical exercise evidence.
+- Must not be populated with placeholder percentages, arbitrary XP or theory-reading activity.
+- Must have a neutral/empty state until valid evidence and criteria exist.
 
-Preserve the existing state fields and data formats unless a documented migration is necessary.
+### Responsive presentation
 
-Do not overwrite or discard existing user data while rebuilding Dojo.
+- Desktop: place the two indicators adjacent to one another, side by side.
+- Mobile: use a compact stacked or otherwise space-efficient arrangement without compromising clarity.
+- Keep the two systems conceptually and technically independent.
 
-Keep static curriculum/content definitions separate from per-user progress.
+## 7.2 DOJO Hub
 
-Store only user-specific state in localStorage/Firestore: completion, mastery, attempts where useful, bookmarks, notes and preferences.
+The DOJO Hub presents three connected areas:
+
+1. Music Theory Compendium.
+2. Fretboard Mastery.
+3. Harmonic Analysis Lab.
+
+On desktop, use a three-column card layout where available space permits.
+
+On mobile, stack the areas in a clear vertical layout.
+
+The Hub should communicate the purpose of each area and how they connect without overwhelming the user.
+
+## 7.3 Compendium Explorer
+
+The Compendium Explorer uses a hybrid pattern.
+
+**Desktop:**
+
+- Persistent category sidebar.
+- Central content area.
+- Search.
+- Useful filters.
+- Clear category and chapter hierarchy.
+- Recommended path and free exploration.
+
+**Mobile:**
+
+- Simplified category-selection view.
+- Search.
+- Category navigation.
+- Clear route to the chapter list.
+- Simple back navigation.
+- Avoid deep nested accordion navigation.
+
+The Explorer must preserve the curriculum themes and topic structure while improving the way users navigate and discover content.
+
+## 7.4 Chapter Reader
+
+Chapter reading uses a continuous editorial page rather than a sequence of nested dropdowns.
+
+**Desktop:**
+
+- Side table of contents.
+- Central article.
+- Clear section hierarchy.
+- Readable article width.
+
+**Mobile:**
+
+- Single-column reading layout.
+- Compact or collapsible chapter index.
+- Clear navigation back to the chapter list.
+- Diagrams and examples must remain legible.
+
+Avoid excessive cards or fragmented panels.
+
+## 7.5 Visual educational resource system
+
+Every substantial theoretical concept must use visual representations whenever they materially improve understanding, clarify relationships or demonstrate musical structure.
+
+Examples include:
+
+- Circle of Fifths and key signatures.
+- Intervals.
+- Scales.
+- Chords.
+- Fretboard maps.
+- Harmonic progressions and functions.
+- Voice leading.
+- Rhythm, meter and subdivision.
+- Modal comparisons.
+
+Place diagrams close to the explanation they support.
+
+Use reusable, responsive HTML/CSS/SVG where appropriate. Keep diagram data separate from rendering where practical.
+
+Ensure:
+
+- Clear labels.
+- Legends where necessary.
+- Captions where useful.
+- Sufficient contrast.
+- Mobile legibility.
+- Consistent notation.
+- No reliance on colour alone.
+
+Distinguish static explanatory diagrams from interactive tools.
+
+Interaction should be added only when it provides genuine educational value.
+
+Phase 2 must establish the conventions and demonstrate at least one representative diagram in the Chapter Reader environment. It must not attempt to build the entire future diagram library.
+
+## 7.6 Visual hierarchy and accessibility
+
+- Retain the Phase 1 design system.
+- Combine modern navigation with editorial reading.
+- Avoid turning every section into a card.
+- Use expandable disclosure only where it improves comprehension, not as the primary navigation model.
+- Preserve accessible controls, keyboard focus and readable contrast.
+- Ensure touch targets are appropriate on mobile.
+- Avoid horizontal overflow.
+
+---
+
+# 8. Data, persistence and compatibility principles
+
+Preserve existing state fields and data formats unless a documented migration is necessary.
+
+Do not overwrite or discard existing user data while rebuilding DOJO.
+
+Keep static curriculum/content definitions separate from per-user practical progress.
+
+Store only user-specific state where appropriate, such as:
+
+- Practical exercise attempts.
+- Exercise completion records.
+- Assessment evidence.
+- Mastery evidence, where supported by transparent criteria.
+- Bookmarks.
+- Personal notes.
+- Preferences.
+
+Do not create chapter-reading completion or studied-state records.
 
 Use additive schema changes where possible and include a versioned migration path.
 
@@ -507,194 +989,1076 @@ Maintain optional login: the app should remain useful without signing in.
 
 Maintain local-first behaviour and ensure account sync does not silently overwrite newer data.
 
-Document how conflict resolution works; do not invent a last-write-wins strategy without checking the current implementation.
+Document how conflict resolution works. Do not invent a last-write-wins strategy without checking the current implementation.
 
-Never expose Firebase private credentials or secrets in client code. Firebase web configuration is not a server secret, but security must rely on correct Firestore Security Rules and Auth checks.
+Never expose Firebase private credentials or secrets in client code.
 
-Do not change Firebase project identifiers, collections, document paths or rules without explicit evidence and a migration plan.
+Firebase web configuration is not a server secret, but security must rely on correct Firestore Security Rules and Auth checks.
 
-## 9. Development workflow and safeguards
+Do not change Firebase project identifiers, collections, document paths or rules without explicit evidence, owner approval and a migration plan.
 
-Maintain an untouched copy of the original index (9).html.
+## Progression data separation
 
-Create a working branch or separate file for development; do not edit the only copy.
+The architecture must distinguish:
 
-Before each Gemini phase, attach the latest complete index.html and provide the phase prompt below.
+1. Static curriculum definitions.
+2. User preferences and personal reference data.
+3. Practical exercise records.
+4. Assessment and mastery evidence.
+5. TECHNIQUE ROADMAP state.
+6. MUSICAL DEVELOPMENT calculations and presentation.
 
-Ask Gemini to inspect the file before editing and identify the exact functions/sections it will touch.
+Theory reading must not be used as a proxy for practical learning.
 
-Require a complete updated index.html as output, plus a concise change log and manual test checklist.
+The existing TECHNIQUE ROADMAP data must not be repurposed as MUSICAL DEVELOPMENT data.
 
-If the complete file is too large for one response, require a reliable downloadable artifact or a clearly staged output. Never accept omitted sections or placeholders such as 'rest of code unchanged'.
+Do not assume that legacy DOJO XP or level fields are meaningful evidence of the new learning model. Inspect them, identify whether any information is worth preserving and document the migration decision.
+
+Legacy UI and functions may be removed where appropriate. Preserve useful user data rather than obsolete architecture for its own sake.
+
+---
+
+# 9. Development workflow and safeguards
+
+## Repository and branch strategy
+
+Repository:
+
+`https://github.com/henriquelimamartins/SHRED/`
+
+Branches:
+
+- `main` — stable, approved production version.
+- `baseline-original` — untouched original reference.
+- Phase-specific branches — development and testing.
+
+Create new development branches from the latest approved `main`.
+
+Never experiment directly on `main` or `baseline-original`.
+
+The owner performs GitHub operations.
+
+Inspect every changed file in Pull Requests. Merge only after the owner has approved the implementation.
+
+## Implementation workflow
+
+Before each Gemini phase:
+
+1. Attach the latest approved complete `index.html`.
+2. Attach the current approved phase specification or prompt.
+3. Require Gemini to inspect the source before editing.
+4. Ask it to identify the exact functions, state fields, styles and sections it intends to change.
+5. Respect the phase scope and exclusions.
+6. Require a complete updated `index.html`.
+7. Require a change log and manual test checklist.
+8. Review the output independently.
+9. Run applicable acceptance tests.
+10. Preserve a named checkpoint.
+11. Obtain explicit owner approval before merging.
+
+Do not edit the only copy of the application.
+
+## Deliverables
+
+Require:
+
+- Complete updated `index.html`.
+- Concise change log.
+- List of functions, state fields and files changed.
+- Migration notes, if any.
+- Manual acceptance-test checklist.
+- Known limitations and unfinished work.
+
+If the complete file is too large for one response, require a reliable downloadable artifact or clearly staged output.
+
+Never accept omitted sections or placeholders such as “rest of code unchanged”.
+
+## Testing and claims
 
 After each phase, test desktop and mobile, signed-out and signed-in states, local persistence and cross-device sync where applicable.
 
-Keep named checkpoints, for example: baseline, phase-01-ui, phase-02-dojo-shell, phase-03-compendium, etc.
+Clearly distinguish:
 
-Do not merge a phase until its acceptance criteria pass.
+- Static source inspection.
+- Automated tests.
+- Browser tests.
+- Manual tests.
+- Firebase/Auth tests.
+- Cross-device tests.
+- Tests not performed.
 
-## 10. Gemini master instructions
+Do not claim that a test passed unless it was actually run.
 
-### Master prompt — include with every phase
+Do not assume that successful local operation proves Firebase or cross-device behaviour.
 
-Objetivo: Sets the global context and safeguards. Paste this before the phase-specific prompt, or prepend it to the relevant phase prompt.
+## Checkpoints
 
-| You are acting as a senior front-end engineer, software architect, UX designer and music-education content architect working on an existing application called The Shred Roadmap.<br><br>PROJECT CONTEXT<br>The Shred Roadmap is an existing single-page web application, originally delivered as a single index.html containing HTML, CSS and JavaScript. The authoritative baseline is the original file named index (9).html. Do not use or reconstruct the app from any failed or simplified alternative file. The app has existing Home, Daily, Improv, Dojo, Library and Setup areas, plus local persistence and optional Google/Firebase authentication with Firestore synchronisation. Verify all technical details against the attached source before relying on them.<br><br>PRODUCT VISION<br>Build a comprehensive, long-term music-learning platform with encyclopaedic music theory, deep fretboard fluency, harmonic analysis and practical improvisational development. The user thinks of themselves as a musician first and a guitarist second. General music theory is the core curriculum; guitar application must be clearly separated as a practical layer. The experience must feel premium, professional, editorial and useful for years, not like a shallow quiz game.<br><br>CONFIRMED DECISIONS<br>- Both a progressive recommended learning path and free exploration.<br>- English language throughout the app.<br>- Desktop and mobile have equal priority.<br>- Comprehensive depth, but progressive disclosure to avoid overwhelming the learner.<br>- Expandable chapters, clear navigation and interactive diagrams.<br>- Respect the original app's identity, core format and useful existing functionality.<br><br>SCOPE<br>- Rebuild the Dojo learning experience from scratch. Treat its current educational content, Codex structure and mini-games as disposable. Preserve or reuse technical integration only where it is genuinely useful.<br>- Redesign Improv substantially, retaining and deepening its five-Gate identity: The Horizontal Prison, The Chord Tone Architect, The Rhythmic Displacer, The Modal Alchemist and Total Audiation.<br>- Redesign and expand the Listening Vault into an active reference and analysis library.<br>- Preserve and sensibly integrate Home, Daily, Setup, existing roadmap/progress and other useful Library content.<br><br>NON-NEGOTIABLE SAFEGUARDS<br>1. The attached original index (9).html is the source of truth. Inspect it; do not guess.<br>2. Do not replace the whole application with a simplified rewrite.<br>3. Do not remove unrelated features, state fields, Firebase integration, local persistence or existing user data.<br>4. Do not change authentication, Firestore paths, Firebase project configuration or security assumptions without explaining the reason and migration impact.<br>5. Keep static educational content separate from user-specific progress.<br>6. Make schema changes additive and versioned wherever possible.<br>7. Do not use XP as a gate that blocks access to educational content.<br>8. Do not make the learning experience a multiple-choice quiz bank. Include construction, analysis, diagnosis, comparison, transposition and application tasks.<br>9. Do not produce superficial or fabricated music-theory content. Explain definitions, derivations, classifications, exceptions, musical effects, examples and applications.<br>10. Do not output placeholders or omit unchanged code. The deliverable must be a complete, working updated index.html.<br><br>WORKING METHOD<br>Only perform the phase requested in the current prompt. First inspect the attached current file. State the relevant existing architecture and the exact areas you plan to change. Implement only after that inspection. Preserve unrelated code. At the end, provide:<br>- complete updated index.html;<br>- a concise change log;<br>- list of functions/state fields/files changed;<br>- migration notes, if any;<br>- manual acceptance-test checklist;<br>- known limitations and unfinished work.<br>If the task cannot be completed safely in one pass, stop at a clear checkpoint and explain exactly what remains. Never silently simplify or pretend incomplete work is finished. |
+Keep named checkpoints, for example:
 
-| --- |
+- `baseline-approved`.
+- `phase-01-ui`.
+- `phase-02-dojo-shell`.
+- `phase-03-compendium`.
+- `phase-04-advanced-theory`.
 
-## 11. Step-by-step Gemini prompts
+A checkpoint must identify the exact source file and phase state it represents.
 
-Use the Master Instructions above together with one prompt at a time. Attach the latest working index.html on every implementation phase. For Phase 0, attach the untouched original baseline.
+---
 
-### Phase 0 — Audit and architecture
+# 10. Gemini master instructions
 
-Objetivo: Understand the actual code and approve a safe architecture before implementation.
+## Master prompt — include with every implementation phase
 
-| PHASE 0 — SOURCE AUDIT AND ARCHITECTURE ONLY (DO NOT EDIT CODE)<br><br>I am attaching the original authoritative index.html for The Shred Roadmap. Your task is to inspect it thoroughly and produce an implementation architecture. Do not modify the file, do not generate replacement code and do not redesign the app yet.<br><br>1. Map the full application:<br>   - top-level navigation and every subview;<br>   - render functions, event handlers, delegated actions and important DOM selectors;<br>   - CSS/layout system and responsive breakpoints;<br>   - central state object and every persistence mechanism;<br>   - localStorage keys and versioning;<br>   - Firebase Auth initialisation, Google sign-in/out, Firestore reads/writes and document paths;<br>   - roadmap, Daily, Improv, Dojo, Library, Listening Vault and Setup functionality;<br>   - external libraries, assets, fonts and other dependencies.<br>2. Identify the minimum set of existing behaviours that must be preserved.<br>3. Identify which Dojo educational structures can be discarded and which technical services/state integrations may be reused.<br>4. Identify the exact Improv and Listening Vault structures that will need replacement or migration.<br>5. Propose a revised information architecture retaining the app's recognisable identity and useful top-level structure.<br>6. Propose a modular internal code organisation suitable for a single-file GitHub Pages app. Do not assume a build system or server exists.<br>7. Propose data models for static curriculum content and per-user progress. Include migration/versioning and local-first/offline considerations.<br>8. Explain how the progressive path and free exploration coexist without content locks.<br>9. Identify risks, technical debt, unknowns and dependencies.<br>10. Provide a phase-by-phase implementation plan with dependencies and test gates.<br><br>OUTPUT FORMAT<br>A. Verified source inventory (quote exact function names/keys/paths only when found).<br>B. Existing feature preservation matrix.<br>C. Proposed navigation and information architecture.<br>D. Proposed code/component organisation.<br>E. Proposed curriculum/content data model.<br>F. Proposed user-progress data model and migration plan.<br>G. Firebase/local persistence compatibility plan.<br>H. Risks and open questions.<br>I. Detailed implementation sequence and acceptance criteria.<br><br>Be explicit about anything you could not verify. Do not infer missing functionality. Do not change the file. |
+**Objective:** Set the global context and safeguards. Paste this before the phase-specific prompt, or prepend it to the relevant phase prompt.
 
-| --- |
+You are acting as a senior front-end engineer, software architect, UX designer and music-education content architect working on an existing application called The Shred Roadmap.
 
-### Phase 1 — Responsive UI and navigation
+### PROJECT CONTEXT
 
-Objetivo: Create the design foundation before adding large content modules.
+The Shred Roadmap is an existing web application. Its current authoritative implementation is the latest approved complete `index.html` from the `main` branch.
 
-| PHASE 1 — RESPONSIVE DESIGN SYSTEM AND NAVIGATION FOUNDATION<br><br>Using the approved Phase 0 architecture, implement only the visual/layout foundation and navigation shell. Do not yet write the full curriculum or build the detailed learning tools.<br><br>GOALS<br>- Preserve the recognisable The Shred Roadmap identity and all unrelated working features.<br>- Replace the narrow, mobile-only-feeling layout with a polished responsive experience for desktop and mobile equally.<br>- On desktop, use a clear persistent navigation/sidebar or equivalent structure and a readable main content area.<br>- On mobile, provide compact, touch-friendly navigation without horizontal overflow.<br>- Retain the six top-level areas: Home, Daily, Dojo, Improv, Library and Setup. Their internal content can be reorganised later.<br>- Add a consistent page header, breadcrumbs or section context where useful, reusable content containers, typography, spacing, buttons, tabs, accordions and status indicators.<br>- Establish progressive disclosure: chapters and sections can expand/collapse; long content should not all appear at once.<br>- Create a visual language for theory, worked examples, guitar application, exercises, warnings and references.<br>- Add a search entry point in the shell if the architecture supports it, but do not pretend it searches content until implemented.<br>- Ensure accessibility: keyboard focus, semantic controls, sufficient contrast, labels and touch target sizes.<br><br>CONSTRAINTS<br>- Do not remove or break existing Home, Daily, Setup, auth, persistence or progress.<br>- Do not add large placeholder modules that imply features are complete.<br>- Avoid unnecessary external dependencies.<br>- Keep the app deployable on GitHub Pages as currently structured.<br><br>DELIVERABLES<br>Complete updated index.html, change log, changed functions/styles, responsive behaviour notes and tests at narrow mobile, wide mobile/tablet and desktop widths. Include signed-out and signed-in checks if navigation interacts with account state. |
+The untouched original file in `baseline-original` is a historical recovery reference, not the current implementation baseline.
 
-| --- |
+Do not use older local attachments, outdated copies or failed/simplified alternatives.
 
-### Phase 2 — Dojo shell and syllabus
+The app has six top-level areas:
 
-Objetivo: Build the new Dojo framework and curriculum map without rushing the content.
+- HOME.
+- DAILY.
+- DOJO.
+- IMPROV.
+- LIBRARY.
+- SETUP.
 
-| PHASE 2 — DOJO INFORMATION ARCHITECTURE AND COMPENDIUM SHELL<br><br>Rebuild the Dojo learning experience from scratch. The current Dojo content, Codex and mini-games are disposable. Preserve the rest of the application and reuse existing progress/auth integration only where appropriate.<br><br>Implement the Dojo shell with three connected areas:<br>1. Music Theory Compendium<br>2. Fretboard Mastery<br>3. Harmonic Analysis Lab<br><br>For this phase, focus on navigation, content structure and reusable templates rather than attempting to write the entire encyclopaedia.<br><br>COMPENDIUM<br>- Create a hierarchical syllabus with categories, chapters and expandable subchapters.<br>- Include beginner-to-advanced progression, prerequisites and related-chapter links.<br>- Support both a recommended learning path and free exploration.<br>- Add chapter search/filtering and clear progress states.<br>- Make all reference content browseable; do not lock chapters behind XP.<br>- Create a reusable chapter page template with overview, prerequisites, definitions, construction, variants, relationships, musical effect, examples, guitar application, common mistakes, worked examples, exercises and further study.<br>- Provide a way to distinguish core material from advanced detail so the page is not overwhelming.<br><br>INITIAL SYLLABUS CATEGORIES<br>Fundamentals; Notes and Pitch; Accidentals and Enharmonic Spelling; Intervals; Key Signatures and Circle of Fifths; Scales; Modes; Triads; Seventh Chords; Extensions and Alterations; Inversions and Voicings; Diatonic Harmony; Functional Harmony; Cadences; Secondary Dominants; Modal Interchange; Modulation; Chromatic Harmony; Voice Leading; Counterpoint; Rhythm and Meter; Musical Form and Composition. You may recommend additions or a better sequence, but explain changes.<br><br>FRETBOARD MASTERY AND ANALYSIS LAB<br>Create coherent landing pages and navigation placeholders with clear descriptions and links to relevant Compendium chapters. Do not claim interactive tools are implemented until they exist.<br><br>DATA<br>Separate static curriculum definitions from per-user chapter progress. Preserve existing state. Add a versioned, additive progress structure only after documenting the proposed schema.<br><br>DELIVERABLES<br>Complete updated index.html; syllabus tree; reusable chapter template; data schema; change log; tests confirming other top-level sections still work. |
+It has existing local persistence and optional Google/Firebase authentication with Firestore synchronisation. Verify all technical details against the attached source before relying on them.
 
-| --- |
+### PRODUCT VISION
 
-### Phase 3 — Compendium foundations and harmony
+Build a comprehensive, long-term music-learning platform with encyclopaedic music theory, deep fretboard fluency, harmonic analysis and practical improvisational development.
 
-Objetivo: Establish the editorial standard and create the first substantial body of theory.
+The user thinks of themselves as a musician first and a guitarist second.
 
-| PHASE 3 — MUSIC THEORY COMPENDIUM: FOUNDATIONS THROUGH HARMONY<br><br>Populate the Dojo Compendium with substantial, accurate English-language learning content. Work only on the agreed chapters in this phase; do not attempt to fill the entire advanced syllabus in one pass.<br><br>CONTENT STANDARD<br>Every substantial chapter should explain what the concept is, why it matters, prerequisites, precise terminology, how it is constructed/derived, classifications and variants, exceptions, relationships to other concepts, musical effect, worked examples, common errors, applications and exercises. Link to related chapters.<br><br>Create the first coherent learning block:<br>- Pitch, pitch classes and octave equivalence.<br>- Note names and enharmonic spelling.<br>- Natural notes, sharps, flats and accidentals.<br>- Semitones, whole tones and interval measurement.<br>- Interval qualities and compound intervals.<br>- Key signatures and the circle of fifths.<br>- Major and minor scales, including construction and spelling.<br>- Scale degrees and basic tonal-centre concepts.<br><br>Then add the next block if the implementation and output quality allow:<br>- Triads and chord construction.<br>- Chord qualities and inversions.<br>- Diatonic triads in major and minor keys.<br>- Seventh chords and chord symbols.<br>- Roman-numeral analysis and basic harmonic function.<br><br>For each chapter:<br>1. Use precise examples in multiple keys, not just C major.<br>2. Explain spelling as well as pitch equivalence.<br>3. Include comparison tables or visual diagrams where they genuinely clarify.<br>4. Include at least three different exercise formats across the chapter set (e.g. construct, identify, diagnose, compare, transpose, analyse).<br>5. Provide worked solutions and reasoning, not only an answer key.<br>6. Include guitar application in a clearly separate subsection where relevant.<br>7. Link prerequisites and follow-up topics.<br><br>Do not invent historical claims, quotations or artist-specific examples. If uncertain, mark an example for verification rather than presenting it as fact.<br><br>Keep content data separate from rendering code. Ensure mobile readability and do not overload the initial chapter view; use accordions or expandable advanced sections.<br><br>DELIVERABLES<br>List chapters completed and their coverage; provide a content-quality self-audit; complete updated index.html; state exactly what remains for the next content block. |
+General music theory is the core curriculum; guitar application must be clearly separated as a practical layer.
 
-| --- |
+The experience must feel premium, professional, editorial and useful for years, not like a shallow quiz game.
 
-### Phase 4 — Advanced theory
+### CONFIRMED DECISIONS
 
-Objetivo: Expand the encyclopaedia into advanced harmony, modes, chromaticism, rhythm and form.
+- Both a progressive recommended learning path and free exploration.
+- English language throughout the application and learning content.
+- Desktop and mobile have equal priority.
+- Comprehensive depth without overwhelming presentation.
+- Hybrid navigation: visual categories, search and filters; persistent desktop category sidebar; simplified mobile category selection.
+- Continuous editorial chapter reader.
+- Visual educational resources wherever they materially improve understanding.
+- No theory-reading progress, studied status, reading XP or theory content locks.
+- Practical progression only through meaningful exercise and practical-work evidence.
+- `TECHNIQUE ROADMAP` and `MUSICAL DEVELOPMENT` are independent systems.
+- `MUSICAL DEVELOPMENT` has DOJO and IMPROV subdivisions.
+- DAILY functionality must be preserved.
 
-| PHASE 4 — ADVANCED MUSIC THEORY COMPENDIUM<br><br>Continue the existing Compendium using the same approved chapter template, terminology, notation conventions and visual system. Do not rewrite earlier chapters unless you identify a factual error; report any correction explicitly.<br><br>Develop substantial chapters covering:<br>- Natural minor, harmonic minor and melodic minor; parallel and relative relationships.<br>- Modes: derivation, interval formulas, characteristic tones, modal centres and modal harmony.<br>- Pentatonic and blues scales, symmetrical scales and selected synthetic scales.<br>- Triad extensions, seventh chords, ninth/eleventh/thirteenth chords, altered tensions and chord-symbol conventions.<br>- Inversions, slash chords, voicings and voice-leading implications.<br>- Diatonic harmony in major and minor.<br>- Functional harmony, tonic/predominant/dominant roles, cadences and harmonic rhythm.<br>- Secondary dominants and applied chords.<br>- Modal mixture/interchange and borrowed chords.<br>- Modulation, tonicisation and ambiguous tonal centres.<br>- Chromatic harmony, diminished harmony, augmented harmony and other relevant advanced devices.<br>- Voice leading, common-tone relationships and counterpoint fundamentals.<br>- Rhythm, meter, subdivisions, syncopation, odd meters and polyrhythmic concepts where appropriate.<br>- Musical form and composition principles relevant to the user's goals.<br><br>For each topic, explain construction, notation, context, musical effect, common misconceptions and analytical use. Distinguish standard practice from stylistic conventions. Use examples across genres, but do not reduce general theory to metal/blues examples.<br><br>Include exercises that require construction, comparison, analysis, diagnosis, transposition and application. Vary the underlying musical examples and task types; do not merely randomise a root note.<br><br>Maintain internal links, prerequisite relationships and a coherent recommended path. Do not create content locks. If scope is too large, divide the work into clearly defined sub-batches and stop after a complete, tested batch.<br><br>DELIVERABLES<br>Complete updated index.html, chapter coverage matrix, new/changed terminology, exercise inventory, content audit and next-batch recommendation. |
+### SCOPE
 
-| --- |
+- Rebuild the DOJO learning experience around Music Theory Compendium, Fretboard Mastery and Harmonic Analysis Lab.
+- Treat obsolete DOJO educational content, Codex structure and mini-games as replaceable. Preserve useful user data and technical integration where appropriate.
+- Redesign IMPROV substantially, retaining and deepening its five-Gate identity:
+  - The Horizontal Prison.
+  - The Chord Tone Architect.
+  - The Rhythmic Displacer.
+  - The Modal Alchemist.
+  - Total Audiation.
+- Redesign and expand the Listening Vault into an active reference and analysis library.
+- Preserve and sensibly integrate HOME, DAILY, SETUP, existing TECHNIQUE ROADMAP progression and other useful LIBRARY content.
 
-### Phase 5 — Fretboard Mastery
+### NON-NEGOTIABLE SAFEGUARDS
 
-Objetivo: Build the interactive guitar visualisation and practical fretboard exercises.
+1. The latest approved complete `index.html` from `main` is the source of truth for the current application. Inspect it; do not guess.
+2. Keep `baseline-original` untouched as a historical reference.
+3. Do not replace the whole application with a simplified rewrite.
+4. Do not remove or break unrelated features, state fields, Firebase integration, local persistence or existing user data.
+5. Do not change authentication, Firestore paths, Firebase project configuration or security assumptions without explaining the reason and migration impact.
+6. Keep static educational content separate from user-specific progress.
+7. Make schema changes additive and versioned wherever possible.
+8. Do not use XP as a gate that blocks access to educational content.
+9. Theory reading must never create progress, completion, studied status, mastery or XP.
+10. Do not provide a “Mark as Studied” action or an equivalent mechanism.
+11. Do not make the learning experience a multiple-choice quiz bank. Include construction, analysis, diagnosis, comparison, transposition and application tasks.
+12. Do not produce superficial or fabricated music-theory content.
+13. Preserve the existing TECHNIQUE ROADMAP calculations and behaviour unless the current approved phase explicitly authorises a change.
+14. Do not modify DAILY functionality unless explicitly authorised.
+15. Do not fabricate MUSICAL DEVELOPMENT progress, percentages, XP or mastery.
+16. Do not output placeholders or omit unchanged code. The deliverable must be a complete working updated `index.html`.
 
-| PHASE 5 — INTERACTIVE FRETBOARD MASTERY<br><br>Implement the Fretboard Mastery area as a real interactive learning tool, not a static diagram.<br><br>CORE FRETBOARD<br>- Render a configurable guitar fretboard with selectable string count/tuning and a useful default standard tuning.<br>- Show note names, enharmonic spelling, pitch classes, intervals, scale degrees and selected chord tones.<br>- Allow the user to select a root/key and a scale, mode, chord or interval set.<br>- Highlight notes consistently and provide a legend.<br>- Support practical fret ranges and responsive interaction on mobile.<br>- Include controls to show/hide labels and switch between note names, interval names and scale degrees.<br>- Ensure note calculations are derived correctly from tuning and fret position; avoid hard-coded pattern-only displays.<br><br>LEARNING TOOLS<br>- Note-finding and interval mapping across the neck.<br>- Scale construction and position visualisation.<br>- Triads, inversions, arpeggios and chord-tone mapping.<br>- Chord voicing visualisation where practical.<br>- String relationship and octave-pattern exploration.<br>- Connect fretboard shapes to keys, scale degrees and harmonic function.<br>- Provide examples that explain why a shape works rather than teaching memorised boxes alone.<br><br>PEDAGOGY<br>- Add guided tasks such as locate all minor thirds from a selected note, map a scale degree across strings, construct a triad in a chosen area, or identify chord tones within a position.<br>- Give hints and explanations.<br>- Link each tool to its relevant Compendium chapter and, where appropriate, Improv Gates.<br><br>TECHNICAL QUALITY<br>- Use accurate tuning/fret mathematics and test enharmonic edge cases.<br>- Avoid rendering too many DOM elements unnecessarily.<br>- Ensure touch-friendly controls, keyboard accessibility where practical and no mobile horizontal overflow.<br>- Preserve existing app state and unrelated features.<br><br>DELIVERABLES<br>Complete updated index.html; explain the calculation model; list supported tunings/ranges; test note accuracy across open strings and multiple frets; provide mobile/desktop checks. |
+### WORKING METHOD
 
-| --- |
+Only perform the phase requested in the current prompt.
 
-### Phase 6 — Harmonic Analysis Lab
+First inspect the attached current file.
 
-Objetivo: Create a useful analysis environment with explicit assumptions and nuanced explanations.
+State the relevant existing architecture and the exact areas you plan to change.
 
-| PHASE 6 — HARMONIC ANALYSIS LAB<br><br>Build the Harmonic Analysis Lab as a guided analysis workspace.<br><br>REQUIRED CAPABILITIES<br>- Let the learner enter or select a key/tonal centre and a chord progression.<br>- Display chord symbols and Roman numerals together where meaningful.<br>- Identify diatonic chords and flag non-diatonic chords for analysis rather than automatically labelling them as errors.<br>- Support analysis concepts including tonic/predominant/dominant function, cadences, secondary dominants, modal interchange, borrowed chords, tonicisation, modulation, pedal points/drones and ambiguous progressions.<br>- Show harmonic rhythm and progression structure.<br>- Explain alternative interpretations where a progression is genuinely ambiguous.<br>- Provide step-by-step worked analyses and guided exercises.<br>- Include a diagnosis mode where the learner corrects a flawed analysis and receives reasoning.<br>- Link to Compendium chapters and relevant Improv Gates.<br><br>IMPORTANT MUSICAL RULES<br>- Do not imply that every chord progression has one unambiguous Roman-numeral interpretation.<br>- Distinguish chord spelling, chord quality, scale-degree root and harmonic function.<br>- Handle major/minor context, accidentals, enharmonic spelling and borrowed chords carefully.<br>- Make assumptions explicit (e.g. selected key, tuning or tonal centre).<br>- Do not claim automatic audio transcription or audio recognition unless it is actually implemented.<br><br>INTERFACE<br>Keep the tool understandable: progressive steps, clear notation, expandable explanations and useful visual summaries. Ensure desktop and mobile support.<br><br>DELIVERABLES<br>Complete updated index.html; describe supported analysis cases and limitations; provide worked examples and tests for diatonic, secondary-dominant, modal-interchange and ambiguous cases. |
+Implement only after that inspection.
 
-| --- |
+Preserve unrelated code.
 
-### Phase 7 — Improv
+At the end, provide:
 
-Objetivo: Turn the five Gates into a serious practical musicianship curriculum.
+- Complete updated `index.html`.
+- Concise change log.
+- List of functions, state fields and files changed.
+- Migration notes, if any.
+- Manual acceptance-test checklist.
+- Known limitations and unfinished work.
 
-| PHASE 7 — IMPROV REDESIGN: FIVE GATES<br><br>Redesign the Improv section substantially while preserving its five-Gate identity. Do not simply restyle the old questions. Treat the current Gate content as replaceable, but inspect the existing state fields and migrate or preserve user progress safely.<br><br>GATES<br>1. The Horizontal Prison — break out of fixed box thinking; connect positions, intervals, phrases and neck navigation.<br>2. The Chord Tone Architect — target chord tones, outline changes, connect lines to harmony and use voice leading.<br>3. The Rhythmic Displacer — rhythmic variation, displacement, subdivisions, odd meters, syncopation and phrase placement.<br>4. The Modal Alchemist — modal colour, scale/chord relationships, characteristic tones and controlled modal application.<br>5. Total Audiation — develop internal musical conception, melodic direction and the relationship between imagined musical ideas and instrument execution. Avoid duplicating the user's separate ear-training tools.<br><br>FOR EACH GATE<br>- Define purpose, prerequisites, skills and measurable outcomes.<br>- Provide a progression of levels or missions, from foundational to advanced.<br>- Explain the musical idea before asking the user to perform it.<br>- Include varied practical tasks, not just multiple-choice questions.<br>- Provide practice instructions, constraints, reflection prompts and assessment criteria.<br>- Include examples and links to Compendium, Fretboard Mastery and Analysis Lab.<br>- Make progress meaningful and transparent; do not lock theory content behind XP.<br>- Provide ways to resume a Gate and see strengths/areas to revisit.<br><br>PRESERVE<br>Retain the user's overall app progress, Daily plan and unrelated features. If old Gate progress cannot map cleanly to the new system, preserve it in a legacy field or document the migration rather than silently discarding it.<br><br>DELIVERABLES<br>Complete updated index.html; Gate-by-Gate content outline; exercise types; progress mapping/migration notes; test checklist. |
+If the task cannot be completed safely in one pass, stop at a clear checkpoint and explain exactly what remains.
 
-| --- |
+Never silently simplify or pretend incomplete work is finished.
 
-### Phase 8 — Listening Vault
+---
 
-Objetivo: Make listening references actionable, searchable and connected to the learning system.
+# 11. Step-by-step Gemini prompts
 
-| PHASE 8 — LISTENING VAULT REDESIGN<br><br>Redesign the Listening Vault as an active reference and musical-analysis library, not just a list of artists or genres.<br><br>ORGANISATION<br>- Browse by genre, artist, musical concept and learning objective.<br>- Retain and expand useful existing categories such as Stoner/Doom/Sludge, Prog/Odd Meters, Death Metal/Groove and Classic Rock/Blues.<br>- Keep the theory general and use genre categories as examples and contexts, not as limits.<br>- Include the user's priority interests: stoner, doom, sludge, progressive music, death metal, thrash and blues.<br><br>REFERENCE ENTRY TEMPLATE<br>Where information is available and verified, each entry can include:<br>- Artist and work/track or specific passage.<br>- Genre and context.<br>- What to listen for (harmonic, melodic, rhythmic, textural or phrasing feature).<br>- Relevant theory concepts and links to Dojo chapters.<br>- Harmonic/melodic/rhythmic analysis, with uncertainty clearly marked.<br>- Guitar application or practice idea.<br>- Personal notes/bookmarking and study status.<br><br>EDITORIAL ACCURACY<br>- Do not invent track timestamps, chord progressions, scales, quotes or claims about a recording.<br>- If the exact musical analysis has not been verified, label it as a suggested listening focus or an item requiring verification.<br>- Do not embed copyrighted audio or reproduce lyrics. Link to legitimate listening destinations only if a reliable URL is supplied or verified.<br>- Do not fabricate external URLs.<br><br>FUNCTIONALITY<br>- Search and filter by genre, artist, concept and instrument application.<br>- Allow bookmarks/favourites and personal study notes if supported by the approved data model.<br>- Provide links to relevant Compendium chapters, Fretboard tools, Analysis Lab and Improv Gates.<br>- Ensure the library remains useful even when the user has not signed in.<br><br>DELIVERABLES<br>Complete updated index.html; describe the taxonomy and entry schema; list verified versus suggested references; test search, filters, bookmarks and persistence. |
+Use the Master Instructions above together with one prompt at a time.
 
-| --- |
+Attach the latest approved complete `index.html` on every implementation phase.
 
-### Phase 9 — Learning and assessment
+The prompts for completed phases are historical records. Do not repeat completed phases unless a specific defect or regression is identified and the owner authorises the work.
 
-Objetivo: Connect the content into a meaningful learning journey without turning it into a locked game.
+## Phase 0 — Audit and architecture
 
-| PHASE 9 — LEARNING PATH, EXERCISES, ASSESSMENT AND REVIEW<br><br>Integrate the learning experience across Dojo, Improv and Listening Vault.<br><br>LEARNING MODES<br>- Progressive path: recommend a sensible sequence based on prerequisites and previous progress.<br>- Free exploration: allow users to open any chapter or tool without arbitrary XP locks.<br>- Explain why a next step is recommended.<br><br>EXERCISE SYSTEM<br>Support a reusable exercise model with task types such as:<br>- Construct a scale/chord/interval set.<br>- Identify a chord or interval from its construction.<br>- Analyse a progression and explain function.<br>- Diagnose an incorrect Roman-numeral analysis.<br>- Compare modes/scales over the same tonal centre.<br>- Transpose a progression while preserving function.<br>- Locate notes or chord tones on the fretboard.<br>- Explain why a progression is ambiguous or why a musical choice creates a particular effect.<br>Avoid repetitive question templates and superficial randomisation.<br><br>FEEDBACK<br>- Give hints, worked reasoning and explanations.<br>- Distinguish an incorrect answer from a partially correct or alternative valid interpretation where possible.<br>- Track attempts and mastery separately from simply opening a chapter.<br>- Use transparent mastery criteria; do not invent precision or claim competence from a single quiz response.<br><br>PROGRESS<br>- Provide a coherent overview across chapters, tools, Gates and Vault references.<br>- Keep static curriculum separate from per-user progress.<br>- Preserve legacy app progress.<br>- Use additive, versioned data structures.<br>- Support local use and optional account sync.<br>- If spaced review is implemented, explain its logic and let users access content freely.<br><br>DELIVERABLES<br>Complete updated index.html; exercise schema; mastery rules; learning-path/prerequisite logic; migration notes; tests for signed-out/local and signed-in/synced use. |
+**Status:** COMPLETE. Historical prompt retained for context.
 
-| --- |
+**Objective:** Understand the actual code and approve a safe architecture before implementation.
 
-### Phase 10 — Integration and release audit
+Historical instruction:
 
-Objetivo: Verify the complete application and prevent regressions before release.
+PHASE 0 — SOURCE AUDIT AND ARCHITECTURE ONLY (DO NOT EDIT CODE)
 
-| PHASE 10 — INTEGRATION, REGRESSION AND RELEASE AUDIT<br><br>Perform a full quality audit of the current complete index.html. Do not add major new features during this phase unless a defect must be fixed to make an existing feature work.<br><br>REGRESSION AREAS<br>- Home dashboard and navigation.<br>- Daily plan, task completion, calendar/streaks and existing roadmap.<br>- Dojo Compendium, chapter navigation, search, diagrams and progress.<br>- Fretboard Mastery calculations and interactions.<br>- Harmonic Analysis Lab examples and analysis.<br>- All five Improv Gates and progress.<br>- Listening Vault search, filters, bookmarks and notes.<br>- Setup tools and settings.<br>- Google sign-in/sign-out and signed-out operation.<br>- localStorage persistence, Firestore sync and cross-device behaviour.<br>- Data migration from the original baseline and from each intermediate checkpoint.<br>- Responsive behaviour on small mobile, large mobile/tablet and desktop.<br><br>TECHNICAL AUDIT<br>- Check browser console errors and broken event handlers.<br>- Check missing IDs, duplicate IDs, invalid selectors and dead controls.<br>- Check that event delegation still works after view changes.<br>- Check that re-rendering does not erase user input unexpectedly.<br>- Check performance for large chapter lists and diagrams.<br>- Check accessibility basics: keyboard navigation, focus, labels and contrast.<br>- Check that no secrets or unsafe user data are exposed.<br>- Check Firestore rules assumptions; do not claim rules are secure unless they were actually inspected.<br><br>OUTPUT<br>1. Test matrix with pass/fail/not-tested.<br>2. Bugs found and fixes made.<br>3. Data migration and backup instructions.<br>4. Known limitations.<br>5. Final complete index.html.<br>6. Release checklist and rollback procedure.<br><br>Do not claim a test passed unless it was actually run. Clearly distinguish code inspection from browser testing. |
+Inspect the original application source thoroughly and produce an implementation architecture. Do not modify the file, generate replacement code or redesign the app.
 
-| --- |
+1. Map the full application:
+   - Top-level navigation and every subview.
+   - Render functions, event handlers, delegated actions and important DOM selectors.
+   - CSS/layout system and responsive breakpoints.
+   - Central state object and every persistence mechanism.
+   - localStorage keys and versioning.
+   - Firebase Auth initialisation, Google sign-in/out, Firestore reads/writes and document paths.
+   - Roadmap, Daily, Improv, Dojo, Library, Listening Vault and Setup functionality.
+   - External libraries, assets, fonts and other dependencies.
+2. Identify the minimum set of existing behaviours that must be preserved.
+3. Identify which Dojo educational structures can be discarded and which technical services/state integrations may be reused.
+4. Identify the exact Improv and Listening Vault structures that will need replacement or migration.
+5. Propose a revised information architecture retaining the app's recognisable identity and useful top-level structure.
+6. Propose a modular internal code organisation suitable for a single-file GitHub Pages app. Do not assume a build system or server exists.
+7. Propose data models for static curriculum content and per-user progress. Include migration/versioning and local-first/offline considerations.
+8. Explain how the progressive path and free exploration coexist without content locks.
+9. Identify risks, technical debt, unknowns and dependencies.
+10. Provide a phase-by-phase implementation plan with dependencies and test gates.
 
-## 12. Acceptance checklist for every phase
+Output:
 
-☐ The latest complete index.html is attached and was inspected.
+A. Verified source inventory.
 
-☐ The requested phase is the only implementation scope.
+B. Existing feature preservation matrix.
 
-☐ No unrelated top-level area was removed or degraded.
+C. Proposed navigation and information architecture.
 
-☐ The app still loads without a signed-in account.
+D. Proposed code/component organisation.
 
-☐ Existing local user data remains readable.
+E. Proposed curriculum/content data model.
 
-☐ Firebase login and sync remain intact where relevant.
+F. Proposed user-progress data model and migration plan.
 
-☐ Desktop and mobile layouts are usable.
+G. Firebase/local persistence compatibility plan.
 
-☐ No visible control is inert or falsely presented as functional.
+H. Risks and open questions.
 
-☐ The output is a complete file, not partial code or placeholders.
+I. Detailed implementation sequence and acceptance criteria.
 
-☐ A change log and test checklist are supplied.
+Be explicit about anything you could not verify. Do not infer missing functionality. Do not change the file.
 
-☐ The new checkpoint is saved separately from the original baseline.
+**Historical note:** this prompt originally referred to the original source as the authoritative baseline. That wording is superseded. The latest approved complete `index.html` from `main` is the current implementation baseline.
 
-## 13. Project context handover — paste into a future ChatGPT conversation
+## Phase 1 — Responsive UI and navigation
 
-| I am continuing a project called The Shred Roadmap, an existing music-learning web app hosted as a static GitHub Pages site. Please read the attached Project Master Document first and treat it as the durable project brief.<br><br>IMPORTANT FILE RULES<br>- The original authoritative source was index (9).html (about 130 KB / 2,038 lines at the time of the audit).<br>- A previous Gemini-generated index(1).html was incomplete and must not be used as the baseline.<br>- Always ask me to provide the latest complete working index.html if it is not attached in the current conversation. Do not pretend you still have access to an old sandbox path.<br>- Keep the untouched original baseline as backup. Never overwrite it.<br>- I am a beginner at coding, so explain technical steps in clear, simple language.<br><br>CONFIRMED PRODUCT DECISIONS<br>- Learning: progressive recommended path AND free exploration.<br>- Language: English.<br>- Platforms: desktop and mobile equally important.<br>- UX: comprehensive but not overwhelming; expandable chapters, clear navigation, interactive diagrams.<br>- Preserve the original app's identity, root structure and useful features.<br><br>PRODUCT VISION<br>I want a deep, almost encyclopaedic music-learning platform, not a shallow quiz app. I am a musician first and a guitarist second, so general music theory is the core curriculum. Guitar applications should be clearly separated as practical sections. Goals: advanced theory, fretboard fluency, complex harmonic analysis, improvisation without relying on memorised shapes, composing riffs/progressions/solos/pieces, and a broad foundation across genres.<br><br>ORIGINAL APP AREAS<br>Home, Daily, Improv, Dojo, Library and Setup.<br>- Preserve useful Home, Daily, Setup, roadmap, progress, login and sync functionality.<br>- Rebuild Dojo learning experience from scratch; its existing educational content/Codex/mini-games can be discarded.<br>- Redesign Improv substantially while retaining five Gates: The Horizontal Prison, The Chord Tone Architect, The Rhythmic Displacer, The Modal Alchemist, Total Audiation.<br>- Redesign Listening Vault into an active listening/reference/analysis library.<br>- Reorganise Library without casually deleting useful content.<br><br>KNOWN TECHNICAL CONTEXT TO VERIFY AGAINST THE CURRENT FILE<br>The app was a single index.html with integrated HTML/CSS/JS, central state, localStorage and optional Google/Firebase Authentication + Firestore sync. A localStorage key observed was shredRoadmapState_v10; a Firestore path observed was users/{uid}. The UI was constrained to about 520 px and used carousel-like navigation. These are audit leads and must be verified against the current source before changes.<br><br>TARGET DOJO<br>1. Music Theory Compendium: deep chapters from fundamentals through advanced harmony, modes, chromaticism, rhythm, voice leading, form and composition.<br>2. Fretboard Mastery: accurate interactive fretboard, notes, intervals, scales, triads, inversions, arpeggios, voicings and theory-to-instrument links.<br>3. Harmonic Analysis Lab: progression analysis, Roman numerals, tonal centres, functions, secondary dominants, modal interchange, modulation, pedal tones, ambiguity and guided diagnosis.<br><br>CHAPTER STANDARD<br>Overview; prerequisites; definitions; construction/derivation; variants; relationships; musical effect; examples/context; separate guitar application; common mistakes; worked examples; varied exercises with solutions; further study.<br><br>EXERCISE PREFERENCES<br>Prioritise harmonic analysis, phrasing and fretboard construction/fluency. Use construct, identify, analyse, diagnose, compare, transpose and apply tasks. Formal staff reading is not required. Ear training and creative composition drills are not essential because I use separate tools for those. Avoid randomising only the key while repeating the same questions.<br><br>GENRE CONTEXT<br>Theory must be general, with examples from stoner, doom, sludge, prog, death metal, thrash, blues and selected classic rock. Explain where ideas occur, why they work and their musical effect. Do not fabricate track analyses or timestamps.<br><br>IMPLEMENTATION APPROACH<br>Use the phase-by-phase Gemini prompts in the Project Master Document. Phase 0 is audit only. Then responsive shell, Dojo structure, theory content, fretboard tools, analysis lab, Improv, Listening Vault, learning/assessment, final regression. For every phase: attach latest full index.html, change only the requested scope, preserve unrelated features and data, return a complete working HTML file, changelog and real test checklist. Save a checkpoint after every phase.<br><br>Please continue from the current project stage: [WRITE CURRENT PHASE / WHAT HAS BEEN COMPLETED HERE]. |
+**Status:** COMPLETE — TESTED AND APPROVED.
 
-| --- |
+**Objective:** Create the design foundation before adding large content modules.
 
-## 14. Important project principles and unresolved decisions
+Historical implementation scope:
 
-### Principles already decided
+- Preserve the recognisable Shred Roadmap identity and unrelated working features.
+- Replace the narrow, mobile-only-feeling layout with a polished responsive experience for desktop and mobile equally.
+- On desktop, use a clear persistent navigation/sidebar or equivalent structure and a readable main content area.
+- On mobile, provide compact, touch-friendly navigation without horizontal overflow.
+- Retain the six top-level areas: HOME, DAILY, DOJO, IMPROV, LIBRARY and SETUP.
+- Add a consistent page header, breadcrumbs or section context where useful, reusable content containers, typography, spacing, buttons, tabs, accordions and status indicators.
+- Establish a visual language for theory, worked examples, guitar application, exercises, warnings and references.
+- Add a search entry point in the shell if the architecture supports it, without pretending it searches content until implemented.
+- Ensure accessibility: keyboard focus, semantic controls, sufficient contrast, labels and touch target sizes.
 
-English is the app language, even though planning conversations may be in Portuguese.
+The original Phase 1 prompt included expandable chapters and progressive disclosure. Those instructions are historical and do not override the later approved Phase 2 navigation blueprint.
 
-The app is a musicianship platform with guitar-specific applications, not a guitar-only theory course.
+The Phase 2 Explorer and Chapter Reader must follow the current hybrid-navigation and continuous-reading requirements in this Masterplan and the approved Phase 2 specification.
 
-The Dojo is a fresh educational rebuild, not a cosmetic refresh.
+**Integration:** Phase 1 was approved and merged into `main` by the owner. Do not repeat its merge.
 
-Improv and Listening Vault are major redesigns, not minor content edits.
+## Phase 2 — DOJO information architecture and Compendium shell
 
-Original useful app behaviour and user data must be protected.
+**Status:** SPECIFICATION APPROVED — IMPLEMENTATION NOT APPROVED — INDEPENDENT AUDIT NEXT.
 
-The product must support both guided progression and free reference use.
+**Working branch:** `phase-2-dojo-shell`.
 
-### Decisions to make during Phase 0/implementation
+**Approved specification:** `project-docs/PHASE-2-SPEC.md` on `phase-2-dojo-shell`.
 
-Whether to retain a single physical index.html or introduce separate JS/CSS files while keeping GitHub Pages deployment simple. Prefer the least disruptive maintainable option.
+**Approval date:** 1 November 2026.
 
-Exact desktop navigation pattern and mobile navigation pattern after inspecting the current visual identity.
+The approved Phase 2 specification and Addenda A, B and C are the exact scope authority for Phase 2. Read the complete specification before any implementation work.
 
-Exact chapter taxonomy and order after curriculum review.
+### Specification approval
 
-Whether notes/bookmarks and exercise attempts should sync immediately or use a local queue; decide based on existing Firebase implementation.
+The owner explicitly approved the Phase 2 specification draft and all three addenda.
 
-Which Listening Vault entries can be verified and which should remain suggested placeholders until checked.
+**Core specification:** DOJO information architecture, Compendium structure, Chapter Reader, curriculum relationships, data principles, progression separation, scope and acceptance criteria.
 
-Whether Total Audiation should include any ear-training-like activities or focus mainly on internal melodic planning, given the user's separate tools.
+**Addendum A — Visual Learning**
 
-## 15. Final reminder
+Visual representations must accompany substantial concepts wherever they materially improve understanding.
 
-The purpose of this document is to preserve intent and prevent scope drift. The project should become deeper, more coherent and more useful without losing the original app's identity or working foundations. Gemini is an implementation assistant, not the authority on the product vision: verify its proposals, keep backups and approve each phase before proceeding.
+Examples include Circle of Fifths, key signatures, intervals, scales, chords, fretboard maps, harmonic progressions/functions, voice leading, rhythm and modal comparisons.
+
+Diagrams should be embedded near the relevant explanation, responsive and legible.
+
+Static diagrams and interactive tools must be distinguished.
+
+Phase 2 establishes conventions and includes at least one representative diagram; it does not build the complete diagram library.
+
+**Addendum B — IMPROV Naming**
+
+`IMPROV` is the official navigation/product label, including bars, cards, progress, Gates and subdivision labels.
+
+Natural explanatory English uses grammatical terms such as “the improvisation track”, “improvisation exercises” and “improvisational development”.
+
+**Addendum C — Navigation and Visual Experience Blueprint**
+
+Defines:
+
+- Dual independent progress indicators.
+- DOJO Hub.
+- Desktop and mobile Explorer patterns.
+- Continuous Chapter Reader.
+- Visual educational resource conventions.
+- Preservation of the Phase 1 visual language.
+- Consistent navigation.
+
+### Approved Phase 2 product and UX decisions
+
+1. **Two independent progression systems**
+   - `TECHNIQUE ROADMAP` remains the existing red, phase-segmented technique progression. Its calculations and behaviour must remain unchanged in Phase 2.
+   - `MUSICAL DEVELOPMENT` is a separate global practical-learning indicator with DOJO and IMPROV subdivisions.
+   - It is driven only by meaningful practical exercise evidence.
+   - No fabricated percentages, arbitrary XP totals or unsupported mastery claims.
+   - The evidence model and weighting remain to be designed in a future approved phase.
+   - Desktop indicators sit side by side; mobile uses a compact stacked or equivalent responsive arrangement.
+
+2. **Theory reading never creates progress**
+   - No chapter reading states.
+   - No studied status.
+   - No “Mark as Studied”.
+   - No XP for reading.
+   - No theory content locks.
+
+3. **Recommended path and free exploration** coexist. The recommended path guides but never blocks access.
+
+4. **DOJO Hub:** Music Theory Compendium, Fretboard Mastery and Harmonic Analysis Lab.
+
+5. **Compendium Explorer:** desktop persistent category sidebar and central content; mobile simplified category selection with search and clear navigation. Avoid deep accordion-heavy navigation.
+
+6. **Chapter Reader:** continuous editorial reading page; desktop side table of contents and compact mobile chapter index.
+
+7. **Bidirectional learning links:** relevant theory chapters link to practical exercises/tools and practical activities link back to supporting theory.
+
+8. **Curriculum:** preserve the approved topic structure and exactly nine Functional Harmony chapters as specified in `PHASE-2-SPEC.md`.
+
+9. **DAILY:** existing routines, tasks, progress and behaviour remain unchanged in Phase 2.
+
+10. **Legacy DOJO:** old UI/functions may be replaced where appropriate. Preserve useful user data, not obsolete architecture for its own sake.
+
+### Phase 2 implementation status
+
+The Phase 2 implementation is not approved and has not been merged into `main`.
+
+The current branch implementation must be independently audited against:
+
+- The approved Phase 2 specification.
+- The latest approved `main` baseline.
+- The technical safeguards in this Masterplan.
+
+Do not assume that the existing branch implementation fully satisfies the approved requirements.
+
+### Stage 1 — Independent implementation audit
+
+The next action is an independent audit of the complete current Phase 2 branch implementation.
+
+This is a no-code-change stage.
+
+The audit must provide:
+
+- Exact baseline and branch commit/file identification.
+- Requirements compliance matrix (PASS / PARTIAL / FAIL / NOT VERIFIABLE) with source evidence.
+- Regression risk review for HOME, DAILY, TECHNIQUE ROADMAP, IMPROV, LIBRARY, SETUP, authentication, persistence and Firebase.
+- Data preservation and migration review, including unknown/future state fields and asynchronous account/session race risks.
+- Desktop/mobile UX and visual-learning review against Addendum C.
+- Critical defects with severity.
+- Recommendation: incremental correction, partial rebuild or rebuild from approved `main`.
+- Truthful test status separating static inspection, automated tests, browser tests, Firebase/auth tests and manual tests still required.
+
+**Stage 1 restrictions:**
+
+- Do not edit code or project files.
+- Do not create commits.
+- Do not change branches.
+- Do not implement fixes.
+- Do not produce a replacement `index.html`.
+
+Stop after the report and wait for explicit owner approval.
+
+### Stage 2 — Implementation gate
+
+Stage 2 does not begin automatically after the audit.
+
+The owner must review the report and explicitly approve the implementation strategy.
+
+Only then may the authorised implementation scope proceed.
+
+Do not merge Phase 2 into `main` until the complete implementation has been reviewed, tested and approved by the owner.
+
+## Phase 3 — Compendium foundations and harmony
+
+**Objective:** Establish the editorial standard and create the first substantial body of theory.
+
+Populate the DOJO Compendium with substantial, accurate English-language learning content.
+
+Work only on the agreed chapters in this phase; do not attempt to fill the entire advanced syllabus in one pass.
+
+### Content standard
+
+Every substantial chapter should explain:
+
+- What the concept is and why it matters.
+- Prerequisites.
+- Precise terminology.
+- Construction and derivation.
+- Classifications and variants.
+- Exceptions.
+- Relationships to other concepts.
+- Musical effect.
+- Worked examples.
+- Common errors.
+- Applications.
+- Exercises and solutions.
+
+Integrate visual explanations wherever they materially improve understanding.
+
+### First coherent learning block
+
+- Pitch, pitch classes and octave equivalence.
+- Note names and enharmonic spelling.
+- Natural notes, sharps, flats and accidentals.
+- Semitones, whole tones and interval measurement.
+- Interval qualities and compound intervals.
+- Key signatures and the Circle of Fifths.
+- Major and minor scales, including construction and spelling.
+- Scale degrees and basic tonal-centre concepts.
+
+Then add the next block if implementation and output quality allow:
+
+- Triads and chord construction.
+- Chord qualities and inversions.
+- Diatonic triads in major and minor keys.
+- Seventh chords and chord symbols.
+- Roman-numeral analysis and basic harmonic function.
+
+### Chapter requirements
+
+1. Use precise examples in multiple keys, not just C major.
+2. Explain spelling as well as pitch equivalence.
+3. Include comparison tables or visual diagrams where they genuinely clarify.
+4. Include at least three different exercise formats across the chapter set.
+5. Provide worked solutions and reasoning, not only an answer key.
+6. Include guitar application in a clearly separate subsection where relevant.
+7. Link prerequisites and follow-up topics.
+8. Do not introduce reading-completion or studied-state progression.
+9. Keep practical exercise evidence separate from chapter reading.
+
+Do not invent historical claims, quotations or artist-specific examples. If uncertain, mark an example for verification rather than presenting it as fact.
+
+Keep content data separate from rendering code.
+
+Ensure mobile readability and do not overload the initial chapter view.
+
+### Deliverables
+
+- Complete updated `index.html`.
+- List of chapters completed and their coverage.
+- Content-quality self-audit.
+- Exercise inventory.
+- Visual resources introduced.
+- Exact list of what remains for the next content block.
+
+## Phase 4 — Advanced theory
+
+**Objective:** Expand the encyclopaedia into advanced harmony, modes, chromaticism, rhythm and form.
+
+Continue the existing Compendium using the same approved chapter template, terminology, notation conventions and visual system.
+
+Do not rewrite earlier chapters unless a factual error is identified. Report any correction explicitly.
+
+Develop substantial chapters covering:
+
+- Natural minor, harmonic minor and melodic minor; parallel and relative relationships.
+- Modes: derivation, interval formulas, characteristic tones, modal centres and modal harmony.
+- Pentatonic and blues scales, symmetrical scales and selected synthetic scales.
+- Triad extensions, seventh chords, ninth/eleventh/thirteenth chords, altered tensions and chord-symbol conventions.
+- Inversions, slash chords, voicings and voice-leading implications.
+- Diatonic harmony in major and minor.
+- Functional harmony, tonic/predominant/dominant roles, cadences and harmonic rhythm.
+- Secondary dominants and applied chords.
+- Modal mixture/interchange and borrowed chords.
+- Modulation, tonicisation and ambiguous tonal centres.
+- Chromatic harmony, diminished harmony, augmented harmony and other relevant advanced devices.
+- Voice leading, common-tone relationships and counterpoint fundamentals.
+- Rhythm, meter, subdivisions, syncopation, odd meters and polyrhythmic concepts where appropriate.
+- Musical form and composition principles relevant to the user's goals.
+
+For each topic, explain construction, notation, context, musical effect, common misconceptions and analytical use.
+
+Distinguish standard practice from stylistic conventions.
+
+Use examples across genres, but do not reduce general theory to metal/blues examples.
+
+Include exercises that require construction, comparison, analysis, diagnosis, transposition and application.
+
+Vary the underlying musical examples and task types; do not merely randomise a root note.
+
+Maintain internal links, prerequisite relationships and a coherent recommended path.
+
+Do not create content locks or reading-based progress.
+
+If scope is too large, divide the work into clearly defined sub-batches and stop after a complete, reviewed batch.
+
+### Deliverables
+
+- Complete updated `index.html`.
+- Chapter coverage matrix.
+- New/changed terminology.
+- Exercise inventory.
+- Visual resource inventory.
+- Content audit.
+- Next-batch recommendation.
+
+## Phase 5 — Fretboard Mastery
+
+**Objective:** Build the interactive guitar visualisation and practical fretboard exercises.
+
+Implement Fretboard Mastery as a real interactive learning tool, not a static diagram.
+
+### Core fretboard
+
+- Render a configurable guitar fretboard with selectable string count/tuning and a useful default standard tuning.
+- Show note names, enharmonic spelling, pitch classes, intervals, scale degrees and selected chord tones.
+- Allow the user to select a root/key and a scale, mode, chord or interval set.
+- Highlight notes consistently and provide a legend.
+- Support practical fret ranges and responsive interaction on mobile.
+- Include controls to show/hide labels and switch between note names, interval names and scale degrees.
+- Ensure note calculations are derived correctly from tuning and fret position; avoid hard-coded pattern-only displays.
+
+### Learning tools
+
+- Note-finding and interval mapping across the neck.
+- Scale construction and position visualisation.
+- Triads, inversions, arpeggios and chord-tone mapping.
+- Chord voicing visualisation where practical.
+- String relationship and octave-pattern exploration.
+- Connect fretboard shapes to keys, scale degrees and harmonic function.
+- Provide examples that explain why a shape works rather than teaching memorised boxes alone.
+
+### Pedagogy
+
+Add guided practical tasks such as:
+
+- Locate all minor thirds from a selected note.
+- Map a scale degree across strings.
+- Construct a triad in a chosen area.
+- Identify chord tones within a position.
+
+Give hints and explanations.
+
+Link each tool to its relevant Compendium chapter and, where appropriate, IMPROV Gates.
+
+Practical exercise records may contribute to MUSICAL DEVELOPMENT only when the relevant evidence model and criteria have been approved and implemented.
+
+### Technical quality
+
+- Use accurate tuning/fret mathematics and test enharmonic edge cases.
+- Avoid rendering too many DOM elements unnecessarily.
+- Ensure touch-friendly controls and keyboard accessibility where practical.
+- Avoid mobile horizontal overflow.
+- Preserve existing app state and unrelated features.
+
+### Deliverables
+
+- Complete updated `index.html`.
+- Explanation of the calculation model.
+- Supported tunings/ranges.
+- Note-accuracy tests across open strings and multiple frets.
+- Mobile/desktop checks.
+- Practical exercise data and progression implications.
+
+## Phase 6 — Harmonic Analysis Lab
+
+**Objective:** Create a useful analysis environment with explicit assumptions and nuanced explanations.
+
+Build the Harmonic Analysis Lab as a guided analysis workspace.
+
+### Required capabilities
+
+- Let the learner enter or select a key/tonal centre and a chord progression.
+- Display chord symbols and Roman numerals together where meaningful.
+- Identify diatonic chords and flag non-diatonic chords for analysis rather than automatically labelling them as errors.
+- Support tonic/predominant/dominant function, cadences, secondary dominants, modal interchange, borrowed chords, tonicisation, modulation, pedal points/drones and ambiguous progressions.
+- Show harmonic rhythm and progression structure.
+- Explain alternative interpretations where a progression is genuinely ambiguous.
+- Provide step-by-step worked analyses and guided exercises.
+- Include a diagnosis mode where the learner corrects a flawed analysis and receives reasoning.
+- Link to Compendium chapters and relevant IMPROV Gates.
+- Include visual representations of harmonic relationships where they materially improve understanding.
+
+### Important musical rules
+
+- Do not imply that every chord progression has one unambiguous Roman-numeral interpretation.
+- Distinguish chord spelling, chord quality, scale-degree root and harmonic function.
+- Handle major/minor context, accidentals, enharmonic spelling and borrowed chords carefully.
+- Make assumptions explicit (e.g. selected key, tuning or tonal centre).
+- Do not claim automatic audio transcription or audio recognition unless it is actually implemented.
+
+### Interface
+
+Keep the tool understandable: progressive steps, clear notation, expandable explanations and useful visual summaries.
+
+Ensure desktop and mobile support.
+
+### Deliverables
+
+- Complete updated `index.html`.
+- Supported analysis cases and limitations.
+- Worked examples.
+- Tests for diatonic, secondary-dominant, modal-interchange and ambiguous cases.
+
+## Phase 7 — IMPROV
+
+**Objective:** Turn the five Gates into a serious practical musicianship curriculum.
+
+Redesign the IMPROV section substantially while preserving its five-Gate identity.
+
+Do not simply restyle old questions.
+
+Treat current Gate content as replaceable, but inspect existing state fields and migrate or preserve user progress safely.
+
+### Gates
+
+1. The Horizontal Prison — break out of fixed-box thinking; connect positions, intervals, phrases and neck navigation.
+2. The Chord Tone Architect — target chord tones, outline changes, connect lines to harmony and use voice leading.
+3. The Rhythmic Displacer — rhythmic variation, displacement, subdivisions, odd meters, syncopation and phrase placement.
+4. The Modal Alchemist — modal colour, scale/chord relationships, characteristic tones and controlled modal application.
+5. Total Audiation — develop internal musical conception, melodic direction and the relationship between imagined musical ideas and instrument execution. Avoid duplicating the user's separate ear-training tools.
+
+### For each Gate
+
+- Define purpose, prerequisites, skills and measurable outcomes.
+- Provide a progression of levels or missions, from foundational to advanced.
+- Explain the musical idea before asking the user to perform it.
+- Include varied practical tasks, not just multiple-choice questions.
+- Provide practice instructions, constraints, reflection prompts and assessment criteria.
+- Include examples and links to Compendium, Fretboard Mastery and Analysis Lab.
+- Make progress meaningful and transparent.
+- Do not lock theory content behind XP.
+- Provide ways to resume a Gate and see strengths/areas to revisit.
+- Link practical activities back to relevant theoretical material.
+
+### Progression
+
+IMPROV practical exercises may contribute to the IMPROV subdivision of MUSICAL DEVELOPMENT.
+
+Only meaningful exercise evidence may contribute.
+
+Do not award arbitrary XP or claim mastery without transparent criteria and sufficient evidence.
+
+The exact global competency and weighting model must be approved before meaningful progress values are displayed.
+
+### Preserve
+
+Retain the user's overall app progress, DAILY plan and unrelated features.
+
+If old Gate progress cannot map cleanly to the new system, preserve it in a legacy field or document the migration rather than silently discarding it.
+
+### Deliverables
+
+- Complete updated `index.html`.
+- Gate-by-Gate content outline.
+- Exercise types.
+- Progress mapping/migration notes.
+- Practical progression evidence model.
+- Test checklist.
+
+## Phase 8 — Listening Vault
+
+**Objective:** Make listening references actionable, searchable and connected to the learning system.
+
+Redesign the Listening Vault as an active reference and musical-analysis library, not just a list of artists or genres.
+
+### Organisation
+
+- Browse by genre, artist, musical concept and learning objective.
+- Retain and expand useful existing categories such as Stoner/Doom/Sludge, Prog/Odd Meters, Death Metal/Groove and Classic Rock/Blues.
+- Keep theory general and use genre categories as examples and contexts, not as limits.
+- Include the user's priority interests: stoner, doom, sludge, progressive music, death metal, thrash and blues.
+
+### Reference entry template
+
+Where information is available and verified, each entry can include:
+
+- Artist and work/track or specific passage.
+- Genre and context.
+- What to listen for (harmonic, melodic, rhythmic, textural or phrasing feature).
+- Relevant theory concepts and links to DOJO chapters.
+- Harmonic/melodic/rhythmic analysis, with uncertainty clearly marked.
+- Guitar application or practice idea.
+- Personal notes and bookmarking.
+
+### Editorial accuracy
+
+- Do not invent track timestamps, chord progressions, scales, quotes or claims about a recording.
+- If the exact musical analysis has not been verified, label it as a suggested listening focus or an item requiring verification.
+- Do not embed copyrighted audio or reproduce lyrics.
+- Link to legitimate listening destinations only if a reliable URL is supplied or verified.
+- Do not fabricate external URLs.
+
+### Functionality
+
+- Search and filter by genre, artist, concept and instrument application.
+- Allow bookmarks/favourites and personal study notes if supported by the approved data model.
+- Provide links to relevant Compendium chapters, Fretboard tools, Analysis Lab and IMPROV Gates.
+- Ensure the library remains useful even when the user has not signed in.
+
+### Deliverables
+
+- Complete updated `index.html`.
+- Taxonomy and entry schema.
+- Verified versus suggested references.
+- Tests for search, filters, bookmarks and persistence.
+
+## Phase 9 — Learning and assessment
+
+**Objective:** Connect the content into a meaningful learning journey without turning it into a locked game.
+
+Integrate the learning experience across DOJO, IMPROV and Listening Vault.
+
+### Learning modes
+
+- Progressive path: recommend a sensible sequence based on prerequisites and practical evidence where relevant.
+- Free exploration: allow users to open any chapter or tool without arbitrary XP locks.
+- Explain why a next step is recommended.
+
+Theory reading must not create progress or be used as an assessment signal.
+
+### Exercise system
+
+Support a reusable exercise model with task types such as:
+
+- Construct a scale/chord/interval set.
+- Identify a chord or interval from its construction.
+- Analyse a progression and explain function.
+- Diagnose an incorrect Roman-numeral analysis.
+- Compare modes/scales over the same tonal centre.
+- Transpose a progression while preserving function.
+- Locate notes or chord tones on the fretboard.
+- Explain why a progression is ambiguous or why a musical choice creates a particular effect.
+
+Avoid repetitive question templates and superficial randomisation.
+
+### Feedback
+
+- Give hints, worked reasoning and explanations.
+- Distinguish an incorrect answer from a partially correct or alternative valid interpretation where possible.
+- Track attempts and practical mastery separately from simply opening a chapter.
+- Use transparent mastery criteria.
+- Do not invent precision or claim competence from a single quiz response.
+
+### Progress
+
+- Provide a coherent overview across practical exercises, tools and Gates.
+- Keep static curriculum separate from per-user practical progress.
+- Preserve legacy app progress where useful.
+- Use additive, versioned data structures.
+- Support local use and optional account sync.
+- If spaced review is implemented, explain its logic and let users access content freely.
+- Keep TECHNIQUE ROADMAP independent from MUSICAL DEVELOPMENT.
+- Keep DAILY outside MUSICAL DEVELOPMENT unless a future approved specification explicitly defines its contribution.
+
+### MUSICAL DEVELOPMENT evidence model
+
+Before displaying meaningful progress, define:
+
+- Competency dimensions.
+- What counts as valid practical evidence.
+- How exercise difficulty is represented.
+- How repeated attempts are treated.
+- How completion differs from mastery.
+- How evidence contributes to DOJO and IMPROV subdivisions.
+- How the global indicator is calculated.
+- How incomplete or insufficient evidence is represented.
+
+The model must be understandable and defensible.
+
+Do not reduce it to an arbitrary XP total.
+
+### Deliverables
+
+- Complete updated `index.html`.
+- Exercise schema.
+- Mastery rules.
+- Learning-path/prerequisite logic.
+- MUSICAL DEVELOPMENT evidence model.
+- Migration notes.
+- Tests for signed-out/local and signed-in/synced use.
+
+## Phase 10 — Integration and release audit
+
+**Objective:** Verify the complete application and prevent regressions before release.
+
+Perform a full quality audit of the current complete `index.html`.
+
+Do not add major new features during this phase unless a defect must be fixed to make an existing feature work.
+
+### Regression areas
+
+- HOME dashboard and navigation.
+- DAILY plan, task completion, calendar/streaks and existing roadmap.
+- TECHNIQUE ROADMAP calculations, display and behaviour.
+- MUSICAL DEVELOPMENT calculations, evidence and subdivisions.
+- DOJO Compendium, chapter navigation, search, diagrams and practical exercises.
+- Fretboard Mastery calculations and interactions.
+- Harmonic Analysis Lab examples and analysis.
+- All five IMPROV Gates and practical progress.
+- Listening Vault search, filters, bookmarks and notes.
+- SETUP tools and settings.
+- Google sign-in/sign-out and signed-out operation.
+- localStorage persistence, Firestore sync and cross-device behaviour.
+- Data migration from the original baseline and from each intermediate checkpoint.
+- Responsive behaviour on small mobile, large mobile/tablet and desktop.
+
+### Technical audit
+
+- Check browser console errors and broken event handlers.
+- Check missing IDs, duplicate IDs, invalid selectors and dead controls.
+- Check that event delegation still works after view changes.
+- Check that re-rendering does not erase user input unexpectedly.
+- Check performance for large chapter lists and diagrams.
+- Check accessibility basics: keyboard navigation, focus, labels and contrast.
+- Check that no secrets or unsafe user data are exposed.
+- Check Firestore rules assumptions; do not claim rules are secure unless they were actually inspected.
+- Verify that theory reading never creates progression evidence.
+- Verify that TECHNIQUE ROADMAP remains independent.
+- Verify that DAILY has not been unintentionally integrated into MUSICAL DEVELOPMENT.
+
+### Output
+
+1. Test matrix with pass/fail/not-tested.
+2. Bugs found and fixes made.
+3. Data migration and backup instructions.
+4. Known limitations.
+5. Final complete `index.html`.
+6. Release checklist and rollback procedure.
+
+Do not claim a test passed unless it was actually run.
+
+Clearly distinguish code inspection from browser testing.
+
+---
+
+# 12. Acceptance checklist for every phase
+
+Before approving a phase, verify:
+
+- [ ] The latest approved complete `index.html` is attached and was inspected.
+- [ ] The requested phase is the only implementation scope.
+- [ ] No unrelated top-level area was removed or degraded.
+- [ ] The app still loads without a signed-in account.
+- [ ] Existing local user data remains readable.
+- [ ] Firebase login and sync remain intact where relevant.
+- [ ] Desktop and mobile layouts are usable.
+- [ ] No visible control is inert or falsely presented as functional.
+- [ ] The output is a complete file, not partial code or placeholders.
+- [ ] A change log and test checklist are supplied.
+- [ ] The new checkpoint is saved separately from the original baseline.
+- [ ] Theory reading does not create progress, completion or mastery.
+- [ ] TECHNIQUE ROADMAP remains independent and unchanged unless explicitly authorised.
+- [ ] DAILY functionality remains intact.
+- [ ] MUSICAL DEVELOPMENT does not display fabricated progress.
+- [ ] Visual resources are legible and educationally useful where applicable.
+- [ ] The implementation complies with the approved phase specification.
+
+A phase is not approved merely because Gemini reports that it is complete.
+
+---
+
+# 13. Project context handover — paste into a future ChatGPT conversation
+
+The Shred Roadmap is a long-term music-learning application.
+
+Read `MASTERPLAN.md`, `CHECKPOINT.md`, `PHASE_LOG.md`, the latest approved `index.html` from `main`, and the current approved phase specification before acting.
+
+Speak to the owner in clear European Portuguese.
+
+All application-facing text, curriculum content and code comments must be in English.
+
+## Current project status — 2 November 2026
+
+- Phase 0 — Source Audit and Architecture: complete.
+- Phase 1 — Responsive UI and Navigation Foundation: complete, tested and approved. Its Pull Request was merged into `main` by the owner.
+- Phase 2 — DOJO Information Architecture and Compendium Shell: specification approved, implementation not approved.
+- The Phase 2 specification is `project-docs/PHASE-2-SPEC.md` on `phase-2-dojo-shell`.
+- The owner approved the core specification and Addenda A, B and C on 1 November 2026.
+- The next action is an independent, no-code-change audit of the existing Phase 2 branch against the approved specification and latest approved `main` baseline.
+- Stage 2 implementation requires explicit owner approval after reviewing the audit.
+- Phases 3–10 have not yet been started unless a later approved project document records otherwise.
+
+## Official application structure
+
+The official top-level areas are:
+
+- HOME.
+- DAILY.
+- DOJO.
+- IMPROV.
+- LIBRARY.
+- SETUP.
+
+DOJO contains:
+
+1. Music Theory Compendium.
+2. Fretboard Mastery.
+3. Harmonic Analysis Lab.
+
+IMPROV retains five Gates:
+
+1. The Horizontal Prison.
+2. The Chord Tone Architect.
+3. The Rhythmic Displacer.
+4. The Modal Alchemist.
+5. Total Audiation.
+
+LIBRARY includes the Listening Vault.
+
+## Progression rules
+
+`TECHNIQUE ROADMAP` is the existing independent, red, phase-based technique progression. Preserve its behaviour and calculations.
+
+`MUSICAL DEVELOPMENT` is the separate global practical-learning indicator with DOJO and IMPROV subdivisions.
+
+Only meaningful practical exercise evidence may contribute to MUSICAL DEVELOPMENT.
+
+Theory reading never contributes.
+
+Do not invent XP, percentages or mastery.
+
+DAILY functionality remains unchanged. DAILY does not contribute to MUSICAL DEVELOPMENT unless a future approved specification explicitly defines this relationship.
+
+## Phase 2 rules
+
+The approved `PHASE-2-SPEC.md` is authoritative for exact Phase 2 scope and acceptance criteria.
+
+The next action is Stage 1: independent inspection and reporting only.
+
+Do not implement fixes before the owner reviews the audit and explicitly approves Stage 2.
+
+Never modify `main` experimentally.
+
+Never merge without owner approval.
+
+Never claim tests that were not actually run.
+
+## Technical safeguards
+
+- Protect existing user progress.
+- Do not change Firebase configuration, authentication or Firestore paths without approval.
+- Keep schema changes additive and versioned.
+- Preserve the latest approved `main` baseline.
+- Keep `baseline-original` untouched.
+- Distinguish verified facts, assumptions and untested behaviour.
+- Do not sacrifice working functionality for convenience.
+
+---
+
+# 14. Important project principles and unresolved decisions
+
+## Principles already decided
+
+1. English is the application language, even though planning conversations may be in Portuguese.
+2. The app is a musicianship platform with guitar-specific applications, not a guitar-only theory course.
+3. DOJO is a substantial educational rebuild, not a cosmetic refresh.
+4. IMPROV and Listening Vault are major redesigns, not minor content edits.
+5. Original useful application behaviour and user data must be protected.
+6. The product must support both guided progression and free reference use.
+7. Theory content must always be accessible.
+8. Theory reading never creates progression, XP, completion or mastery.
+9. Practical progression is based exclusively on meaningful exercise and practical-work evidence.
+10. TECHNIQUE ROADMAP and MUSICAL DEVELOPMENT are independent.
+11. MUSICAL DEVELOPMENT has DOJO and IMPROV subdivisions.
+12. DAILY functionality must be preserved.
+13. The Compendium must integrate visual learning resources where they materially improve understanding.
+14. The DOJO Explorer uses hybrid desktop/mobile navigation, not deep accordion-heavy navigation.
+15. Chapter reading uses a continuous editorial page.
+16. `IMPROV` is the official navigation and product label; ordinary explanatory English should remain grammatical.
+17. The approved Phase 2 specification takes precedence over older conflicting Phase 2 planning instructions.
+
+## Decisions still open
+
+These are genuine unresolved decisions and must not be invented by Gemini.
+
+1. **Practical progression model:** exact competency dimensions, evidence requirements, weighting, difficulty treatment and mastery thresholds for MUSICAL DEVELOPMENT.
+2. **Technical code organisation:** whether to retain a single physical `index.html` or introduce separate JS/CSS files while keeping GitHub Pages deployment simple. Prefer the least disruptive maintainable option.
+3. **Persistence and synchronisation:** whether notes/bookmarks and exercise attempts should sync immediately or use a local queue; decide based on the actual Firebase implementation.
+4. **Listening Vault verification:** which entries can be verified and which should remain suggested placeholders until checked.
+5. **Total Audiation scope:** whether it should include any ear-training-like activities or focus mainly on internal melodic planning, given the user's separate tools.
+
+## Decisions no longer open
+
+Do not reopen the following without explicit owner approval:
+
+- DOJO Hub structure.
+- Desktop/mobile Compendium navigation pattern.
+- Continuous Chapter Reader approach.
+- No theory-reading progress.
+- Separation between TECHNIQUE ROADMAP and MUSICAL DEVELOPMENT.
+- DOJO and IMPROV as the two MUSICAL DEVELOPMENT subdivisions.
+- Official IMPROV naming convention.
+- Visual-learning principle and Phase 2 representative-diagram requirement.
+- Preservation of DAILY functionality during Phase 2.
+
+---
+
+# 15. Final reminder
+
+The purpose of this document is to preserve intent and prevent scope drift.
+
+The project should become deeper, more coherent and more useful without losing the original application's identity, working foundations or user data.
+
+Gemini is an implementation assistant, not the authority on the product vision.
+
+The owner approves product decisions, implementation scope and phase completion.
+
+Verify proposals, preserve backups, review every change and approve each phase before proceeding.
+
+**Preserve what works. Improve what needs to evolve. Never sacrifice project continuity for convenience.**
