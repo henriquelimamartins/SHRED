@@ -341,14 +341,14 @@ table.info td.day{font-weight:700;white-space:nowrap;color:var(--accent2);}
     }
   }
 
-  if (document.readyState === 'complete' || document.readyState === 'interactive') {
-    setTimeout(forceRemoveSplash, 500);
-  } else {
-    document.addEventListener('DOMContentLoaded', function() {
-      setTimeout(forceRemoveSplash, 500);
-    });
-  }
-  setTimeout(forceRemoveSplash, 2000);
+  // Catch fatal module loading errors (e.g. Firebase CDN blocked or network failure)
+  window.addEventListener('error', function(e) {
+    forceRemoveSplash();
+    var root = document.getElementById("root");
+    if (root && root.innerHTML.trim() === '') {
+      root.innerHTML = '<div style="padding: 20px; color: #ff3b30; font-family: monospace; line-height: 1.5; background: #101217; height: 100vh; width: 100vw; z-index: 99999; position: relative;"><h3>Application Load Error:</h3><p>Could not load application modules.</p><p>Check your network connection or ad-blocker.</p></div>';
+    }
+  });
 </script>
 </head>
 <body>
@@ -1849,13 +1849,23 @@ document.addEventListener("change",function(e){
   if(e.target.dataset.action==="setTuning") { state.setupTuning = e.target.value; saveState(); render(); }
 });
 
-ensureDailyReset();
-render();
-if (typeof forceRemoveSplash === 'function') {
-  forceRemoveSplash();
-} else {
-  var sp = document.getElementById("splash");
-  if (sp) sp.remove();
+try {
+  ensureDailyReset();
+  render();
+} catch (initErr) {
+  console.error("Initialization error:", initErr);
+  var root = document.getElementById("root");
+  if (root) {
+    root.innerHTML = '<div style="padding: 20px; color: #ff3b30; font-family: monospace; line-height: 1.5; background: #101217; height: 100vh; width: 100vw; z-index: 99999; position: relative;"><h3>Application Initialization Error:</h3><p>' + initErr.message + '</p><pre>' + initErr.stack + '</pre></div>';
+  }
+} finally {
+  // First render attempt complete (success or failure). Safe to remove splash.
+  if (typeof forceRemoveSplash === 'function') {
+    forceRemoveSplash();
+  } else {
+    var sp = document.getElementById("splash");
+    if (sp) sp.remove();
+  }
 }
 </script>
 </body>
