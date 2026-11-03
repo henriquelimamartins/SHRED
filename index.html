@@ -67,6 +67,7 @@ button:focus-visible, a:focus-visible, select:focus-visible { outline: 2px solid
 .sidebar-nav button:hover { background:var(--card); color:var(--text); }
 .sidebar-nav button.active { background:var(--card2); color:var(--accent2); }
 .sidebar-nav button.active.improv-nav { color:var(--purple); }
+.sidebar-nav button.active.dojo-nav { color:var(--blue); }
 
 .main-area { flex:1; display:flex; flex-direction:column; position:relative; overflow:hidden; height:100%; }
 
@@ -111,6 +112,7 @@ button:focus-visible, a:focus-visible, select:focus-visible { outline: 2px solid
 .botnav button .ic { font-size:16px; }
 .botnav button.active { color:var(--accent2); }
 .botnav button.active.improv-nav { color:var(--purple); }
+.botnav button.active.dojo-nav { color:var(--blue); }
 
 @media (min-width: 768px) {
   .sidebar { display:flex; }
@@ -347,7 +349,7 @@ table.info td.day{font-weight:700;white-space:nowrap;color:var(--accent2);}
     }
   }
 
-  // Catch fatal module loading errors
+  // Catch fatal module loading errors safely
   window.addEventListener('error', function(e) {
     forceRemoveSplash();
     var root = document.getElementById("root");
@@ -517,14 +519,14 @@ const CHAPTER_DATA = {
         '<g stroke="#2a2e38" fill="none" stroke-width="1"><circle cx="200" cy="200" r="180"/><circle cx="200" cy="200" r="120"/><circle cx="200" cy="200" r="60"/></g>' +
         '<g font-family="Inter,sans-serif" font-weight="700" font-size="20" fill="#fff" text-anchor="middle" dominant-baseline="middle">' +
         '<text x="200" y="50">C</text><text x="275" y="70">G</text><text x="330" y="125">D</text><text x="350" y="200">A</text><text x="330" y="275">E</text><text x="275" y="330">B</text>' +
-        '<text x="200" y="350">F#/Gb</text><text x="125" y="330">Db</text><text x="70" y="275">Ab</text><text x="50" y="200">Eb</text><text x="70" y="125">Bb</text><text x="125" y="70">F</text>' +
+        '<text x="200" y="342"><tspan x="200" dy="0">F#</tspan><tspan x="200" dy="18">Gb</tspan></text><text x="125" y="330">Db</text><text x="70" y="275">Ab</text><text x="50" y="200">Eb</text><text x="70" y="125">Bb</text><text x="125" y="70">F</text>' +
         '</g><g font-family="Inter,sans-serif" font-weight="500" font-size="14" fill="#6fa8ff" text-anchor="middle" dominant-baseline="middle">' +
         '<text x="200" y="110">Am</text><text x="245" y="122">Em</text><text x="278" y="155">Bm</text><text x="290" y="200">F#m</text><text x="278" y="245">C#m</text><text x="245" y="278">G#m</text>' +
-        '<text x="200" y="290">D#m/Ebm</text><text x="155" y="278">Bbm</text><text x="122" y="245">Fm</text><text x="110" y="200">Cm</text><text x="122" y="155">Gm</text><text x="155" y="122">Dm</text>' +
+        '<text x="200" y="284"><tspan x="200" dy="0">D#m</tspan><tspan x="200" dy="14">Ebm</tspan></text><text x="155" y="278">Bbm</text><text x="122" y="245">Fm</text><text x="110" y="200">Cm</text><text x="122" y="155">Gm</text><text x="155" y="122">Dm</text>' +
         '</g></svg><div class="diagram-caption">Complete Circle of Fifths. Outer ring: Major Keys. Inner ring: Relative Minor Keys.</div></div>'
       },
       { id: 'sec-application', title: 'Practical Application', content: '<p>When applying this to the fretboard, target the 3rd and 7th of the functioning chord to clearly outline the harmonic movement without relying on full barre chords.</p>' +
-        '<button class="tbtn" style="margin-top:12px;" onclick="document.querySelector(\'[data-dest=fretboard]\').click()">Explore in Fretboard Mastery &rsaquo;</button>'
+        '<button class="tbtn" style="margin-top:12px;" data-action="dojonav" data-dest="fretboard">Explore in Fretboard Mastery &rsaquo;</button>'
       }
     ]
   },
@@ -1318,6 +1320,12 @@ function renderDojoHub() {
   html += '<div class="h2" style="font-size:24px; margin-bottom:16px;">Training & Curriculum</div>';
   html += '<p class="lede">Explore complete theory tracks and apply your understanding through specialized practice modules. Your practical progress is independently tracked under Musical Development.</p>';
 
+  html += '<div class="card" style="border-color:var(--accent); margin-top:24px; margin-bottom:24px; box-shadow:0 0 10px rgba(255,59,48,0.08);">';
+  html += '<h3 style="color:var(--accent);">⭐ Recommended Learning Path</h3>';
+  html += '<p style="margin-bottom:12px; font-size:13.5px; color:var(--text); text-align:justify;">Start your journey by mastering the fundamental principles of Functional Harmony before exploring individual modules.</p>';
+  html += '<button class="tbtn primary" data-action="dojochap" data-ch="ch1" data-cat="c13" style="width:100%;">Start: Understanding Harmonic Function</button>';
+  html += '</div>';
+
   html += '<h3 style="font-size:16px; color:var(--text); margin-top:24px; margin-bottom:12px; font-family:\'Inter\',sans-serif; text-transform:none; font-weight:600;">Theory Curriculum</h3>';
   html += '<button class="navbtn" style="border-color:var(--blue);" data-action="dojonav" data-dest="compendium"><div class="ic">📖</div><div class="info"><b>Music Theory Compendium</b><span style="display:block; margin-top:4px;">Explore theory, harmony, and rhythm from fundamentals to advanced.</span></div></button>';
 
@@ -1342,7 +1350,6 @@ function renderCompendium() {
   html += '<div class="dojo-sidebar">';
   html += '<div class="shell-search" style="margin:0 0 12px 0; max-width:100%; border-radius:8px;"><span class="ic">🔍</span><input type="text" id="dojo-local-search" placeholder="Search curriculum..." value="'+ui.searchStr+'"></div>';
   
-  // Sidebar logic (Filter or Show Categories)
   if (ui.searchStr && ui.searchStr.trim().length > 0) {
      html += '<p style="font-size:12px; color:var(--accent2); margin-left:8px; font-weight:600;">Search Results</p>';
   } else {
@@ -1380,7 +1387,6 @@ function renderCompendium() {
     var cat = COMPENDIUM_CATEGORIES.find(function(c){ return c.id === ui.dojoCat; });
     html += '<h3 style="font-size:22px; color:var(--text); margin-bottom:12px;">' + (cat ? cat.title : 'Select a Category') + '</h3>';
     if(cat && cat.chapters && cat.chapters.length) {
-       html += '<p class="lede" style="margin-bottom:24px;">Recommended: <b>'+cat.chapters[0].title+'</b>.<br><span style="font-size:12.5px; opacity:0.8;">Select any chapter to begin reading. Theory reading does not require progression or XP.</span></p>';
        html += '<div class="chapter-list">';
        cat.chapters.forEach(function(ch) {
           html += '<div class="chapter-card" data-action="dojochap" data-ch="'+ch.id+'" data-cat="'+cat.id+'"><h4>'+ch.title+'</h4><p style="font-size:12.5px;">Theoretical foundation and practical context.</p></div>';
@@ -1784,10 +1790,11 @@ document.addEventListener("click",function(e){
   if (ui.conflictData && a !== "resolveLocal" && a !== "resolveCloud") return;
 
   if(a === "resolveLocal") {
-     state.unsynced = true;
      ui.conflictData = null;
-     ui.view = 'home';
+     state.unsynced = true;
+     mutationCount++;
      saveState();
+     ui.view = 'home';
      render(); return;
   }
   if(a === "resolveCloud") {
@@ -1851,10 +1858,15 @@ document.addEventListener("click",function(e){
         if(!validateSchema(cloudData)) {
             showToast("Cloud version incompatible.");
         } else {
-            state = Object.assign(defaultState(), cloudData, {unsynced: false});
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-            render();
-            showToast("Progress loaded from cloud!");
+            if (state.unsynced) {
+                ui.conflictData = cloudData;
+                render();
+            } else {
+                state = Object.assign(defaultState(), cloudData, {unsynced: false});
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+                render();
+                showToast("Progress loaded from cloud!");
+            }
         }
       } else { showToast("No cloud data found."); }
     }).catch(() => showToast("Error loading from cloud."));
