@@ -141,6 +141,14 @@ button:focus-visible, a:focus-visible, select:focus-visible { outline: 2px solid
 .prog-col { flex:1; background:#15171e; border:1px solid var(--border); border-radius:10px; padding:12px; min-width:0; }
 .prog-title { font-size:10.5px; color:var(--muted); text-transform:uppercase; font-weight:700; letter-spacing:1px; margin-bottom:8px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
 
+.md-global { display:flex; align-items:center; gap:9px; color:var(--muted); font-size:11px; margin:2px 0 10px; }
+.md-empty-mark { width:9px; height:9px; border-radius:50%; border:1px solid #727987; background:transparent; flex:none; }
+.md-empty-track { height:5px; border:1px solid var(--border); border-radius:8px; background:var(--card2); margin:0 0 9px; }
+.md-subdivisions { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.md-subdivisions span { display:flex; flex-direction:column; gap:3px; background:var(--card2); border:1px solid var(--border); border-radius:7px; padding:7px 9px; min-width:0; }
+.md-subdivisions b { font-size:10px; letter-spacing:.7px; color:var(--text); }
+.md-subdivisions small { font-size:9px; color:var(--muted); line-height:1.3; }
+
 /* Technique Roadmap specific */
 .phasebar-wrapper { width:100%; margin:0; }
 .phasebar{display:flex;gap:4px;margin-bottom:4px;}
@@ -297,42 +305,98 @@ table.info td.day{font-weight:700;white-space:nowrap;color:var(--accent2);}
 
 @keyframes fadein { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:translateY(0); } }
 
-/* --- DOJO SHELL CSS --- */
-.dojo-explorer { display:flex; gap:20px; height:100%; min-height:500px; }
-.dojo-sidebar { flex:0 0 240px; display:flex; flex-direction:column; gap:8px; border-right:1px solid var(--border); padding-right:16px; }
-.dojo-content { flex:1; display:flex; flex-direction:column; }
-@media (max-width:767px) { 
-  .dojo-explorer { flex-direction:column; } 
-  .dojo-sidebar { flex:none; border-right:none; border-bottom:1px solid var(--border); padding-bottom:16px; margin-bottom:16px; padding-right:0; } 
-}
-.cat-btn { text-align:left; background:transparent; border:1px solid transparent; padding:8px 12px; border-radius:8px; color:var(--muted); font-weight:600; font-size:13px; cursor:pointer; transition:0.2s; }
+/* --- DOJO SHELL AND EDITORIAL READER --- */
+.dojo-hub-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; margin:18px 0 28px; }
+.dojo-area-card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:20px; min-width:0; display:flex; flex-direction:column; align-items:flex-start; }
+.dojo-area-card h3 { font-size:16px; color:var(--text); margin:10px 0 8px; }
+.dojo-area-card p { font-size:13px; margin-bottom:16px; }
+.dojo-area-icon { width:42px; height:42px; border-radius:12px; display:flex; align-items:center; justify-content:center; background:#202633; font-size:22px; }
+.dojo-path { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-top:12px; }
+.dojo-path button,.relationship-links button { border:1px solid var(--border); background:var(--card2); color:var(--text); border-radius:8px; padding:8px 10px; font-size:12px; text-align:left; }
+.dojo-path button:hover,.relationship-links button:hover { border-color:var(--blue); }
+.dojo-path .path-arrow { color:var(--muted); font-size:12px; }
+.dojo-explorer-tools { display:flex; gap:10px; align-items:center; margin:14px 0 16px; }
+.dojo-explorer-tools .shell-search { max-width:none; flex:1; margin:0; border-radius:10px; padding:10px 12px; cursor:text; }
+.dojo-explorer-tools .shell-search input { display:block; }
+.dojo-explorer-tools .select { width:auto; min-width:160px; margin:0; }
+.dojo-explorer { display:flex; gap:22px; min-height:480px; }
+.dojo-sidebar { flex:0 0 248px; display:flex; flex-direction:column; gap:5px; border-right:1px solid var(--border); padding-right:16px; max-height:calc(100vh - 300px); overflow-y:auto; }
+.dojo-sidebar-title { font-size:10px; color:var(--muted); letter-spacing:1.4px; font-weight:700; text-transform:uppercase; margin:2px 8px 8px; }
+.dojo-content { flex:1; min-width:0; display:flex; flex-direction:column; }
+.cat-btn { text-align:left; background:transparent; border:1px solid transparent; padding:9px 11px; border-radius:8px; color:var(--muted); font-weight:600; font-size:12px; cursor:pointer; transition:0.2s; }
 .cat-btn:hover { background:var(--card2); color:var(--text); }
-.cat-btn.active { background:var(--card); border-color:var(--border); color:var(--accent2); }
-
-.chapter-list { display:flex; flex-direction:column; gap:8px; overflow-y:auto; padding-bottom:40px;}
-.chapter-card { background:var(--card); border:1px solid var(--border); padding:16px; border-radius:12px; cursor:pointer; transition:0.2s; }
-.chapter-card:hover { border-color:var(--muted); }
-.chapter-card h4 { font-family:'Inter',sans-serif; color:var(--text); font-size:15px; font-weight:600; text-transform:none; margin-bottom:4px; }
-
-.reader-layout { display:flex; gap:24px; }
-.reader-article { flex:1; max-width:680px; }
-.reader-article p { font-size:15px; color:#c4c8d4; line-height:1.6; margin-bottom:16px; text-align:justify; }
-.reader-article h1 { font-size:28px; color:var(--text); text-transform:none; margin-bottom:24px; font-family:'Inter',sans-serif; font-weight:700; }
-.reader-article h2 { font-size:20px; color:#fff; text-transform:none; margin:32px 0 12px; font-family:'Inter',sans-serif; font-weight:600; scroll-margin-top: 80px; }
-.reader-article h3 { font-size:16px; color:#fff; text-transform:none; margin:24px 0 12px; font-family:'Inter',sans-serif; font-weight:600; }
-.reader-article ul { margin:0 0 16px 20px; padding:0; color:#c4c8d4; font-size:15px; line-height:1.6;}
-.reader-article li { margin-bottom:8px; text-align:justify; }
-.reader-index { flex:0 0 200px; position:sticky; top:20px; align-self:start; border-left:1px solid var(--border); padding-left:16px; }
-.reader-index button { display:block; font-size:12px; color:var(--muted); padding:6px 0; text-decoration:none; background:none; border:none; text-align:left; transition:0.2s;}
-.reader-index button:hover, .reader-index button:focus-visible { color:var(--accent2); outline:none; }
-@media (max-width:767px) { 
-  .reader-layout { flex-direction:column-reverse; } 
-  .reader-index { flex:none; border-left:none; border-bottom:1px solid var(--border); padding-left:0; padding-bottom:16px; position:static; } 
+.cat-btn.active { background:var(--card); border-color:var(--border); color:var(--blue); }
+.dojo-mobile-back { display:none; }
+.dojo-category-heading { display:flex; justify-content:space-between; align-items:flex-start; gap:14px; margin-bottom:8px; }
+.dojo-category-heading h3 { font-size:23px; color:var(--text); margin:0 0 8px; }
+.dojo-stage { flex:none; border:1px solid var(--border); border-radius:20px; padding:5px 10px; color:var(--muted); font-size:10px; text-transform:uppercase; letter-spacing:.7px; }
+.dojo-category-summary { font-size:14px; margin-bottom:16px; max-width:760px; }
+.relationship-block { margin:16px 0 22px; }
+.relationship-block h4 { font-family:Inter,sans-serif; font-size:10px; color:var(--muted); letter-spacing:1px; margin-bottom:8px; }
+.relationship-links { display:flex; flex-wrap:wrap; gap:7px; }
+.chapter-list { display:flex; flex-direction:column; gap:9px; padding-bottom:32px; }
+.chapter-card { background:var(--card); border:1px solid var(--border); padding:15px 16px; border-radius:12px; cursor:pointer; transition:0.2s; text-align:left; color:var(--text); width:100%; }
+.chapter-card:hover { border-color:var(--blue); }
+.chapter-card h4 { font-family:Inter,sans-serif; color:var(--text); font-size:14px; font-weight:650; text-transform:none; margin-bottom:6px; }
+.chapter-card p { font-size:12px; }
+.chapter-card .chapter-match { color:var(--blue); margin-top:7px; font-size:11px; }
+.chapter-card-meta { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; color:var(--muted); font-size:10px; }
+.curriculum-note { background:#151922; border:1px solid var(--border); border-radius:10px; padding:14px 16px; margin-top:8px; }
+.curriculum-note b { display:block; font-size:12px; color:var(--text); margin-bottom:5px; }
+.curriculum-note p { font-size:12px; }
+.reader-layout { display:grid; grid-template-columns:minmax(0,1fr) 190px; gap:28px; align-items:start; }
+.reader-article { min-width:0; max-width:760px; }
+.reader-article p { font-size:15px; color:#c4c8d4; line-height:1.72; margin-bottom:16px; text-align:left; }
+.reader-article h1 { font-size:30px; color:var(--text); text-transform:none; margin-bottom:12px; font-family:Inter,sans-serif; font-weight:750; letter-spacing:-.7px; }
+.reader-article h2 { font-size:20px; color:#fff; text-transform:none; margin:34px 0 13px; font-family:Inter,sans-serif; font-weight:650; scroll-margin-top:24px; }
+.reader-article h3 { font-size:16px; color:#fff; text-transform:none; margin:24px 0 12px; font-family:Inter,sans-serif; font-weight:650; }
+.reader-article ul { margin:0 0 18px 20px; padding:0; color:#c4c8d4; font-size:14px; line-height:1.7; }
+.reader-article li { margin-bottom:8px; text-align:left; }
+.reader-summary { font-size:14px; line-height:1.65; color:var(--muted); margin-bottom:22px; max-width:720px; }
+.reader-index { position:sticky; top:18px; border-left:1px solid var(--border); padding-left:16px; }
+.reader-index button,.reader-index-mobile button { display:block; font-size:11px; color:var(--muted); padding:7px 0; text-decoration:none; background:none; border:none; text-align:left; width:100%; }
+.reader-index button:hover,.reader-index button:focus-visible,.reader-index-mobile button:hover,.reader-index button.active,.reader-index-mobile button.active { color:var(--blue); font-weight:700; }
+.reader-index-mobile { display:none; }
+.reader-index-title { font-size:10px; text-transform:uppercase; font-weight:700; color:var(--text); letter-spacing:1px; margin-bottom:10px; }
+.reader-meta { display:flex; gap:8px; flex-wrap:wrap; margin:12px 0 20px; }
+.reader-meta span { border:1px solid var(--border); border-radius:20px; padding:5px 9px; font-size:10px; color:var(--muted); }
+.theory-diagram { background:#15171e; border:1px solid #2a2e38; border-radius:12px; padding:18px; margin:22px 0; text-align:center; overflow:hidden; }
+.theory-diagram svg { display:block; width:100%; height:auto; }
+.diagram-caption { font-size:11px; color:var(--muted); margin-top:12px; font-style:italic; }
+.theory-callout,.theory-example { border-left:3px solid var(--blue); background:#171d28; padding:14px 16px; margin:20px 0; border-radius:0 10px 10px 0; }
+.theory-callout>b,.theory-example>b { display:block; color:var(--blue); font-size:11px; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; }
+.theory-callout p,.theory-example p { font-size:13px; margin-bottom:7px; }
+.theory-callout p:last-child,.theory-example p:last-child { margin-bottom:0; }
+.reader-related { border-top:1px solid var(--border); margin-top:30px; padding-top:20px; }
+.reader-navigation { display:flex; justify-content:space-between; gap:10px; margin-top:26px; }
+.reader-navigation button { max-width:48%; }
+@media (max-width:1000px) and (min-width:768px) { .dojo-sidebar { flex-basis:210px; } .reader-layout { grid-template-columns:minmax(0,1fr) 160px; gap:18px; } }
+@media (max-width:767px) {
+  .dojo-hub-grid { grid-template-columns:1fr; gap:10px; }
+  .dojo-area-card { padding:16px; }
+  .dojo-explorer-tools { flex-direction:column; align-items:stretch; }
+  .dojo-explorer-tools .select { width:100%; }
+  .dojo-explorer { display:block; min-height:0; }
+  .dojo-sidebar { display:flex; border:0; padding:0; margin:0; max-height:none; overflow:visible; }
+  .dojo-explorer.mobile-category-selected .dojo-sidebar { display:none; }
+  .dojo-content { display:none; }
+  .dojo-explorer.mobile-category-selected .dojo-content { display:flex; }
+  .dojo-mobile-back { display:inline-flex; margin-bottom:14px; }
+  .dojo-sidebar .cat-btn { padding:13px 14px; background:var(--card); border:1px solid var(--border); color:var(--text); font-size:13px; }
+  .dojo-sidebar .cat-btn.active { border-color:var(--blue); color:var(--blue); }
+  .dojo-category-heading h3 { font-size:21px; }
+  .reader-layout { display:flex; flex-direction:column; gap:12px; }
+  .reader-article { max-width:none; width:100%; }
+  .reader-article h1 { font-size:25px; line-height:1.18; }
+  .reader-article p { font-size:14px; }
+  .reader-index { display:none; }
+  .reader-index-mobile { display:block; border:1px solid var(--border); background:var(--card); border-radius:10px; padding:10px 13px; margin:0 0 20px; }
+  .reader-index-mobile summary { color:var(--text); font-size:12px; font-weight:700; cursor:pointer; }
+  .reader-index-mobile[open] { padding-bottom:12px; }
+  .theory-diagram { padding:10px; }
+  .reader-navigation { flex-direction:column; }
+  .reader-navigation button { max-width:none; width:100%; }
 }
-
-.theory-diagram { background:#15171e; border:1px solid #2a2e38; border-radius:12px; padding:24px; margin:24px 0; text-align:center; }
-.diagram-caption { font-size:12px; color:var(--muted); margin-top:16px; font-style:italic; }
-
 .conflict-modal { position:fixed; inset:0; background:rgba(16,18,23,0.9); z-index:99999; display:flex; align-items:center; justify-content:center; padding:20px; }
 .conflict-box { background:var(--card); border:1px solid var(--accent); border-radius:12px; padding:24px; max-width:400px; width:100%; text-align:center; box-shadow:0 10px 30px rgba(0,0,0,0.5); }
 
@@ -404,38 +468,60 @@ let mutationCount = 0;
 let ui = { 
   view: "home", lib: {}, dayOverride: null, resetConfirm: false, 
   phaseJumpPending: null, conflictData: null, 
-  dojoView: "hub", dojoCat: "c13", dojoChap: null, searchStr: ""
+  dojoView: "hub", dojoCat: "c13", dojoChap: null, searchStr: "", dojoStageFilter: "all", dojoMobileCategorySelected: false, readerActiveSection: null
 };
 
-// Strict schema validation merging defaults while preserving unknown cloud properties
-function validateSchema(data) {
-   if(!data || typeof data !== 'object' || Array.isArray(data)) return false;
-   if(data.schemaVersion !== undefined) {
-      if(typeof data.schemaVersion !== 'number' || data.schemaVersion < 0 || !Number.isInteger(data.schemaVersion)) return false;
-      if(data.schemaVersion > LOCAL_SCHEMA_VERSION) return false;
-      if(data.schemaVersion === 0) return false; // P1 correction
-   }
-   if(data.phaseIndex !== undefined) {
-      if(typeof data.phaseIndex !== 'number' || !Number.isInteger(data.phaseIndex) || data.phaseIndex < 0 || data.phaseIndex >= PHASES.length) return false;
-   }
-   
-   // P1 correction: Exhaustive inner object checks
-   const objProps = ['chop', 'testLevel', 'bonusLevel', 'checks', 'practiced', 'improvChecks'];
-   for(let prop of objProps) {
-      if(data[prop] !== undefined && (typeof data[prop] !== 'object' || data[prop] === null || Array.isArray(data[prop]))) return false;
-   }
-   
-   if(data.streakDates !== undefined && !Array.isArray(data.streakDates)) return false;
-   if(data.improvIndex !== undefined && (typeof data.improvIndex !== 'number' || !Number.isInteger(data.improvIndex) || data.improvIndex < 0)) return false;
-   
-   // P1 correction: String fields mapping directly to application settings and dates
-   const strProps = ['setupGuitar', 'setupTuning', 'practicedDate', 'congratsDate', 'activeDayOverride', 'activeDayDate'];
-   for (let prop of strProps) {
-      if(data[prop] !== undefined && data[prop] !== null && typeof data[prop] !== 'string') return false;
-   }
-   
-   return true;
+// Validate known persisted fields while preserving unknown properties for forward compatibility.
+function isRecord(value) {
+  return !!value && typeof value === 'object' && !Array.isArray(value);
 }
+function isISODate(value) {
+  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  var parsed = new Date(value + 'T00:00:00Z');
+  return !Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value;
+}
+function validateNumericMap(map, limits) {
+  if (map === undefined) return true;
+  if (!isRecord(map)) return false;
+  return Object.keys(map).every(function(key) {
+    var value = map[key];
+    if (typeof value !== 'number' || !Number.isFinite(value) || value < 0) return false;
+    return limits[key] === undefined ? value <= 10 : value <= limits[key];
+  });
+}
+function validateBooleanMap(map) {
+  return map === undefined || (isRecord(map) && Object.keys(map).every(function(key) {
+    return typeof map[key] === 'boolean';
+  }));
+}
+function validateCheckMap(map) {
+  return map === undefined || (isRecord(map) && Object.keys(map).every(function(key) {
+    return map[key] === false || map[key] === true || isISODate(map[key]);
+  }));
+}
+function validateSchema(data) {
+  if (!isRecord(data)) return false;
+  if (data.schemaVersion !== undefined && (!Number.isInteger(data.schemaVersion) || data.schemaVersion < 1 || data.schemaVersion > LOCAL_SCHEMA_VERSION)) return false;
+  if (data.phaseIndex !== undefined && (!Number.isInteger(data.phaseIndex) || data.phaseIndex < 0 || data.phaseIndex >= PHASES.length)) return false;
+  if (!validateNumericMap(data.chop, {alt:10,sweep:10,legato:10,econ:10,tap:10})) return false;
+  if (!validateNumericMap(data.testLevel, {alt:5,sweep:5,legato:5,econ:5,tap:5,ult:5})) return false;
+  if (!validateNumericMap(data.bonusLevel, {})) return false;
+  if (!validateCheckMap(data.checks) || !validateBooleanMap(data.practiced) || !validateBooleanMap(data.improvChecks)) return false;
+  if (data.streakDates !== undefined && (!Array.isArray(data.streakDates) || !data.streakDates.every(isISODate))) return false;
+  if (data.improvIndex !== undefined && (!Number.isInteger(data.improvIndex) || data.improvIndex < 0 || data.improvIndex > IMPROV_GATES.length)) return false;
+  if (data.setupGuitar !== undefined && !['prs','epi'].includes(data.setupGuitar)) return false;
+  if (data.setupTuning !== undefined && !['e_std','drop_d','d_std','drop_c','c_std','dadfae'].includes(data.setupTuning)) return false;
+  if (data.activeDayOverride !== undefined && data.activeDayOverride !== null && !['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].includes(data.activeDayOverride)) return false;
+  if (!['practicedDate','congratsDate','activeDayDate'].every(function(key) {
+    return data[key] === undefined || data[key] === null || isISODate(data[key]);
+  })) return false;
+  if (data.unsynced !== undefined && typeof data.unsynced !== 'boolean') return false;
+  return true;
+}
+
+let localSchemaError = null;
+let authStateReady = !hasFirebase;
+let cloudLockReason = '';
 
 if(hasFirebase) {
   try {
@@ -444,61 +530,76 @@ if(hasFirebase) {
     googleProvider = new GoogleAuthProvider();
     db = initializeFirestore(app, { localCache: persistentLocalCache({tabManager: persistentMultipleTabManager()}) });
 
-    // Session identification mechanism
     onAuthStateChanged(auth, async (user) => {
       sessionGeneration += 1;
       const mySession = sessionGeneration;
       currentUid = user ? user.uid : null;
       currentUser = user;
-      
-      cloudWriteLock = false; // P5 correction: Clear stale locks on session change
-      if (ui.conflictData) ui.conflictData = null; 
-      
-      if(user) {
-        isSyncing = true; render();
+      authStateReady = false;
+      isSyncing = !!user;
+      cloudWriteLock = !!localSchemaError;
+      cloudLockReason = localSchemaError ? 'Local data uses an unsupported schema.' : '';
+      if (ui.conflictData) ui.conflictData = null;
+
+      if (localSchemaError) {
+        authStateReady = true;
+        isSyncing = false;
+        render();
+        return;
+      }
+
+      if (user) {
+        render();
+        var cloudDocFound = false;
         try {
-          const docSnap = await getDoc(doc(db, "users", user.uid));
-          if(mySession !== sessionGeneration || currentUid !== user.uid) return;
-          
-          if(docSnap.exists()){
+          // Drain any earlier session write before reading the current account snapshot.
+          await writeQueue;
+          if (mySession !== sessionGeneration || currentUid !== user.uid) return;
+          const docSnap = await getDoc(doc(db, 'users', user.uid));
+          if (mySession !== sessionGeneration || currentUid !== user.uid) return;
+          cloudDocFound = docSnap.exists();
+          if (cloudDocFound) {
             const cloudData = docSnap.data();
-            if(!validateSchema(cloudData)) {
+            if (!validateSchema(cloudData)) {
               cloudWriteLock = true;
-              showToast("Cloud schema mismatch or unsupported version. Writes locked.");
+              cloudLockReason = 'Cloud data is incompatible or malformed.';
+              showToast('Cloud data is incompatible. Cloud writes are locked.');
+            } else if (state.unsynced) {
+              ui.conflictData = { data: cloudData, session: mySession, uid: currentUid, mutation: mutationCount };
             } else {
-              if (state.unsynced) {
-                // P2 correction: Bind conflict data to the exact session and mutation epoch
-                ui.conflictData = { data: cloudData, session: mySession, uid: currentUid, mutation: mutationCount };
-              } else {
-                // Merge cloud data safely while preserving unknown properties
-                state = Object.assign({}, defaultState(), cloudData, {unsynced: false});
-                try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e){}
-                showToast("Progress synced from cloud!");
-              }
+              state = mergeCloudState(cloudData);
+              mutationCount += 1;
+              persistLocalState();
+              showToast('Progress synced from cloud.');
             }
-          } else {
-            if(!cloudWriteLock) saveState(); 
           }
-        } catch(e) { 
-          if(mySession === sessionGeneration) {
+        } catch (error) {
+          if (mySession === sessionGeneration) {
             cloudWriteLock = true;
-            console.error("Cloud read failed, writes locked to prevent overwrite.", e);
+            cloudLockReason = 'Cloud data could not be read. Cloud writes are locked to prevent overwrite.';
+            console.error('Cloud read failed; cloud writes locked.', error);
           }
         }
-        if(mySession === sessionGeneration) {
+        if (mySession === sessionGeneration) {
+          authStateReady = true;
           isSyncing = false;
+          if (!cloudDocFound && !cloudWriteLock && !localSchemaError) saveState();
           render();
         }
-      } else {
-        if(mySession === sessionGeneration) {
-          isSyncing = false;
-          render();
-        }
+      } else if (mySession === sessionGeneration) {
+        authStateReady = true;
+        isSyncing = false;
+        if (state.unsynced && !localSchemaError) persistLocalState();
+        render();
       }
     });
-  } catch(e) { console.error("Firebase init error:", e); }
+  } catch(error) {
+    console.error('Firebase init error; continuing in local-only mode.', error);
+    authStateReady = true;
+    cloudWriteLock = true;
+    cloudLockReason = 'Cloud services could not be initialised. Local progress remains available.';
+  }
 }
-
 const IMPROV_GATES = [
   { title: "The Horizontal Prison", desc: "Destroy the vertical pentatonic boxes and force expressiveness. Stop 'going up and down' and start playing melodies.", exercises: [ { t: "1. One-String Doom", desc: "<b>Key:</b> E minor<br><b>Track:</b> Heavy Stoner/Doom drone<br><b>Rule:</b> You can ONLY use the G string for 3 full minutes. Focus on finding E, G, B, D horizontally. Force yourself to use slides to connect notes instead of crossing strings.", listen: "<b>Tony Iommi (Black Sabbath)</b><br>'Snowblind' solo. Notice how he squeezes huge emotion out of horizontal slides and trills on single strings." }, { t: "2. The 4-Fret Box", desc: "<b>Key:</b> B minor<br><b>Track:</b> Slow minor blues vamp<br><b>Rule:</b> Stay strictly between frets 7 and 10. Use all 6 strings, but your hand cannot shift up or down the neck. Use intense bends to reach pitches that aren't physically under your fingers.", listen: "<b>David Gilmour (Pink Floyd)</b><br>'Comfortably Numb' (1st solo). He stays almost entirely in one tiny box, extracting pure gold via perfectly pitched 1.5-step bends." }, { t: "3. The Singing Acoustic Slide", desc: "<b>Key:</b> D minor (Dm - Bb - C)<br><b>Track:</b> Clean/Acoustic fingerpicked vamp<br><b>Rule:</b> Pick the string only once per beat. Every other note MUST be generated by sliding or hammering-on/pulling-off.", listen: "<b>Mikael Åkerfeldt (Opeth)</b><br>'Windowpane' or 'To Bid You Farewell' solos. Pay attention to his fluid, vocal-like slides between chord tones on clean tones." }, { t: "4. Pre-Bending the Fuzz", desc: "<b>Key:</b> C# minor<br><b>Track:</b> Massive Fuzz Stoner track<br><b>Rule:</b> Every phrase you play must START with a pre-bend (bend the string silently, strike it, and release it down to the target note).", listen: "<b>Nick DiSalvo (Elder)</b><br>'Lore'. Notice the crying, microtonal tension he creates by bending into and out of notes with heavy fuzz." } ] },
   { title: "The Chord Tone Architect", desc: "Eliminate the 4-second mental lag. Train your ear and fingers to land on the changes exactly as they happen.", exercises: [ { t: "1. The Target 3rd", desc: "<b>Key:</b> A minor (Am - F - C - G)<br><b>Track:</b> Prog ballad loop<br><b>Rule:</b> You must land on the 3rd of the chord EXACTLY on Beat 1. (Am -> C, F -> A, C -> E, G -> B). Play freely in between, but nail that target.", listen: "<b>John Petrucci (Dream Theater)</b><br>'The Spirit Carries On'. Notice how his fastest, most chaotic runs always resolve perfectly on the major or minor 3rd exactly on the downbeat." }, { t: "2. Chromatic Enclosures", desc: "<b>Key:</b> D minor (Dm - Bb - Gm - A7)<br><b>Track:</b> Backing track matching the progression<br><b>Rule:</b> Before landing on your target note on Beat 1, you must play the note one fret above it, and one fret below it, on the 'and' of Beat 4.", listen: "<b>Guthrie Govan</b><br>Listen to any of his fusion tracks or clinic solos. He uses chromatic enclosures constantly to 'surround' a note before landing on it safely." }, { t: "3. Arpeggio Outlining", desc: "<b>Key:</b> E minor (Em - C - B7 - Em)<br><b>Track:</b> Heavy mid-tempo<br><b>Rule:</b> NO SWEEPING. You must alternate-pick arpeggiated lines that explicitly spell out the chord underneath. When the B7 hits, you must emphasize the D#.", listen: "<b>Chuck Schuldiner (Death)</b><br>'Crystal Mountain' solo. Hear how he meticulously alternate-picks the underlying triads, completely avoiding bluesy pentatonic habits." }, { t: "4. The Vocal Orchestration", desc: "<b>Key:</b> A Major (A - D - E)<br><b>Track:</b> Epic rock ballad<br><b>Rule:</b> Do not play 'licks'. Imagine you are a singer. Play a distinct verse melody, leave a gap for a breath, and then play a chorus melody. Keep it singable.", listen: "<b>Brian May (Queen)</b><br>'Bohemian Rhapsody' or 'Killer Queen'. He literally plays compositions within compositions. Every solo is a memorable, hummable vocal line." }, { t: "5. The Sludge to Dominant Turn", desc: "<b>Key:</b> C minor (C5 - Bb5 - Ab5 - G7)<br><b>Track:</b> Classic Doom turnaround<br><b>Rule:</b> Play absolute filthy pentatonic sludge over the first 3 chords. When the G7 hits, switch instantly to C Harmonic Minor (target the B natural).", listen: "<b>Matt Pike (High on Fire) / Brent Hinds (Mastodon)</b><br>Listen to how they inject sudden, jarring harmonic minor or Middle Eastern scales at the very end of a dirty riff." } ] },
@@ -507,61 +608,69 @@ const IMPROV_GATES = [
   { title: "Total Audiation", desc: "The Master Level. The brain commands, the fingers obey. No more muscle memory dictating your solos.", exercises: [ { t: "1. The Slash Sing-Along", desc: "<b>Key:</b> Any<br><b>Track:</b> Any melodic backing track<br><b>Rule:</b> Put the pick down. Sing/hum a 2-bar melody. Pick up the guitar and find those exact notes on the very first try. Repeat.", listen: "<b>Slash / Guthrie Govan</b><br>Both players have a 1:1 connection between their inner ear and their fretboard. What they hear in their head is instantly translated to the hands." }, { t: "2. Vocal Call & Response", desc: "<b>Key:</b> Any Blues Key<br><b>Track:</b> Slow Blues<br><b>Rule:</b> Play a lick. Then, attempt to sing a 'response' to that lick. Then play that response on the guitar. Keep the conversation going.", listen: "<b>Eric Clapton / John Mayer</b><br>Listen to how their guitar solos mimic a lead vocalist breathing, pausing, and answering themselves." }, { t: "3. Unaccompanied Soloing", desc: "<b>Key:</b> Free<br><b>Track:</b> NONE<br><b>Rule:</b> Play for 3 minutes with no backing track. You must keep the rhythm, the chord changes, and the melody entirely clear to the listener just by your playing.", listen: "<b>Eddie Van Halen</b><br>'Eruption' or 'Spanish Fly'. The ultimate masterclass in carrying the entire song (harmony, rhythm, melody) alone." }, { t: "4. The Free Expression Flow", desc: "<b>Key:</b> Shifting<br><b>Track:</b> 10-minute complex Prog track<br><b>Rule:</b> Improvise freely. Incorporate Dorian 6ths, Harmonic Minor 7ths, chromatic approaches, and rhythmic displacement seamlessly without stopping to think.", listen: "<b>The Legends</b><br>You are combining the brain of Petrucci, the darkness of Opeth, the soul of Gilmour, and the riff-power of Sabbath. Just play." } ] }
 ];
 
+// Static curriculum catalogue. Stable IDs and explicit relationships are the contract used by future practical modules.
 const COMPENDIUM_CATEGORIES = [
-  {id: 'c1', title: '1. Fundamentals'}, {id: 'c2', title: '2. Notes and Pitch'}, {id: 'c3', title: '3. Accidentals and Enharmonic Spelling'},
-  {id: 'c4', title: '4. Intervals'}, {id: 'c5', title: '5. Key Signatures and Circle of Fifths'}, {id: 'c6', title: '6. Scales'},
-  {id: 'c7', title: '7. Modes'}, {id: 'c8', title: '8. Triads'}, {id: 'c9', title: '9. Seventh Chords'},
-  {id: 'c10', title: '10. Extensions and Alterations'}, {id: 'c11', title: '11. Inversions and Voicings'}, {id: 'c12', title: '12. Diatonic Harmony'},
-  {id: 'c13', title: '13. Functional Harmony', chapters: [
-    {id: 'ch1', title: 'Understanding Harmonic Function'},
-    {id: 'ch2', title: 'Tonic, Predominant and Dominant Functions'},
-    {id: 'ch3', title: 'Diatonic Functions in Major Keys'},
-    {id: 'ch4', title: 'Diatonic Functions in Minor Keys'},
-    {id: 'ch5', title: 'Functional Progressions and Harmonic Goals'},
-    {id: 'ch6', title: 'Functional Behaviour of Seventh Chords'},
-    {id: 'ch7', title: 'Chord Function in Context'},
-    {id: 'ch8', title: 'Harmonic Rhythm and Phrase Structure'},
-    {id: 'ch9', title: 'Limits of Functional Analysis'}
+  {id:'c1',title:'Fundamentals',number:1,stage:'Foundation',recommendedOrder:1,summary:'The basic language of music: sound, musical organisation, notation-independent concepts and the relationships that make musical ideas understandable.',prerequisites:[],related:['c2','c4','c21'],chapters:[]},
+  {id:'c2',title:'Notes and Pitch',number:2,stage:'Foundation',recommendedOrder:2,summary:'Pitch names, pitch classes, octaves, enharmonic identity and the organisation of the twelve-note system.',prerequisites:['c1'],related:['c3','c4','c5'],chapters:[]},
+  {id:'c3',title:'Accidentals and Enharmonic Spelling',number:3,stage:'Foundation',recommendedOrder:3,summary:'Sharps, flats, naturals and the spelling choices that make intervals, scales and chords readable and logically constructed.',prerequisites:['c2'],related:['c4','c5','c6'],chapters:[]},
+  {id:'c4',title:'Intervals',number:4,stage:'Foundation',recommendedOrder:4,summary:'The measurable distance between pitches, interval quality, inversion and the intervallic structure behind scales and chords.',prerequisites:['c2','c3'],related:['c6','c8','c9'],chapters:[]},
+  {id:'c5',title:'Key Signatures and Circle of Fifths',number:5,stage:'Developing',recommendedOrder:6,summary:'Major and minor key signatures, tonal relationships, relative keys and the cycle of fifths as a map of key organisation.',prerequisites:['c2','c3','c4'],related:['c6','c12','c17'],chapters:[]},
+  {id:'c6',title:'Scales',number:6,stage:'Developing',recommendedOrder:7,summary:'Scale construction, interval formulas, major and minor collections, and the relationship between a scale and its tonal context.',prerequisites:['c4','c5'],related:['c7','c12','c16'],chapters:[]},
+  {id:'c7',title:'Modes',number:7,stage:'Developing',recommendedOrder:14,summary:'Modal pitch collections, characteristic tones, tonal centres and the distinction between a mode as a scale and a mode as a sound.',prerequisites:['c6'],related:['c12','c16','c18'],chapters:[]},
+  {id:'c8',title:'Triads',number:8,stage:'Developing',recommendedOrder:8,summary:'Three-note chord construction, quality, scale-degree spelling and the harmonic role of major, minor, diminished and augmented triads.',prerequisites:['c4','c6'],related:['c9','c11','c12'],chapters:[]},
+  {id:'c9',title:'Seventh Chords',number:9,stage:'Developing',recommendedOrder:9,summary:'Four-note chord construction, seventh-chord qualities, inversions and the additional voice-leading tendencies created by chord sevenths.',prerequisites:['c8'],related:['c10','c11','c13'],chapters:[]},
+  {id:'c10',title:'Extensions and Alterations',number:10,stage:'Advanced',recommendedOrder:13,summary:'Chord extensions, altered tensions and the distinction between chord identity, available colour tones and context-dependent dissonance.',prerequisites:['c9'],related:['c11','c13','c18'],chapters:[]},
+  {id:'c11',title:'Inversions and Voicings',number:11,stage:'Developing',recommendedOrder:10,summary:'Chord inversion, bass-note function, spacing, register and practical voicing choices across instruments and ensembles.',prerequisites:['c8','c9'],related:['c19','c13'],chapters:[]},
+  {id:'c12',title:'Diatonic Harmony',number:12,stage:'Developing',recommendedOrder:11,summary:'Building chords from a key, Roman-numeral analysis and the relationships between scale degrees and diatonic chord families.',prerequisites:['c5','c6','c8'],related:['c13','c14','c15'],chapters:[]},
+  {id:'c13',title:'Functional Harmony',number:13,stage:'Advanced',recommendedOrder:12,summary:'How tonal chords create direction, stability, departure, tension and resolution. The nine-chapter sequence below is the approved structural foundation.',prerequisites:['c9','c12'],related:['c14','c15','c16','c17','c19'],chapters:[
+    {id:'ch1',title:'Understanding Harmonic Function',summary:'Define harmonic function and distinguish a chord’s role in a tonal progression from its root, spelling or isolated quality.',prerequisites:['c8','c9','c12'],related:['ch2','ch3','ch5'],subchapters:[],relatedAreas:['fretboard','harmonic'],activityRefs:[],futureImprovRefs:[]},
+    {id:'ch2',title:'Tonic, Predominant and Dominant Functions',summary:'Introduce the three broad functional families and the directional relationships that commonly connect them.',prerequisites:['ch1'],related:['ch3','ch4','ch5'],subchapters:[],relatedAreas:['harmonic'],activityRefs:[],futureImprovRefs:[]},
+    {id:'ch3',title:'Diatonic Functions in Major Keys',summary:'Examine the functional behaviour of diatonic chords in major keys, including context-sensitive tonic and predominant roles.',prerequisites:['ch2'],related:['ch5','ch6','ch7'],subchapters:[],relatedAreas:['harmonic'],activityRefs:[],futureImprovRefs:[]},
+    {id:'ch4',title:'Diatonic Functions in Minor Keys',summary:'Explore functional behaviour in minor keys and the effects of variable scale degrees across natural, harmonic and melodic minor contexts.',prerequisites:['ch2','c6'],related:['ch5','ch6','ch9'],subchapters:[],relatedAreas:['harmonic'],activityRefs:[],futureImprovRefs:[]},
+    {id:'ch5',title:'Functional Progressions and Harmonic Goals',summary:'Analyse progression direction, arrival points, continuation and the expectations created by functional sequences.',prerequisites:['ch3','ch4'],related:['ch7','ch8','c14'],subchapters:[],relatedAreas:['harmonic'],activityRefs:[],futureImprovRefs:[]},
+    {id:'ch6',title:'Functional Behaviour of Seventh Chords',summary:'Relate seventh-chord construction and voice-leading tendencies to functional context in major and minor keys.',prerequisites:['ch3','ch4','c9'],related:['ch7','c19'],subchapters:[],relatedAreas:['harmonic'],activityRefs:[],futureImprovRefs:[]},
+    {id:'ch7',title:'Chord Function in Context',summary:'Evaluate chord function through surrounding harmony, melody, bass movement, phrase position and musical style.',prerequisites:['ch5','ch6'],related:['ch9','c16','c18'],subchapters:[],relatedAreas:['harmonic'],activityRefs:[],futureImprovRefs:[]},
+    {id:'ch8',title:'Harmonic Rhythm and Phrase Structure',summary:'Understand how the rate and placement of chord changes shape phrases, accents, momentum and musical form.',prerequisites:['ch5'],related:['c14','c21','c22'],subchapters:[],relatedAreas:['harmonic'],activityRefs:[],futureImprovRefs:[]},
+    {id:'ch9',title:'Limits of Functional Analysis',summary:'Recognise contexts where functional labels are incomplete or misleading, including modal vamps, blues, pedal harmony and non-functional riff-based music.',prerequisites:['ch7','ch8'],related:['c7','c16','c18','c20'],subchapters:[],relatedAreas:['harmonic'],activityRefs:[],futureImprovRefs:[]}
   ]},
-  {id: 'c14', title: '14. Cadences'}, {id: 'c15', title: '15. Secondary Dominants'}, {id: 'c16', title: '16. Modal Interchange'},
-  {id: 'c17', title: '17. Modulation'}, {id: 'c18', title: '18. Chromatic Harmony'}, {id: 'c19', title: '19. Voice Leading'},
-  {id: 'c20', title: '20. Counterpoint'}, {id: 'c21', title: '21. Rhythm and Meter'}, {id: 'c22', title: '22. Musical Form and Composition'}
+  {id:'c14',title:'Cadences',number:14,stage:'Advanced',recommendedOrder:14,summary:'Cadential patterns, phrase endings, harmonic arrival and the different degrees of closure created by tonal progressions.',prerequisites:['c12','c13'],related:['c15','c17','c22'],chapters:[]},
+  {id:'c15',title:'Secondary Dominants',number:15,stage:'Advanced',recommendedOrder:15,summary:'Applied dominant harmony, tonicisation and chromatic leading tones that temporarily direct attention toward diatonic chords.',prerequisites:['c9','c12','c13'],related:['c14','c17','c18'],chapters:[]},
+  {id:'c16',title:'Modal Interchange',number:16,stage:'Advanced',recommendedOrder:16,summary:'Borrowed chords and modal mixture: how parallel-mode resources alter harmonic colour while retaining a shared tonal centre.',prerequisites:['c7','c12','c13'],related:['c17','c18'],chapters:[]},
+  {id:'c17',title:'Modulation',number:17,stage:'Advanced',recommendedOrder:17,summary:'Changes of tonal centre, pivot relationships, common modulation strategies and the musical perception of key change.',prerequisites:['c5','c12','c13'],related:['c14','c15','c16'],chapters:[]},
+  {id:'c18',title:'Chromatic Harmony',number:18,stage:'Advanced',recommendedOrder:18,summary:'Chromatic chords and pitch relationships beyond the diatonic collection, including their notation, voice leading and contextual function.',prerequisites:['c9','c12','c13'],related:['c15','c16','c17','c19'],chapters:[]},
+  {id:'c19',title:'Voice Leading',number:19,stage:'Advanced',recommendedOrder:19,summary:'The movement of individual voices between chords, including tendency tones, common tones, contrary motion and smooth connection.',prerequisites:['c9','c11','c12'],related:['c13','c18','c20'],chapters:[]},
+  {id:'c20',title:'Counterpoint',number:20,stage:'Advanced',recommendedOrder:20,summary:'Independent melodic lines, consonance and dissonance, contrapuntal motion and the interaction of horizontal and vertical musical structures.',prerequisites:['c4','c19'],related:['c19','c22'],chapters:[]},
+  {id:'c21',title:'Rhythm and Meter',number:21,stage:'Foundation',recommendedOrder:5,summary:'Pulse, subdivision, note duration, meter, grouping, syncopation and the rhythmic organisation of musical time.',prerequisites:['c1'],related:['c22','c13'],chapters:[]},
+  {id:'c22',title:'Musical Form and Composition',number:22,stage:'Advanced',recommendedOrder:21,summary:'Phrase, section and large-scale form; the ways melody, harmony, rhythm, repetition and contrast shape musical works.',prerequisites:['c13','c14','c19','c20','c21'],related:['c1','c8','c13'],chapters:[]}
 ];
 
-const CHAPTER_DATA = {
-  'ch1': {
-    title: 'Understanding Harmonic Function',
-    cat: 'c13',
-    sections: [
-      { id: 'sec-overview', title: 'Overview & Objectives', content: '<p>The concept of harmonic function explains how chords behave, relate to one another, and create a sense of movement or resolution within a tonal center. It is not enough to simply spell a chord; we must understand its job in the progression.</p><p>Understanding this movement helps to anticipate chord changes and connect phrases logically during improvisation.</p>' },
-      { id: 'sec-visualizing', title: 'Visualizing Relationships', content: '<p>The Circle of Fifths is a fundamental diagram for visualizing key signatures, relative minors, and diatonic relationships across all twelve pitch-class positions.</p>' + 
-        '<div class="theory-diagram" style="padding:16px;">' +
-        '<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" style="max-width:100%; height:auto;">' +
-        '<title>Responsive Circle of Fifths SVG</title><desc>Complete representation of major and relative minor key signatures.</desc>' +
-        '<g stroke="#2a2e38" fill="none" stroke-width="1"><circle cx="200" cy="200" r="180"/><circle cx="200" cy="200" r="120"/><circle cx="200" cy="200" r="60"/></g>' +
-        '<g font-family="Inter,sans-serif" font-weight="700" font-size="20" fill="#fff" text-anchor="middle" dominant-baseline="middle">' +
-        '<text x="200" y="50">C</text><text x="275" y="70">G</text><text x="330" y="125">D</text><text x="350" y="200">A</text><text x="330" y="275">E</text><text x="275" y="330">B</text>' +
-        '<text x="200" y="342"><tspan x="200" dy="0">F#</tspan><tspan x="200" dy="18">Gb</tspan></text><text x="125" y="330">Db</text><text x="70" y="275">Ab</text><text x="50" y="200">Eb</text><text x="70" y="125">Bb</text><text x="125" y="70">F</text>' +
-        '</g><g font-family="Inter,sans-serif" font-weight="500" font-size="14" fill="#6fa8ff" text-anchor="middle" dominant-baseline="middle">' +
-        '<text x="200" y="110">Am</text><text x="245" y="122">Em</text><text x="278" y="155">Bm</text><text x="290" y="200">F#m</text><text x="278" y="245">C#m</text><text x="245" y="278">G#m</text>' +
-        '<text x="200" y="284"><tspan x="200" dy="0">D#m</tspan><tspan x="200" dy="14">Ebm</tspan></text><text x="155" y="278">Bbm</text><text x="122" y="245">Fm</text><text x="110" y="200">Cm</text><text x="122" y="155">Gm</text><text x="155" y="122">Dm</text>' +
-        '</g></svg><div class="diagram-caption">Complete Circle of Fifths. Outer ring: Major Keys. Inner ring: Relative Minor Keys.</div></div>'
-      },
-      { id: 'sec-application', title: 'Practical Application', content: '<p>When applying this to the fretboard, target the 3rd and 7th of the functioning chord to clearly outline the harmonic movement without relying on full barre chords.</p>' +
-        '<button class="tbtn" style="margin-top:12px;" data-action="dojonav" data-dest="fretboard">Explore in Fretboard Mastery &rsaquo;</button>'
-      }
-    ]
-  },
-  'ch2': { title: 'Tonic, Predominant and Dominant Functions', cat: 'c13', sections: [{ id: 'sec-pend', title: 'Content Pending', content: '<p>Detailed breakdown of T-P-D flow will be populated in a future phase. (Placeholder content to preserve editorial model).</p>'}] },
-  'ch3': { title: 'Diatonic Functions in Major Keys', cat: 'c13', sections: [{ id: 'sec-pend', title: 'Content Pending', content: '<p>Explanation of I, ii, iii, IV, V, vi, viio mapping scheduled for future phase.</p>'}] },
-  'ch4': { title: 'Diatonic Functions in Minor Keys', cat: 'c13', sections: [{ id: 'sec-pend', title: 'Content Pending', content: '<p>Natural, Harmonic, and Melodic minor functional differences scheduled for future phase.</p>'}] },
-  'ch5': { title: 'Functional Progressions and Harmonic Goals', cat: 'c13', sections: [{ id: 'sec-pend', title: 'Content Pending', content: '<p>Analyzing points of arrival and deceptive cadences scheduled for future phase.</p>'}] },
-  'ch6': { title: 'Functional Behaviour of Seventh Chords', cat: 'c13', sections: [{ id: 'sec-pend', title: 'Content Pending', content: '<p>Extensions and Voice Leading tendencies scheduled for future phase.</p>'}] },
-  'ch7': { title: 'Chord Function in Context', cat: 'c13', sections: [{ id: 'sec-pend', title: 'Content Pending', content: '<p>Real-world song analysis scheduled for future phase.</p>'}] },
-  'ch8': { title: 'Harmonic Rhythm and Phrase Structure', cat: 'c13', sections: [{ id: 'sec-pend', title: 'Content Pending', content: '<p>Pacing chord changes and downbeat targets scheduled for future phase.</p>'}] },
-  'ch9': { title: 'Limits of Functional Analysis', cat: 'c13', sections: [{ id: 'sec-pend', title: 'Content Pending', content: '<p>Modal vamps, blues ambiguity, and non-functional riffing scheduled for future phase.</p>'}] }
+const RECOMMENDED_CURRICULUM_PATH = ['c1','c2','c3','c4','c21','c5','c6','c8','c9','c11','c12','c13'];
+
+// Practical areas expose real landing pages now; future exercise IDs can be added without changing chapter/category identifiers.
+const DOJO_PRACTICE_AREAS = {
+  fretboard: {id:'fretboard',title:'Fretboard Mastery',description:'Translate musical knowledge into reliable pitch-location, interval, scale, chord and voicing awareness across the guitar neck.',purpose:'A practical guitar layer connected to the general musicianship curriculum. Future activities will focus on locating, connecting, hearing and applying musical material rather than memorising isolated shapes.',status:'The landing page and curriculum relationships are available. Interactive fretboard exercises are planned for a later phase.',categoryIds:['c2','c3','c4','c6','c8','c9','c11'],chapterIds:[],relatedTheoryIds:['c2','c3','c4','c6','c8','c9','c11'],activities:[]},
+  harmonic: {id:'harmonic',title:'Harmonic Analysis Lab',description:'Understand how chords, bass movement, voice leading and phrase context create harmonic direction.',purpose:'A practical analysis environment for identifying, comparing and explaining harmonic behaviour in real musical contexts.',status:'The landing page and curriculum relationships are available. Interactive analysis and assessment tools are planned for a later phase.',categoryIds:['c8','c9','c12','c13','c14','c15','c16','c17','c18','c19','c21','c22'],chapterIds:['ch1','ch2','ch3','ch4','ch5','ch6','ch7','ch8','ch9'],relatedTheoryIds:['c8','c9','c12','c13','c14','c15','c16','c17','c18','c19','c21','c22','ch1','ch2','ch3','ch4','ch5','ch6','ch7','ch8','ch9'],activities:[]}
 };
 
+const DOJO_RELATIONSHIP_SCHEMA = {
+  version: 1,
+  description: 'Static curriculum links use stable category, chapter, subchapter and practical-area IDs. Future exercise records may reference these IDs and carry their own evidence; reading and navigation are not progress events.',
+  activityRecordFields: ['activityId','areaId','eventType','theoryRefs','subchapterRefs','competencyRefs','outcome','evidence','recordedAt'],
+  eventTypes: ['attempt','completion','competencyDemonstration'],
+  note: 'This is an architectural contract only. Phase 2 does not persist activity records or calculate mastery.'
+};
+
+const CHAPTER_DATA = {
+  ch1: {
+    sections: [
+      {id:'sec-overview',title:'Overview and Learning Objectives',content:'<p>Harmonic function describes the role a chord plays within a tonal context. It explains how harmony creates stability, movement, tension and resolution. A chord symbol tells us which notes are present; a functional analysis asks what the chord is doing in relation to the surrounding music.</p><p>By the end of this chapter, you should be able to distinguish chord identity from harmonic role, recognise the broad functional families, and explain why context matters when assigning a function.</p>'},
+      {id:'sec-principles',title:'Chord Identity and Harmonic Role',content:'<p>A chord does not carry one universal function in isolation. Its role depends on the tonal centre, the chords around it, the bass, melodic context and phrase position. In a major-key context, the same chord quality may participate in different harmonic relationships depending on where the music is going and where it has arrived.</p><p>Functional labels are therefore analytical descriptions, not permanent properties printed onto chord symbols. Roman numerals describe scale-degree roots and chord quality; functional labels describe a broader sense of harmonic behaviour.</p><div class="theory-callout"><b>Core distinction</b><p><b>Chord identity:</b> the notes and interval structure that form the chord.</p><p><b>Harmonic function:</b> the role that chord plays in the progression and tonal context.</p></div>'},
+      {id:'sec-functional-flow',title:'The Three Broad Functional Families',content:'<p>In common-practice tonal harmony, three broad functional families are often distinguished:</p><ul><li><b>Tonic (T):</b> stability, arrival or prolongation of the tonal centre. The I chord is the clearest tonic representative; vi and, in some contexts, iii may participate in tonic prolongation.</li><li><b>Predominant (PD):</b> preparation for dominant activity. Chords such as ii and IV commonly lead toward V, although their role depends on context.</li><li><b>Dominant (D):</b> directed tension, commonly shaped by the leading tone and often moving toward tonic. V and V7 are central examples; vii° can also have dominant function.</li></ul><p>A common large-scale motion is Tonic → Predominant → Dominant → Tonic. This is a useful model, not a compulsory formula for every progression. Music can prolong a function, omit a stage, delay resolution or use non-functional relationships.</p><div class="theory-diagram"><svg viewBox="0 0 360 390" role="img" aria-labelledby="function-flow-title function-flow-desc" xmlns="http://www.w3.org/2000/svg"><title id="function-flow-title">A common tonal functional motion</title><desc id="function-flow-desc">Tonic moves to predominant, then dominant, and resolves to tonic. This is a common model, not a rule for every progression.</desc><defs><marker id="function-arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#9aa0ac" stroke-width="1.2"/></marker></defs><g font-family="Inter, sans-serif" text-anchor="middle"><rect x="30" y="8" width="300" height="58" rx="11" fill="#1e222c" stroke="#63d69a" stroke-width="2"/><text x="180" y="32" fill="#63d69a" font-size="15" font-weight="700">TONIC</text><text x="180" y="52" fill="#eef0f4" font-size="12">I · vi · (iii)</text><rect x="30" y="102" width="300" height="58" rx="11" fill="#1e222c" stroke="#6fa8ff" stroke-width="2"/><text x="180" y="126" fill="#6fa8ff" font-size="15" font-weight="700">PREDOMINANT</text><text x="180" y="146" fill="#eef0f4" font-size="12">ii · IV</text><rect x="30" y="196" width="300" height="58" rx="11" fill="#1e222c" stroke="#f5a623" stroke-width="2"/><text x="180" y="220" fill="#f5a623" font-size="15" font-weight="700">DOMINANT</text><text x="180" y="240" fill="#eef0f4" font-size="12">V · V7 · vii°</text><rect x="30" y="290" width="300" height="58" rx="11" fill="#1e222c" stroke="#63d69a" stroke-width="2"/><text x="180" y="314" fill="#63d69a" font-size="15" font-weight="700">TONIC</text><text x="180" y="334" fill="#eef0f4" font-size="12">I · arrival</text><g stroke="#9aa0ac" stroke-width="2" fill="none" marker-end="url(#function-arrow)"><path d="M180 67 V94"/><path d="M180 161 V188"/><path d="M180 255 V282"/></g><text x="180" y="376" fill="#9aa0ac" font-size="10">A common directional model, not a fixed progression</text></g></svg><div class="diagram-caption">Functional motion describes tendencies and context, not a fixed chord sequence.</div></div>'},
+      {id:'sec-example',title:'A Worked Example in C Major',content:'<p>Consider the progression <b>C – F – G7 – C</b>. In C major, these chords can be labelled <b>I – IV – V7 – I</b>. The C major chord establishes tonic. F major commonly acts as predominant. G7 contains B, the leading tone, and F, the chordal seventh; these tones create strong voice-leading tendencies toward C and E in the tonic chord.</p><p>The analysis explains more than chord spelling: it describes why the progression creates departure, tension and arrival. A different melody, bass line or phrase position can alter how a chord is perceived, so Roman numerals and functional labels should always be checked against the musical context.</p><div class="theory-example"><b>Example</b><p><b>Key:</b> C major</p><p><b>Chords:</b> C – F – G7 – C</p><p><b>Roman numerals:</b> I – IV – V7 – I</p><p><b>Broad functions:</b> Tonic – Predominant – Dominant – Tonic</p></div>'},
+      {id:'sec-application',title:'Practical Guitar Application',content:'<p>On guitar, begin by identifying the chord roots and then locate the chord tones that reveal each harmony. When the harmony changes, follow the third of each chord to hear its quality and the seventh where present to hear its tendency. Voice-leading between nearby chord tones is often more revealing than moving through a scale shape without reference to the chord.</p><p>These are analytical and practice suggestions. This application does not currently evaluate audio input or verify physical performance.</p>'}
+    ]
+  }
+};
 const PHASES=[
  {id:"p0",label:"Setup",short:"Setup & Baseline",kind:"setup"},
  {id:"p1",label:"Beginner",short:"Levels 1 - 2",target:3,testReq:2,
@@ -630,76 +739,101 @@ const setupData = {
 function defaultState(){
   return {phaseIndex:0,chop:{alt:0,sweep:0,legato:0,econ:0,tap:0},testLevel:{alt:0,sweep:0,legato:0,econ:0,tap:0,ult:0},bonusLevel:{},checks:{},practiced:{},practicedDate:null,congratsDate:null,activeDayOverride:null,activeDayDate:null,streakDates:[],setupGuitar:"prs",setupTuning:"e_std",improvIndex:0,improvChecks:{}};
 }
+function mergeCloudState(cloudData) {
+  var defaults = defaultState();
+  var localData = state || defaults;
+  var merged = Object.assign({}, defaults, localData, cloudData, {unsynced:false});
+  ['chop','testLevel','bonusLevel','checks','practiced','improvChecks'].forEach(function(key) {
+    merged[key] = Object.assign({}, defaults[key] || {}, localData[key] || {}, cloudData[key] || {});
+  });
+  if (cloudData.streakDates === undefined) merged.streakDates = (localData.streakDates || defaults.streakDates).slice();
+  else merged.streakDates = cloudData.streakDates.slice();
+  return merged;
+}
 
 function loadState(){
-  try{
-    var raw=localStorage.getItem(STORAGE_KEY);
-    if(raw){
-      var d=JSON.parse(raw);
-      
-      // F-03 Correction: Detect and protect against unsupported future schemas
-      if (d.schemaVersion !== undefined && d.schemaVersion > LOCAL_SCHEMA_VERSION) {
-        cloudWriteLock = true;
-        d.schemaError = true;
-        return d; // Return raw data to prevent default merge and preserve structure
-      }
-      
-      // Clean up legacy dojo object without gamification variables safely migrating back
-      if(d.dojo && (d.dojo.xp !== undefined || d.dojo.level !== undefined)) {
-        delete d.dojo;
-      }
-      var isLegacySync = (d.unsynced === undefined);
-      var st = Object.assign(defaultState(),d,{
-        chop:Object.assign(defaultState().chop,d.chop||{}),
-        testLevel:Object.assign(defaultState().testLevel,d.testLevel||{}),
-        bonusLevel:d.bonusLevel||{},
-        checks:d.checks||{},
-        practiced:d.practiced||{},
-        streakDates:d.streakDates||[],
-        setupGuitar:d.setupGuitar||"prs",
-        setupTuning:d.setupTuning||"e_std",
-        improvIndex:d.improvIndex||0,
-        improvChecks:d.improvChecks||{}
-      });
-      if(isLegacySync) { st.unsynced = true; localStorage.setItem(STORAGE_KEY, JSON.stringify(st)); }
-      return st;
+  try {
+    var raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return defaultState();
+    var data = JSON.parse(raw);
+    if (!isRecord(data) || (data.schemaVersion !== undefined && data.schemaVersion > LOCAL_SCHEMA_VERSION) || !validateSchema(data)) {
+      localSchemaError = {
+        kind: data && data.schemaVersion > LOCAL_SCHEMA_VERSION ? 'future' : 'invalid',
+        version: data && data.schemaVersion !== undefined ? data.schemaVersion : null
+      };
+      cloudWriteLock = true;
+      cloudLockReason = 'Local data is incompatible. All persistence is disabled.';
+      return Object.assign(defaultState(), {unsynced: true});
     }
-  }catch(e){}
-  return defaultState();
+    var defaults = defaultState();
+    var stateData = Object.assign({}, defaults, data, {
+      chop: Object.assign({}, defaults.chop, data.chop || {}),
+      testLevel: Object.assign({}, defaults.testLevel, data.testLevel || {}),
+      bonusLevel: Object.assign({}, data.bonusLevel || {}),
+      checks: Object.assign({}, data.checks || {}),
+      practiced: Object.assign({}, data.practiced || {}),
+      streakDates: Array.isArray(data.streakDates) ? data.streakDates.slice() : [],
+      improvChecks: Object.assign({}, data.improvChecks || {})
+    });
+    if (data.unsynced === undefined) stateData.unsynced = true;
+    return stateData;
+  } catch(error) {
+    localSchemaError = {kind: 'corrupt', version: null};
+    cloudWriteLock = true;
+    cloudLockReason = 'Local data could not be read. All persistence is disabled.';
+    console.error('Local progress could not be parsed; original storage preserved.', error);
+    return Object.assign(defaultState(), {unsynced: true});
+  }
 }
 
+function persistLocalState() {
+  if (localSchemaError) return false;
+  try {
+    var snapshot = JSON.parse(JSON.stringify(state));
+    snapshot.schemaVersion = LOCAL_SCHEMA_VERSION;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot));
+    return true;
+  } catch(error) {
+    console.error('Local progress could not be saved.', error);
+    return false;
+  }
+}
+function canWriteCloud() {
+  return !!(hasFirebase && db && currentUid && authStateReady && !isSyncing && !cloudWriteLock && !localSchemaError && !ui.conflictData);
+}
 function markDirty() {
-   state.unsynced = true;
-   mutationCount += 1;
-   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e){}
+  if (localSchemaError) return false;
+  state.unsynced = true;
+  mutationCount += 1;
+  persistLocalState();
+  return true;
 }
-
-function saveState(){
-  markDirty();
-  if(cloudWriteLock || !hasFirebase || !currentUid || !db) return;
+function saveState() {
+  // Compatible local state is saved immediately; Firestore waits for a verified auth/cloud read.
+  if (!markDirty()) return false;
+  if (!canWriteCloud()) return true;
   const snapshot = JSON.parse(JSON.stringify(state));
   delete snapshot.unsynced;
   snapshot.schemaVersion = LOCAL_SCHEMA_VERSION;
-  
   const capturedSession = sessionGeneration;
   const capturedUid = currentUid;
   const capturedMutation = mutationCount;
-
-  writeQueue = writeQueue.then(async () => {
-     if (capturedSession !== sessionGeneration || cloudWriteLock || currentUid !== capturedUid) return;
-     try {
-        await setDoc(doc(db, "users", capturedUid), snapshot);
-        // P3 correction: only clear unsynced if the precise mutation snapshot succeeds and remains current
-        if (capturedSession === sessionGeneration && currentUid === capturedUid && capturedMutation === mutationCount) {
-           state.unsynced = false;
-           try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e){}
-        }
-     } catch(e) {
-        console.error("Cloud write queued fail:", e);
-     }
-  }).catch(e => { console.error("Write queue stalled:", e); });
+  writeQueue = writeQueue.then(async function() {
+    if (!canWriteCloud() || capturedSession !== sessionGeneration || currentUid !== capturedUid || capturedMutation !== mutationCount) return;
+    try {
+      await setDoc(doc(db, 'users', capturedUid), snapshot);
+      if (capturedSession === sessionGeneration && currentUid === capturedUid && capturedMutation === mutationCount && !cloudWriteLock) {
+        state.unsynced = false;
+        persistLocalState();
+      }
+    } catch(error) {
+      console.error('Cloud write queued fail:', error);
+    }
+  }).catch(function(error) {
+    console.error('Write queue stalled:', error);
+  });
+  return true;
 }
-
 let state=loadState();
 
 function k(){return Array.prototype.slice.call(arguments).join(".");}
@@ -709,6 +843,7 @@ function isWeekendDay(d){return d==="Sat"||d==="Sun";}
 function activeDay(){ if(state.activeDayOverride && state.activeDayDate===todayISO()) return state.activeDayOverride; return todayName(); }
 
 function ensureDailyReset(){
+  if (localSchemaError || !authStateReady || isSyncing || ui.conflictData) return;
   var t=todayISO();
   if(state.practicedDate!==t){
     updateStreakStatus();
@@ -939,8 +1074,11 @@ function renderHeaderProgress(){
 
   return '<div class="header-progress-grid">' +
          '<div class="prog-col"><div class="prog-title">TECHNIQUE ROADMAP</div>' + phaseHtml + '</div>' +
-         '<div class="prog-col"><div class="prog-title">MUSICAL DEVELOPMENT</div><div class="md-label">Measurement model pending</div></div>' +
-         '</div>';
+         '<div class="prog-col musical-progress"><div class="prog-title">MUSICAL DEVELOPMENT</div>' +
+         '<div class="md-global"><span class="md-empty-mark"></span><span>Progress appears as practical activity is recorded</span></div>' +
+         '<div class="md-empty-track" aria-hidden="true"></div>' +
+         '<div class="md-subdivisions"><span><b>DOJO</b><small>Awaiting activity</small></span><span><b>IMPROV</b><small>Awaiting activity</small></span></div>' +
+         '</div></div>';
 }
 
 function dayPicker(selectedDay){
@@ -1079,9 +1217,9 @@ function changeCalMonth(dir) {
 
 function renderConflict() {
   return '<div class="conflict-modal"><div class="conflict-box"><h3>\u26a0\ufe0f Sync Conflict</h3>' +
-         '<p style="margin:16px 0; color:var(--text); line-height:1.5;">You have local changes that haven\'t been saved to the cloud, but the cloud also has data.</p>' +
+         '<p style="margin:16px 0; color:var(--text); line-height:1.5;">Local changes and cloud data both exist. Choose which values to use; unknown local fields are preserved for forward compatibility.</p>' +
          '<button class="tbtn primary" style="width:100%;margin-bottom:12px;" data-action="resolveLocal">Keep Local Data (Overwrite Cloud)</button>' +
-         '<button class="tbtn danger" style="width:100%;" data-action="resolveCloud">Keep Cloud Data (Overwrite Local)</button></div></div>';
+         '<button class="tbtn danger" style="width:100%;" data-action="resolveCloud">Use Cloud Values (Preserve Unknown Fields)</button></div></div>';
 }
 
 /* ---------- views ---------- */
@@ -1123,8 +1261,9 @@ function renderHome(){
     html+='<p style="color:#ffb3ac;text-align:justify;"><b>Delete everything?</b> This wipes every phase, checklist, chop level, test level and streak. This cannot be undone.</p>'+
       '<div style="display:flex;gap:12px;margin-top:14px;"><button class="tbtn" style="flex:1;" data-action="cancelreset">Cancel</button><button class="tbtn danger" style="flex:1;" data-action="confirmreset">Yes, delete everything</button></div>';
   } else {
-    html+='<p style="text-align:justify;">Your progress syncs automatically when logged in. You can also manually push a save or pull your latest cloud backup here.</p>'+
-      '<div style="display:flex;gap:12px;margin-top:14px;"><button class="tbtn" style="flex:1;" data-action="cloudsave">\u2601\ufe0f Save</button><button class="tbtn" style="flex:1;" data-action="cloudload">\u2601\ufe0f Load</button></div>'+
+    html+='<p style="text-align:justify;">Your progress syncs automatically when logged in. You can also manually push a save or pull your latest cloud backup here.</p>';
+    if (cloudWriteLock) html+='<p style="margin-top:10px;color:#ffb3ac;font-size:12px;">Cloud writes are locked: '+(cloudLockReason || 'the cloud state could not be verified.')+' Local progress remains available on this device.</p>';
+    html+='<div style="display:flex;gap:12px;margin-top:14px;"><button class="tbtn" style="flex:1;" data-action="cloudsave">\u2601\ufe0f Save</button><button class="tbtn" style="flex:1;" data-action="cloudload">\u2601\ufe0f Load</button></div>'+
       '<button class="tbtn danger" style="width:100%;margin-top:12px;" data-action="reset">\u26a0\ufe0f Reset Everything</button>';
   }
   html+='</div>';
@@ -1347,130 +1486,157 @@ function renderImprov(){
   return html;
 }
 
+function escapeHTML(value) {
+  return String(value == null ? '' : value).replace(/[&<>"']/g, function(ch) {
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];
+  });
+}
+function findChapterById(chapterId) {
+  for (var i=0;i<COMPENDIUM_CATEGORIES.length;i++) {
+    var category=COMPENDIUM_CATEGORIES[i];
+    var chapter=(category.chapters||[]).find(function(item){return item.id===chapterId;});
+    if(chapter) return {category:category,chapter:chapter};
+  }
+  return null;
+}
+function renderCategoryLinks(ids) {
+  var html='<div class="relationship-links">';
+  (ids||[]).forEach(function(id){
+    var category=COMPENDIUM_CATEGORIES.find(function(item){return item.id===id;});
+    if(category) html+='<button data-action="dojocat" data-id="'+category.id+'">'+escapeHTML(category.title)+'</button>';
+    var found=findChapterById(id);
+    if(found) html+='<button data-action="dojochap" data-ch="'+found.chapter.id+'" data-cat="'+found.category.id+'">'+escapeHTML(found.chapter.title)+'</button>';
+  });
+  return html+'</div>';
+}
+function renderAreaLinks(ids) {
+  var html='<div class="relationship-links">';
+  (ids||[]).forEach(function(id){
+    var area=DOJO_PRACTICE_AREAS[id];
+    if(area) html+='<button data-action="dojonav" data-dest="'+area.id+'">'+escapeHTML(area.title)+'</button>';
+  });
+  return html+'</div>';
+}
 function renderDojoHub() {
-  let html = '<div class="eyebrow" style="color:var(--blue);">DOJO HUB</div>';
-  html += '<div class="h2" style="font-size:24px; margin-bottom:16px;">Training & Curriculum</div>';
-  html += '<p class="lede">Explore complete theory tracks and apply your understanding through specialized practice modules. Your practical progress is independently tracked under Musical Development.</p>';
-
-  html += '<div class="card" style="border-color:var(--accent); margin-top:24px; margin-bottom:24px; box-shadow:0 0 10px rgba(255,59,48,0.08);">';
-  html += '<h3 style="color:var(--accent);">⭐ Recommended Learning Path</h3>';
-  html += '<p style="margin-bottom:12px; font-size:13.5px; color:var(--text); text-align:justify;">Start your journey by mastering the fundamental principles of Functional Harmony before exploring individual modules.</p>';
-  html += '<button class="tbtn primary" data-action="dojochap" data-ch="ch1" data-cat="c13" style="width:100%;">Start: Understanding Harmonic Function</button>';
-  html += '</div>';
-
-  html += '<h3 style="font-size:16px; color:var(--text); margin-top:24px; margin-bottom:12px; font-family:\'Inter\',sans-serif; text-transform:none; font-weight:600;">Theory Curriculum</h3>';
-  html += '<button class="navbtn" style="border-color:var(--blue);" data-action="dojonav" data-dest="compendium"><div class="ic">📖</div><div class="info"><b>Music Theory Compendium</b><span style="display:block; margin-top:4px;">Explore theory, harmony, and rhythm from fundamentals to advanced.</span></div></button>';
-
-  html += '<h3 style="font-size:16px; color:var(--text); margin-top:24px; margin-bottom:12px; font-family:\'Inter\',sans-serif; text-transform:none; font-weight:600;">Interactive Training</h3>';
-  html += '<button class="navbtn" data-action="dojonav" data-dest="fretboard"><div class="ic">🎯</div><div class="info"><b>Fretboard Mastery</b><span style="display:block; margin-top:4px;">Practical navigation and visualization across the neck.</span></div></button>';
-  html += '<button class="navbtn" data-action="dojonav" data-dest="harmonic"><div class="ic">🏛️</div><div class="info"><b>Harmonic Analysis Lab</b><span style="display:block; margin-top:4px;">Test your knowledge on songwriting decisions and modal tension.</span></div></button>';
-
+  var html='<div class="eyebrow" style="color:var(--blue);">DOJO · LEARNING ENVIRONMENT</div>';
+  html+='<h2 style="font-family:Inter,sans-serif;font-size:26px;letter-spacing:-.5px;text-transform:none;margin-bottom:8px;">Understand. Connect. Apply.</h2>';
+  html+='<p class="lede">Build general musicianship through theory, then connect those ideas to guitar fluency and harmonic understanding. Theory is always open; the suggested route is guidance, not a requirement.</p>';
+  html+='<div class="dojo-hub-grid">';
+  html+='<section class="dojo-area-card"><div class="dojo-area-icon">📖</div><h3>Music Theory Compendium</h3><p>A structured reference spanning the foundations of pitch, rhythm, scales, chords, harmony, form and musical relationships.</p><button class="tbtn primary" data-action="dojonav" data-dest="compendium" style="margin-top:auto;">Explore the Compendium</button></section>';
+  html+='<section class="dojo-area-card"><div class="dojo-area-icon">🎸</div><h3>Fretboard Mastery</h3><p>Connect notes, intervals, scales, chords and voicings to their locations across the guitar neck.</p><button class="tbtn" data-action="dojonav" data-dest="fretboard" style="margin-top:auto;">Open Fretboard Mastery</button></section>';
+  html+='<section class="dojo-area-card"><div class="dojo-area-icon">⌁</div><h3>Harmonic Analysis Lab</h3><p>Explore chord function, progression, voice leading and the musical context behind harmonic choices.</p><button class="tbtn" data-action="dojonav" data-dest="harmonic" style="margin-top:auto;">Open Harmonic Analysis Lab</button></section>';
+  html+='</div>';
+  html+='<section class="card"><h3>Recommended Learning Path <span class="tag">Guidance only · No content locks</span></h3><p>Begin with the language of music, establish pitch and interval fluency, then build scales and harmony. You can open any category at any time.</p><div class="dojo-path">';
+  RECOMMENDED_CURRICULUM_PATH.forEach(function(id,index){
+    var category=COMPENDIUM_CATEGORIES.find(function(item){return item.id===id;});
+    if(index) html+='<span class="path-arrow">→</span>';
+    html+='<button data-action="dojocat" data-id="'+id+'">'+escapeHTML(category.title)+'</button>';
+  });
+  html+='</div><p style="font-size:11px;margin-top:12px;">Continue into modal study, extensions, cadences and advanced harmony — or explore any other topic that interests you.</p></section>';
+  html+='<div class="card"><h3>Practical Development</h3><p>DOJO and IMPROV remain separate practical learning areas. Reading theory, opening categories and viewing diagrams do not create progress or mastery records. Practical evidence will be introduced with the exercise systems in later phases.</p><div class="relationship-links" style="margin-top:12px;"><button data-action="dojonav" data-dest="fretboard">Fretboard Mastery</button><button data-action="dojonav" data-dest="harmonic">Harmonic Analysis Lab</button></div></div>';
   return html;
 }
-
-function renderDojoLanding(title, desc) {
-  return '<div class="game-header" style="margin-bottom:16px;"><button class="tbtn" data-action="dojonav" data-dest="hub">&lsaquo; Back to Hub</button></div>' +
-         '<div class="card" style="text-align:center; padding:40px 20px;"><div class="ic" style="font-size:48px; margin-bottom:16px;">⏳</div>' +
-         '<h3 style="display:block; font-size:20px;">'+title+'</h3><p>'+desc+'</p>' +
-         '<p style="margin-top:16px; font-style:italic; font-size:13px;">Interactive tools are assigned to a future phase.</p>' +
-         '<button class="tbtn primary" style="margin-top:24px;" data-action="dojonav" data-dest="compendium">Explore Theory Compendium instead</button></div>';
-}
-
-function renderCompendium() {
-  var html = '<div class="game-header" style="margin-bottom:16px;"><button class="tbtn" data-action="dojonav" data-dest="hub">&lsaquo; Dojo Hub</button></div>';
-  html += '<div class="dojo-explorer">';
-  html += '<div class="dojo-sidebar">';
-  html += '<div class="shell-search" style="margin:0 0 12px 0; max-width:100%; border-radius:8px;"><span class="ic">🔍</span><input type="text" id="dojo-local-search" placeholder="Search curriculum..." value="'+ui.searchStr+'"></div>';
-  
-  if (ui.searchStr && ui.searchStr.trim().length > 0) {
-     html += '<p style="font-size:12px; color:var(--accent2); margin-left:8px; font-weight:600;">Search Results</p>';
-  } else {
-     COMPENDIUM_CATEGORIES.forEach(function(c) {
-        var active = ui.dojoCat === c.id ? " active" : "";
-        html += '<button class="cat-btn' + active + '" data-action="dojocat" data-id="' + c.id + '">' + c.title + '</button>';
-     });
+function renderDojoAreaLanding(areaId) {
+  var area=DOJO_PRACTICE_AREAS[areaId];
+  if(!area) return renderDojoHub();
+  var icon=areaId==='fretboard'?'🎸':'⌁';
+  var html='<div class="game-header" style="margin-bottom:18px;"><button class="tbtn" data-action="dojonav" data-dest="hub">&lsaquo; Back to DOJO Hub</button></div>';
+  html+='<div class="eyebrow" style="color:var(--blue);">DOJO · PRACTICAL LEARNING AREA</div>';
+  html+='<div style="display:flex;align-items:center;gap:14px;margin-bottom:12px;"><div class="dojo-area-icon">'+icon+'</div><h2 style="font-family:Inter,sans-serif;font-size:25px;text-transform:none;letter-spacing:-.5px;">'+escapeHTML(area.title)+'</h2></div>';
+  html+='<p class="lede">'+escapeHTML(area.description)+'</p>';
+  html+='<section class="card"><h3>Learning Purpose</h3><p>'+escapeHTML(area.purpose)+'</p></section>';
+  html+='<div class="curriculum-note"><b>Current Phase 2 scope</b><p>'+escapeHTML(area.status)+'</p><p style="margin-top:8px;">No physical performance, audio input or musical competency is evaluated by this landing page.</p></div>';
+  html+='<section class="card" style="margin-top:20px;"><h3>Connected Theory</h3><p style="margin-bottom:12px;">Use these Compendium topics as the theoretical foundation for this learning area.</p>'+renderCategoryLinks(area.categoryIds)+'</section>';
+  if(area.chapterIds.length){
+    html+='<section class="card"><h3>Relevant Chapter References</h3><p style="margin-bottom:12px;">The following Functional Harmony chapter references are available in the Compendium reader.</p>'+renderCategoryLinks(area.chapterIds)+'</section>';
   }
-  html += '</div>';
-
-  html += '<div class="dojo-content">';
-  
-  if (ui.searchStr && ui.searchStr.trim().length > 0) {
-    let lowerStr = ui.searchStr.toLowerCase().trim();
-    let hasMatches = false;
-    html += '<h3 style="font-size:22px; color:var(--text); margin-bottom:12px;">Results for "'+ui.searchStr+'"</h3><div class="chapter-list">';
-    COMPENDIUM_CATEGORIES.forEach(c => {
-       if (c.chapters) {
-          c.chapters.forEach(ch => {
-             let chData = CHAPTER_DATA[ch.id];
-             let matchStr = ch.title.toLowerCase() + " " + c.title.toLowerCase();
-             if (chData) {
-                 chData.sections.forEach(s => matchStr += " " + s.content.toLowerCase());
-             }
-             if (matchStr.includes(lowerStr)) {
-                hasMatches = true;
-                html += '<div class="chapter-card" data-action="dojochap" data-ch="'+ch.id+'" data-cat="'+c.id+'"><h4>'+ch.title+'</h4><p style="font-size:12.5px;">Found in '+c.title+'</p></div>';
-             }
-          });
-       }
-    });
-    if (!hasMatches) html += '<p style="color:var(--muted);">No matching curriculum chapters found.</p>';
-    html += '</div>';
+  html+='<button class="tbtn" data-action="dojonav" data-dest="compendium" style="width:100%;">Browse the full Music Theory Compendium</button>';
+  return html;
+}
+function renderCompendium() {
+  var search=ui.searchStr.trim().toLowerCase();
+  var filteredCategories=COMPENDIUM_CATEGORIES.filter(function(category){return ui.dojoStageFilter==='all'||category.stage.toLowerCase()===ui.dojoStageFilter;});
+  var mobileSelected=ui.dojoMobileCategorySelected||!!search;
+  var html='<div class="game-header" style="margin-bottom:10px;"><button class="tbtn" data-action="dojonav" data-dest="hub">&lsaquo; DOJO Hub</button></div>';
+  html+='<div class="eyebrow" style="color:var(--blue);">MUSIC THEORY COMPENDIUM</div><h2 style="font-family:Inter,sans-serif;font-size:24px;text-transform:none;letter-spacing:-.4px;">Explore the Curriculum</h2>';
+  html+='<p class="lede">Search the curriculum or choose a category. The framework contains 22 topic areas; the nine Functional Harmony chapters are preserved as the first structured chapter sequence.</p>';
+  html+='<div class="dojo-explorer-tools"><div class="shell-search"><span class="ic">⌕</span><input type="search" id="dojo-local-search" aria-label="Search curriculum" placeholder="Search topics and chapters..." value="'+escapeHTML(ui.searchStr)+'"></div>';
+  html+='<select class="select" id="dojo-stage-filter" aria-label="Filter by learning stage"><option value="all"'+(ui.dojoStageFilter==='all'?' selected':'')+'>All learning stages</option><option value="foundation"'+(ui.dojoStageFilter==='foundation'?' selected':'')+'>Foundation</option><option value="developing"'+(ui.dojoStageFilter==='developing'?' selected':'')+'>Developing</option><option value="advanced"'+(ui.dojoStageFilter==='advanced'?' selected':'')+'>Advanced</option></select></div>';
+  html+='<div class="dojo-explorer'+(mobileSelected?' mobile-category-selected':'')+'">';
+  html+='<nav class="dojo-sidebar" aria-label="Curriculum categories"><div class="dojo-sidebar-title">22 Curriculum Categories</div>';
+  filteredCategories.forEach(function(category){
+    html+='<button class="cat-btn'+(ui.dojoCat===category.id?' active':'')+'" data-action="dojocat" data-id="'+category.id+'">'+category.number+'. '+escapeHTML(category.title)+'</button>';
+  });
+  html+='</nav><main class="dojo-content">';
+  if(search){
+    var categoryMatches=filteredCategories.filter(function(category){return (category.title+' '+category.summary+' '+category.stage).toLowerCase().includes(search);});
+    var chapterMatches=[];
+    filteredCategories.forEach(function(category){(category.chapters||[]).forEach(function(chapter){var data=CHAPTER_DATA[chapter.id];var sectionText=data?data.sections.map(function(section){return section.title+' '+(section.content||'').replace(/<[^>]*>/g,' ');}).join(' '):'';var matchingSubchapters=(chapter.subchapters||[]).filter(function(sub){var subText=sub.title+' '+(sub.summary||'')+' '+(sub.sections||[]).map(function(section){return section.title+' '+(section.content||'').replace(/<[^>]*>/g,' ');}).join(' ');return subText.toLowerCase().includes(search);});var subchapterText=matchingSubchapters.map(function(sub){return sub.title+' '+(sub.summary||'');}).join(' ');if((chapter.title+' '+chapter.summary+' '+category.title+' '+sectionText+' '+subchapterText).toLowerCase().includes(search))chapterMatches.push({category:category,chapter:chapter,subchapters:matchingSubchapters});});});
+    html+='<button class="tbtn dojo-mobile-back" data-action="dojobackcategories">&lsaquo; All Categories</button>';
+    html+='<h3 style="font-size:20px;margin-bottom:12px;">Search Results</h3>';
+    if(!categoryMatches.length&&!chapterMatches.length) html+='<p>No matching topics or chapters were found. Try a broader term or change the learning-stage filter.</p>';
+    if(categoryMatches.length){html+='<div class="relationship-block"><h4>TOPIC CATEGORIES</h4><div class="chapter-list">';categoryMatches.forEach(function(category){html+='<button class="chapter-card" data-action="dojocat" data-id="'+category.id+'"><h4>'+category.number+'. '+escapeHTML(category.title)+'</h4><p>'+escapeHTML(category.summary)+'</p></button>';});html+='</div></div>';}
+    if(chapterMatches.length){html+='<div class="relationship-block"><h4>CHAPTERS</h4><div class="chapter-list">';chapterMatches.forEach(function(item){html+='<button class="chapter-card" data-action="dojochap" data-ch="'+item.chapter.id+'" data-cat="'+item.category.id+'"><h4>'+escapeHTML(item.chapter.title)+'</h4><p>'+escapeHTML(item.chapter.summary)+'</p>'+(item.subchapters&&item.subchapters.length?'<p class="chapter-match">Matching subchapter: '+item.subchapters.map(function(sub){return escapeHTML(sub.title);}).join(', ')+'</p>':'')+'<div class="chapter-card-meta"><span>'+escapeHTML(item.category.title)+'</span><span>Chapter reader</span></div></button>';});html+='</div></div>';}
   } else {
-    var cat = COMPENDIUM_CATEGORIES.find(function(c){ return c.id === ui.dojoCat; });
-    html += '<h3 style="font-size:22px; color:var(--text); margin-bottom:12px;">' + (cat ? cat.title : 'Select a Category') + '</h3>';
-    if(cat && cat.chapters && cat.chapters.length) {
-       html += '<div class="chapter-list">';
-       cat.chapters.forEach(function(ch) {
-          html += '<div class="chapter-card" data-action="dojochap" data-ch="'+ch.id+'" data-cat="'+cat.id+'"><h4>'+ch.title+'</h4><p style="font-size:12.5px;">Theoretical foundation and practical context.</p></div>';
-       });
-       html += '</div>';
+    var category=COMPENDIUM_CATEGORIES.find(function(item){return item.id===ui.dojoCat;})||COMPENDIUM_CATEGORIES[0];
+    html+='<button class="tbtn dojo-mobile-back" data-action="dojobackcategories">&lsaquo; All Categories</button>';
+    html+='<div class="dojo-category-heading"><div><h3>'+category.number+'. '+escapeHTML(category.title)+'</h3></div><span class="dojo-stage">'+escapeHTML(category.stage)+'</span></div>';
+    html+='<p class="dojo-category-summary">'+escapeHTML(category.summary)+'</p>';
+    if(category.prerequisites.length) html+='<div class="relationship-block"><h4>PREREQUISITES</h4>'+renderCategoryLinks(category.prerequisites)+'</div>';
+    if(category.related.length) html+='<div class="relationship-block"><h4>RELATED TOPICS</h4>'+renderCategoryLinks(category.related)+'</div>';
+    if(category.chapters&&category.chapters.length){
+      html+='<div class="relationship-block"><h4>CHAPTERS IN THIS CATEGORY</h4><div class="chapter-list">';
+      category.chapters.forEach(function(chapter,index){html+='<button class="chapter-card" data-action="dojochap" data-ch="'+chapter.id+'" data-cat="'+category.id+'"><h4>'+String(index+1).padStart(2,'0')+' · '+escapeHTML(chapter.title)+'</h4><p>'+escapeHTML(chapter.summary)+'</p><div class="chapter-card-meta"><span>'+(((CHAPTER_DATA[chapter.id]&&CHAPTER_DATA[chapter.id].sections.length)||(chapter.subchapters||[]).some(function(sub){return (sub.sections||[]).length;}))?'Reader content available':'Editorial content planned for Phase 3')+'</span><span>'+chapter.prerequisites.length+' prerequisite references</span>'+(chapter.subchapters.length?'<span>'+chapter.subchapters.length+' subchapters</span>':'')+'</div></button>';});
+      html+='</div></div>';
     } else {
-       html += '<p style="color:var(--muted); margin-top:10px;">Chapters for this category will be populated in a future phase.</p>';
+      html+='<div class="curriculum-note"><b>Curriculum framework</b><p>This topic is part of the approved 22-category curriculum. Its detailed chapter hierarchy and editorial content will be developed in subsequent Compendium phases. This category remains available for exploration and is not locked.</p></div>';
     }
   }
-  
-  html += '</div></div>';
+  html+='</main></div>';
   return html;
 }
-
 function renderChapterReader() {
-  var cat = COMPENDIUM_CATEGORIES.find(function(c){ return c.id === ui.dojoCat; });
-  var chMeta = cat.chapters.find(function(c) { return c.id === ui.dojoChap; });
-  var chData = CHAPTER_DATA[ui.dojoChap] || { title: chMeta.title, sections: [{ id:'sec-ph', title:'Content Pending', content:'<p>This chapter will be populated in a future phase.</p>'}] };
-  
-  var html = '<div class="game-header" style="margin-bottom:16px;"><button class="tbtn" data-action="dojobackcat">&lsaquo; Back to ' + cat.title + '</button></div>';
-  html += '<div class="reader-layout">';
-  
-  html += '<div class="reader-article">';
-  html += '<div class="eyebrow" style="color:var(--blue);">' + cat.title + '</div>';
-  html += '<h1>' + chData.title + '</h1>';
-  
-  chData.sections.forEach(function(sec) {
-     html += '<h2 id="' + sec.id + '">' + sec.title + '</h2>';
-     html += sec.content;
-  });
-  
-  html += '</div>';
-
-  html += '<div class="reader-index">';
-  html += '<div style="font-size:11.5px; text-transform:uppercase; font-weight:700; color:var(--text); margin-bottom:12px;">Chapter Index</div>';
-  chData.sections.forEach(function(sec) {
-      html += '<button data-action="scrollto" data-target="' + sec.id + '">' + sec.title + '</button>';
-  });
-  html += '</div>';
-
-  html += '</div>';
+  var found=findChapterById(ui.dojoChap);
+  if(!found){return '<button class="tbtn" data-action="dojonav" data-dest="compendium">&lsaquo; Back to Compendium</button><p style="margin-top:16px;">This chapter reference is unavailable.</p>';}
+  var category=found.category,chapter=found.chapter,data=CHAPTER_DATA[chapter.id]||{sections:[]};
+  var sections=data.sections||[], subchapters=chapter.subchapters||[];
+  var indexItems=sections.map(function(section){return {id:section.id,title:section.title};});
+  subchapters.forEach(function(sub){indexItems.push({id:sub.id,title:sub.title});(sub.sections||[]).forEach(function(section){indexItems.push({id:section.id,title:section.title});});});
+  if(indexItems.length && !ui.readerActiveSection) ui.readerActiveSection=indexItems[0].id;
+  var html='<div class="game-header" style="margin-bottom:16px;"><button class="tbtn" data-action="dojobackcat">&lsaquo; Back to '+escapeHTML(category.title)+'</button></div>';
+  html+='<div class="reader-layout"><article class="reader-article">';
+  html+='<div class="eyebrow" style="color:var(--blue);">'+escapeHTML(category.title)+' · CHAPTER '+(category.chapters.findIndex(function(item){return item.id===chapter.id;})+1)+'</div>';
+  html+='<h1>'+escapeHTML(chapter.title)+'</h1><p class="reader-summary">'+escapeHTML(chapter.summary)+'</p>';
+  html+='<div class="reader-meta"><span>'+escapeHTML(category.stage)+'</span><span>Open access</span><span>No reading-based progress</span></div>';
+  if(indexItems.length){
+    html+='<details class="reader-index-mobile"><summary>Chapter Index · '+indexItems.length+' items</summary>';
+    indexItems.forEach(function(item){html+='<button class="'+(ui.readerActiveSection===item.id?'active':'')+'" data-action="scrollto" data-target="'+item.id+'">'+escapeHTML(item.title)+'</button>';});
+    html+='</details>';
+    sections.forEach(function(section){html+='<section><h2 id="'+section.id+'">'+escapeHTML(section.title)+'</h2>'+(section.content||'')+'</section>';});
+    subchapters.forEach(function(sub,index){html+='<section class="reader-subchapter"><h2 id="'+sub.id+'">'+(index+1)+'. '+escapeHTML(sub.title)+'</h2>'+(sub.summary?'<p>'+escapeHTML(sub.summary)+'</p>':'');(sub.sections||[]).forEach(function(section){html+='<h3 id="'+section.id+'">'+escapeHTML(section.title)+'</h3>'+(section.content||'');});html+='</section>';});
+  } else {
+    html+='<div class="curriculum-note"><b>Editorial chapter development</b><p>The chapter title, position, summary and relationships are part of the approved Functional Harmony structure. Its full editorial treatment is scheduled for Phase 3. This is a curriculum framework notice, not a completed lesson.</p></div>';
+  }
+  html+='<section class="reader-related"><h2>Prerequisites and Related Study</h2>';
+  if(chapter.prerequisites.length) html+='<div class="relationship-block"><h4>PREREQUISITES</h4>'+renderCategoryLinks(chapter.prerequisites)+'</div>';
+  if(chapter.related.length) html+='<div class="relationship-block"><h4>RELATED TOPICS AND CHAPTERS</h4>'+renderCategoryLinks(chapter.related)+'</div>';
+  if(chapter.relatedAreas.length) html+='<div class="relationship-block"><h4>CONNECTED PRACTICAL AREAS</h4>'+renderAreaLinks(chapter.relatedAreas)+'</div>';
+  html+='</section>';
+  var chapterIndex=category.chapters.findIndex(function(item){return item.id===chapter.id;});
+  var previous=category.chapters[chapterIndex-1],next=category.chapters[chapterIndex+1];
+  html+='<div class="reader-navigation">'+(previous?'<button class="tbtn" data-action="dojochap" data-ch="'+previous.id+'" data-cat="'+category.id+'">&larr; '+escapeHTML(previous.title)+'</button>':'<span></span>')+(next?'<button class="tbtn" data-action="dojochap" data-ch="'+next.id+'" data-cat="'+category.id+'">'+escapeHTML(next.title)+' &rarr;</button>':'')+'</div>';
+  html+='</article>';
+  if(indexItems.length){html+='<aside class="reader-index"><div class="reader-index-title">Chapter Index</div>';indexItems.forEach(function(item){html+='<button class="'+(ui.readerActiveSection===item.id?'active':'')+'" data-action="scrollto" data-target="'+item.id+'">'+escapeHTML(item.title)+'</button>';});html+='</aside>';}
+  html+='</div>';
   return html;
 }
 
 function renderDojoView() {
   if (ui.dojoView === 'compendium') return renderCompendium();
   if (ui.dojoView === 'reader') return renderChapterReader();
-  if (ui.dojoView === 'fretboard') return renderDojoLanding('Fretboard Mastery', 'Practical navigation, note-location fluency, and visualization across the neck.');
-  if (ui.dojoView === 'harmonic') return renderDojoLanding('Harmonic Analysis Lab', 'Roman-numeral analysis, chord identification, and harmonic functions.');
+  if (ui.dojoView === 'fretboard' || ui.dojoView === 'harmonic') return renderDojoAreaLanding(ui.dojoView);
   return renderDojoHub();
 }
-
 function renderLibrary(){
   var html='<div class="eyebrow">Reference &amp; Review</div><div class="h2" style="font-size:22px;margin-bottom:8px;">Library</div>';
   html+='<p class="lede">Browse and check off any item, anytime - it all counts toward the same progress as Daily Practice.</p>';
@@ -1722,12 +1888,12 @@ function initCalCarousel(){
 
 function render(){
   try {
-    if (state.schemaError) {
+    if (localSchemaError) {
       document.body.innerHTML = '<div style="padding: 30px 20px; color: #ffb3ac; font-family: \'Inter\', sans-serif; line-height: 1.6; background: #101217; height: 100vh; width: 100vw; z-index: 99999; position: fixed; inset: 0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;">' +
         '<div style="font-size:48px; margin-bottom:16px;">\u26a0\ufe0f</div>' +
-        '<h3 style="font-family: \'Oswald\', sans-serif; font-size:24px; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; color:#fff;">Version Incompatible</h3>' +
-        '<p style="max-width:400px; color:var(--muted); font-size:15px;">Your locally stored progress was saved by a newer version of The Shred Roadmap.</p>' +
-        '<p style="max-width:400px; color:var(--muted); font-size:15px; margin-top:12px;">Please clear your cache and reload the application to the latest version to prevent data corruption. Cloud sync has been locked.</p>' +
+        '<h3 style="font-family: \'Oswald\', sans-serif; font-size:24px; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; color:#fff;">Progress Data Protected</h3>' +
+        '<p style="max-width:400px; color:var(--muted); font-size:15px;">Your locally stored progress cannot be safely read by this version of The Shred Roadmap.</p>' +
+        '<p style="max-width:440px; color:var(--muted); font-size:15px; margin-top:12px;">The original local data has been left untouched. Local and cloud writes are disabled to prevent data loss. Open the compatible application version before continuing.</p>' +
         '</div>';
       return;
     }
@@ -1786,6 +1952,15 @@ function render(){
 }
 
 document.addEventListener("scroll", function(e) {
+  if(e.target && e.target.id === "panel-dojo" && ui.dojoView === 'reader') {
+    var headings = Array.from(e.target.querySelectorAll('.reader-article h2[id],.reader-article h3[id]'));
+    var activeHeading = headings[0];
+    headings.forEach(function(heading){if(heading.getBoundingClientRect().top <= 150) activeHeading = heading;});
+    if(activeHeading && ui.readerActiveSection !== activeHeading.id) {
+      ui.readerActiveSection = activeHeading.id;
+      document.querySelectorAll('.reader-index button,.reader-index-mobile button').forEach(function(button){button.classList.toggle('active',button.dataset.target===ui.readerActiveSection);});
+    }
+  }
   if(e.target && e.target.id === "cal-carousel") {
     var carousel = e.target;
     var panels = carousel.querySelectorAll('.cal-panel');
@@ -1812,6 +1987,7 @@ document.addEventListener("scroll", function(e) {
 document.addEventListener("input", function(e) {
    if(e.target.id === "dojo-local-search") {
       ui.searchStr = e.target.value;
+      ui.dojoMobileCategorySelected = !!ui.searchStr.trim();
       render();
       setTimeout(() => {
          let input = document.getElementById("dojo-local-search");
@@ -1828,6 +2004,7 @@ document.addEventListener("click",function(e){
   var a = t.dataset.action || t.dataset.toggle;
   if(t.id === "authBtn") a = "authBtn";
 
+  if (localSchemaError) return;
   if (isSyncing) return;
   if (ui.conflictData && a !== "resolveLocal" && a !== "resolveCloud") return;
 
@@ -1850,9 +2027,9 @@ document.addEventListener("click",function(e){
          showToast("Local changes occurred. Cannot apply old cloud data safely.");
          ui.conflictData = null; render(); return;
      }
-     state = Object.assign({}, defaultState(), ui.conflictData.data, {unsynced: false});
-     try{localStorage.setItem(STORAGE_KEY, JSON.stringify(state));}catch(e){}
+     state = mergeCloudState(ui.conflictData.data);
      mutationCount += 1;
+     persistLocalState();
      ui.conflictData = null;
      ui.view = 'home';
      render(); return;
@@ -1897,43 +2074,63 @@ document.addEventListener("click",function(e){
   else if(a==="resetactiveday"){ resetActiveDay(); }
   else if(a==="cloudsave"){ 
     if(!currentUid) { showToast("Please login first to save to cloud."); return; }
-    if(cloudWriteLock) { showToast("Cloud locked. Cannot save."); return; }
+    if(cloudWriteLock || !authStateReady || isSyncing) { showToast("Cloud writes are locked until a safe cloud read is completed."); return; }
     saveState();
     showToast("Progress manually queued to cloud!");
   }
-  else if(a==="cloudload"){ 
-    if(!currentUid) { showToast("Please login first to load from cloud."); return; }
+  else if(a==="cloudload"){
+    if(!currentUid || !db) { showToast("Please login first to load from cloud."); return; }
     const loadSession = sessionGeneration;
     const loadUid = currentUid;
     const loadMutation = mutationCount;
-
-    isSyncing = true; render();
-
-    getDoc(doc(db, "users", loadUid)).then(docSnap => {
-      if(loadSession !== sessionGeneration || currentUid !== loadUid) return;
-
-      if(docSnap.exists()){
-        const cloudData = docSnap.data();
-        if(!validateSchema(cloudData)) {
-            showToast("Cloud version incompatible.");
+    isSyncing = true;
+    cloudWriteLock = true;
+    cloudLockReason = 'A manual cloud read is in progress.';
+    render();
+    (async function(){
+      try {
+        // Wait for an already in-flight write to finish before taking the cloud snapshot.
+        await writeQueue;
+        if (loadSession !== sessionGeneration || currentUid !== loadUid) return;
+        const docSnap = await getDoc(doc(db, 'users', loadUid));
+        if (loadSession !== sessionGeneration || currentUid !== loadUid) return;
+        if (docSnap.exists()) {
+          const cloudData = docSnap.data();
+          if (!validateSchema(cloudData)) {
+            cloudWriteLock = true;
+            cloudLockReason = 'Cloud data is incompatible or malformed.';
+            showToast('Cloud data is incompatible. Cloud writes remain locked.');
+          } else if (loadMutation !== mutationCount || state.unsynced) {
+            cloudWriteLock = false;
+            cloudLockReason = '';
+            ui.conflictData = { data: cloudData, session: loadSession, uid: loadUid, mutation: mutationCount };
+          } else {
+            cloudWriteLock = false;
+            cloudLockReason = '';
+            state = mergeCloudState(cloudData);
+            mutationCount += 1;
+            persistLocalState();
+            showToast('Progress loaded from cloud.');
+          }
         } else {
-            if (loadMutation !== mutationCount || state.unsynced) {
-                // P2 correction: Bind conflict data tightly to the session generating it
-                ui.conflictData = { data: cloudData, session: loadSession, uid: loadUid, mutation: mutationCount };
-                render();
-            } else {
-                state = Object.assign({}, defaultState(), cloudData, {unsynced: false});
-                try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e){}
-                render();
-                showToast("Progress loaded from cloud!");
-            }
+          cloudWriteLock = false;
+          cloudLockReason = '';
+          showToast('No cloud data found. Local progress was kept.');
         }
-      } else { showToast("No cloud data found."); }
-    }).catch(() => {
-      if(loadSession === sessionGeneration) showToast("Error loading from cloud.");
-    }).finally(() => {
-      if(loadSession === sessionGeneration) { isSyncing = false; render(); }
-    });
+      } catch(error) {
+        if (loadSession === sessionGeneration && currentUid === loadUid) {
+          cloudWriteLock = true;
+          cloudLockReason = 'The manual cloud read failed. Cloud writes are locked to prevent overwrite.';
+          console.error('Manual cloud read failed; cloud writes locked.', error);
+          showToast('Cloud read failed. Local progress is safe; cloud writes are locked.');
+        }
+      } finally {
+        if (loadSession === sessionGeneration && currentUid === loadUid) {
+          isSyncing = false;
+          render();
+        }
+      }
+    })();
   }
   else if(a==="reset"){ handleReset(); }
   else if(a==="cancelreset"){ cancelReset(); }
@@ -1941,27 +2138,42 @@ document.addEventListener("click",function(e){
   else if(a==="canceljump"){ cancelPhaseJumpBack(); }
   else if(a==="confirmjump"){ confirmPhaseJumpBack(); }
   else if(a==="scrollto") {
+    ui.readerActiveSection = t.dataset.target;
+    document.querySelectorAll('.reader-index button,.reader-index-mobile button').forEach(function(button){button.classList.toggle('active',button.dataset.target===ui.readerActiveSection);});
     let target = document.getElementById(t.dataset.target);
     if(target) target.scrollIntoView({behavior: 'smooth'});
+    var mobileIndex = document.querySelector('.reader-index-mobile');
+    if(mobileIndex) mobileIndex.open = false;
   }
   else if(a==="dojonav"){
     ui.dojoView = t.dataset.dest;
+    if(t.dataset.dest === 'compendium') { ui.searchStr = ''; ui.dojoMobileCategorySelected = false; }
     render();
   }
   else if(a==="dojobackcat"){
     ui.dojoView = 'compendium';
+    ui.dojoMobileCategorySelected = true;
+    render();
+  }
+  else if(a==="dojobackcategories"){
+    ui.dojoView = 'compendium';
+    ui.dojoMobileCategorySelected = false;
+    ui.searchStr = '';
     render();
   }
   else if(a==="dojocat"){
     ui.dojoCat = t.dataset.id;
-    ui.searchStr = "";
+    ui.searchStr = '';
+    ui.dojoMobileCategorySelected = true;
     ui.dojoView = 'compendium';
     render();
   }
   else if(a==="dojochap"){
     ui.dojoChap = t.dataset.ch;
+    ui.readerActiveSection = null;
     ui.dojoCat = t.dataset.cat;
-    ui.searchStr = "";
+    ui.searchStr = '';
+    ui.dojoMobileCategorySelected = true;
     ui.dojoView = 'reader';
     render();
   }
@@ -1971,7 +2183,14 @@ document.addEventListener("click",function(e){
 });
 
 document.addEventListener("change",function(e){
-  if(isSyncing || ui.conflictData) return;
+  if(localSchemaError || isSyncing || ui.conflictData) return;
+  if(e.target.id === "dojo-stage-filter") {
+    ui.dojoStageFilter = e.target.value;
+    var visibleCategories = COMPENDIUM_CATEGORIES.filter(function(category){return ui.dojoStageFilter === 'all' || category.stage.toLowerCase() === ui.dojoStageFilter;});
+    if(!visibleCategories.some(function(category){return category.id === ui.dojoCat;})) ui.dojoCat = visibleCategories.length ? visibleCategories[0].id : COMPENDIUM_CATEGORIES[0].id;
+    render();
+    return;
+  }
   if(e.target.dataset.action==="setphase") handlePhaseSelect(parseInt(e.target.value,10));
   if(e.target.dataset.action==="setGuitar") { state.setupGuitar = e.target.value; saveState(); render(); }
   if(e.target.dataset.action==="setTuning") { state.setupTuning = e.target.value; saveState(); render(); }
