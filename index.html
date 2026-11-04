@@ -349,9 +349,8 @@ table.info td.day{font-weight:700;white-space:nowrap;color:var(--accent2);}
     }
   }
 
-  // Catch fatal module loading errors safely
   window.addEventListener('error', function(e) {
-    forceRemoveSplash();
+    if (typeof forceRemoveSplash === 'function') forceRemoveSplash();
     var root = document.getElementById("root");
     if (root && root.innerHTML.trim() === '') {
       root.innerHTML = '<div style="padding: 20px; color: #ff3b30; font-family: monospace; line-height: 1.5; background: #101217; height: 100vh; width: 100vw; z-index: 99999; position: relative;"><h3>Application Load Error:</h3><p>Could not load application modules.</p><p>Check your network connection or ad-blocker.</p></div>';
@@ -396,7 +395,8 @@ let auth, db, googleProvider, currentUser = null;
 
 const STORAGE_KEY="shredRoadmapState_v10";
 const LOCAL_SCHEMA_VERSION = 1;
-let sessionGeneration = Date.now();
+let sessionGeneration = 0;
+let currentUid = null;
 let cloudWriteLock = false;
 let writeQueue = Promise.resolve();
 let isSyncing = false;
@@ -407,16 +407,22 @@ let ui = {
   dojoView: "hub", dojoCat: "c13", dojoChap: null, searchStr: ""
 };
 
-// Strict validation, blocking unsafe cloud states
+// Strict schema validation merging defaults while preserving unknown cloud properties
 function validateSchema(data) {
    if(!data || typeof data !== 'object' || Array.isArray(data)) return false;
    if(data.schemaVersion !== undefined) {
       if(typeof data.schemaVersion !== 'number' || data.schemaVersion < 0 || !Number.isInteger(data.schemaVersion)) return false;
       if(data.schemaVersion > LOCAL_SCHEMA_VERSION) return false;
    }
-   if(data.phaseIndex !== undefined && (!Number.isInteger(data.phaseIndex) || data.phaseIndex < 0 || data.phaseIndex > PHASES.length)) return false;
-   if(data.chop !== undefined && typeof data.chop !== 'object') return false;
-   if(data.testLevel !== undefined && typeof data.testLevel !== 'object') return false;
+   if(data.phaseIndex !== undefined) {
+      if(typeof data.phaseIndex !== 'number' || !Number.isInteger(data.phaseIndex) || data.phaseIndex < 0 || data.phaseIndex >= PHASES.length) return false;
+   }
+   if(data.chop !== undefined && (typeof data.chop !== 'object' || data.chop === null || Array.isArray(data.chop))) return false;
+   if(data.testLevel !== undefined && (typeof data.testLevel !== 'object' || data.testLevel === null || Array.isArray(data.testLevel))) return false;
+   if(data.bonusLevel !== undefined && (typeof data.bonusLevel !== 'object' || data.bonusLevel === null || Array.isArray(data.bonusLevel))) return false;
+   if(data.checks !== undefined && (typeof data.checks !== 'object' || data.checks === null || Array.isArray(data.checks))) return false;
+   if(data.practiced !== undefined && (typeof data.practiced !== 'object' || data.practiced === null || Array.isArray(data.practiced))) return false;
+   if(data.streakDates !== undefined && !Array.isArray(data.streakDates)) return false;
    return true;
 }
 
@@ -429,16 +435,16 @@ if(hasFirebase) {
 
     // Session identification mechanism
     onAuthStateChanged(auth, async (user) => {
-      sessionGeneration++;
+      sessionGeneration += 1;
       const mySession = sessionGeneration;
+      currentUid = user ? user.uid : null;
       currentUser = user;
       
       if(user) {
+        isSyncing = true; render();
         try {
-          isSyncing = true; render();
           const docSnap = await getDoc(doc(db, "users", user.uid));
-          
-          if(mySession !== sessionGeneration) return; // session shifted during async read
+          if(mySession !== sessionGeneration || currentUid !== user.uid) return;
           
           if(docSnap.exists()){
             const cloudData = docSnap.data();
@@ -448,28 +454,31 @@ if(hasFirebase) {
             } else {
               if (state.unsynced) {
                 ui.conflictData = cloudData;
-                isSyncing = false;
-                render();
-                return;
               } else {
-                state = Object.assign(defaultState(), cloudData, {unsynced: false});
+                // Merge cloud data safely while preserving unknown properties
+                state = Object.assign({}, defaultState(), cloudData, {unsynced: false});
                 try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e){}
                 showToast("Progress synced from cloud!");
               }
             }
           } else {
-            if(!cloudWriteLock) saveState(); // Initial user doc
+            if(!cloudWriteLock) saveState(); 
           }
         } catch(e) { 
-          cloudWriteLock = true;
-          console.error("Cloud read failed, writes locked to prevent overwrite.", e);
-        } finally {
+          if(mySession === sessionGeneration) {
+            cloudWriteLock = true;
+            console.error("Cloud read failed, writes locked to prevent overwrite.", e);
+          }
+        }
+        if(mySession === sessionGeneration) {
           isSyncing = false;
           render();
         }
       } else {
-        isSyncing = false;
-        render();
+        if(mySession === sessionGeneration) {
+          isSyncing = false;
+          render();
+        }
       }
     });
   } catch(e) { console.error("Firebase init error:", e); }
@@ -614,7 +623,7 @@ function loadState(){
     var raw=localStorage.getItem(STORAGE_KEY);
     if(raw){
       var d=JSON.parse(raw);
-      // Clean up legacy phase-2 dojo object (no XP/levels) safely migrating back
+      // Clean up legacy dojo object without gamification variables safely migrating back
       if(d.dojo && (d.dojo.xp !== undefined || d.dojo.level !== undefined)) {
         delete d.dojo;
       }
@@ -640,28 +649,32 @@ function loadState(){
 
 function markDirty() {
    state.unsynced = true;
-   mutationCount++;
+   mutationCount += 1;
    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e){}
 }
 
 function saveState(){
   markDirty();
-  if(cloudWriteLock || !hasFirebase || !currentUser || !db) return;
-  const capturedMutation = mutationCount;
+  if(cloudWriteLock || !hasFirebase || !currentUid || !db) return;
   const snapshot = JSON.parse(JSON.stringify(state));
   delete snapshot.unsynced;
   snapshot.schemaVersion = LOCAL_SCHEMA_VERSION;
-  const mySession = sessionGeneration;
-  const myUid = currentUser.uid;
+  
+  const capturedSession = sessionGeneration;
+  const capturedUid = currentUid;
+  const capturedMutation = mutationCount;
 
-  writeQueue = writeQueue.then(() => {
-     if (mySession !== sessionGeneration || cloudWriteLock || !currentUser || currentUser.uid !== myUid) return;
-     return setDoc(doc(db, "users", myUid), snapshot).then(() => {
-        if (mutationCount === capturedMutation && sessionGeneration === mySession && currentUser && currentUser.uid === myUid) {
+  writeQueue = writeQueue.then(async () => {
+     if (capturedSession !== sessionGeneration || cloudWriteLock || currentUid !== capturedUid) return;
+     try {
+        await setDoc(doc(db, "users", capturedUid), snapshot);
+        if (capturedSession === sessionGeneration && currentUid === capturedUid && capturedMutation === mutationCount) {
            state.unsynced = false;
            try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e){}
         }
-     }).catch(e => { console.error("Cloud write queued fail:", e); });
+     } catch(e) {
+        console.error("Cloud write queued fail:", e);
+     }
   }).catch(e => { console.error("Write queue stalled:", e); });
 }
 
@@ -818,10 +831,10 @@ function confirmReset(){
   if(cloudWriteLock) { showToast("Cloud locked. Cannot reset."); return; }
   ui.resetConfirm=false;
   
-  // Object assign keeps unknown fields from the old state to avoid destruction, but overwrites known fields to defaults.
+  // Safe merge: preserves unknown cloud fields locally, but wipes known fields to default
   const resetSt = Object.assign({}, state, defaultState());
   resetSt.unsynced = true;
-  mutationCount++;
+  mutationCount += 1;
   state = resetSt;
   try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}catch(e){}
   saveState(); 
@@ -1372,7 +1385,7 @@ function renderCompendium() {
              let chData = CHAPTER_DATA[ch.id];
              let matchStr = ch.title.toLowerCase() + " " + c.title.toLowerCase();
              if (chData) {
-                chData.sections.forEach(s => matchStr += " " + s.content.toLowerCase());
+                 chData.sections.forEach(s => matchStr += " " + s.content.toLowerCase());
              }
              if (matchStr.includes(lowerStr)) {
                 hasMatches = true;
@@ -1714,7 +1727,7 @@ function render(){
         var shortName = currentUser.email.split('@')[0];
         topbarHTML += '<span class="user-email">' + shortName + '</span>';
       }
-      topbarHTML += '<button id="authBtn" class="dchip2" style="padding:7px 12px; margin:0; border-color:var(--border); color:var(--text);">' + (currentUser ? "Logout" : "Login") + '</button></div>';
+      topbarHTML += '<button id="authBtn" class="dchip2" style="padding:7px 12px; margin:0; border-color:var(--border); color:var(--text);">' + (currentUid ? "Logout" : "Login") + '</button></div>';
     }
     topbarHTML += '</div>' + renderHeaderProgress();
     document.getElementById('topbar').innerHTML = topbarHTML;
@@ -1791,22 +1804,21 @@ document.addEventListener("click",function(e){
 
   if(a === "resolveLocal") {
      ui.conflictData = null;
-     state.unsynced = true;
-     mutationCount++;
      saveState();
      ui.view = 'home';
      render(); return;
   }
   if(a === "resolveCloud") {
-     state = Object.assign(defaultState(), ui.conflictData, {unsynced: false});
+     state = Object.assign({}, defaultState(), ui.conflictData, {unsynced: false});
      try{localStorage.setItem(STORAGE_KEY, JSON.stringify(state));}catch(e){}
+     mutationCount += 1;
      ui.conflictData = null;
      ui.view = 'home';
      render(); return;
   }
 
   if(a === "authBtn"){
-    if(currentUser){ signOut(auth).then(() => { showToast("Logged out"); render(); }); } 
+    if(currentUid){ signOut(auth).then(() => { showToast("Logged out"); }); } 
     else { signInWithPopup(auth, googleProvider).catch(err => showToast("Login failed")); }
     return;
   }
@@ -1843,33 +1855,43 @@ document.addEventListener("click",function(e){
   else if(a==="activateday"){ setActiveDay(t.dataset.day); }
   else if(a==="resetactiveday"){ resetActiveDay(); }
   else if(a==="cloudsave"){ 
-    if(!currentUser) { showToast("Please login first to save to cloud."); return; }
+    if(!currentUid) { showToast("Please login first to save to cloud."); return; }
     if(cloudWriteLock) { showToast("Cloud locked. Cannot save."); return; }
     saveState();
     showToast("Progress manually queued to cloud!");
   }
   else if(a==="cloudload"){ 
-    if(!currentUser) { showToast("Please login first to load from cloud."); return; }
+    if(!currentUid) { showToast("Please login first to load from cloud."); return; }
     const loadSession = sessionGeneration;
-    getDoc(doc(db, "users", currentUser.uid)).then(docSnap => {
-      if(loadSession !== sessionGeneration) return;
+    const loadUid = currentUid;
+    const loadMutation = mutationCount;
+
+    isSyncing = true; render();
+
+    getDoc(doc(db, "users", currentUid)).then(docSnap => {
+      if(loadSession !== sessionGeneration || currentUid !== loadUid) return;
+
       if(docSnap.exists()){
         const cloudData = docSnap.data();
         if(!validateSchema(cloudData)) {
             showToast("Cloud version incompatible.");
         } else {
-            if (state.unsynced) {
+            if (loadMutation !== mutationCount || state.unsynced) {
                 ui.conflictData = cloudData;
                 render();
             } else {
-                state = Object.assign(defaultState(), cloudData, {unsynced: false});
+                state = Object.assign({}, defaultState(), cloudData, {unsynced: false});
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
                 render();
                 showToast("Progress loaded from cloud!");
             }
         }
       } else { showToast("No cloud data found."); }
-    }).catch(() => showToast("Error loading from cloud."));
+    }).catch(() => {
+      if(loadSession === sessionGeneration) showToast("Error loading from cloud.");
+    }).finally(() => {
+      if(loadSession === sessionGeneration) { isSyncing = false; render(); }
+    });
   }
   else if(a==="reset"){ handleReset(); }
   else if(a==="cancelreset"){ cancelReset(); }
@@ -1907,6 +1929,7 @@ document.addEventListener("click",function(e){
 });
 
 document.addEventListener("change",function(e){
+  if(isSyncing || ui.conflictData) return;
   if(e.target.dataset.action==="setphase") handlePhaseSelect(parseInt(e.target.value,10));
   if(e.target.dataset.action==="setGuitar") { state.setupGuitar = e.target.value; saveState(); render(); }
   if(e.target.dataset.action==="setTuning") { state.setupTuning = e.target.value; saveState(); render(); }
@@ -1915,19 +1938,19 @@ document.addEventListener("change",function(e){
 try {
   ensureDailyReset();
   render();
-} catch (initErr) {
-  console.error("Initialization error:", initErr);
-  var root = document.getElementById("root");
-  if (root) {
-    root.innerHTML = '<div style="padding: 20px; color: #ff3b30; font-family: monospace; line-height: 1.5; background: #101217; height: 100vh; width: 100vw; z-index: 99999; position: relative;"><h3>Application Initialization Error:</h3><p>' + initErr.message + '</p><pre>' + initErr.stack + '</pre></div>';
-  }
-} finally {
   if (typeof forceRemoveSplash === 'function') {
     forceRemoveSplash();
   } else {
     var sp = document.getElementById("splash");
     if (sp) sp.remove();
   }
+} catch (initErr) {
+  console.error("Initialization error:", initErr);
+  var root = document.getElementById("root");
+  if (root) {
+    root.innerHTML = '<div style="padding: 20px; color: #ff3b30; font-family: monospace; line-height: 1.5; background: #101217; height: 100vh; width: 100vw; z-index: 99999; position: relative;"><h3>Application Initialization Error:</h3><p>' + initErr.message + '</p><pre>' + initErr.stack + '</pre></div>';
+  }
+  if (typeof forceRemoveSplash === 'function') forceRemoveSplash();
 }
 </script>
 </body>
