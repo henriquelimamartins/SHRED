@@ -636,6 +636,14 @@ function loadState(){
     var raw=localStorage.getItem(STORAGE_KEY);
     if(raw){
       var d=JSON.parse(raw);
+      
+      // F-03 Correction: Detect and protect against unsupported future schemas
+      if (d.schemaVersion !== undefined && d.schemaVersion > LOCAL_SCHEMA_VERSION) {
+        cloudWriteLock = true;
+        d.schemaError = true;
+        return d; // Return raw data to prevent default merge and preserve structure
+      }
+      
       // Clean up legacy dojo object without gamification variables safely migrating back
       if(d.dojo && (d.dojo.xp !== undefined || d.dojo.level !== undefined)) {
         delete d.dojo;
@@ -1714,6 +1722,16 @@ function initCalCarousel(){
 
 function render(){
   try {
+    if (state.schemaError) {
+      document.body.innerHTML = '<div style="padding: 30px 20px; color: #ffb3ac; font-family: \'Inter\', sans-serif; line-height: 1.6; background: #101217; height: 100vh; width: 100vw; z-index: 99999; position: fixed; inset: 0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;">' +
+        '<div style="font-size:48px; margin-bottom:16px;">\u26a0\ufe0f</div>' +
+        '<h3 style="font-family: \'Oswald\', sans-serif; font-size:24px; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; color:#fff;">Version Incompatible</h3>' +
+        '<p style="max-width:400px; color:var(--muted); font-size:15px;">Your locally stored progress was saved by a newer version of The Shred Roadmap.</p>' +
+        '<p style="max-width:400px; color:var(--muted); font-size:15px; margin-top:12px;">Please clear your cache and reload the application to the latest version to prevent data corruption. Cloud sync has been locked.</p>' +
+        '</div>';
+      return;
+    }
+
     ensureDailyReset();
     if(!document.getElementById("views-container")) initAppLayout();
 
