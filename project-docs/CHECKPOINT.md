@@ -1,11 +1,16 @@
 # THE SHRED ROADMAP
-## PROJECT CHECKPOINT — PHASE 1 APPROVED / PHASE 2 NEXT
 
-**Current status:** Phase 1 completed, tested, approved and integrated into `main`. Phase 2 is the next implementation phase.
+## PROJECT CHECKPOINT — PHASE 2 CANDIDATE / CLAUDE REVIEW NEXT
 
-**Last completed phase:** Phase 1 — Responsive UI and Navigation Foundation  
-**Next phase:** Phase 2 — DOJO Information Architecture and Compendium Shell
+**Current project status:** Phase 1 is complete, tested, approved and integrated into `main`. Phase 2 specification is approved. A substantial Phase 2 implementation candidate exists on `phase-2-dojo-shell`. The owner reports that all manual tests performed passed. Phase 2 implementation is NOT formally approved and has NOT been merged.
 
+**Last completed and approved implementation phase:** Phase 1 — Responsive UI and Navigation Foundation.
+
+**Current authorised activity:** Transfer to Claude for independent product, curriculum, technical and development-process review. No implementation is authorised during the first review.
+
+**Current Phase 2 development branch:** `phase-2-dojo-shell`.
+
+**Stable production branch:** `main`.
 ---
 
 ## 1. Purpose of this document
