@@ -530,69 +530,6 @@ if(hasFirebase) {
     googleProvider = new GoogleAuthProvider();
     db = initializeFirestore(app, { localCache: persistentLocalCache({tabManager: persistentMultipleTabManager()}) });
 
-    onAuthStateChanged(auth, async (user) => {
-      sessionGeneration += 1;
-      const mySession = sessionGeneration;
-      currentUid = user ? user.uid : null;
-      currentUser = user;
-      authStateReady = false;
-      isSyncing = !!user;
-      cloudWriteLock = !!localSchemaError;
-      cloudLockReason = localSchemaError ? 'Local data uses an unsupported schema.' : '';
-      if (ui.conflictData) ui.conflictData = null;
-
-      if (localSchemaError) {
-        authStateReady = true;
-        isSyncing = false;
-        render();
-        return;
-      }
-
-      if (user) {
-        render();
-        var cloudDocFound = false;
-        try {
-          // Drain any earlier session write before reading the current account snapshot.
-          await writeQueue;
-          if (mySession !== sessionGeneration || currentUid !== user.uid) return;
-          const docSnap = await getDoc(doc(db, 'users', user.uid));
-          if (mySession !== sessionGeneration || currentUid !== user.uid) return;
-          cloudDocFound = docSnap.exists();
-          if (cloudDocFound) {
-            const cloudData = docSnap.data();
-            if (!validateSchema(cloudData)) {
-              cloudWriteLock = true;
-              cloudLockReason = 'Cloud data is incompatible or malformed.';
-              showToast('Cloud data is incompatible. Cloud writes are locked.');
-            } else if (state.unsynced) {
-              ui.conflictData = { data: cloudData, session: mySession, uid: currentUid, mutation: mutationCount };
-            } else {
-              state = mergeCloudState(cloudData);
-              mutationCount += 1;
-              persistLocalState();
-              showToast('Progress synced from cloud.');
-            }
-          }
-        } catch (error) {
-          if (mySession === sessionGeneration) {
-            cloudWriteLock = true;
-            cloudLockReason = 'Cloud data could not be read. Cloud writes are locked to prevent overwrite.';
-            console.error('Cloud read failed; cloud writes locked.', error);
-          }
-        }
-        if (mySession === sessionGeneration) {
-          authStateReady = true;
-          isSyncing = false;
-          if (!cloudDocFound && !cloudWriteLock && !localSchemaError) saveState();
-          render();
-        }
-      } else if (mySession === sessionGeneration) {
-        authStateReady = true;
-        isSyncing = false;
-        if (state.unsynced && !localSchemaError) persistLocalState();
-        render();
-      }
-    });
   } catch(error) {
     console.error('Firebase init error; continuing in local-only mode.', error);
     authStateReady = true;
@@ -671,6 +608,8 @@ const CHAPTER_DATA = {
     ]
   }
 };
+// Helper: builds a link item {t: title, url: link}. Must be defined before PHASES and CREATIVE.
+const I=function(t,url){ return {t:t,url:url}; };
 const PHASES=[
  {id:"p0",label:"Setup",short:"Setup & Baseline",kind:"setup"},
  {id:"p1",label:"Beginner",short:"Levels 1 - 2",target:3,testReq:2,
@@ -2212,6 +2151,81 @@ try {
     root.innerHTML = '<div style="padding: 20px; color: #ff3b30; font-family: monospace; line-height: 1.5; background: #101217; height: 100vh; width: 100vw; z-index: 99999; position: relative;"><h3>Application Initialization Error:</h3><p>' + initErr.message + '</p><pre>' + initErr.stack + '</pre></div>';
   }
   if (typeof forceRemoveSplash === 'function') forceRemoveSplash();
+}
+
+
+// Register Firebase authentication only after all application state and UI functions are initialized.
+if (hasFirebase && auth && db) {
+  try {
+    onAuthStateChanged(auth, async (user) => {
+      sessionGeneration += 1;
+      const mySession = sessionGeneration;
+      currentUid = user ? user.uid : null;
+      currentUser = user;
+      authStateReady = false;
+      isSyncing = !!user;
+      cloudWriteLock = !!localSchemaError;
+      cloudLockReason = localSchemaError ? 'Local data uses an unsupported schema.' : '';
+      if (ui.conflictData) ui.conflictData = null;
+
+      if (localSchemaError) {
+        authStateReady = true;
+        isSyncing = false;
+        render();
+        return;
+      }
+
+      if (user) {
+        render();
+        var cloudDocFound = false;
+        try {
+          // Drain any earlier session write before reading the current account snapshot.
+          await writeQueue;
+          if (mySession !== sessionGeneration || currentUid !== user.uid) return;
+          const docSnap = await getDoc(doc(db, 'users', user.uid));
+          if (mySession !== sessionGeneration || currentUid !== user.uid) return;
+          cloudDocFound = docSnap.exists();
+          if (cloudDocFound) {
+            const cloudData = docSnap.data();
+            if (!validateSchema(cloudData)) {
+              cloudWriteLock = true;
+              cloudLockReason = 'Cloud data is incompatible or malformed.';
+              showToast('Cloud data is incompatible. Cloud writes are locked.');
+            } else if (state.unsynced) {
+              ui.conflictData = { data: cloudData, session: mySession, uid: currentUid, mutation: mutationCount };
+            } else {
+              state = mergeCloudState(cloudData);
+              mutationCount += 1;
+              persistLocalState();
+              showToast('Progress synced from cloud.');
+            }
+          }
+        } catch (error) {
+          if (mySession === sessionGeneration) {
+            cloudWriteLock = true;
+            cloudLockReason = 'Cloud data could not be read. Cloud writes are locked to prevent overwrite.';
+            console.error('Cloud read failed; cloud writes locked.', error);
+          }
+        }
+        if (mySession === sessionGeneration) {
+          authStateReady = true;
+          isSyncing = false;
+          if (!cloudDocFound && !cloudWriteLock && !localSchemaError) saveState();
+          render();
+        }
+      } else if (mySession === sessionGeneration) {
+        authStateReady = true;
+        isSyncing = false;
+        if (state.unsynced && !localSchemaError) persistLocalState();
+        render();
+      }
+    });
+  } catch (error) {
+    console.error('Firebase auth observer registration failed; continuing in local-only mode.', error);
+    authStateReady = true;
+    cloudWriteLock = true;
+    cloudLockReason = 'Authentication observer could not be registered. Local progress remains available.';
+  }
 }
 </script>
 </body>
