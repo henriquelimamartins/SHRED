@@ -698,3 +698,162 @@ Whether Total Audiation should include any ear-training-like activities or focus
 ## 15. Final reminder
 
 The purpose of this document is to preserve intent and prevent scope drift. The project should become deeper, more coherent and more useful without losing the original app's identity or working foundations. Gemini is an implementation assistant, not the authority on the product vision: verify its proposals, keep backups and approve each phase before proceeding.
+
+# 16. PROJECT STATUS AMENDMENT — 5 NOVEMBER 2026
+
+This amendment updates the current implementation status and immediate development process. It does not replace or invalidate previously approved product requirements, curriculum decisions, technical safeguards or phase specifications.
+
+If an earlier status statement in this document conflicts with this amendment, this amendment represents the more recent project status.
+
+## 16.1. Repository snapshot
+
+Repository: `https://github.com/henriquelimamartins/SHRED/`
+
+The following identifiers were verified on 5 November 2026:
+
+- Approved production branch: `main`
+- `main` commit: `5c4487f40466a82cc747abb3e66890944216b514`
+- Current Phase 2 candidate branch: `phase-2-dojo-shell`
+- Candidate branch HEAD: `7037803aa4fef4f5188a988f8ce6e4603f6991ed`
+- Candidate branch comparison: 22 commits ahead of `main`, 0 commits behind.
+- Candidate `index.html` blob SHA: `861c202e5119e81db2b63036001fe6b743ae4446`
+- Candidate `index.html` size at inspection: 175,223 bytes / 2,233 lines.
+
+These are dated identifiers. They must be verified again before any implementation, review or GitHub operation.
+
+## 16.2. Current phase status
+
+- Phase 0 — Audit and Architecture: COMPLETE.
+- Phase 1 — Responsive UI and Navigation Foundation: COMPLETE, TESTED AND APPROVED. Its Pull Request was merged into `main`.
+- Phase 2 — DOJO Information Architecture and Compendium Shell: approved specification; substantial implementation candidate exists on `phase-2-dojo-shell`; owner reports all manual tests performed passed; implementation is NOT formally approved and has NOT been merged.
+- Phases 3–10: NOT STARTED unless subsequent approved project records establish otherwise.
+
+`main` remains the stable, approved production baseline.
+
+The Phase 2 branch is a candidate under review, not an approved replacement for `main`.
+
+## 16.3. Phase 2 implementation observed
+
+The current candidate contains the following work, subject to independent requirements and regression review:
+
+- DOJO Hub with three learning destinations.
+- Music Theory Compendium Explorer with 22 curriculum categories.
+- Search and learning-stage filtering.
+- Recommended learning path alongside free exploration.
+- Nine Functional Harmony chapters using the approved sequence.
+- Continuous Chapter Reader with responsive navigation.
+- Chapter 1, "Understanding Harmonic Function", containing five substantive editorial sections and an SVG educational diagram.
+- Structured shells for the remaining eight Functional Harmony chapters.
+- Fretboard Mastery landing page.
+- Harmonic Analysis Lab landing page.
+- Neutral MUSICAL DEVELOPMENT presentation without invented mastery percentages.
+
+The remaining eight Functional Harmony chapters are not yet fully authored. Their substantive editorial development belongs to Phase 3.
+
+Fretboard Mastery and Harmonic Analysis Lab are landing pages at this stage, not completed interactive tools.
+
+These are observations from the candidate source. They do not establish that every interaction or acceptance criterion has been independently tested.
+
+## 16.4. Owner-reported manual testing
+
+The owner reports that all manual tests performed on the current Phase 2 candidate passed.
+
+This must be recorded as owner-reported manual testing.
+
+It must not be represented as independent testing by an AI assistant. Browser automation, Firebase synchronisation, authentication, cross-device and other tests must only be reported as completed if they were actually performed and their results recorded.
+
+## 16.5. Original authentication initialisation error
+
+The previously reported runtime error was:
+
+`ReferenceError: Cannot access 'state' before initialization`
+
+The cause was an authentication observer callback being registered before the `state` variable had completed initialisation.
+
+In the current candidate, source inspection showed:
+
+- State initialisation near line 776.
+- Initial application render near line 2140.
+- Firebase `onAuthStateChanged` registration near line 2160.
+
+This ordering appears to address the original temporal-dead-zone issue. It is a source-order observation, not proof of a successful independent runtime test.
+
+## 16.6. Unresolved Firebase synchronisation architecture decision
+
+The current Phase 2 candidate contains a substantially expanded persistence and Firebase synchronisation protection layer.
+
+Observed mechanisms include:
+
+- Schema validation.
+- Local and cloud write locks.
+- Queued cloud writes.
+- Session-generation checks.
+- Mutation counters and stale-write protection.
+- Cloud data validation.
+- Conflict detection and state merging.
+- Additional error and recovery handling.
+
+The approved Phase 2 specification requires preservation of the existing persistence and synchronisation architecture except for explicitly approved additive changes. A broad redesign of general cloud synchronisation was not separately approved.
+
+The owner has not decided whether to:
+
+A. Retain the expanded protection layer and audit it comprehensively.
+
+B. Restore the original Firebase synchronisation implementation from `main`, while preserving the Phase 2 DOJO work and the corrected authentication observer ordering.
+
+C. Selectively retain only those new mechanisms that are demonstrably necessary, compatible with the original architecture and explicitly approved.
+
+This is an open architectural decision. No AI assistant may silently choose an option or modify the synchronisation architecture before the owner approves a recommendation.
+
+Any review must compare the exact implementations in `main` and `phase-2-dojo-shell`, including account switching, offline operation, queued writes, stale callbacks, conflict resolution, recovery and data-loss risks.
+
+## 16.7. Reset Everything — review item, correction deferred
+
+The current candidate's `confirmReset()` implementation uses:
+
+`Object.assign({}, state, defaultState())`
+
+Because the current state is copied before default properties are applied, unknown or legacy properties not represented in `defaultState()` may survive the reset.
+
+The owner has explicitly requested that this issue not be corrected for now.
+
+It may be analysed and explained, but no code change is authorised unless the owner later explicitly approves it.
+
+Normal loading, migration and synchronisation must continue to preserve unknown or future state properties unless a separately approved migration strategy says otherwise.
+
+## 16.8. Current development handover
+
+The owner is transferring development from ChatGPT to Claude.
+
+Claude's first task is an independent, no-code-change review of:
+
+- The complete project documentation.
+- The complete approved Phase 2 specification.
+- The complete current candidate `index.html`.
+- The complete approved `main` `index.html`.
+- The differences between the two code versions.
+- The educational architecture and curriculum.
+- The current technical architecture and persistence model.
+- The development process and future phase sequence.
+
+Claude must confirm its understanding, identify material open questions, perform a deep review and recommend the safest and most effective way forward.
+
+The first review does not authorise:
+
+- Code edits.
+- Documentation edits.
+- Commits or pushes.
+- Branch creation or switching.
+- Pull request creation.
+- Merging.
+- Firebase or data architecture changes.
+
+Claude must wait for explicit owner approval before implementation.
+
+## 16.9. Source-of-truth reminder
+
+The approved `main` branch remains the production baseline.
+
+The Phase 2 branch is the current development candidate and must be compared with `main`; it must not be treated as an approved baseline merely because it exists or because the owner reports successful manual tests.
+
+The owner remains the final authority on product decisions, implementation scope, approvals and merges.
