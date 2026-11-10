@@ -1,0 +1,4 @@
+# Test tooling (never committed)
+node_modules/
+test-results/
+playwright-report/

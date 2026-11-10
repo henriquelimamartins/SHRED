@@ -26,6 +26,7 @@ Status values: `APPROVED`, `APPROVED (adjustable)`, `OPEN`, `SUPERSEDED by Dxx`.
 | D07 | 2026-11-09 | Development follows the 10-phase plan of the overhaul document (0 Foundations → 9 Continuous content). The old phase numbering (old "Phase 0 — Audit", "Phase 1 — UI", "Phase 2 — DOJO shell") is closed history. | APPROVED |
 | D08 | 2026-11-09 | Talk to the owner in European Portuguese; all app text, curriculum, identifiers, commits and code comments in English. | APPROVED |
 | D09 | 2026-11-10 | Claude tells the owner whenever it thinks a new conversation should be started in the project (new phase or new topic). | APPROVED |
+| D92 | 2026-11-10 | Local working copy moved out of OneDrive: fresh clone at `C:\Users\Henri\Dev\SHRED`, connected to the Claude project. The old OneDrive folder is renamed `SHRED-OLD-nao-usar`, removed from GitHub Desktop, and deleted only after the first Phase 1 PR is merged. | DONE |
 
 ## Product structure
 
@@ -35,18 +36,22 @@ Status values: `APPROVED`, `APPROVED (adjustable)`, `OPEN`, `SUPERSEDED by Dxx`.
 | D11 | 2026-11-09 | Structure: 3 pillars + DAILY + 7 destinations (HOME, DAILY, TECHNIQUE, IMPROV, THEORY, LIBRARY, TOOLS). | APPROVED |
 | D12 | 2026-11-09 | The Theory pillar is named THEORY. The name DOJO disappears from the app. | APPROVED |
 | D13 | 2026-11-09 | TECHNIQUE ROADMAP and MUSICAL DEVELOPMENT stay independent. MUSICAL DEVELOPMENT covers Theory + Improv. | APPROVED |
-| D14 | 2026-11-09 | Position, format and colours of the progress bars are decided in the design conversation. | APPROVED (deferred) |
-| D15 | 2026-11-09 | Visual direction: dark + red is only a starting hypothesis; 2–3 mockups before coding (Phase 4). | APPROVED (deferred) |
+| D14 | 2026-11-09 | Position, format and colours of the progress bars are decided in the design conversation. | APPROVED (deferred) — see D18, D25 |
+| D15 | 2026-11-09 | Visual direction: dark + red is only a starting hypothesis; 2–3 mockups before coding (Phase 4). | SUPERSEDED by D16 |
+| D16 | 2026-11-10 | Visual baseline for Phase 4 = mockup direction A, round 2 (Claude Design canvas "SHRED — HOME mockups"): dark UI, red accent, Oswald headings + Inter body (as in the current app), rich desktop sidebar, "roadmap rail" progress, current-app calendar style without a partial state. Improv uses purple; Technique and Theory use red. Details to be adjusted in later rounds; working notes in `DESIGN-NOTES.md`. | APPROVED (adjustable) |
+| D17 | 2026-11-10 | No visible scrollbars anywhere in the app, on desktop or mobile. Scrolling still works (wheel, touch, keyboard); scrollbars are hidden with CSS. | APPROVED |
+| D18 | 2026-11-10 | MUSICAL DEVELOPMENT indicator in the desktop sidebar, under the Technique rail: level pips (current level of 5) + one combined bar of the current level's units — Improv missions in purple, Theory chapters in red; each unit shows solid / practising / not started. TECHNIQUE ROADMAP stays a separate indicator (D13). | APPROVED (provisional) |
 
 ## Technique
 
 | ID | Date | Decision | Status |
 |---|---|---|---|
-| D20 | 2026-11-09 | All BHGS content (phases, exercises, chop-builders, tests, progress, DAILY workouts) is protected. Calculations, state keys and the red phase bar stay identical. | APPROVED |
+| D20 | 2026-11-09 | All BHGS content (phases, exercises, chop-builders, tests, progress, DAILY workouts) is protected. Calculations, state keys and the red phase bar stay identical. | APPROVED — placement of the phase bar refined by D25 (calculations and state keys unchanged) |
 | D21 | 2026-11-09 | Optional improvements approved, all additive: dated chop/test history, BPM log, session note, built-in metronome. | APPROVED |
 | D22 | 2026-11-09 | "Reinforce Weakest" may be reformulated; owner still thinking. | OPEN |
 | D23 | 2026-11-09 | BHGS content in the app is direct Patreon links only, no copied material. In any shared version all Bradley Hall content is removed. | APPROVED — exception: the two Bradley Hall PDFs stay (C01) |
 | D24 | 2026-11-09 | BHGS theory videos and micro-doses (including Sight-Reading) stay in DAILY as they are. | APPROVED |
+| D25 | 2026-11-10 | The Technique phase bar is no longer fixed at the top of every page: it appears only on HOME and in the desktop sidebar (mini-rail). Its data and calculation stay exactly as in the current app (D20). Resolves C02. | APPROVED |
 
 ## DAILY
 
@@ -66,6 +71,8 @@ Status values: `APPROVED`, `APPROVED (adjustable)`, `OPEN`, `SUPERSEDED by Dxx`.
 | D43 | 2026-11-09 | Theory drills are high-end phone minigames without a guitar: randomised keys, real examples in the owner's styles, never repetitive, difficulty in step with theory learned. | APPROVED |
 | D44 | 2026-11-09 | Claude generates all Theory content, diagrams and interactive visuals; real examples where possible; nothing invented. References classified as Verified Analysis, Stylistic Association or Suggested Listening. | APPROVED |
 | D45 | 2026-11-09 | Semantic IDs for categories, chapters, drills and missions (e.g. `theory.intervals`). | APPROVED |
+| D46 | 2026-11-10 | Fretboard Explorer (owner's idea): pick a scale, chord or fingering system and see it on the neck in any key. Scope: major; natural/harmonic/melodic minor; major/minor pentatonic; blues; the 7 modes; modes of harmonic and melodic minor; symmetric scales; triads (with inversions per string set) and seventh arpeggios; whole neck, CAGED, 3NPS, 4NPS. Labels notes/intervals/degrees; Standard and Drop D (D63); sound opt-in (D61); reference only, no progress (D40). Lives in TOOLS, reachable from THEORY → Practice and from chapters/missions. Built in Phase 5 (music engine) in two slices: scales/modes/triads first, then CAGED/3NPS/4NPS. Look decided in the design conversation. | APPROVED (idea; detailed scope confirmed in Phase 5) |
+| D47 | 2026-11-10 | Theory Path layout = mockup "option 2 — roadmap line": a sober vertical line with one node per level (progress ring on the current level); each level expands into chapter rows showing the chapter, its drill and the drill state; a fixed "Continue" button. No locks (D40). Islands, "down the neck" and the combined neck-line options were rejected. | APPROVED (provisional) |
 
 ## Improvisation
 
@@ -102,6 +109,10 @@ Status values: `APPROVED`, `APPROVED (adjustable)`, `OPEN`, `SUPERSEDED by Dxx`.
 | D84 | 2026-11-09 | Maximum security by default. The repo is public: nothing in it may be risky to read. Claude reports and fixes any security issue anywhere, in its own slice. | APPROVED |
 | D85 | 2026-11-10 | Owner made the first manual backup of his app data (local copy + cloud screenshots), outside the repo folder. Verified complete with the offline backup checker. | DONE |
 | D87 | 2026-11-10 | Firestore Rules inspected: only a signed-in user can read/write `users/{own uid}`; everything else is denied. Kept as they are; no change in Phase 0. | APPROVED |
+| D88 | 2026-11-10 | GitHub Secret Protection and Push protection enabled on the repo (owner). Firebase plan confirmed: Spark (free, no billing). | DONE |
+| D89 | 2026-11-10 | Authorised sign-in domains reduced: `localhost` removed. `shred-auth.web.app` is a Firebase default that cannot be removed; acceptable, since only the project owner can deploy to it. Kept: `henriquelimamartins.github.io`, `shred-auth.firebaseapp.com` (required for Google sign-in). | DONE |
+| D90 | 2026-11-10 | Firebase browser API key restricted to websites `https://henriquelimamartins.github.io/*` and `https://shred-auth.firebaseapp.com/*`. Rollback: set Application restrictions to None. | DONE — owner tested login and sync on PC and phone 2026-11-10 |
+| D91 | 2026-11-10 | App Check postponed; reassess before sharing the app with others. | APPROVED (2026-11-10) |
 | D86 | 2026-11-09 | "Ask an AI" in Theory: idea for later. If approved, the API key never goes in code or browser (server-side function recommended). | OPEN |
 
 ## Open contradictions (to be resolved by the owner)
@@ -109,3 +120,4 @@ Status values: `APPROVED`, `APPROVED (adjustable)`, `OPEN`, `SUPERSEDED by Dxx`.
 | ID | Found | Contradiction | Status |
 |---|---|---|---|
 | C01 | 2026-11-10 | D23 says the app holds no copied BHGS material, but `main` contains two Bradley Hall PDFs (`music-theory-cheat-sheet.pdf`, `scales-handbook.pdf`), served publicly by GitHub Pages and present in the public Git history of every branch. | RESOLVED 2026-11-10: owner chose to keep both PDFs as they are (option a) |
+| C02 | 2026-11-10 | D20 keeps "the red phase bar identical"; in the current app it is fixed at the top of every page, while the D16 mockups show it on HOME and as a mini-rail in the desktop sidebar. | RESOLVED 2026-11-10: HOME + desktop sidebar only (D25) |
