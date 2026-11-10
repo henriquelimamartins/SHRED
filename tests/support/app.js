@@ -10,15 +10,19 @@ const FIREBASE_CDN = /^https:\/\/www\.gstatic\.com\/firebasejs\/10\.12\.2\/(fire
 // Hosts the real Firebase SDK talks to (auth, Firestore, Google sign-in). Web fonts are not Firebase.
 const FIREBASE_BACKEND = /(^|\.)(firebaseio\.com|firebaseapp\.com|web\.app|apis\.google\.com|accounts\.google\.com)$|^(?!fonts\.)[a-z0-9-]+\.googleapis\.com$/;
 
+// All tests run at a fixed moment so dates (streak, calendar, daily reset) are predictable.
+const DEFAULT_NOW = '2026-11-10T12:00:00Z'; // a Tuesday
+
 /**
  * @param {import('@playwright/test').Page} page
- * @param {{ user?: object|null, docs?: object, localState?: object }} [options]
+ * @param {{ user?: object|null, docs?: object, localState?: object, now?: string }} [options]
  *   user       - signed-in user for the auth stand-in (null = signed out)
  *   docs       - cloud documents by path, e.g. { 'users/test-uid': {...} }
  *   localState - value placed in localStorage before the app starts (first load only)
+ *   now        - fixed clock time (ISO string); defaults to DEFAULT_NOW
  */
 async function openApp(page, options = {}) {
-  const { user = null, docs = {}, localState } = options;
+  const { user = null, docs = {}, localState, now = DEFAULT_NOW } = options;
   const monitor = { consoleErrors: [], pageErrors: [], blockedRequests: [], firebaseBackendRequests: [] };
 
   page.on('console', (msg) => {
@@ -57,6 +61,7 @@ async function openApp(page, options = {}) {
     return route.abort();
   });
 
+  await page.clock.setFixedTime(new Date(now));
   await page.goto('/');
   await expect(page.locator('#views-container')).toBeAttached();
   await expect(page.locator('#splash')).toHaveCount(0, { timeout: 5000 });
@@ -77,4 +82,14 @@ async function cloudWrites(page) {
   return page.evaluate(() => window.__SHRED_TEST__.writes);
 }
 
-module.exports = { openApp, unexpectedConsoleErrors, cloudWrites, STORAGE_KEY };
+/** The app state currently saved in localStorage (parsed), or null. */
+async function localSaved(page) {
+  return page.evaluate((key) => JSON.parse(localStorage.getItem(key) || 'null'), STORAGE_KEY);
+}
+
+/** Waits for the app's async work (stubbed Firebase calls, re-render) to settle. */
+async function settle(page) {
+  await page.evaluate(() => new Promise((resolve) => setTimeout(resolve, 50)));
+}
+
+module.exports = { openApp, unexpectedConsoleErrors, cloudWrites, localSaved, settle, STORAGE_KEY, DEFAULT_NOW };
