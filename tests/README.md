@@ -16,3 +16,4 @@ Automated tests for The Shred Roadmap (Phase 1 · Safety net). They are not part
 |---|---|
 | `smoke.spec.js` | App opens on Home signed out; all 6 main views open from the navigation; no page/console errors; no Firebase traffic; no cloud writes. |
 | `persistence.spec.js` | Local saving and reload; unknown fields kept; sign-in sync (cloud replaces local; upload when no cloud doc; write-back on a new day); signed-in writes go only to `users/{uid}`; manual Save/Load; Reset Everything (cancel, local wipe, cloud overwrite). |
+| `technique.spec.js` | Technique (D20): phase % for Setup, Beginner and Pro and the red phase bar; Mastered/Watched/Completed toggles and stored values; chop (0–10), test (0–5) and bonus limits; automatic phase advance (and none after Pro); Jump to phase forward, back + Cancel, back + Confirm. |
