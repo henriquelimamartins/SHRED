@@ -12,6 +12,7 @@ Automated tests for The Shred Roadmap (Phase 1 · Safety net). They are not part
 - Test data shaped like the app's saved state lives in `tests/support/fixtures.js`.
 - Tests named `current behaviour: …` document known risks on purpose (D81, D83) and other problems found on `main`. The Phase 3 fixes update them in the same PR.
 - Run: `npm install` then `npm test`. Screenshots and traces go to `test-results/` (not committed).
+- On GitHub: the `Tests` workflow (`.github/workflows/tests.yml`) runs the whole suite on every pull request to `main` and can be started by hand from the Actions tab. It only reads the code, uses no secrets, and keeps the report for 14 days when a test fails.
 
 | File | What it checks |
 |---|---|
