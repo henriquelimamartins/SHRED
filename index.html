@@ -35,80 +35,16 @@
 <div id="toast" class="toast"></div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { PHASES, CREATIVE, PHASE_BLURB, CHOP, TESTCATS, THEORY_DOCS, THEORY_ROOT_ITEMS, THEORY_GROUPS, THEORY_ITEMS, ESSENTIAL, ESSENTIAL_URL, BONUS, PREREQ, WARMUP_URL, WEEKLY_RHYTHM } from "./js/data/bhgs.js?v=1";
 import { IMPROV_GATES } from "./js/data/improv.js?v=1";
 import { LISTENING_VAULT } from "./js/data/listening.js?v=1";
 import { DAY_FULL, DAYS, DAY_ORDER } from "./js/data/days.js?v=1";
 import { setupData } from "./js/data/setup.js?v=1";
 import { DOJO_LEVELS, CODEX_DATA, HARMONIC_QUESTIONS } from "./js/data/dojo.js?v=1";
+import { STORAGE_KEY, defaultState, saveState, state, replaceState } from "./js/store.js?v=1";
+import { hasFirebase, auth, db, googleProvider, currentUser, initFirebase, doc, setDoc, getDoc, signInWithPopup, signOut } from "./js/firebase.js?v=1";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDO-7ovvVwmowSa6KIoPwglO93nnp2kS4Y",
-  authDomain: "shred-auth.firebaseapp.com",
-  projectId: "shred-auth",
-  storageBucket: "shred-auth.firebasestorage.app",
-  messagingSenderId: "372290387192",
-  appId: "1:372290387192:web:3052450efe7d7f8eaa4f0d",
-  measurementId: "G-NLJVRXEG85"
-};
-
-const hasFirebase = !!firebaseConfig.apiKey;
-let auth, db, googleProvider, currentUser = null;
-
-if(hasFirebase) {
-  try {
-    const app = initializeApp(firebaseConfig);
-    auth = getAuth(app);
-    googleProvider = new GoogleAuthProvider();
-    db = initializeFirestore(app, { localCache: persistentLocalCache({tabManager: persistentMultipleTabManager()}) });
-
-    onAuthStateChanged(auth, async (user) => {
-      currentUser = user;
-      if(user) {
-        try {
-          const docSnap = await getDoc(doc(db, "users", user.uid));
-          if(docSnap.exists()){
-            state = Object.assign(defaultState(), docSnap.data());
-            state.setupGuitar = state.setupGuitar || "prs";
-            state.setupTuning = state.setupTuning || "e_std";
-            state.improvIndex = state.improvIndex || 0;
-            state.improvChecks = state.improvChecks || {};
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-            showToast("Progress synced from cloud!");
-          } else {
-            await setDoc(doc(db, "users", user.uid), state);
-            showToast("Local progress saved to cloud!");
-          }
-        } catch(e) { console.error("Sync error:", e); }
-      }
-      render();
-    });
-  } catch(e) { console.error("Firebase init error:", e); }
-}
-
-const STORAGE_KEY="shredRoadmapState_v10";
-
-function defaultDojoState() {
-  return {
-    xp: 0, level: 1, unlockedCodexes: [1], readCodexes: [], audioMuted: false
-  };
-}
-
-function defaultState(){
-return {phaseIndex:0,chop:{alt:0,sweep:0,legato:0,econ:0,tap:0},testLevel:{alt:0,sweep:0,legato:0,econ:0,tap:0,ult:0},bonusLevel:{},checks:{},practiced:{},practicedDate:null,congratsDate:null,activeDayOverride:null,activeDayDate:null,streakDates:[],setupGuitar:"prs",setupTuning:"e_std",improvIndex:0,improvChecks:{}, dojo: defaultDojoState()};}
-function loadState(){try{var raw=localStorage.getItem(STORAGE_KEY);if(raw){var d=JSON.parse(raw);return Object.assign(defaultState(),d,{chop:Object.assign(defaultState().chop,d.chop||{}),testLevel:Object.assign(defaultState().testLevel,d.testLevel||{}),bonusLevel:d.bonusLevel||{},checks:d.checks||{},practiced:d.practiced||{},streakDates:d.streakDates||[],setupGuitar:d.setupGuitar||"prs",setupTuning:d.setupTuning||"e_std",improvIndex:d.improvIndex||0,improvChecks:d.improvChecks||{}, dojo: Object.assign(defaultDojoState(), d.dojo||{})});}}catch(e){}return defaultState();}
-
-function saveState(){
-  try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}catch(e){}
-  if(hasFirebase && currentUser && db) {
-    setDoc(doc(db, "users", currentUser.uid), state).catch(e => console.error("Firebase save err", e));
-  }
-}
-
-let state=loadState();
+initFirebase(render, showToast);
 let ui={view:"home",lib:{},dayOverride:null,resetConfirm:false,phaseJumpPending:null};
 const APP_VIEWS = ["home", "daily", "improv", "dojo", "library", "setup"];
 
@@ -272,7 +208,7 @@ function handleReset(){ ui.resetConfirm=true; render(); }
 function cancelReset(){ ui.resetConfirm=false; render(); }
 function confirmReset(){
   localStorage.removeItem(STORAGE_KEY);
-  state=defaultState();
+  replaceState(defaultState());
   if(hasFirebase && currentUser && db) { setDoc(doc(db, "users", currentUser.uid), state).catch(e => console.error(e)); }
   ui.resetConfirm=false;
   render();
@@ -1306,7 +1242,7 @@ document.addEventListener("click",function(e){
     if(!currentUser) { showToast("Please login first to load from cloud."); return; }
     getDoc(doc(db, "users", currentUser.uid)).then(docSnap => {
       if(docSnap.exists()){
-        state = Object.assign(defaultState(), docSnap.data());
+        replaceState(Object.assign(defaultState(), docSnap.data()));
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
         render();
         showToast("Progress loaded from cloud!");
