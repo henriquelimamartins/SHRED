@@ -1,7 +1,8 @@
 // Dates, daily reset and streak.
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
+// Slice 3.3 (D103): ensureDailyReset() saves on the device only.
 import { DAYS } from "../data/days.js?v=1";
-import { saveState, state } from "../store.js?v=3";
+import { saveLocal, state } from "../store.js?v=4";
 
 export function todayISO(){return new Date().toISOString().slice(0,10);}
 export function todayName(){return DAYS[new Date().getDay()];}
@@ -14,7 +15,7 @@ export function ensureDailyReset(){
     updateStreakStatus();
     state.practiced={};
     state.practicedDate=t;
-    saveState();
+    saveLocal(); // slice 3.3 (D103): the daily reset is not written to the cloud by itself
   }
 }
 

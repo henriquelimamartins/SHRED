@@ -1,6 +1,6 @@
 // Phase 1.2: how saving and cloud sync behave on main TODAY.
 // Tests named "current behaviour:" document known risks (DECISIONS D81, D83). When Phase 3 fixes
-// them, those tests are updated on purpose, in the same PR as the fix.
+// them, those tests are updated on purpose, in the same PR as the fix (3.3: new-day write-back).
 // Firebase is stubbed; the "cloud" is window.__SHRED_TEST__.docs and every write is recorded.
 const { test, expect } = require('@playwright/test');
 const { openApp, cloudWrites, localSaved, settle, unexpectedConsoleErrors } = require('./support/app');
@@ -77,18 +77,26 @@ test.describe('cloud sync on sign-in', () => {
     expect(writes[0].data.streakDates).toEqual(['2026-11-07', '2026-11-08', '2026-11-09']);
   });
 
-  test('current behaviour: on a new day, the loaded cloud state is written straight back without any action', async ({ page }) => {
+  test('on a new day, loading the cloud state writes nothing back by itself (slice 3.3, D103)', async ({ page }) => {
     const cloud = progressState({ practicedDate: '2026-11-09', practiced: { 'warmup.Mon': true } });
     await openApp(page, { user: TEST_USER, docs: { [USER_DOC]: cloud } });
     await settle(page);
 
+    expect(await cloudWrites(page)).toEqual([]);
+    const local = await localSaved(page); // the daily reset is applied on the device
+    expect(local.practicedDate).toBe('2026-11-10');
+    expect(local.practiced).toEqual({});
+
+    // The next real change carries the daily reset to the cloud.
+    await altPlus(page).click();
+    await settle(page);
     const writes = await cloudWrites(page);
     expect(writes.length).toBeGreaterThanOrEqual(1);
     expect(writes.every((w) => w.path === USER_DOC)).toBe(true);
     const last = writes[writes.length - 1].data;
     expect(last.practicedDate).toBe('2026-11-10');
     expect(last.practiced).toEqual({});
-    expect(last.testLevel.alt).toBe(3); // progress itself is carried over
+    expect(last.testLevel.alt).toBe(4); // progress itself is carried over
   });
 });
 

@@ -1,7 +1,7 @@
 // SETUP view (Guitar Setup Companion).
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
 import { setupData } from "../data/setup.js?v=1";
-import { state } from "../store.js?v=3";
+import { state } from "../store.js?v=4";
 
 export function formatGauge(g){
   var parts = g.split('-');
