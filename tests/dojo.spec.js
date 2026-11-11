@@ -182,5 +182,6 @@ test('DOJO answers do not touch Technique, Improv, the streak or Setup', async (
   await dojo(page).locator('[data-game="architect"]').click();
   await dojo(page).locator('[data-action="dojoans"][data-ans="2"]').click();
   const saved = await localSaved(page);
-  expect({ ...saved, dojo: before.dojo }).toEqual(before);
+  // schemaVersion: 1 is added by the migration (slice 3.1, D101); nothing else changes.
+  expect({ ...saved, dojo: before.dojo }).toEqual({ ...before, schemaVersion: 1 });
 });

@@ -2,7 +2,7 @@
 // its stored data must still be kept.
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
 import { DOJO_LEVELS, CODEX_DATA, HARMONIC_QUESTIONS } from "../data/dojo.js?v=1";
-import { saveState, state } from "../store.js?v=1";
+import { saveState, state } from "../store.js?v=2";
 import { showToast } from "../ui.js?v=1";
 
 // --- THEORY DOJO LOGIC ---

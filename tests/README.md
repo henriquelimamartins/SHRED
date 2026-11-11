@@ -9,7 +9,7 @@ Automated tests for The Shred Roadmap (Phase 1 · Safety net). They are not part
   Web fonts are blocked too, so screenshots use fallback fonts.
 - The clock is fixed at 2026-11-10 12:00 UTC (a Tuesday) so dates are predictable (`DEFAULT_NOW` in `tests/support/app.js`).
   `daily.spec.js` and `improv.spec.js` also fix the browser time zone to `Europe/Lisbon` (the owner's) and moves the clock where a test needs another day.
-- Test data shaped like the app's saved state lives in `tests/support/fixtures.js`.
+- Test data shaped like the app's saved state lives in `tests/support/fixtures.js`. The fixtures have no `schemaVersion` on purpose: they are data as saved before Phase 3 (version 0), so every test also exercises the 0 → 1 migration.
 - Tests named `current behaviour: …` document known risks on purpose (D81, D83) and other problems found on `main`. The Phase 3 fixes update them in the same PR.
 - Run: `npm install` then `npm test`. Screenshots and traces go to `test-results/` (not committed).
 - On GitHub: the `Tests` workflow (`.github/workflows/tests.yml`) runs the whole suite on every pull request to `main` and can be started by hand from the Actions tab. It only reads the code, uses no secrets, and keeps the report for 14 days when a test fails.
@@ -26,3 +26,4 @@ Automated tests for The Shred Roadmap (Phase 1 · Safety net). They are not part
 | `dojo.spec.js` | Legacy THEORY DOJO: level and XP bar from XP; audio toggle hides the Rhythm game; placeholder games; Codex locks; Harmonic Architect right/wrong answers, level-limited questions, Level 11 unlocks Module 2; signed-in writes; other state untouched; one `current behaviour` problem (reading a Codex module gives 100 XP, against D40). |
 | `handlers.spec.js` | Phase 2.5: no inline `onclick` left in any view; Search shows its "coming in a future phase" message with no page errors; the SETUP video button opens the PRS / Les Paul guide in a new tab (YouTube answered locally). |
 | `csp.spec.js` | Phase 2.6 (D96, D98): the Content Security Policy is in the page with the approved script sources; every view (and Library sections, Dojo Codex) runs signed out and signed in with no policy violations; injected inline code (script and `onerror`) is refused and does not run; scripts from other websites are refused. |
+| `backups.spec.js` | Phase 3.1 (D101): data without `schemaVersion` is migrated to 1 with every field kept, after a backup of the original (locally, on sign-in and on manual Load); runs once; newer versions left untouched; one `daily` snapshot per day; at most 20 backups, oldest dropped; when a backup cannot be written (storage full, unreadable list) there is no migration and nothing is lost; backups never reach the cloud; only the two expected localStorage keys exist. |
