@@ -1,6 +1,6 @@
 # CHECKPOINT — The Shred Roadmap
 
-**Updated:** 2026-11-11 · **Current phase:** 1 · Safety net — slices 1.1–1.2 merged; 1.3 delivered on `phase-1/technique-tests`, awaiting owner PR
+**Updated:** 2026-11-11 · **Current phase:** 1 · Safety net — slices 1.1–1.3 merged; 1.4 delivered on `phase-1/daily-tests`, awaiting owner PR
 **Sources of truth:** `DECISIONS.md` (owner-approved decisions), this file, then the code on `main`.
 **Full plan:** "The Shred Roadmap — Plano revisto (overhaul)", Claude Docs, 9 Nov 2026.
 The previous ChatGPT-era checkpoint is in Git history; it is context only (DECISIONS D07).
@@ -10,10 +10,11 @@ The previous ChatGPT-era checkpoint is in Git history; it is context only (DECIS
 - `main` = the live app (Phase 1 UI). Only Technique is fully implemented. Deployed to GitHub Pages from `main`.
 - `phase-2-dojo-shell` = archived candidate, not merged (D05). `baseline-original` = untouched original.
 - App code (`index.html`) unchanged in the overhaul so far.
-- Automated tests: Playwright, Firebase stubbed, clock fixed at 2026-11-10 12:00 UTC, desktop + mobile. On `main`: smoke suite (1.1) + persistence/sync suite (1.2); 28/28 pass. On `phase-1/technique-tests`: + Technique suite (1.3); 58/58 pass.
+- Automated tests: Playwright, Firebase stubbed, clock fixed at 2026-11-10 12:00 UTC, desktop + mobile. On `main`: smoke (1.1) + persistence/sync (1.2) + Technique (1.3); 58/58 pass. On `phase-1/daily-tests`: + DAILY, streak and calendar (1.4, time zone Europe/Lisbon); 124/124 pass.
 - Owner's real progress lives in Firestore `users/{uid}` and localStorage `shredRoadmapState_v10`.
 - Local working copy: `C:\Users\Henri\Dev\SHRED` (fresh clone, outside OneDrive, D92). Old OneDrive copy `SHRED-OLD-nao-usar` may now be deleted by the owner.
 - The copies of `DECISIONS.md` / `CHECKPOINT.md` in `project-docs/` are synced with the project versions at the end of each slice.
+- Workflow note: before creating a slice branch, the owner pulls `main` first (slice 1.3's branch was created one step early and had to be updated from `main`).
 - PR #3 accidentally committed `Claude outputs/` (two app screenshots the Claude desktop app saved into the repo folder; harmless). Removed and git-ignored in PR #4.
 
 ## Phase 0 — Foundations — COMPLETE (2026-11-10)
@@ -34,8 +35,8 @@ The previous ChatGPT-era checkpoint is in Git history; it is context only (DECIS
 | Preparation: repo moved out of OneDrive (D92) | DONE 2026-11-10 |
 | 1.1 Test setup: Playwright + Firebase stubs + smoke test (Home loads; 6 main views open; no errors; no Firebase traffic; no cloud writes), desktop + mobile | DONE — merged in PR #3 (2026-11-10); 4/4 pass on merged `main` |
 | 1.2 Persistence and sync tests (current behaviour): local save/reload, unknown fields kept, sign-in sync, signed-in writes, manual Save/Load, Reset Everything | DONE — merged in PR #4 (2026-11-10); 28/28 pass on merged `main` |
-| 1.3 Technique tests (D20): phase %, red phase bar, item toggles, stepper limits, automatic advance, Jump to phase | DELIVERED 2026-11-11 on `phase-1/technique-tests` — 58/58 pass, mutation-checked; awaiting owner commit + PR |
-| 1.4 DAILY, calendar and streak tests (fixed clock) | NOT STARTED |
+| 1.3 Technique tests (D20): phase %, red phase bar, item toggles, stepper limits, automatic advance, Jump to phase | DONE — merged in PR #5 (2026-11-11); 58/58 pass on merged `main` |
+| 1.4 DAILY, calendar and streak tests (fixed clock, Europe/Lisbon): session blocks per day/weekend/Setup, read-only days + Switch + expiry, Practiced → streak, full-session message, daily reset, streak count, calendar grid and navigation, item sequences; 2 `current behaviour` problems documented | DELIVERED 2026-11-11 on `phase-1/daily-tests` — 124/124 pass; awaiting owner PR |
 | 1.5 Improv, Setup, Library, Dojo tests | NOT STARTED |
 | 1.6 Run the tests automatically on every PR (GitHub Actions) | NOT STARTED |
 
@@ -47,6 +48,8 @@ The previous ChatGPT-era checkpoint is in Git history; it is context only (DECIS
 
 - Sync: cloud overwrites local on login, and local-only fields are lost; writes can happen before the read finishes (fixed in Phase 3, D81). Covered by `current behaviour` tests in 1.2.
 - On the first load of a new day, the app writes the cloud state straight back (daily reset) without any user action (found in 1.2; relevant to safeguard 2, D81).
+- Extra streak day (found in 1.4): if any DAILY block was ticked yesterday, opening the app today logs today in the streak before anything is practised; it disappears at the next change that day (any change, even outside DAILY), otherwise it stays and inflates "Days Logged" and the streak. Covered by `current behaviour` tests in 1.4. Fix not yet scheduled (owner to decide the phase).
+- Time zone (found in 1.4): the weekday comes from the device clock, but "today" (streak, calendar, daily reset, item dates) comes from UTC. In Portuguese summer time, between 00:00 and 01:00, the DAILY session is already the new day while practice is logged on the previous date. Covered by a `current behaviour` test in 1.4. Fix not yet scheduled.
 - Reset Everything currently also wipes streak, calendar, SETUP and unknown fields, and overwrites the cloud with no backup (fixed in Phase 3, D83). Covered by `current behaviour` tests in 1.2.
 - Firestore Rules protect each account's document, but cannot stop the app itself from overwriting good data with stale data; that is what the Phase 3 sync safeguards fix.
 - GitHub Pages deploys the whole repository, so the test files are publicly served too. They contain nothing sensitive (D84); excluding them from the deploy is a possible later slice.
