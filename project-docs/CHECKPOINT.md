@@ -1,6 +1,6 @@
 # CHECKPOINT — The Shred Roadmap
 
-**Updated:** 2026-11-11 · **Current phase:** 2 · Split files — plan approved (D95, D96, D97); slices 2.1 and 2.2 merged; slice 2.3 (persistence + Firebase) delivered on `phase-2/store-firebase`, awaiting owner PR. Phase 1 complete (tag `v1-phase-1`).
+**Updated:** 2026-11-11 · **Current phase:** 2 · Split files — plan approved (D95, D96, D97); slices 2.1, 2.2 and 2.3 merged; slice 2.4 (logic → modules) delivered on `phase-2/logic-modules`, awaiting owner PR. Phase 1 complete (tag `v1-phase-1`).
 **Sources of truth:** `DECISIONS.md` (owner-approved decisions), this file, then the code on `main`.
 **Full plan:** "The Shred Roadmap — Plano revisto (overhaul)", Claude Docs, 9 Nov 2026.
 The previous ChatGPT-era checkpoint is in Git history; it is context only (DECISIONS D07).
@@ -9,11 +9,11 @@ The previous ChatGPT-era checkpoint is in Git history; it is context only (DECIS
 
 - `main` = the live app (Phase 1 UI). Only Technique is fully implemented. Deployed to GitHub Pages from `main`.
 - `phase-2-dojo-shell` = archived candidate, not merged (D05). `baseline-original` = untouched original.
-- App code on `main` after 2.2: `index.html` 1380 lines (one inline JS module), `css/app.css`, `js/splash.js`, `js/data/*.js`. After 2.3: `index.html` 1316 lines, plus `js/store.js` and `js/firebase.js`.
+- App code on `main` after 2.3: `index.html` 1316 lines (one inline JS module), `css/app.css`, `js/splash.js`, `js/data/*.js`, `js/store.js`, `js/firebase.js`. After 2.4: `index.html` 39 lines with no inline script; the app starts from `js/main.js`.
 - Automated tests: Playwright, Firebase stubbed, clock fixed at 2026-11-10 12:00 UTC, desktop + mobile. On `main`: smoke (1.1) + persistence/sync (1.2) + Technique (1.3) + DAILY, streak and calendar (1.4) + Improv, Setup, Library, Dojo (1.5); 216/216 pass. They are black-box (they use only the page, never app internals), so the Phase 2 split must not need test changes. From 1.6 they also run on GitHub (workflow `Tests`, job "Playwright (desktop + mobile)") on every PR to `main`, inside the official image `mcr.microsoft.com/playwright:v1.63.0-noble`. When `@playwright/test` is upgraded in `package.json`, the image tag in `.github/workflows/tests.yml` must be upgraded to the same version.
 - Owner's real progress lives in Firestore `users/{uid}` and localStorage `shredRoadmapState_v10`.
 - Local working copy: `C:\Users\Henri\Dev\SHRED` (fresh clone, outside OneDrive, D92). Old OneDrive copy `SHRED-OLD-nao-usar` may now be deleted by the owner.
-- The copies of `DECISIONS.md` / `CHECKPOINT.md` in `project-docs/` are synced with the project versions at the end of each slice. Synced in slice 2.3.
+- The copies of `DECISIONS.md` / `CHECKPOINT.md` in `project-docs/` are synced with the project versions at the end of each slice. Synced in slice 2.4.
 - Workflow note: Claude cannot write inside `.github/` in the owner's folder (protected by the desktop bridge); workflow files are sent to the owner, who saves them himself.
 - Workflow note: before creating a slice branch, the owner pulls `main` first (slice 1.3's branch was created one step early and had to be updated from `main`).
 - Workflow note: Claude's cloud workspace cannot reach the npm registry (blocked by the network policy); since slice 2.3 the tests run there with the pre-installed Playwright 1.63.0 (same version as `package.json`), through a local stand-in for `@playwright/test` that is never committed.
@@ -50,8 +50,8 @@ Goal: same app, same look, same behaviour; code spread over files. Acceptance fo
 |---|---|---|
 | 2.1 | CSS → `css/app.css`; splash script → `js/splash.js`; sync `project-docs/` copies of DECISIONS and CHECKPOINT | DONE — merged 2026-11-11: 216/216 pass; 12/12 screenshots pixel-identical to `main` (6 views × desktop/mobile) |
 | 2.2 | Data → `js/data/` as ES modules: `bhgs.js` (all BHGS data: phases, chop-builders, tests, prerequisites, bonus, DAILY micro-doses, BHGS theory videos/PDF links, creative links), `improv.js`, `listening.js`, `days.js`, `setup.js`, `dojo.js`, `helpers.js` (`I()`). `index.html` 1694 → 1380 lines | DONE — merged 2026-11-11: 216/216 pass; 12/12 screenshots pixel-identical to `main`; owner checked the live app on PC and phone |
-| 2.3 | Persistence + Firebase → `js/store.js` + `js/firebase.js`; code moved as it is, `state` replaced only via `replaceState` (D95, D97). Own slice, no UI changes. Branch `phase-2/store-firebase`. `index.html` 1380 → 1316 lines | DELIVERED 2026-11-11, awaiting owner PR: 216/216 pass; 24/24 screenshots pixel-identical to `main` (6 views × desktop/mobile × signed out/signed in) |
-| 2.4 | Non-persistence logic → modules (dates/streak, technique, daily, views, navigation/events), importing `state` from `js/store.js` | NOT STARTED |
+| 2.3 | Persistence + Firebase → `js/store.js` + `js/firebase.js`; code moved as it is, `state` replaced only via `replaceState` (D95, D97). Own slice, no UI changes. Branch `phase-2/store-firebase`. `index.html` 1380 → 1316 lines | DONE — merged 2026-11-11: 216/216 pass; 24/24 screenshots pixel-identical to `main` (6 views × desktop/mobile × signed out/signed in); owner checked the live app |
+| 2.4 | Non-persistence logic → modules: `js/main.js` (start-up), `js/ui.js`, `js/render.js`, `js/events.js`, `js/logic/` (dates, technique, daily), `js/views/` (components, calendar, home, daily, improv, library, setup, dojo). Code moved verbatim; only `import`/`export` lines and file header comments added. Branch `phase-2/logic-modules`. `index.html` 1316 → 39 lines | DELIVERED 2026-11-11, awaiting owner PR: 216/216 pass; 24/24 screenshots pixel-identical and 24/24 rendered DOM identical to `main` (6 views × desktop/mobile × signed out/signed in) |
 | 2.5 | Two inline `onclick` (search, SETUP video) → central event handler | NOT STARTED |
 | 2.6 | Content Security Policy: scripts only from the app and Firebase (D96) | NOT STARTED |
 
@@ -59,13 +59,18 @@ Phase 2 notes:
 - The Firebase SDK is already pinned (10.12.2). Dependabot does not watch CDN-loaded libraries, so the plan's "Dependabot" item does not apply as written.
 - No parked idea in `IDEAS.md` has its "Ask at" point in Phase 2.
 - Method used in every Phase 2 slice: build in Claude's workspace, run the 216 tests, then a one-off pixel comparison (6 views × desktop/mobile, Firebase stubbed, fixed clock; from 2.3 also signed in) of the slice against current `main`; files keep CRLF line endings like the repo.
-- Branch `phase-2/logic-modules` was created for the old 2.3 and never used (nothing written); the owner may delete it.
 - How 2.3 is built (for 2.4 and later):
   - `js/store.js`: `STORAGE_KEY`, `defaultDojoState`, `defaultState`, `loadState`, `saveState` (unchanged), plus `export let state` and `replaceState(next)`, the only place that replaces the whole state (initial load, sign-in sync, `confirmReset`, manual "Load from cloud"). Changing fields inside `state` (`state.x = …`) still works from any file.
   - `js/firebase.js`: config, `hasFirebase`, live bindings `auth`, `db`, `googleProvider`, `currentUser` (only this file changes them), `initFirebase(render, showToast)` = the old init + `onAuthStateChanged` sync block, unchanged except `replaceState`. It re-exports `doc`, `setDoc`, `getDoc`, `signInWithPopup`, `signOut`, so only this file loads the Firebase SDK (useful for the CSP in 2.6).
   - `index.html` calls `initFirebase(render, showToast)` where the Firebase block used to be. The UI functions are handed over because `render`/`showToast` still live in `index.html`; when 2.4 moves them to modules, `initFirebase` can import them instead.
   - `store.js` and `firebase.js` import each other (`saveState` needs `currentUser`/`db`; the sign-in sync needs `replaceState`). This is safe because neither uses the other's values while loading, only later in functions. Every import of these two files must use exactly the same suffix (`?v=1`): a different suffix would load a second copy with its own `state`.
-  - The manual Save/Load handlers and `confirmReset` stay in `index.html` (UI code), as planned.
+  - The manual Save/Load handlers and `confirmReset` stay with the UI code (in `js/events.js` since 2.4).
+- How 2.4 is built (for 2.5 and later):
+  - Lines were moved by a script that also checked every original line is present exactly once; a token-based check confirmed each module imports every app name it uses (no missing or unused imports).
+  - Modules import each other in cycles (e.g. `logic/technique.js` ↔ `render.js`). Safe for the same reason as 2.3: only function declarations and `ui`/`state` objects are shared, and nothing runs at load time except `js/main.js` (start-up) and `js/events.js` (adds the document listeners).
+  - Every import of a shared file uses the `?v=1` suffix; when a file changes in a later slice, bump its suffix in **every** import of it at once (otherwise a second copy loads).
+  - `js/firebase.js` still says in a comment that `index.html` hands over `render`/`showToast`; it is now `js/main.js`. Comment-only, left untouched to keep persistence files out of this slice.
+  - Still to do: the inline `onclick` on the search box (in `js/render.js`) and on the SETUP video button (in `js/views/setup.js`) → slice 2.5. `APP_VIEWS` (in `js/ui.js`) and `PHASE_BLURB` (in `js/data/bhgs.js`) are unused on `main`; kept as they are.
 
 ## Next phases
 
