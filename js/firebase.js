@@ -4,10 +4,11 @@
 // only this file changes them. The sign-in sync replaces the state through replaceState().
 // render and showToast belong to the UI; index.html hands them over when it starts Firebase.
 // Slice 3.1 (D101): the sign-in sync passes cloud data through migrate() (schemaVersion).
+// Slice 3.2 (D102): the local state is backed up before the sign-in sync replaces it.
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDoc, initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { state, replaceState, defaultState, STORAGE_KEY, migrate } from './store.js?v=2';
+import { state, replaceState, defaultState, STORAGE_KEY, migrate, backupBeforeReplace } from './store.js?v=3';
 
 // Firebase functions the rest of the app uses, so only this file loads the Firebase SDK.
 export { doc, setDoc, getDoc, signInWithPopup, signOut };
@@ -40,7 +41,10 @@ if(hasFirebase) {
           const docSnap = await getDoc(doc(db, "users", user.uid));
           if(docSnap.exists()){
             // Slice 3.1 (D101): cloud data is brought to the current schemaVersion (backup first).
-            replaceState(Object.assign(defaultState(), migrate(docSnap.data())));
+            const incoming = Object.assign(defaultState(), migrate(docSnap.data()));
+            // Slice 3.2 (D102): back up local state first; the cloud still wins if that fails (D80).
+            backupBeforeReplace("before-cloud-sync", incoming);
+            replaceState(incoming);
             state.setupGuitar = state.setupGuitar || "prs";
             state.setupTuning = state.setupTuning || "e_std";
             state.improvIndex = state.improvIndex || 0;

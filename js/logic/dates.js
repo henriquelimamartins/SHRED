@@ -1,7 +1,7 @@
 // Dates, daily reset and streak.
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
 import { DAYS } from "../data/days.js?v=1";
-import { saveState, state } from "../store.js?v=2";
+import { saveState, state } from "../store.js?v=3";
 
 export function todayISO(){return new Date().toISOString().slice(0,10);}
 export function todayName(){return DAYS[new Date().getDay()];}

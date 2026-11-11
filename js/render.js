@@ -1,16 +1,16 @@
 // Page layout, navigation and the main render() that redraws every view.
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
-import { hasFirebase, currentUser } from "./firebase.js?v=2";
+import { hasFirebase, currentUser } from "./firebase.js?v=3";
 import { ui } from "./ui.js?v=1";
-import { ensureDailyReset } from "./logic/dates.js?v=2";
-import { progressBar } from "./views/components.js?v=3";
-import { initCalCarousel } from "./views/calendar.js?v=3";
-import { renderHome } from "./views/home.js?v=3";
-import { renderDaily } from "./views/daily.js?v=3";
-import { renderImprov } from "./views/improv.js?v=2";
-import { renderLibrary } from "./views/library.js?v=3";
-import { renderSetup } from "./views/setup.js?v=3";
-import { renderDojoView } from "./views/dojo.js?v=2";
+import { ensureDailyReset } from "./logic/dates.js?v=3";
+import { progressBar } from "./views/components.js?v=4";
+import { initCalCarousel } from "./views/calendar.js?v=4";
+import { renderHome } from "./views/home.js?v=4";
+import { renderDaily } from "./views/daily.js?v=4";
+import { renderImprov } from "./views/improv.js?v=3";
+import { renderLibrary } from "./views/library.js?v=4";
+import { renderSetup } from "./views/setup.js?v=4";
+import { renderDojoView } from "./views/dojo.js?v=3";
 
 export function initAppLayout() {
   var root = document.getElementById("root");
