@@ -27,6 +27,15 @@ Status values: `APPROVED`, `APPROVED (adjustable)`, `OPEN`, `SUPERSEDED by Dxx`.
 | D08 | 2026-11-09 | Talk to the owner in European Portuguese; all app text, curriculum, identifiers, commits and code comments in English. | APPROVED |
 | D09 | 2026-11-10 | Claude tells the owner whenever it thinks a new conversation should be started in the project (new phase or new topic). | APPROVED |
 | D92 | 2026-11-10 | Local working copy moved out of OneDrive: fresh clone at `C:\Users\Henri\Dev\SHRED`, connected to the Claude project. The old OneDrive folder is renamed `SHRED-OLD-nao-usar`, removed from GitHub Desktop, and deleted only after the first Phase 1 PR is merged. | DONE |
+| D93 | 2026-11-11 | Owner ideas not yet approved are parked in `IDEAS.md` (project docs). An idea moves to this file only when the owner approves it. | APPROVED |
+| D94 | 2026-11-11 | Each parked idea in `IDEAS.md` has an "Ask at" point: the phase (or slice) where a decision is useful before going further. When the project reaches that point, Claude asks the owner about the idea before continuing, one topic at a time. | APPROVED |
+
+## Code structure (Phase 2)
+
+| ID | Date | Decision | Status |
+|---|---|---|---|
+| D95 | 2026-11-11 | Phase 2 splits `index.html` into files with **no change in behaviour or look** (acceptance: all tests green + pixel comparison of screenshots against `main`, desktop and mobile). Slices: 2.1 CSS → `css/app.css` and splash script → `js/splash.js` (plus sync of the `project-docs/` copies); 2.2 data → `js/data/`, with all BHGS data in its own file (`bhgs.js`) so the BHGS package can be swapped later (I06); 2.3 non-persistence logic → modules; 2.4 persistence and Firebase → `js/store.js` + `js/firebase.js`, in its own slice, never mixed with UI: code moved as it is; the only technical change is that replacing `state` goes through one function (`replaceState`), because ES modules cannot reassign another module's variable; 2.5 the two inline `onclick` handlers (search, SETUP video) move to the central event handler. New files are loaded with a `?v=` cache-busting suffix. Phase ends with tag `v1-phase-2`. | APPROVED |
+| D96 | 2026-11-11 | Content Security Policy (planned for Phase 1 in the overhaul plan, not done there) becomes slice 2.6, after all inline scripts and handlers are gone: scripts only from the app itself and Firebase. | APPROVED |
 
 ## Product structure
 
@@ -62,6 +71,7 @@ Status values: `APPROVED`, `APPROVED (adjustable)`, `OPEN`, `SUPERSEDED by Dxx`.
 | D30 | 2026-11-09 | Keep the daily routine where the app says what to practise each day. Timeslots stay as they are (Technique + Improv). Theory is not daily; it is for free time. | APPROVED |
 | D31 | 2026-11-09 | Writing/songwriting stays outside the app: no Create track, no writing slots; writing mentions in DAILY are replaced (Tuesday → Improv mission). | APPROVED |
 | D32 | 2026-11-09 | Weekend DAILY sessions become lighter (20–30 min). | APPROVED |
+| D33 | 2026-11-11 | The two DAILY/streak bugs found in slice 1.4 are fixed in Phase 3, each in its own slice with tests: (1) extra streak day — opening the app must not log today before anything is practised today; (2) time zone — "today" (streak, calendar, daily reset, item dates) follows the device's local day, like the weekday already does, instead of UTC. Dates already logged are kept as they are (no rewrite of past data). | APPROVED |
 
 ## Theory
 
@@ -84,6 +94,7 @@ Status values: `APPROVED`, `APPROVED (adjustable)`, `OPEN`, `SUPERSEDED by Dxx`.
 |---|---|---|---|
 | D50 | 2026-11-09 | The 5 Gates stay, rebuilt as levels of missions with rules, success criteria and links to theory. Current exercises and progress migrate to Level 1. | APPROVED |
 | D51 | 2026-11-09 | Missions show fretboard diagrams where applicable (look decided in design conversation). | APPROVED |
+| D52 | 2026-11-11 | Improv ↔ Theory link (proposal in `DESIGN-NOTES.md`), shown as separate rails: (1) paired levels, Gate n ↔ Theory Level n; (2) each mission lists its related theory chapters with their drill state, "Recommended first" when not yet Solid, never a lock (D40, D50); (3) each chapter lists the missions that use it; (4) theory drills may reuse the active mission's key and transposition target; (5) HOME "Continue in Theory" suggests the chapter linked to today's mission first; (6) no combined percentage, each rail keeps its own evidence (D70, D71). **Condition (owner):** the link never cuts or condenses content on either side to make them match. Where Improv and Theory do not line up, content is extended (chapters or missions added), never trimmed. The same extend-don't-condense rule applies to any future alignment of content. | APPROVED |
 
 ## Exercise rules (whole app)
 
@@ -125,3 +136,4 @@ Status values: `APPROVED`, `APPROVED (adjustable)`, `OPEN`, `SUPERSEDED by Dxx`.
 |---|---|---|---|
 | C01 | 2026-11-10 | D23 says the app holds no copied BHGS material, but `main` contains two Bradley Hall PDFs (`music-theory-cheat-sheet.pdf`, `scales-handbook.pdf`), served publicly by GitHub Pages and present in the public Git history of every branch. | RESOLVED 2026-11-10: owner chose to keep both PDFs as they are (option a) |
 | C02 | 2026-11-10 | D20 keeps "the red phase bar identical"; in the current app it is fixed at the top of every page, while the D16 mockups show it on HOME and as a mini-rail in the desktop sidebar. | RESOLVED 2026-11-10: HOME + desktop sidebar only (D25) |
+| C03 | 2026-11-11 | The overhaul plan's security table put the Content Security Policy in Phase 1, but Phase 1 closed without it. | RESOLVED 2026-11-11: CSP becomes slice 2.6 (D96) |
