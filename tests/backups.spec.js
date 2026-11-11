@@ -91,15 +91,15 @@ test.describe('schemaVersion migration (signed out)', () => {
     expect(list.filter((b) => b.reason === 'daily')).toHaveLength(1);
   });
 
-  test('data with a newer schemaVersion is left as it is (no migration, no migration backup)', async ({ page }) => {
-    await openApp(page, { localState: progressState({ schemaVersion: 2, laterField: [1, 2] }) });
+  test('data with a newer schemaVersion is left exactly as it is: no migration, no backup, nothing saved (slice 3.4, D105)', async ({ page }) => {
+    const newer = progressState({ schemaVersion: 2, laterField: [1, 2] });
+    await openApp(page, { localState: newer });
     await expect(altLevel(page)).toHaveText('3/5');
-    const list = await backups(page);
-    expect(list.filter((b) => b.reason === 'migration')).toHaveLength(0);
+    await expect(page.locator('#toast')).toHaveText('Your progress was saved by a newer version of the app. Reload the page to update.');
+    expect(await backups(page)).toBeNull(); // D105 point 7: this app writes nothing over newer data
     await altPlus(page).click();
     const saved = await localSaved(page);
-    expect(saved.schemaVersion).toBe(2);
-    expect(saved.laterField).toEqual([1, 2]);
+    expect(saved).toEqual(newer);
   });
 });
 

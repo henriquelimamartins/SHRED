@@ -3,11 +3,11 @@
 import { PHASES, TESTCATS, THEORY_DOCS, THEORY_GROUPS, THEORY_ITEMS, ESSENTIAL, ESSENTIAL_URL, PREREQ, WARMUP_URL } from "../data/bhgs.js?v=1";
 import { IMPROV_GATES } from "../data/improv.js?v=1";
 import { DAY_FULL } from "../data/days.js?v=1";
-import { state } from "../store.js?v=4";
+import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=1";
-import { todayISO, todayName, isWeekendDay, activeDay } from "../logic/dates.js?v=4";
-import { k } from "../logic/technique.js?v=5";
-import { linked, checkItem, prereqItem, docItem, chopRow, dayPicker, blk, getDailyActiveSequence } from "./components.js?v=5";
+import { todayISO, todayName, isWeekendDay, activeDay } from "../logic/dates.js?v=5";
+import { k } from "../logic/technique.js?v=6";
+import { linked, checkItem, prereqItem, docItem, chopRow, dayPicker, blk, getDailyActiveSequence } from "./components.js?v=6";
 
 export function renderDaily(){
   var idx=state.phaseIndex,p=PHASES[idx];

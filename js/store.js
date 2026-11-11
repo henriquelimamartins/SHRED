@@ -7,7 +7,10 @@
 // Phase 3, slice 3.2 (DECISIONS D102): backup before every whole-state replacement.
 // Phase 3, slice 3.3 (DECISIONS D103): no cloud write before the cloud was read (cloudReady);
 // saveLocal() saves on the device only (used by the daily reset).
-import { hasFirebase, currentUser, cloudReady, db, doc, setDoc } from './firebase.js?v=4';
+// Phase 3, slice 3.4 (DECISIONS D105): cloud writes go through requestCloudWrite() (firebase.js),
+// a checked transaction on `syncRev`. Data with a newer schemaVersion than this app knows is never
+// written over (newerSchema): nothing is saved on the device or in the cloud.
+import { hasFirebase, currentUser, cloudReady, db, requestCloudWrite } from './firebase.js?v=5';
 
 export const STORAGE_KEY="shredRoadmapState_v10";
 
@@ -17,6 +20,16 @@ export const STORAGE_KEY="shredRoadmapState_v10";
 export const SCHEMA_VERSION = 1;
 export const BACKUP_KEY = "shredRoadmapBackups_v1";
 export const MAX_BACKUPS = 20;
+
+// --- Newer data (slice 3.4, D105 point 7, rule from D101) ---
+// When the device or cloud data was saved by a newer app version (higher schemaVersion), this app
+// writes nothing at all until the page is reloaded with the newer code.
+export const NEWER_SCHEMA_MSG = "Your progress was saved by a newer version of the app. Reload the page to update.";
+export let newerSchema = false;
+export function isNewerSchema(data){
+  return !!(data && typeof data === "object" && typeof data.schemaVersion === "number" && data.schemaVersion > SCHEMA_VERSION);
+}
+export function markNewerSchema(){ newerSchema = true; }
 
 // Device-local calendar day (YYYY-MM-DD), used to take one "daily" backup per day.
 function localDayISO(d){
@@ -90,6 +103,7 @@ export function backupBeforeReplace(reason, incoming){
 
 // One automatic snapshot of the current state on the first start-up of each local day.
 export function dailyBackup(){
+  if(newerSchema) return false; // slice 3.4 (D105): write nothing over newer data
   var list = readBackups();
   if(list === null) return false;
   var today = localDayISO();
@@ -106,17 +120,18 @@ export function defaultDojoState() {
 
 export function defaultState(){
 return {phaseIndex:0,chop:{alt:0,sweep:0,legato:0,econ:0,tap:0},testLevel:{alt:0,sweep:0,legato:0,econ:0,tap:0,ult:0},bonusLevel:{},checks:{},practiced:{},practicedDate:null,congratsDate:null,activeDayOverride:null,activeDayDate:null,streakDates:[],setupGuitar:"prs",setupTuning:"e_std",improvIndex:0,improvChecks:{}, dojo: defaultDojoState()};}
-export function loadState(){try{var raw=localStorage.getItem(STORAGE_KEY);if(raw){var d=migrate(JSON.parse(raw));return Object.assign(defaultState(),d,{chop:Object.assign(defaultState().chop,d.chop||{}),testLevel:Object.assign(defaultState().testLevel,d.testLevel||{}),bonusLevel:d.bonusLevel||{},checks:d.checks||{},practiced:d.practiced||{},streakDates:d.streakDates||[],setupGuitar:d.setupGuitar||"prs",setupTuning:d.setupTuning||"e_std",improvIndex:d.improvIndex||0,improvChecks:d.improvChecks||{}, dojo: Object.assign(defaultDojoState(), d.dojo||{})});}}catch(e){}var fresh=defaultState();fresh.schemaVersion=SCHEMA_VERSION;return fresh;}
+export function loadState(){try{var raw=localStorage.getItem(STORAGE_KEY);if(raw){var parsed=JSON.parse(raw);if(isNewerSchema(parsed))markNewerSchema();var d=migrate(parsed);return Object.assign(defaultState(),d,{chop:Object.assign(defaultState().chop,d.chop||{}),testLevel:Object.assign(defaultState().testLevel,d.testLevel||{}),bonusLevel:d.bonusLevel||{},checks:d.checks||{},practiced:d.practiced||{},streakDates:d.streakDates||[],setupGuitar:d.setupGuitar||"prs",setupTuning:d.setupTuning||"e_std",improvIndex:d.improvIndex||0,improvChecks:d.improvChecks||{}, dojo: Object.assign(defaultDojoState(), d.dojo||{})});}}catch(e){}var fresh=defaultState();fresh.schemaVersion=SCHEMA_VERSION;return fresh;}
 
 export function saveLocal(){
+  if(newerSchema) return; // slice 3.4 (D105)
   try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}catch(e){}
 }
 
 export function saveState(){
+  if(newerSchema) return; // slice 3.4 (D105)
   saveLocal();
-  if(hasFirebase && currentUser && db && cloudReady) {
-    setDoc(doc(db, "users", currentUser.uid), state).catch(e => console.error("Firebase save err", e));
-  }
+  // Slice 3.4 (D105): a checked, queued cloud write (never over newer cloud data).
+  if(hasFirebase && currentUser && db && cloudReady) requestCloudWrite();
 }
 
 // The one place where the whole state object is replaced (initial load, sign-in sync,

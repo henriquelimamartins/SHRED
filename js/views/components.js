@@ -2,10 +2,10 @@
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
 import { PHASES, CHOP, TESTCATS, BONUS } from "../data/bhgs.js?v=1";
 import { DAY_ORDER } from "../data/days.js?v=1";
-import { state } from "../store.js?v=4";
-import { todayISO, todayName, activeDay } from "../logic/dates.js?v=4";
-import { phasePercent } from "../logic/technique.js?v=5";
-import { isBlockPracticed } from "../logic/daily.js?v=5";
+import { state } from "../store.js?v=5";
+import { todayISO, todayName, activeDay } from "../logic/dates.js?v=5";
+import { phasePercent } from "../logic/technique.js?v=6";
+import { isBlockPracticed } from "../logic/daily.js?v=6";
 
 /* ---------- render helpers ---------- */
 export function linked(label,url){ return url? '<a href="'+url+'" target="_blank" rel="noopener">'+label+'</a>' : label; }
