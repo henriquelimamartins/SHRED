@@ -1,12 +1,12 @@
 // HOME view.
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
 import { PHASES, TESTCATS } from "../data/bhgs.js?v=1";
-import { state } from "../store.js?v=1";
+import { state } from "../store.js?v=2";
 import { ui } from "../ui.js?v=1";
-import { totalStreak, currentStreak } from "../logic/dates.js?v=1";
-import { phasePercent } from "../logic/technique.js?v=2";
-import { testRow } from "./components.js?v=2";
-import { renderStreakCalendar } from "./calendar.js?v=2";
+import { totalStreak, currentStreak } from "../logic/dates.js?v=2";
+import { phasePercent } from "../logic/technique.js?v=3";
+import { testRow } from "./components.js?v=3";
+import { renderStreakCalendar } from "./calendar.js?v=3";
 
 /* ---------- views ---------- */
 export function renderHome(){

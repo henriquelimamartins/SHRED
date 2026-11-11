@@ -2,11 +2,11 @@
 // applyStateChange() is the shared "after a change" step (daily reset, streak, advance, save, render).
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
 import { PHASES, CHOP, TESTCATS, PREREQ } from "../data/bhgs.js?v=1";
-import { saveState, state } from "../store.js?v=1";
+import { saveState, state } from "../store.js?v=2";
 import { ui, showToast } from "../ui.js?v=1";
-import { todayISO, ensureDailyReset, updateStreakStatus } from "./dates.js?v=1";
-import { isFullyDoneToday } from "./daily.js?v=2";
-import { render } from "../render.js?v=2";
+import { todayISO, ensureDailyReset, updateStreakStatus } from "./dates.js?v=2";
+import { isFullyDoneToday } from "./daily.js?v=3";
+import { render } from "../render.js?v=3";
 
 export function k(){return Array.prototype.slice.call(arguments).join(".");}
 

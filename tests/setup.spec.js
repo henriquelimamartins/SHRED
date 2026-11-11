@@ -124,7 +124,8 @@ test('changing Setup does not touch progress, streak or other state', async ({ p
   await goTo(page, 'setup');
   await tuningSelect(page).selectOption('drop_d');
   const saved = await localSaved(page);
-  expect({ ...saved, setupTuning: before.setupTuning }).toEqual(before);
+  // schemaVersion: 1 is added by the migration (slice 3.1, D101); nothing else changes.
+  expect({ ...saved, setupTuning: before.setupTuning }).toEqual({ ...before, schemaVersion: 1 });
 });
 
 test('signed in: a Setup change writes the full state to users/{uid} only', async ({ page }) => {

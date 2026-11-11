@@ -1,16 +1,17 @@
 // User actions: the central click/change handlers, the calendar swipe listener and Reset Everything.
 // The manual cloud Save/Load handlers and confirmReset() are moved unchanged (no persistence change).
+// Slice 3.1 (D101): "Load from cloud" passes cloud data through migrate() (schemaVersion).
 // Slice 2.5: the SETUP video button ("openvideo") and the search box are handled here only (no inline onclick).
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
 import { CODEX_DATA } from "./data/dojo.js?v=1";
-import { STORAGE_KEY, defaultState, saveState, state, replaceState } from "./store.js?v=1";
-import { hasFirebase, auth, db, googleProvider, currentUser, doc, setDoc, getDoc, signInWithPopup, signOut } from "./firebase.js?v=1";
+import { STORAGE_KEY, defaultState, saveState, state, replaceState, migrate } from "./store.js?v=2";
+import { hasFirebase, auth, db, googleProvider, currentUser, doc, setDoc, getDoc, signInWithPopup, signOut } from "./firebase.js?v=2";
 import { ui, showToast } from "./ui.js?v=1";
-import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=2";
-import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=2";
-import { changeCalMonth } from "./views/calendar.js?v=2";
-import { currentMinigame, addXP, startArchitectGame, handleDojoAnswer, renderCodexList } from "./views/dojo.js?v=1";
-import { updateNav, render } from "./render.js?v=2";
+import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=3";
+import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=3";
+import { changeCalMonth } from "./views/calendar.js?v=3";
+import { currentMinigame, addXP, startArchitectGame, handleDojoAnswer, renderCodexList } from "./views/dojo.js?v=2";
+import { updateNav, render } from "./render.js?v=3";
 
 export function handleReset(){ ui.resetConfirm=true; render(); }
 export function cancelReset(){ ui.resetConfirm=false; render(); }
@@ -104,7 +105,7 @@ document.addEventListener("click",function(e){
     if(!currentUser) { showToast("Please login first to load from cloud."); return; }
     getDoc(doc(db, "users", currentUser.uid)).then(docSnap => {
       if(docSnap.exists()){
-        replaceState(Object.assign(defaultState(), docSnap.data()));
+        replaceState(Object.assign(defaultState(), migrate(docSnap.data()))); // slice 3.1 (D101)
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
         render();
         showToast("Progress loaded from cloud!");

@@ -1,6 +1,6 @@
 # CHECKPOINT — The Shred Roadmap
 
-**Updated:** 2026-11-11 · **Current phase:** 2 · Split files — plan approved (D95, D96, D97); slices 2.1–2.5 merged; slice 2.6 (Content Security Policy, D98) delivered on `phase-2/csp`, awaiting owner PR, then live check and tag `v1-phase-2`. Phase 1 complete (tag `v1-phase-1`).
+**Updated:** 2026-11-11 · **Current phase:** 3 · Safe data — plan approved (D99); slice 3.1 (D101) delivered on `phase-3/backups-schema`, awaiting owner PR and live check. Phase 2 complete (tag `v1-phase-2`); Phase 1 complete (tag `v1-phase-1`).
 **Sources of truth:** `DECISIONS.md` (owner-approved decisions), this file, then the code on `main`.
 **Full plan:** "The Shred Roadmap — Plano revisto (overhaul)", Claude Docs, 9 Nov 2026.
 The previous ChatGPT-era checkpoint is in Git history; it is context only (DECISIONS D07).
@@ -42,7 +42,7 @@ The previous ChatGPT-era checkpoint is in Git history; it is context only (DECIS
 | 1.5 Improv, Setup, Library, Dojo tests: gates, marks, Unlock, transposition key; Setup values for every guitar × tuning; Library sections, Theory/Creative marks, Bonus steppers; Dojo levels/XP, Codex, Harmonic Architect; signed-in writes; 4 `current behaviour` problems documented | DONE — merged in PR #7 (2026-11-11); 216/216 pass on merged `main` |
 | 1.6 Run the tests automatically on every PR (GitHub Actions): workflow `.github/workflows/tests.yml`, read-only permissions, no secrets, actions pinned to commit SHAs, report kept 14 days on failure | DONE — PR #8 (2026-11-11): green check on GitHub. First two runs failed because the GitHub runner could not reach the Ubuntu package mirrors; fixed by running inside the Playwright image (no apt downloads) |
 
-## Phase 2 — Split files — IN PROGRESS (plan approved 2026-11-11, D95 + D96; order of 2.3/2.4 swapped by D97)
+## Phase 2 — Split files — COMPLETE (2026-11-11, tag `v1-phase-2`; plan D95 + D96, order of 2.3/2.4 swapped by D97)
 
 Goal: same app, same look, same behaviour; code spread over files. Acceptance for every slice: 216/216 tests green + screenshots pixel-compared with `main` (desktop and mobile, every view). New files load with a `?v=` suffix (cache). Ends with tag `v1-phase-2`.
 
@@ -53,7 +53,7 @@ Goal: same app, same look, same behaviour; code spread over files. Acceptance fo
 | 2.3 | Persistence + Firebase → `js/store.js` + `js/firebase.js`; code moved as it is, `state` replaced only via `replaceState` (D95, D97). Own slice, no UI changes. Branch `phase-2/store-firebase`. `index.html` 1380 → 1316 lines | DONE — merged 2026-11-11: 216/216 pass; 24/24 screenshots pixel-identical to `main` (6 views × desktop/mobile × signed out/signed in); owner checked the live app |
 | 2.4 | Non-persistence logic → modules: `js/main.js` (start-up), `js/ui.js`, `js/render.js`, `js/events.js`, `js/logic/` (dates, technique, daily), `js/views/` (components, calendar, home, daily, improv, library, setup, dojo). Code moved verbatim; only `import`/`export` lines and file header comments added. Branch `phase-2/logic-modules`. `index.html` 1316 → 39 lines | DONE — merged 2026-11-11: 216/216 pass; 24/24 screenshots pixel-identical and 24/24 rendered DOM identical to `main` (6 views × desktop/mobile × signed out/signed in) |
 | 2.5 | Two inline `onclick` (search, SETUP video) → central event handler: search's `onclick` removed (the central handler already showed its message; the inline one threw `showToast is not defined` on every click); SETUP video button → `data-action="openvideo"` handled in `js/events.js`. Cache suffixes bumped to `?v=2` along the import chain. New `tests/handlers.spec.js`. Branch `phase-2/inline-handlers` | DONE — merged 2026-11-11: 224/224 pass; 24/24 screenshots pixel-identical to `main`; owner checked Search, SETUP video, sign-in and saving on the live app |
-| 2.6 | Content Security Policy (D96, D98) as a `<meta>` tag in `index.html`; sources checked against the live app signed in (built-in browser, 11 Nov 2026): `www.gstatic.com` (Firebase SDK), `apis.google.com` (Google sign-in scripts), `shred-auth.firebaseapp.com` (auth iframe), `identitytoolkit.googleapis.com`, `firestore.googleapis.com`, plus `securetoken.googleapis.com` (token refresh) and Google Fonts. New `tests/csp.spec.js`. No JS change, so no `?v=` bump. Branch `phase-2/csp` | DELIVERED 2026-11-11, awaiting owner PR: 234/234 pass (new policy tests fail on `main` as expected); 24/24 screenshots pixel-identical and 24/24 DOM identical to `main`. **After merge:** owner checks sign-in, marking + reload on PC and phone before using the app; any failure → revert the PR |
+| 2.6 | Content Security Policy (D96, D98) as a `<meta>` tag in `index.html`; sources checked against the live app signed in (built-in browser, 11 Nov 2026): `www.gstatic.com` (Firebase SDK), `apis.google.com` (Google sign-in scripts), `shred-auth.firebaseapp.com` (auth iframe), `identitytoolkit.googleapis.com`, `firestore.googleapis.com`, plus `securetoken.googleapis.com` (token refresh) and Google Fonts. New `tests/csp.spec.js`. No JS change, so no `?v=` bump. Branch `phase-2/csp` | DONE — merged in PR #14 (2026-11-11): 234/234 pass; 24/24 screenshots pixel-identical and 24/24 DOM identical to `main`; owner checked sign-in, marking + reload on PC and phone after merge |
 
 Phase 2 notes:
 - The Firebase SDK is already pinned (10.12.2). Dependabot does not watch CDN-loaded libraries, so the plan's "Dependabot" item does not apply as written.
@@ -72,12 +72,34 @@ Phase 2 notes:
   - `js/firebase.js` still says in a comment that `index.html` hands over `render`/`showToast`; it is now `js/main.js`. Comment-only, left untouched to keep persistence files out of this slice.
   - The two inline `onclick` were removed in 2.5. `APP_VIEWS` (in `js/ui.js`) and `PHASE_BLURB` (in `js/data/bhgs.js`) are unused on `main`; kept as they are.
 
+## Phase 3 — Safe data — IN PROGRESS (plan approved 2026-11-11, D99)
+
+Goal: progress is never lost, between PC and phone or in a Reset; the app looks the same. One PR per slice; persistence/sync slices (3.1–3.5) and 3.8 each need a detailed decision recorded before implementation. Tests that document today's bugs (`current behaviour`) change on purpose in 3.3–3.7; each delivery lists which ones. Ends with tag `v1-phase-3`.
+
+| Slice | Content | Status |
+|---|---|---|
+| 3.1 | `schemaVersion: 1` + automatic on-device backups (last N snapshots, separate localStorage key; `shredRoadmapState_v10` untouched) | DELIVERED 2026-11-11, awaiting owner PR: 258/258 pass (234 + 24 new in `backups.spec.js`; 20 of the 24 new fail on `main` as expected); 24/24 screenshots pixel-identical and 24/24 DOM identical to `main` (only the `main.js?v=` suffix differs). Two exact-equality tests (`setup.spec.js`, `dojo.spec.js`) now expect the added `schemaVersion: 1`. **After merge:** owner opens the app on PC and phone, signs in, marks something and reloads |
+| 3.2 | Safeguard 1: snapshot before every whole-state replacement (sign-in sync, Load from cloud, Reset) | TODO |
+| 3.3 | Safeguard 2: no cloud write before the cloud has been read (incl. daily reset on first load) | TODO |
+| 3.4 | Safeguard 3: stale sessions never overwrite newer cloud data | TODO |
+| 3.5 | Reset Everything as D83 | TODO |
+| 3.6 | Extra streak day fix (D33-1) | TODO |
+| 3.7 | "Today" = device's local day (D33-2) | TODO |
+| 3.8 | UI only: Download backup / Restore backup | TODO |
+
+Phase 3 notes:
+- Parked idea I01 (custom SETUP guitars): data shape reserved in D100 (`setupGuitars`, `schemaVersion` 2, written only when built).
+- How 3.1 is built: `js/store.js` has `SCHEMA_VERSION`, `BACKUP_KEY` (`shredRoadmapBackups_v1`), `MAX_BACKUPS` (20), `readBackups()`, `writeBackup(reason, data)` (returns false if it could not store), `migrate(data)` (returns a new object; backup first; untouched if current/newer or if the backup failed) and `dailyBackup()` (first start-up of each **local** day, after `loadState`). `migrate` is applied in `loadState`, in the sign-in sync (`js/firebase.js`) and in manual "Load from cloud" (`js/events.js`). A new device starts at `schemaVersion: 1`. `defaultState()` has no `schemaVersion`, so after Reset Everything the next start migrates again (one extra backup); slice 3.5 settles Reset. A corrupt main state still falls back to defaults as before (unchanged).
+- Cache suffixes after 3.1 (bumped by script along the import chain; one suffix per file checked): `store.js`, `firebase.js`, `logic/dates.js`, `views/dojo.js`, `views/improv.js` `?v=2`; `main.js`, `events.js`, `render.js`, `logic/technique.js`, `logic/daily.js`, `views/` calendar, components, daily, home, library, setup `?v=3`; the rest `?v=1`.
+- Code facts for the plan (on `main`): every save is a full `setDoc` of the whole state (no merge); `onAuthStateChanged` sets `currentUser` before `getDoc` finishes, so a save in between writes local state to the cloud; on sign-in the cloud copy replaces local (`Object.assign(defaultState(), cloud)`), so local-only fields are lost; `main.js` runs `ensureDailyReset()` (which saves) at start-up.
+
 ## Next phases
 
-3 Safe data (sync safeguards, reset, schemaVersion) → 4 Design and navigation → 5 Music engine → 6 Theory v1 → 7 Musical Development + Improv v1 → 8 DAILY integrated → 9 Continuous content.
+4 Design and navigation → 5 Music engine → 6 Theory v1 → 7 Musical Development + Improv v1 → 8 DAILY integrated → 9 Continuous content.
 
 ## Known risks
 
+- Stale sessions: a device left open (e.g. the phone since yesterday) overwrites newer progress from another device on its next save, because every save is a full overwrite (fixed in Phase 3, slice 3.4, D81).
 - Sync: cloud overwrites local on login, and local-only fields are lost; writes can happen before the read finishes (fixed in Phase 3, D81). Covered by `current behaviour` tests in 1.2.
 - On the first load of a new day, the app writes the cloud state straight back (daily reset) without any user action (found in 1.2; relevant to safeguard 2, D81).
 - Extra streak day (found in 1.4): if any DAILY block was ticked yesterday, opening the app today logs today in the streak before anything is practised. Fixed in Phase 3 (D33). Covered by `current behaviour` tests in 1.4.
