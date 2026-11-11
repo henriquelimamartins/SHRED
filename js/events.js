@@ -1,15 +1,16 @@
 // User actions: the central click/change handlers, the calendar swipe listener and Reset Everything.
 // The manual cloud Save/Load handlers and confirmReset() are moved unchanged (no persistence change).
+// Slice 2.5: the SETUP video button ("openvideo") and the search box are handled here only (no inline onclick).
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
 import { CODEX_DATA } from "./data/dojo.js?v=1";
 import { STORAGE_KEY, defaultState, saveState, state, replaceState } from "./store.js?v=1";
 import { hasFirebase, auth, db, googleProvider, currentUser, doc, setDoc, getDoc, signInWithPopup, signOut } from "./firebase.js?v=1";
 import { ui, showToast } from "./ui.js?v=1";
-import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=1";
-import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=1";
-import { changeCalMonth } from "./views/calendar.js?v=1";
+import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=2";
+import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=2";
+import { changeCalMonth } from "./views/calendar.js?v=2";
 import { currentMinigame, addXP, startArchitectGame, handleDojoAnswer, renderCodexList } from "./views/dojo.js?v=1";
-import { updateNav, render } from "./render.js?v=1";
+import { updateNav, render } from "./render.js?v=2";
 
 export function handleReset(){ ui.resetConfirm=true; render(); }
 export function cancelReset(){ ui.resetConfirm=false; render(); }
@@ -155,6 +156,7 @@ document.addEventListener("click",function(e){
   else if(a==="calprev"){ changeCalMonth(-1); }
   else if(a==="calnext"){ changeCalMonth(1); }
   else if(a==="caltoday"){ ui.calMonth = new Date().getMonth(); ui.calYear = new Date().getFullYear(); render(); }
+  else if(a==="openvideo"){ window.open(t.dataset.url, '_blank'); }
 
 });
 

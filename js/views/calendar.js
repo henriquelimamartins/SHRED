@@ -3,7 +3,7 @@
 import { state } from "../store.js?v=1";
 import { ui } from "../ui.js?v=1";
 import { todayISO } from "../logic/dates.js?v=1";
-import { render } from "../render.js?v=1";
+import { render } from "../render.js?v=2";
 
 export function getEarliestYearMonth() {
   if(!state.streakDates || state.streakDates.length === 0) return { y: new Date().getFullYear(), m: new Date().getMonth() };

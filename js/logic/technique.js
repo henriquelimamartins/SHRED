@@ -5,8 +5,8 @@ import { PHASES, CHOP, TESTCATS, PREREQ } from "../data/bhgs.js?v=1";
 import { saveState, state } from "../store.js?v=1";
 import { ui, showToast } from "../ui.js?v=1";
 import { todayISO, ensureDailyReset, updateStreakStatus } from "./dates.js?v=1";
-import { isFullyDoneToday } from "./daily.js?v=1";
-import { render } from "../render.js?v=1";
+import { isFullyDoneToday } from "./daily.js?v=2";
+import { render } from "../render.js?v=2";
 
 export function k(){return Array.prototype.slice.call(arguments).join(".");}
 
