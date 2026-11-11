@@ -20,9 +20,13 @@ concurrency:
 jobs:
   playwright:
     name: Playwright (desktop + mobile)
-    # Fixed Ubuntu version: ubuntu-latest is moving to Ubuntu 26.04, whose package mirrors failed
-    # to resolve during the first run (PR #8). Playwright 1.63 officially supports 24.04.
     runs-on: ubuntu-24.04
+    # Playwright's official image: Chromium and every system package it needs are already inside,
+    # so nothing is downloaded from the Ubuntu package mirrors (unreachable in the first two runs
+    # of PR #8). The image version must match @playwright/test in package.json (1.63.0).
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-noble
+      options: --user 1001
     timeout-minutes: 20
     steps:
       - name: Checkout
@@ -37,17 +41,6 @@ jobs:
 
       - name: Install test tools (exact versions from package.json)
         run: npm install --no-audit --no-fund
-
-      # Downloads Chromium and the system packages it needs. Up to 3 attempts, because a failing
-      # package mirror should not fail the tests.
-      - name: Install Chromium for Playwright
-        run: |
-          for attempt in 1 2 3; do
-            npx playwright install --with-deps chromium && exit 0
-            echo "Install attempt $attempt failed; retrying in 20 s"
-            sleep 20
-          done
-          exit 1
 
       - name: Run tests
         run: npx playwright test
