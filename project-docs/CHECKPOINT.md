@@ -1,6 +1,6 @@
 # CHECKPOINT — The Shred Roadmap
 
-**Updated:** 2026-11-10 · **Current phase:** 1 · Safety net — slice 1.2 delivered on `phase-1/persistence-tests`, awaiting owner PR
+**Updated:** 2026-11-11 · **Current phase:** 1 · Safety net — slices 1.1–1.2 merged; 1.3 delivered on `phase-1/technique-tests`, awaiting owner PR
 **Sources of truth:** `DECISIONS.md` (owner-approved decisions), this file, then the code on `main`.
 **Full plan:** "The Shred Roadmap — Plano revisto (overhaul)", Claude Docs, 9 Nov 2026.
 The previous ChatGPT-era checkpoint is in Git history; it is context only (DECISIONS D07).
@@ -10,11 +10,11 @@ The previous ChatGPT-era checkpoint is in Git history; it is context only (DECIS
 - `main` = the live app (Phase 1 UI). Only Technique is fully implemented. Deployed to GitHub Pages from `main`.
 - `phase-2-dojo-shell` = archived candidate, not merged (D05). `baseline-original` = untouched original.
 - App code (`index.html`) unchanged in the overhaul so far.
-- Automated tests: Playwright, Firebase stubbed, clock fixed at 2026-11-10 12:00 UTC, desktop + mobile. On `main`: smoke suite (1.1). On `phase-1/persistence-tests`: + persistence/sync suite (1.2); 28/28 pass.
+- Automated tests: Playwright, Firebase stubbed, clock fixed at 2026-11-10 12:00 UTC, desktop + mobile. On `main`: smoke suite (1.1) + persistence/sync suite (1.2); 28/28 pass. On `phase-1/technique-tests`: + Technique suite (1.3); 58/58 pass.
 - Owner's real progress lives in Firestore `users/{uid}` and localStorage `shredRoadmapState_v10`.
 - Local working copy: `C:\Users\Henri\Dev\SHRED` (fresh clone, outside OneDrive, D92). Old OneDrive copy `SHRED-OLD-nao-usar` may now be deleted by the owner.
 - The copies of `DECISIONS.md` / `CHECKPOINT.md` in `project-docs/` are synced with the project versions at the end of each slice.
-- PR #3 accidentally committed `Claude outputs/` (two app screenshots the Claude desktop app saved into the repo folder; harmless). Slice 1.2 adds it to `.gitignore`; the owner deletes the folder in the same PR.
+- PR #3 accidentally committed `Claude outputs/` (two app screenshots the Claude desktop app saved into the repo folder; harmless). Removed and git-ignored in PR #4.
 
 ## Phase 0 — Foundations — COMPLETE (2026-11-10)
 
@@ -33,8 +33,8 @@ The previous ChatGPT-era checkpoint is in Git history; it is context only (DECIS
 |---|---|
 | Preparation: repo moved out of OneDrive (D92) | DONE 2026-11-10 |
 | 1.1 Test setup: Playwright + Firebase stubs + smoke test (Home loads; 6 main views open; no errors; no Firebase traffic; no cloud writes), desktop + mobile | DONE — merged in PR #3 (2026-11-10); 4/4 pass on merged `main` |
-| 1.2 Persistence and sync tests (current behaviour): local save/reload, unknown fields kept, sign-in sync, signed-in writes, manual Save/Load, Reset Everything | DELIVERED 2026-11-10 on `phase-1/persistence-tests` — 28/28 pass; awaiting owner commit + PR |
-| 1.3 Technique tests (phases, chops, tests, checks) | NOT STARTED |
+| 1.2 Persistence and sync tests (current behaviour): local save/reload, unknown fields kept, sign-in sync, signed-in writes, manual Save/Load, Reset Everything | DONE — merged in PR #4 (2026-11-10); 28/28 pass on merged `main` |
+| 1.3 Technique tests (D20): phase %, red phase bar, item toggles, stepper limits, automatic advance, Jump to phase | DELIVERED 2026-11-11 on `phase-1/technique-tests` — 58/58 pass, mutation-checked; awaiting owner commit + PR |
 | 1.4 DAILY, calendar and streak tests (fixed clock) | NOT STARTED |
 | 1.5 Improv, Setup, Library, Dojo tests | NOT STARTED |
 | 1.6 Run the tests automatically on every PR (GitHub Actions) | NOT STARTED |
