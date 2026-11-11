@@ -5,7 +5,9 @@
 // importers always see the current object.
 // Phase 3, slice 3.1 (DECISIONS D101): schemaVersion + automatic on-device backups.
 // Phase 3, slice 3.2 (DECISIONS D102): backup before every whole-state replacement.
-import { hasFirebase, currentUser, db, doc, setDoc } from './firebase.js?v=3';
+// Phase 3, slice 3.3 (DECISIONS D103): no cloud write before the cloud was read (cloudReady);
+// saveLocal() saves on the device only (used by the daily reset).
+import { hasFirebase, currentUser, cloudReady, db, doc, setDoc } from './firebase.js?v=4';
 
 export const STORAGE_KEY="shredRoadmapState_v10";
 
@@ -106,9 +108,13 @@ export function defaultState(){
 return {phaseIndex:0,chop:{alt:0,sweep:0,legato:0,econ:0,tap:0},testLevel:{alt:0,sweep:0,legato:0,econ:0,tap:0,ult:0},bonusLevel:{},checks:{},practiced:{},practicedDate:null,congratsDate:null,activeDayOverride:null,activeDayDate:null,streakDates:[],setupGuitar:"prs",setupTuning:"e_std",improvIndex:0,improvChecks:{}, dojo: defaultDojoState()};}
 export function loadState(){try{var raw=localStorage.getItem(STORAGE_KEY);if(raw){var d=migrate(JSON.parse(raw));return Object.assign(defaultState(),d,{chop:Object.assign(defaultState().chop,d.chop||{}),testLevel:Object.assign(defaultState().testLevel,d.testLevel||{}),bonusLevel:d.bonusLevel||{},checks:d.checks||{},practiced:d.practiced||{},streakDates:d.streakDates||[],setupGuitar:d.setupGuitar||"prs",setupTuning:d.setupTuning||"e_std",improvIndex:d.improvIndex||0,improvChecks:d.improvChecks||{}, dojo: Object.assign(defaultDojoState(), d.dojo||{})});}}catch(e){}var fresh=defaultState();fresh.schemaVersion=SCHEMA_VERSION;return fresh;}
 
-export function saveState(){
+export function saveLocal(){
   try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}catch(e){}
-  if(hasFirebase && currentUser && db) {
+}
+
+export function saveState(){
+  saveLocal();
+  if(hasFirebase && currentUser && db && cloudReady) {
     setDoc(doc(db, "users", currentUser.uid), state).catch(e => console.error("Firebase save err", e));
   }
 }

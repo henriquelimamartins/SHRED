@@ -29,8 +29,21 @@ export function doc(db, ...segments) {
   return { path: segments.join('/') };
 }
 
+// Optional behaviour set by a test before the app starts (Phase 3.3), in window.__SHRED_TEST_FLAGS__:
+//   failGetDoc: true -> every getDoc fails, as when the cloud cannot be reached
+//   holdGetDoc: true -> getDoc waits until the test calls window.__SHRED_TEST_RELEASE_GETDOC__()
+function flags() {
+  return window.__SHRED_TEST_FLAGS__ || {};
+}
+
 export async function getDoc(ref) {
   testState().calls.push('getDoc:' + ref.path);
+  if (flags().holdGetDoc) {
+    await new Promise((resolve) => {
+      window.__SHRED_TEST_RELEASE_GETDOC__ = () => { window.__SHRED_TEST_FLAGS__.holdGetDoc = false; resolve(); };
+    });
+  }
+  if (flags().failGetDoc) throw new Error('unavailable (test: cloud cannot be reached)');
   const stored = testState().docs[ref.path];
   return {
     exists: () => stored !== undefined,

@@ -1,18 +1,19 @@
 // User actions: the central click/change handlers, the calendar swipe listener and Reset Everything.
 // The manual cloud Save/Load handlers and confirmReset() are moved unchanged (no persistence change).
 // Slice 3.1 (D101): "Load from cloud" passes cloud data through migrate() (schemaVersion).
+// Slice 3.3 (D103): no cloud write (manual Save, Reset) before the cloud was read this session.
 // Slice 3.2 (D102): backup before "Load from cloud" and Reset Everything replace the state; no backup, no reset.
 // Slice 2.5: the SETUP video button ("openvideo") and the search box are handled here only (no inline onclick).
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
 import { CODEX_DATA } from "./data/dojo.js?v=1";
-import { STORAGE_KEY, defaultState, saveState, state, replaceState, migrate, backupBeforeReplace } from "./store.js?v=3";
-import { hasFirebase, auth, db, googleProvider, currentUser, doc, setDoc, getDoc, signInWithPopup, signOut } from "./firebase.js?v=3";
+import { STORAGE_KEY, defaultState, saveState, state, replaceState, migrate, backupBeforeReplace } from "./store.js?v=4";
+import { hasFirebase, auth, db, googleProvider, currentUser, cloudReady, cloudReadFailed, CLOUD_READ_FAILED_MSG, markCloudRead, doc, setDoc, getDoc, signInWithPopup, signOut } from "./firebase.js?v=4";
 import { ui, showToast } from "./ui.js?v=1";
-import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=4";
-import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=4";
-import { changeCalMonth } from "./views/calendar.js?v=4";
-import { currentMinigame, addXP, startArchitectGame, handleDojoAnswer, renderCodexList } from "./views/dojo.js?v=3";
-import { updateNav, render } from "./render.js?v=4";
+import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=5";
+import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=5";
+import { changeCalMonth } from "./views/calendar.js?v=5";
+import { currentMinigame, addXP, startArchitectGame, handleDojoAnswer, renderCodexList } from "./views/dojo.js?v=4";
+import { updateNav, render } from "./render.js?v=5";
 
 export function handleReset(){ ui.resetConfirm=true; render(); }
 export function cancelReset(){ ui.resetConfirm=false; render(); }
@@ -26,7 +27,7 @@ export function confirmReset(){
   }
   localStorage.removeItem(STORAGE_KEY);
   replaceState(defaultState());
-  if(hasFirebase && currentUser && db) { setDoc(doc(db, "users", currentUser.uid), state).catch(e => console.error(e)); }
+  if(hasFirebase && currentUser && db && cloudReady) { setDoc(doc(db, "users", currentUser.uid), state).catch(e => console.error(e)); } // slice 3.3 (D103)
   ui.resetConfirm=false;
   render();
   showToast("Everything has been reset.");
@@ -107,6 +108,8 @@ document.addEventListener("click",function(e){
   else if(a==="resetactiveday"){ resetActiveDay(); }
   else if(a==="cloudsave"){ 
     if(!currentUser) { showToast("Please login first to save to cloud."); return; }
+    // Slice 3.3 (D103): never write over cloud data this session has not read.
+    if(!cloudReady) { showToast(cloudReadFailed ? CLOUD_READ_FAILED_MSG : "Cloud progress is still loading. Try again in a moment."); return; }
     setDoc(doc(db, "users", currentUser.uid), state).then(() => showToast("Progress manually saved to cloud!")).catch(() => showToast("Error saving to cloud."));
   }
   else if(a==="cloudload"){ 
@@ -116,6 +119,7 @@ document.addEventListener("click",function(e){
         const incoming = Object.assign(defaultState(), migrate(docSnap.data())); // slice 3.1 (D101)
         backupBeforeReplace("before-cloud-load", incoming); // slice 3.2 (D102): cloud still wins if this fails
         replaceState(incoming);
+        markCloudRead(); // slice 3.3 (D103): a successful read allows cloud writes
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
         render();
         showToast("Progress loaded from cloud!");
