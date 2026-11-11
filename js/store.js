@@ -4,7 +4,8 @@
 // replacement of the whole state goes through replaceState(). `state` itself is a live binding:
 // importers always see the current object.
 // Phase 3, slice 3.1 (DECISIONS D101): schemaVersion + automatic on-device backups.
-import { hasFirebase, currentUser, db, doc, setDoc } from './firebase.js?v=2';
+// Phase 3, slice 3.2 (DECISIONS D102): backup before every whole-state replacement.
+import { hasFirebase, currentUser, db, doc, setDoc } from './firebase.js?v=3';
 
 export const STORAGE_KEY="shredRoadmapState_v10";
 
@@ -62,6 +63,27 @@ export function migrate(data){
   // 0 -> 1: only the version number is added.
   out.schemaVersion = 1;
   return out;
+}
+
+// JSON with object keys sorted, so two states compare equal whatever their key order.
+function stableJSON(v){
+  if(Array.isArray(v)) return "[" + v.map(stableJSON).join(",") + "]";
+  if(v && typeof v === "object"){
+    return "{" + Object.keys(v).sort().filter(function(k){ return v[k] !== undefined; })
+      .map(function(k){ return JSON.stringify(k) + ":" + stableJSON(v[k]); }).join(",") + "}";
+  }
+  return JSON.stringify(v === undefined ? null : v);
+}
+export function sameData(a, b){ return stableJSON(a) === stableJSON(b); }
+
+// Safeguard 1 (slice 3.2, D102): call before the whole state is replaced.
+// Backs up the current state unless there is nothing to lose (it equals `incoming`, when given,
+// or the newest backup). Returns true when the current state is safe: backed up now or already.
+export function backupBeforeReplace(reason, incoming){
+  if(incoming !== undefined && sameData(state, incoming)) return true;
+  var list = readBackups();
+  if(list && list.length && sameData(state, list[list.length-1].state)) return true;
+  return writeBackup(reason, state);
 }
 
 // One automatic snapshot of the current state on the first start-up of each local day.

@@ -1,6 +1,6 @@
 # CHECKPOINT — The Shred Roadmap
 
-**Updated:** 2026-11-11 · **Current phase:** 3 · Safe data — plan approved (D99); slice 3.1 (D101) delivered on `phase-3/backups-schema`, awaiting owner PR and live check. Phase 2 complete (tag `v1-phase-2`); Phase 1 complete (tag `v1-phase-1`).
+**Updated:** 2026-11-11 · **Current phase:** 3 · Safe data — plan approved (D99); slice 3.1 merged (PR #15); slice 3.2 (D102) delivered on `phase-3/backup-before-replace`, awaiting owner PR and live check. Phase 2 complete (tag `v1-phase-2`); Phase 1 complete (tag `v1-phase-1`).
 **Sources of truth:** `DECISIONS.md` (owner-approved decisions), this file, then the code on `main`.
 **Full plan:** "The Shred Roadmap — Plano revisto (overhaul)", Claude Docs, 9 Nov 2026.
 The previous ChatGPT-era checkpoint is in Git history; it is context only (DECISIONS D07).
@@ -78,8 +78,8 @@ Goal: progress is never lost, between PC and phone or in a Reset; the app looks 
 
 | Slice | Content | Status |
 |---|---|---|
-| 3.1 | `schemaVersion: 1` + automatic on-device backups (last N snapshots, separate localStorage key; `shredRoadmapState_v10` untouched) | DELIVERED 2026-11-11, awaiting owner PR: 258/258 pass (234 + 24 new in `backups.spec.js`; 20 of the 24 new fail on `main` as expected); 24/24 screenshots pixel-identical and 24/24 DOM identical to `main` (only the `main.js?v=` suffix differs). Two exact-equality tests (`setup.spec.js`, `dojo.spec.js`) now expect the added `schemaVersion: 1`. **After merge:** owner opens the app on PC and phone, signs in, marks something and reloads |
-| 3.2 | Safeguard 1: snapshot before every whole-state replacement (sign-in sync, Load from cloud, Reset) | TODO |
+| 3.1 | `schemaVersion: 1` + automatic on-device backups (last N snapshots, separate localStorage key; `shredRoadmapState_v10` untouched) | DONE — merged in PR #15 (2026-11-11): 258/258 pass; 24/24 screenshots pixel-identical and 24/24 DOM identical to `main`; owner checked the live app after merge |
+| 3.2 | Safeguard 1: snapshot before every whole-state replacement (sign-in sync, Load from cloud, Reset) | DELIVERED 2026-11-11, awaiting owner PR: 278/278 pass (258 + 20 new in `backup-before-replace.spec.js`; 8 of the 20 fail on `main`, the other 12 check that nothing extra happens); 24/24 screenshots pixel-identical and 24/24 DOM identical to `main`. **After merge:** owner signs in on PC and phone, marks something, reloads |
 | 3.3 | Safeguard 2: no cloud write before the cloud has been read (incl. daily reset on first load) | TODO |
 | 3.4 | Safeguard 3: stale sessions never overwrite newer cloud data | TODO |
 | 3.5 | Reset Everything as D83 | TODO |
@@ -90,6 +90,8 @@ Goal: progress is never lost, between PC and phone or in a Reset; the app looks 
 Phase 3 notes:
 - Parked idea I01 (custom SETUP guitars): data shape reserved in D100 (`setupGuitars`, `schemaVersion` 2, written only when built).
 - How 3.1 is built: `js/store.js` has `SCHEMA_VERSION`, `BACKUP_KEY` (`shredRoadmapBackups_v1`), `MAX_BACKUPS` (20), `readBackups()`, `writeBackup(reason, data)` (returns false if it could not store), `migrate(data)` (returns a new object; backup first; untouched if current/newer or if the backup failed) and `dailyBackup()` (first start-up of each **local** day, after `loadState`). `migrate` is applied in `loadState`, in the sign-in sync (`js/firebase.js`) and in manual "Load from cloud" (`js/events.js`). A new device starts at `schemaVersion: 1`. `defaultState()` has no `schemaVersion`, so after Reset Everything the next start migrates again (one extra backup); slice 3.5 settles Reset. A corrupt main state still falls back to defaults as before (unchanged).
+- How 3.2 is built: `js/store.js` adds `sameData(a, b)` (sorted-key JSON comparison) and `backupBeforeReplace(reason, incoming)`; called in the sign-in sync (`js/firebase.js`), manual Load and `confirmReset` (`js/events.js`). On the first start of a day the `daily` snapshot already equals local state, so the sign-in sync usually adds no second backup; the local state is still safe in that snapshot.
+- Cache suffixes after 3.2: `store.js`, `firebase.js`, `logic/dates.js`, `views/dojo.js`, `views/improv.js` `?v=3`; `main.js`, `events.js`, `render.js`, `logic/technique.js`, `logic/daily.js`, `views/` calendar, components, daily, home, library, setup `?v=4`; the rest `?v=1`.
 - Cache suffixes after 3.1 (bumped by script along the import chain; one suffix per file checked): `store.js`, `firebase.js`, `logic/dates.js`, `views/dojo.js`, `views/improv.js` `?v=2`; `main.js`, `events.js`, `render.js`, `logic/technique.js`, `logic/daily.js`, `views/` calendar, components, daily, home, library, setup `?v=3`; the rest `?v=1`.
 - Code facts for the plan (on `main`): every save is a full `setDoc` of the whole state (no merge); `onAuthStateChanged` sets `currentUser` before `getDoc` finishes, so a save in between writes local state to the cloud; on sign-in the cloud copy replaces local (`Object.assign(defaultState(), cloud)`), so local-only fields are lost; `main.js` runs `ensureDailyReset()` (which saves) at start-up.
 
