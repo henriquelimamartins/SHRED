@@ -3,13 +3,13 @@
 import { hasFirebase, currentUser } from "./firebase.js?v=1";
 import { ui } from "./ui.js?v=1";
 import { ensureDailyReset } from "./logic/dates.js?v=1";
-import { progressBar } from "./views/components.js?v=1";
-import { initCalCarousel } from "./views/calendar.js?v=1";
-import { renderHome } from "./views/home.js?v=1";
-import { renderDaily } from "./views/daily.js?v=1";
+import { progressBar } from "./views/components.js?v=2";
+import { initCalCarousel } from "./views/calendar.js?v=2";
+import { renderHome } from "./views/home.js?v=2";
+import { renderDaily } from "./views/daily.js?v=2";
 import { renderImprov } from "./views/improv.js?v=1";
-import { renderLibrary } from "./views/library.js?v=1";
-import { renderSetup } from "./views/setup.js?v=1";
+import { renderLibrary } from "./views/library.js?v=2";
+import { renderSetup } from "./views/setup.js?v=2";
 import { renderDojoView } from "./views/dojo.js?v=1";
 
 export function initAppLayout() {
@@ -69,7 +69,7 @@ export function render(){
     topbarHTML += '<div class="brand mobile-brand">THE <span>SHRED</span> ROADMAP</div>';
     
     // Future search integration
-    topbarHTML += '<div class="shell-search" onclick="showToast(\'Global search coming in a future phase\')"><span class="ic">🔍</span><span class="srch-txt">Search...</span></div>';
+    topbarHTML += '<div class="shell-search"><span class="ic">🔍</span><span class="srch-txt">Search...</span></div>';
     
     if(hasFirebase){
       topbarHTML += '<div class="auth-container">';

@@ -3,8 +3,8 @@
 import { initFirebase } from "./firebase.js?v=1";
 import { showToast } from "./ui.js?v=1";
 import { ensureDailyReset } from "./logic/dates.js?v=1";
-import { render } from "./render.js?v=1";
-import "./events.js?v=1";
+import { render } from "./render.js?v=2";
+import "./events.js?v=2";
 
 initFirebase(render, showToast);
 
