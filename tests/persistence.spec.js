@@ -1,6 +1,7 @@
 // Phase 1.2: how saving and cloud sync behave on main TODAY.
 // Tests named "current behaviour:" document known risks (DECISIONS D81, D83). When Phase 3 fixes
-// them, those tests are updated on purpose, in the same PR as the fix (3.3: new-day write-back).
+// them, those tests are updated on purpose, in the same PR as the fix (3.3: new-day write-back;
+// 3.5: Reset Everything, D106).
 // Firebase is stubbed; the "cloud" is window.__SHRED_TEST__.docs and every write is recorded.
 const { test, expect } = require('@playwright/test');
 const { openApp, cloudWrites, localSaved, settle, unexpectedConsoleErrors } = require('./support/app');
@@ -158,37 +159,46 @@ test.describe('Reset Everything', () => {
     expect(saved.streakDates).toHaveLength(3);
   });
 
-  test('current behaviour: confirm wipes everything, including streak, calendar and SETUP', async ({ page }) => {
-    await openApp(page, { localState: progressState({ futureField: 'x' }) });
+  test('confirm erases progress only and keeps streak, calendar, SETUP and unknown fields (D83, D106)', async ({ page }) => {
+    // Replaced on purpose in slice 3.5: before D106 the reset also wiped streak, calendar, SETUP and unknown fields.
+    await openApp(page, { localState: progressState({ schemaVersion: 1, futureField: 'x' }) });
     await page.locator('#panel-home [data-action="reset"]').click();
     await page.locator('#panel-home [data-action="confirmreset"]').click();
-    await expect(page.locator('#toast')).toHaveText('Everything has been reset.');
+    await expect(page.locator('#toast')).toHaveText('Progress has been reset. Streak, calendar and SETUP were kept.');
 
     await expect(altLevel(page)).toHaveText('0/5');
     const saved = await localSaved(page);
     expect(saved.testLevel.alt).toBe(0);
     expect(saved.chop.alt).toBe(0);
     expect(saved.checks).toEqual({});
-    expect(saved.streakDates).toEqual([]); // D83 will keep these
-    expect(saved.setupGuitar).toBe('prs'); // D83 will keep SETUP
     expect(saved.improvChecks).toEqual({});
-    expect(saved).not.toHaveProperty('futureField');
+    expect(saved.streakDates).toEqual(['2026-11-07', '2026-11-08', '2026-11-09']);
+    expect(saved.setupGuitar).toBe('epi');
+    expect(saved.setupTuning).toBe('drop_d');
+    expect(saved.futureField).toBe('x');
+    expect(saved.schemaVersion).toBe(1);
     expect(await cloudWrites(page)).toEqual([]);
   });
 
-  test('current behaviour: while signed in, confirm overwrites the cloud document with no backup', async ({ page }) => {
-    await openApp(page, { user: TEST_USER, docs: { [USER_DOC]: progressState() } });
+  test('while signed in, confirm sends the reset to the cloud as a checked write, streak and SETUP kept (D106)', async ({ page }) => {
+    // Replaced on purpose in slice 3.5: before D106 the cloud document lost the streak and SETUP too.
+    await openApp(page, { user: TEST_USER, docs: { [USER_DOC]: progressState({ schemaVersion: 1, syncRev: 2 }) } });
     await page.locator('#panel-home [data-action="reset"]').click();
     await page.locator('#panel-home [data-action="confirmreset"]').click();
     await settle(page);
 
     const writes = await cloudWrites(page);
-    expect(writes.length).toBeGreaterThanOrEqual(1);
-    expect(writes.every((w) => w.path === USER_DOC)).toBe(true);
-    const last = writes[writes.length - 1].data;
+    expect(writes).toHaveLength(1);
+    expect(writes[0].path).toBe(USER_DOC);
+    expect(writes[0].via).toBe('transaction');
+    const last = writes[0].data;
+    expect(last.syncRev).toBe(3);
     expect(last.testLevel.alt).toBe(0);
-    expect(last.streakDates).toEqual([]);
+    expect(last.checks).toEqual({});
+    expect(last.streakDates).toEqual(['2026-11-07', '2026-11-08', '2026-11-09']);
+    expect(last.setupGuitar).toBe('epi');
     const cloudNow = await page.evaluate((path) => window.__SHRED_TEST__.docs[path], USER_DOC);
-    expect(cloudNow.streakDates).toEqual([]);
+    expect(cloudNow.streakDates).toEqual(['2026-11-07', '2026-11-08', '2026-11-09']);
+    expect(cloudNow.testLevel.alt).toBe(0);
   });
 });

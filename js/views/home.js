@@ -1,12 +1,13 @@
 // HOME view.
+// Slice 3.5 (D106): Reset Everything confirmation text says what is erased and what is kept.
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
 import { PHASES, TESTCATS } from "../data/bhgs.js?v=1";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=1";
 import { totalStreak, currentStreak } from "../logic/dates.js?v=5";
-import { phasePercent } from "../logic/technique.js?v=6";
-import { testRow } from "./components.js?v=6";
-import { renderStreakCalendar } from "./calendar.js?v=6";
+import { phasePercent } from "../logic/technique.js?v=7";
+import { testRow } from "./components.js?v=7";
+import { renderStreakCalendar } from "./calendar.js?v=7";
 
 /* ---------- views ---------- */
 export function renderHome(){
@@ -44,8 +45,8 @@ export function renderHome(){
 
   html+='<div class="card"><h3>Cloud Sync</h3>';
   if(ui.resetConfirm){
-    html+='<p style="color:#ffb3ac;text-align:justify;"><b>Delete everything?</b> This wipes every phase, checklist, chop level, test level and streak. This cannot be undone.</p>'+
-      '<div style="display:flex;gap:12px;margin-top:14px;"><button class="tbtn" style="flex:1;" data-action="cancelreset">Cancel</button><button class="tbtn danger" style="flex:1;" data-action="confirmreset">Yes, delete everything</button></div>';
+    html+='<p style="color:#ffb3ac;text-align:justify;"><b>Reset all progress?</b> This erases Technique, Improv, Theory and Creative progress. Your streak, calendar and SETUP are kept. A backup is saved on this device first.</p>'+
+      '<div style="display:flex;gap:12px;margin-top:14px;"><button class="tbtn" style="flex:1;" data-action="cancelreset">Cancel</button><button class="tbtn danger" style="flex:1;" data-action="confirmreset">Yes, reset progress</button></div>';
   } else {
     html+='<p style="text-align:justify;">Your progress syncs automatically when logged in. You can also manually push a save or pull your latest cloud backup here.</p>'+
       '<div style="display:flex;gap:12px;margin-top:14px;"><button class="tbtn" style="flex:1;" data-action="cloudsave">\u2601\ufe0f Save</button><button class="tbtn" style="flex:1;" data-action="cloudload">\u2601\ufe0f Load</button></div>'+

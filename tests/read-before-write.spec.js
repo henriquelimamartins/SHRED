@@ -98,13 +98,16 @@ test.describe('when the cloud read fails', () => {
     expect(await cloudWrites(page)).toEqual([]);
   });
 
-  test('Reset Everything works on the device only and leaves the cloud untouched', async ({ page }) => {
+  test('Reset Everything is refused with the same message; nothing is erased (slice 3.5, D106)', async ({ page }) => {
+    // Changed on purpose in slice 3.5: before D106 the reset ran on the device only and was undone at the next sign-in.
     await setFlags(page, { failGetDoc: true });
     await openApp(page, { user: TEST_USER, docs: { [USER_DOC]: progressState({ schemaVersion: 1 }) }, localState: progressState({ schemaVersion: 1 }) });
     await page.locator('#panel-home [data-action="reset"]').click();
     await page.locator('#panel-home [data-action="confirmreset"]').click();
-    await expect(page.locator('#toast')).toHaveText('Everything has been reset.');
+    await expect(page.locator('#toast')).toHaveText(READ_FAILED);
+    await expect(altLevel(page)).toHaveText('3/5');
     await settle(page);
+    expect((await localSaved(page)).testLevel.alt).toBe(3);
     expect(await cloudWrites(page)).toEqual([]);
     expect((await cloudDoc(page)).testLevel.alt).toBe(3);
   });

@@ -6,8 +6,8 @@ import { LISTENING_VAULT } from "../data/listening.js?v=1";
 import { DAY_FULL } from "../data/days.js?v=1";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=1";
-import { k, phasePercent } from "../logic/technique.js?v=6";
-import { linked, checkItem, watchItem, prereqItem, docItem, chopRow, testRow, renderBonusList } from "./components.js?v=6";
+import { k, phasePercent } from "../logic/technique.js?v=7";
+import { linked, checkItem, watchItem, prereqItem, docItem, chopRow, testRow, renderBonusList } from "./components.js?v=7";
 
 export function renderLibrary(){
   var html='<div class="eyebrow">Reference &amp; Review</div><div class="h2" style="font-size:22px;margin-bottom:8px;">Library</div>';

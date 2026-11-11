@@ -5,36 +5,62 @@
 // Slice 3.2 (D102): backup before "Load from cloud" and Reset Everything replace the state; no backup, no reset.
 // Slice 3.4 (D105): manual Save and Reset use the checked write queue (requestCloudWrite); manual Load
 // uses loadFromCloud(); nothing is saved or reset over data from a newer app version.
+// Slice 3.5 (D106): Reset Everything erases progress only (D83) and keeps streak, calendar, today's
+// DAILY session, SETUP, sync fields and unknown fields; signed in, it waits for the first cloud read.
 // Slice 2.5: the SETUP video button ("openvideo") and the search box are handled here only (no inline onclick).
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
 import { CODEX_DATA } from "./data/dojo.js?v=1";
-import { STORAGE_KEY, defaultState, saveState, state, replaceState, backupBeforeReplace, newerSchema, NEWER_SCHEMA_MSG } from "./store.js?v=5";
+import { defaultState, defaultDojoState, saveState, state, replaceState, backupBeforeReplace, newerSchema, NEWER_SCHEMA_MSG } from "./store.js?v=5";
 import { hasFirebase, auth, db, googleProvider, currentUser, cloudReady, cloudReadFailed, CLOUD_READ_FAILED_MSG, requestCloudWrite, loadFromCloud, signInWithPopup, signOut } from "./firebase.js?v=5";
 import { ui, showToast } from "./ui.js?v=1";
-import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=6";
-import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=6";
-import { changeCalMonth } from "./views/calendar.js?v=6";
+import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=7";
+import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=7";
+import { changeCalMonth } from "./views/calendar.js?v=7";
 import { currentMinigame, addXP, startArchitectGame, handleDojoAnswer, renderCodexList } from "./views/dojo.js?v=5";
-import { updateNav, render } from "./render.js?v=6";
+import { updateNav, render } from "./render.js?v=7";
 
 export function handleReset(){ ui.resetConfirm=true; render(); }
 export function cancelReset(){ ui.resetConfirm=false; render(); }
+// Slice 3.5 (D106): the state after Reset Everything. Only progress is erased: Technique, every mark in
+// `checks` (Technique, BHGS theory videos, Creative), Improv and legacy DOJO data. Everything else is
+// kept as it is, including fields this app does not know (D82) and the DOJO sound setting.
+var RESET_FIELDS = ["phaseIndex","chop","testLevel","bonusLevel","checks","improvIndex","improvChecks"];
+export function progressResetState(current){
+  var fresh = defaultState();
+  var next = JSON.parse(JSON.stringify(current));
+  RESET_FIELDS.forEach(function(f){ next[f] = fresh[f]; });
+  var dojo = defaultDojoState();
+  if(current.dojo && typeof current.dojo.audioMuted === "boolean") dojo.audioMuted = current.dojo.audioMuted;
+  next.dojo = dojo;
+  return next;
+}
+
 export function confirmReset(){
   // Slice 3.4 (D105): nothing is reset over data saved by a newer app version.
   if(newerSchema){ ui.resetConfirm=false; render(); showToast(NEWER_SCHEMA_MSG); return; }
+  // Slice 3.5 (D106): signed in, no reset before this session has read the cloud (it would be undone
+  // by the sign-in sync or never reach the account). Same message as manual "Save to cloud".
+  if(hasFirebase && currentUser && !cloudReady){
+    ui.resetConfirm=false;
+    render();
+    showToast(cloudReadFailed ? CLOUD_READ_FAILED_MSG : "Cloud progress is still loading. Try again in a moment.");
+    return;
+  }
+  var next = progressResetState(state);
   // Slice 3.2 (D102): no reset without a backup of the current state.
-  if(!backupBeforeReplace("before-reset")){
+  if(!backupBeforeReplace("before-reset", next)){
     ui.resetConfirm=false;
     render();
     showToast("Could not back up your progress. Nothing was reset.");
     return;
   }
-  localStorage.removeItem(STORAGE_KEY);
-  replaceState(defaultState());
-  if(hasFirebase && currentUser && db && cloudReady) { requestCloudWrite(); } // slice 3.3 (D103), 3.4 (D105)
+  replaceState(next);
+  // Saved on the device; signed in, sent through the checked write queue (D105). The localStorage
+  // key is no longer removed (D106), so the next start-up needs no migration.
+  saveState();
   ui.resetConfirm=false;
   render();
-  showToast("Everything has been reset.");
+  showToast("Progress has been reset. Streak, calendar and SETUP were kept.");
 }
 
 // Calendar carousel scroll listener for fluid swiping and month preview
