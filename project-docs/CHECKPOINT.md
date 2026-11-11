@@ -1,6 +1,6 @@
 # CHECKPOINT — The Shred Roadmap
 
-**Updated:** 2026-11-11 · **Current phase:** 2 · Split files — plan approved (D95, D96); slice 2.1 delivered on `phase-2/css-splash`, awaiting owner PR. Phase 1 complete (tag `v1-phase-1`).
+**Updated:** 2026-11-11 · **Current phase:** 2 · Split files — plan approved (D95, D96); slice 2.1 merged; slice 2.2 delivered on `phase-2/data-files`, awaiting owner PR. Phase 1 complete (tag `v1-phase-1`).
 **Sources of truth:** `DECISIONS.md` (owner-approved decisions), this file, then the code on `main`.
 **Full plan:** "The Shred Roadmap — Plano revisto (overhaul)", Claude Docs, 9 Nov 2026.
 The previous ChatGPT-era checkpoint is in Git history; it is context only (DECISIONS D07).
@@ -47,8 +47,8 @@ Goal: same app, same look, same behaviour; code spread over files. Acceptance fo
 
 | Slice | Content | Status |
 |---|---|---|
-| 2.1 | CSS → `css/app.css`; splash script → `js/splash.js`; sync `project-docs/` copies of DECISIONS and CHECKPOINT | DELIVERED on `phase-2/css-splash` (2026-11-11): 216/216 pass; 12/12 screenshots pixel-identical to `main` (6 views × desktop/mobile); awaiting owner PR |
-| 2.2 | Data → `js/data/`: `bhgs.js` (all BHGS data, own file), `improv.js`, `theory.js`, `listening.js`, `setup.js`, `dojo.js` | NOT STARTED |
+| 2.1 | CSS → `css/app.css`; splash script → `js/splash.js`; sync `project-docs/` copies of DECISIONS and CHECKPOINT | DONE — merged 2026-11-11: 216/216 pass; 12/12 screenshots pixel-identical to `main` (6 views × desktop/mobile) |
+| 2.2 | Data → `js/data/` as ES modules: `bhgs.js` (all BHGS data: phases, chop-builders, tests, prerequisites, bonus, DAILY micro-doses, BHGS theory videos/PDF links, creative links), `improv.js`, `listening.js`, `days.js`, `setup.js`, `dojo.js`, `helpers.js` (`I()`). `index.html` 1694 → 1380 lines | DELIVERED on `phase-2/data-files` (2026-11-11): 216/216 pass; 12/12 screenshots pixel-identical to `main`; awaiting owner PR |
 | 2.3 | Non-persistence logic → modules (dates/streak, technique, daily, views, navigation/events) | NOT STARTED |
 | 2.4 | Persistence + Firebase → `js/store.js` + `js/firebase.js`; code moved as it is, `state` replaced only via `replaceState` (D95). Own slice, no UI changes | NOT STARTED |
 | 2.5 | Two inline `onclick` (search, SETUP video) → central event handler | NOT STARTED |
