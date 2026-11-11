@@ -1,15 +1,12 @@
 # SHRED — Project Documentation
 
-This folder contains durable documentation for The Shred Roadmap.
+This folder holds copies of the two documents that steer The Shred Roadmap:
 
-## Document authority
-1. `MASTERPLAN.md` — authoritative product vision, requirements, safeguards and phase prompts.
-2. `CHECKPOINT.md` — current execution status and next actions.
-3. `PHASE_LOG.md` — chronological record of implementation, review and approval.
-4. `phase-prompts/` — copy-ready implementation prompts.
+1. `DECISIONS.md` — owner-approved decisions (source of truth).
+2. `CHECKPOINT.md` — current status, next step and known risks.
 
-Keep these documents on `main` so they remain available independently of development branches. Update the Checkpoint and Phase Log after every phase review or approval. Do not let Gemini rewrite the Masterplan without explicit approval.
+After these two, the code on `main` is the reference. The working versions of both files live in the Claude project and are copied here at the end of each slice.
 
-Code development happens on phase-specific branches, never directly on `main`. Merge only after independent review. Keep local backups of all complete HTML deliverables and the original baseline.
+The earlier ChatGPT-era documents (`MASTERPLAN.md`, `PHASE_LOG.md`, `CLAUDE-PROMPT`, `phase-prompts/`) were removed from `main` by decision D104. They remain in Git history, for example at tag `v1-pre-overhaul`.
 
 **Public repository warning:** never store passwords, private tokens, service-account credentials, private keys, personal user data or other secrets in this repository.
