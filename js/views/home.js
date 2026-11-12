@@ -4,10 +4,10 @@
 import { PHASES, TESTCATS } from "../data/bhgs.js?v=1";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=1";
-import { totalStreak, currentStreak } from "../logic/dates.js?v=6";
-import { phasePercent } from "../logic/technique.js?v=8";
-import { testRow } from "./components.js?v=8";
-import { renderStreakCalendar } from "./calendar.js?v=8";
+import { totalStreak, currentStreak } from "../logic/dates.js?v=7";
+import { phasePercent } from "../logic/technique.js?v=9";
+import { testRow } from "./components.js?v=9";
+import { renderStreakCalendar } from "./calendar.js?v=9";
 
 /* ---------- views ---------- */
 export function renderHome(){

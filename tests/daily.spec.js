@@ -437,10 +437,9 @@ test.describe('item sequences in DAILY', () => {
 
 // ---------------------------------------------------------------------------------------------
 test.describe('time zone', () => {
-  test('current behaviour: in Lisbon summer time, just after midnight the weekday is local but the date is UTC', async ({ page }) => {
-    // Known problem (found in 1.4): the app takes the weekday from the device clock but "today"
-    // (streak, calendar, daily reset, item dates) from UTC. In summer (UTC+1), between 00:00 and
-    // 01:00 the DAILY session is already Wednesday, but practice is logged on Tuesday's date.
+  test('in Lisbon summer time, just after midnight the weekday and the date are both local (slice 3.7, D109)', async ({ page }) => {
+    // Fixed in slice 3.7: was "current behaviour: in Lisbon summer time, just after midnight the
+    // weekday is local but the date is UTC" (found in 1.4). 23:30 UTC = 00:30 Wednesday in Lisbon.
     await openApp(page, { now: '2026-07-14T23:30:00Z', localState: baseState({ phaseIndex: 1, practicedDate: '2026-07-14' }) });
     await goTo(page, 'daily');
     await expect(daily(page).locator('.eyebrow')).toHaveText('Wednesday · Beginner');
@@ -448,12 +447,13 @@ test.describe('time zone', () => {
     await practiceBox(page, 'warmup').click();
     const saved = await localSaved(page);
     expect(saved.practiced).toEqual({ 'warmup.Wed': true });
-    expect(saved.practicedDate).toBe('2026-07-14');
-    expect(saved.streakDates).toEqual(['2026-07-14']);
+    expect(saved.practicedDate).toBe('2026-07-15');
+    expect(saved.streakDates).toEqual(['2026-07-15']);
 
     await goTo(page, 'home');
-    await expect(cell(page, 2026, 6, 14)).toHaveClass(/today/);
-    await expect(cell(page, 2026, 6, 15)).not.toHaveClass(/today/);
+    await expect(cell(page, 2026, 6, 15)).toHaveClass(/today/);
+    await expect(cell(page, 2026, 6, 15)).toHaveClass(/\bhit\b/);
+    await expect(cell(page, 2026, 6, 14)).not.toHaveClass(/today/);
   });
 });
 
