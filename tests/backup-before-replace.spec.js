@@ -7,6 +7,7 @@ const { openApp, cloudWrites, localSaved, settle, unexpectedConsoleErrors } = re
 const { TEST_USER, USER_DOC, progressState } = require('./support/fixtures');
 
 const BACKUP_KEY = 'shredRoadmapBackups_v1';
+const RESET_DONE = 'Progress has been reset. Streak, calendar and SETUP were kept.'; // slice 3.5 (D106)
 
 const altPlus = (page) => page.locator('#panel-home [data-action="test"][data-t="alt"][data-d="1"]');
 const altLevel = (page) => altPlus(page).locator('xpath=preceding-sibling::div[contains(@class,"lvl")]');
@@ -137,7 +138,7 @@ test.describe('Reset Everything', () => {
     await openApp(page, { localState: progressState({ schemaVersion: 1 }) });
     await altPlus(page).click(); // differs from the daily snapshot taken at start-up
     await resetEverything(page);
-    await expect(page.locator('#toast')).toHaveText('Everything has been reset.');
+    await expect(page.locator('#toast')).toHaveText(RESET_DONE);
     await expect(altLevel(page)).toHaveText('0/5');
 
     const reset = byReason(await backups(page), 'before-reset');
@@ -150,7 +151,7 @@ test.describe('Reset Everything', () => {
     const local = progressState({ schemaVersion: 1 });
     await openApp(page, { localState: local });
     await resetEverything(page);
-    await expect(page.locator('#toast')).toHaveText('Everything has been reset.');
+    await expect(page.locator('#toast')).toHaveText(RESET_DONE);
     const list = await backups(page);
     expect(byReason(list, 'before-reset')).toHaveLength(0);
     expect(list[list.length - 1].state.testLevel).toEqual(local.testLevel); // the daily snapshot covers it
