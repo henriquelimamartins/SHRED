@@ -13,11 +13,11 @@ import { CODEX_DATA } from "./data/dojo.js?v=1";
 import { defaultState, defaultDojoState, saveState, state, replaceState, backupBeforeReplace, newerSchema, NEWER_SCHEMA_MSG } from "./store.js?v=5";
 import { hasFirebase, auth, db, googleProvider, currentUser, cloudReady, cloudReadFailed, CLOUD_READ_FAILED_MSG, requestCloudWrite, loadFromCloud, signInWithPopup, signOut } from "./firebase.js?v=5";
 import { ui, showToast } from "./ui.js?v=1";
-import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=7";
-import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=7";
-import { changeCalMonth } from "./views/calendar.js?v=7";
+import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=8";
+import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=8";
+import { changeCalMonth } from "./views/calendar.js?v=8";
 import { currentMinigame, addXP, startArchitectGame, handleDojoAnswer, renderCodexList } from "./views/dojo.js?v=5";
-import { updateNav, render } from "./render.js?v=7";
+import { updateNav, render } from "./render.js?v=8";
 
 export function handleReset(){ ui.resetConfirm=true; render(); }
 export function cancelReset(){ ui.resetConfirm=false; render(); }

@@ -2,13 +2,13 @@
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
 import { hasFirebase, currentUser } from "./firebase.js?v=5";
 import { ui } from "./ui.js?v=1";
-import { ensureDailyReset } from "./logic/dates.js?v=5";
-import { progressBar } from "./views/components.js?v=7";
-import { initCalCarousel } from "./views/calendar.js?v=7";
-import { renderHome } from "./views/home.js?v=7";
-import { renderDaily } from "./views/daily.js?v=7";
+import { ensureDailyReset } from "./logic/dates.js?v=6";
+import { progressBar } from "./views/components.js?v=8";
+import { initCalCarousel } from "./views/calendar.js?v=8";
+import { renderHome } from "./views/home.js?v=8";
+import { renderDaily } from "./views/daily.js?v=8";
 import { renderImprov } from "./views/improv.js?v=5";
-import { renderLibrary } from "./views/library.js?v=7";
+import { renderLibrary } from "./views/library.js?v=8";
 import { renderSetup } from "./views/setup.js?v=6";
 import { renderDojoView } from "./views/dojo.js?v=5";
 

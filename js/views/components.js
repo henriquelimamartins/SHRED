@@ -3,9 +3,9 @@
 import { PHASES, CHOP, TESTCATS, BONUS } from "../data/bhgs.js?v=1";
 import { DAY_ORDER } from "../data/days.js?v=1";
 import { state } from "../store.js?v=5";
-import { todayISO, todayName, activeDay } from "../logic/dates.js?v=5";
-import { phasePercent } from "../logic/technique.js?v=7";
-import { isBlockPracticed } from "../logic/daily.js?v=7";
+import { todayISO, todayName, activeDay } from "../logic/dates.js?v=6";
+import { phasePercent } from "../logic/technique.js?v=8";
+import { isBlockPracticed } from "../logic/daily.js?v=8";
 
 /* ---------- render helpers ---------- */
 export function linked(label,url){ return url? '<a href="'+url+'" target="_blank" rel="noopener">'+label+'</a>' : label; }
