@@ -1,5 +1,7 @@
 # Runs the automated tests (tests/, Playwright, Firebase stubbed) on every pull request to main.
 # Phase 1.6 · Safety net. Read-only: no secrets, no deploy, no writes to the repository.
+# D107: the tests run in 4 parallel jobs (desktop/mobile × 2 shards) to save time; a final job with
+# the original check name "Playwright (desktop + mobile)" is green only if all 4 passed.
 name: Tests
 
 on:
@@ -18,8 +20,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  playwright:
-    name: Playwright (desktop + mobile)
+  shard:
+    name: Playwright (${{ matrix.project }} ${{ matrix.shard }}/2)
     runs-on: ubuntu-24.04
     # Playwright's official image: Chromium and every system package it needs are already inside,
     # so nothing is downloaded from the Ubuntu package mirrors (unreachable in the first two runs
@@ -28,6 +30,12 @@ jobs:
       image: mcr.microsoft.com/playwright:v1.63.0-noble
       options: --user 1001
     timeout-minutes: 20
+    strategy:
+      # Every shard runs to the end, so one failure does not hide others.
+      fail-fast: false
+      matrix:
+        project: [desktop, mobile]
+        shard: [1, 2]
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -42,8 +50,8 @@ jobs:
       - name: Install test tools (exact versions from package.json)
         run: npm install --no-audit --no-fund
 
-      - name: Run tests
-        run: npx playwright test
+      - name: Run tests (${{ matrix.project }}, part ${{ matrix.shard }} of 2)
+        run: npx playwright test --project=${{ matrix.project }} --shard=${{ matrix.shard }}/2
         env:
           CI: "true"
 
@@ -51,8 +59,21 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: playwright-report
+          name: playwright-report-${{ matrix.project }}-${{ matrix.shard }}
           path: |
             playwright-report/
             test-results/
           retention-days: 14
+
+  playwright:
+    # Same name as the single job before D107, so the PR check keeps its name.
+    name: Playwright (desktop + mobile)
+    needs: shard
+    if: always()
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: All 4 test jobs passed
+        run: |
+          echo "Test jobs result: ${{ needs.shard.result }}"
+          test "${{ needs.shard.result }}" = "success"
