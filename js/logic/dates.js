@@ -2,10 +2,13 @@
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
 // Slice 3.3 (D103): ensureDailyReset() saves on the device only.
 // Slice 3.6 (D108): on a new day, ticks left from an earlier day are logged under that day, never today.
+// Slice 3.7 (D109): "today" is the device's local calendar day (was the UTC date).
 import { DAYS } from "../data/days.js?v=1";
 import { saveLocal, state } from "../store.js?v=5";
 
-export function todayISO(){return new Date().toISOString().slice(0,10);}
+// Slice 3.7 (D109): a date as YYYY-MM-DD in the device's local calendar (not UTC).
+export function localISO(d){ return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0"); }
+export function todayISO(){ return localISO(new Date()); } // was new Date().toISOString().slice(0,10) (UTC date)
 export function todayName(){return DAYS[new Date().getDay()];}
 export function isWeekendDay(d){return d==="Sat"||d==="Sun";}
 export function activeDay(){ if(state.activeDayOverride && state.activeDayDate===todayISO()) return state.activeDayOverride; return todayName(); }
@@ -45,14 +48,16 @@ export function updateStreakStatus(){
   }
 }
 
+// Slice 3.7 (D109): counts back one local calendar day at a time (setDate keeps local midnight
+// steps correct across summer-time changes); dates compared with localISO, not the UTC date.
 export function currentStreak(){
   var dates = state.streakDates.slice().sort().reverse();
   if(dates.length===0) return 0;
   var streak = 0;
   var checkDate = new Date();
-  var todayStr = checkDate.toISOString().slice(0,10);
+  var todayStr = localISO(checkDate);
   checkDate.setDate(checkDate.getDate() - 1);
-  var yestStr = checkDate.toISOString().slice(0,10);
+  var yestStr = localISO(checkDate);
   
   var dStart = new Date();
   if(dates.indexOf(todayStr) !== -1) {
@@ -66,7 +71,7 @@ export function currentStreak(){
   
   for(var i=1; i<=1000; i++){
      dStart.setDate(dStart.getDate() - 1);
-     var iso = dStart.toISOString().slice(0,10);
+     var iso = localISO(dStart);
      if(dates.indexOf(iso) !== -1) streak++;
      else break;
   }
