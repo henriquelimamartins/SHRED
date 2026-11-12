@@ -2,8 +2,8 @@
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=1";
-import { todayISO } from "../logic/dates.js?v=5";
-import { render } from "../render.js?v=7";
+import { todayISO } from "../logic/dates.js?v=6";
+import { render } from "../render.js?v=8";
 
 export function getEarliestYearMonth() {
   if(!state.streakDates || state.streakDates.length === 0) return { y: new Date().getFullYear(), m: new Date().getMonth() };

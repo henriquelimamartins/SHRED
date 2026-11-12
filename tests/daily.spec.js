@@ -253,20 +253,22 @@ test.describe('Practiced boxes and the streak', () => {
     expect(saved.streakDates).toEqual(['2026-11-08']);
   });
 
-  test('current behaviour: after practising yesterday, opening the app today also logs today', async ({ page }) => {
-    // Known problem (found in 1.4): on the first load of a new day the streak is updated with
-    // yesterday's ticks but today's date, so today counts as practised before anything is done.
+  test('after practising yesterday, opening the app today does not log today (slice 3.6, D108)', async ({ page }) => {
+    // Fixed in slice 3.6: was "current behaviour: after practising yesterday, opening the app today
+    // also logs today" (found in 1.4). Yesterday's ticks stay logged under yesterday only.
     await openApp(page, {
       localState: baseState({ phaseIndex: 1, practicedDate: '2026-11-09', practiced: { 'warmup.Mon': true }, streakDates: ['2026-11-09'] }),
     });
     const saved = await localSaved(page);
     expect(saved.practiced).toEqual({});
     expect(saved.practicedDate).toBe('2026-11-10');
-    expect(saved.streakDates).toEqual(['2026-11-09', '2026-11-10']);
-    expect(await streakOnHome(page)).toEqual({ logged: '🔥2', tag: "You've practiced 2 days in a row!" });
+    expect(saved.streakDates).toEqual(['2026-11-09']);
+    expect(await streakOnHome(page)).toEqual({ logged: '🔥1', tag: "You've practiced 1 day in a row!" });
   });
 
-  test('current behaviour: that extra day disappears at the next change of the day, even outside DAILY', async ({ page }) => {
+  test('a change outside DAILY on the new day does not log today either (slice 3.6, D108)', async ({ page }) => {
+    // Fixed in slice 3.6: was "current behaviour: that extra day disappears at the next change of
+    // the day, even outside DAILY". There is no extra day any more, before or after the change.
     await openApp(page, {
       localState: baseState({ phaseIndex: 1, practicedDate: '2026-11-09', practiced: { 'warmup.Mon': true }, streakDates: ['2026-11-09'] }),
     });

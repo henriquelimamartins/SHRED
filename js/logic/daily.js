@@ -4,9 +4,9 @@ import { PHASES } from "../data/bhgs.js?v=1";
 import { DAY_FULL } from "../data/days.js?v=1";
 import { saveState, state } from "../store.js?v=5";
 import { showToast } from "../ui.js?v=1";
-import { todayISO, isWeekendDay, activeDay, ensureDailyReset } from "./dates.js?v=5";
-import { applyStateChange } from "./technique.js?v=7";
-import { render } from "../render.js?v=7";
+import { todayISO, isWeekendDay, activeDay, ensureDailyReset } from "./dates.js?v=6";
+import { applyStateChange } from "./technique.js?v=8";
+import { render } from "../render.js?v=8";
 
 export function blockPKey(name,day){ return name+"."+day; }
 export function isBlockPracticed(name,day){ return !!state.practiced[blockPKey(name,day)]; }

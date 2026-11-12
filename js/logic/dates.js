@@ -1,6 +1,7 @@
 // Dates, daily reset and streak.
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
 // Slice 3.3 (D103): ensureDailyReset() saves on the device only.
+// Slice 3.6 (D108): on a new day, ticks left from an earlier day are logged under that day, never today.
 import { DAYS } from "../data/days.js?v=1";
 import { saveLocal, state } from "../store.js?v=5";
 
@@ -12,11 +13,22 @@ export function activeDay(){ if(state.activeDayOverride && state.activeDayDate==
 export function ensureDailyReset(){
   var t=todayISO();
   if(state.practicedDate!==t){
-    updateStreakStatus();
+    logPracticedDay(t); // slice 3.6 (D108): was updateStreakStatus(), which logged yesterday's ticks under today's date
     state.practiced={};
     state.practicedDate=t;
     saveLocal(); // slice 3.3 (D103): the daily reset is not written to the cloud by itself
   }
+}
+
+// Slice 3.6 (D108): the ticks still in state.practiced belong to state.practicedDate. Log that day
+// (if it has a tick, is a valid earlier date and is not logged yet); today is never added here.
+// Days already logged are never removed or rewritten (D33).
+function logPracticedDay(t){
+  var d = state.practicedDate;
+  var hasPracticed = Object.keys(state.practiced || {}).some(function(k){ return state.practiced[k]; });
+  if (!hasPracticed || typeof d !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(d) || d >= t) return;
+  if (!Array.isArray(state.streakDates)) return;
+  if (state.streakDates.indexOf(d) === -1) state.streakDates.push(d);
 }
 
 export function totalStreak(){return (state.streakDates||[]).length;}
