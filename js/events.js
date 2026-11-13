@@ -7,17 +7,20 @@
 // uses loadFromCloud(); nothing is saved or reset over data from a newer app version.
 // Slice 3.5 (D106): Reset Everything erases progress only (D83) and keeps streak, calendar, today's
 // DAILY session, SETUP, sync fields and unknown fields; signed in, it waits for the first cloud read.
+// Slice 3.8 (D110): Download backup / Restore backup (Home, card "Cloud Sync"). A restore replaces the
+// state like Reset: newer-version stop, cloud read first when signed in, backup first, then a checked write.
 // Slice 2.5: the SETUP video button ("openvideo") and the search box are handled here only (no inline onclick).
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
 import { CODEX_DATA } from "./data/dojo.js?v=1";
-import { defaultState, defaultDojoState, saveState, state, replaceState, backupBeforeReplace, newerSchema, NEWER_SCHEMA_MSG } from "./store.js?v=5";
+import { defaultState, defaultDojoState, saveState, state, replaceState, backupBeforeReplace, migrate, newerSchema, NEWER_SCHEMA_MSG } from "./store.js?v=5";
 import { hasFirebase, auth, db, googleProvider, currentUser, cloudReady, cloudReadFailed, CLOUD_READ_FAILED_MSG, requestCloudWrite, loadFromCloud, signInWithPopup, signOut } from "./firebase.js?v=5";
 import { ui, showToast } from "./ui.js?v=1";
-import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=9";
-import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=9";
-import { changeCalMonth } from "./views/calendar.js?v=9";
+import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=10";
+import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=10";
+import { changeCalMonth } from "./views/calendar.js?v=10";
 import { currentMinigame, addXP, startArchitectGame, handleDojoAnswer, renderCodexList } from "./views/dojo.js?v=5";
-import { updateNav, render } from "./render.js?v=9";
+import { updateNav, render } from "./render.js?v=10";
+import { buildBackupFile, backupFileName, listDeviceBackups, parseBackupFile, isNewerCopy, restoredState, formatLocalTime, reasonLabel, MAX_BACKUP_FILE_BYTES, INVALID_BACKUP_MSG, NEWER_BACKUP_MSG } from "./logic/backup.js?v=1";
 
 export function handleReset(){ ui.resetConfirm=true; render(); }
 export function cancelReset(){ ui.resetConfirm=false; render(); }
@@ -61,6 +64,85 @@ export function confirmReset(){
   ui.resetConfirm=false;
   render();
   showToast("Progress has been reset. Streak, calendar and SETUP were kept.");
+}
+
+// --- Download / Restore backup (slice 3.8, D110) ---
+// Download: a JSON file with the current state and the on-device snapshots. Changes nothing.
+export function downloadBackup(){
+  try{
+    var text = JSON.stringify(buildBackupFile(state), null, 2);
+    var url = URL.createObjectURL(new Blob([text], { type: "application/json" }));
+    var link = document.createElement("a");
+    link.href = url;
+    link.download = backupFileName();
+    link.style.display = "none";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 10000);
+    showToast("Backup downloaded.");
+  }catch(e){
+    showToast("Could not create the backup file.");
+  }
+}
+
+// Restore: list of on-device snapshots (ui.restoreOpen), then a confirmation (ui.restorePick).
+export function openRestore(){ ui.resetConfirm=false; ui.restorePick=null; ui.restoreOpen=true; render(); }
+export function cancelRestore(){ ui.restoreOpen=false; ui.restorePick=null; render(); }
+
+function pickCopy(copyState, at, label){
+  if(isNewerCopy(copyState)){ showToast(NEWER_BACKUP_MSG); return; }
+  ui.restorePick = { state: JSON.parse(JSON.stringify(copyState)), at: at, label: label };
+  render();
+}
+
+export function pickDeviceBackup(index){
+  var b = listDeviceBackups().filter(function(x){ return x.index === index; })[0];
+  if(!b){ showToast("This backup is no longer on this device."); ui.restorePick=null; render(); return; }
+  pickCopy(b.state, b.at, reasonLabel(b.reason));
+}
+
+// "Restore from file…": a file input created on demand (no inline handler, CSP D98).
+export function pickBackupFile(){
+  var input = document.createElement("input");
+  input.type = "file";
+  input.accept = ".json,application/json";
+  input.style.display = "none";
+  input.addEventListener("change", function(){
+    var file = input.files && input.files[0];
+    input.remove();
+    if(!file) return;
+    if(file.size > MAX_BACKUP_FILE_BYTES){ showToast(INVALID_BACKUP_MSG); return; }
+    file.text().then(function(text){
+      var parsed = parseBackupFile(text);
+      if(!parsed){ showToast(INVALID_BACKUP_MSG); return; }
+      pickCopy(parsed.state, parsed.at, "File " + file.name);
+    }).catch(function(){ showToast(INVALID_BACKUP_MSG); });
+  });
+  document.body.appendChild(input);
+  input.click();
+}
+
+export function confirmRestore(){
+  var pick = ui.restorePick;
+  if(!pick){ render(); return; }
+  function close(msg){ ui.restorePick=null; ui.restoreOpen=false; render(); if(msg) showToast(msg); }
+  // Same order as Reset Everything (D106): nothing over data from a newer app version (D105).
+  if(newerSchema) return close(NEWER_SCHEMA_MSG);
+  if(isNewerCopy(pick.state)) return close(NEWER_BACKUP_MSG);
+  // Signed in: not before this session has read the cloud (D103).
+  if(hasFirebase && currentUser && !cloudReady){
+    return close(cloudReadFailed ? CLOUD_READ_FAILED_MSG : "Cloud progress is still loading. Try again in a moment.");
+  }
+  var next = restoredState(state, pick.state);
+  // Backup of the current state first; no restore without it (D102).
+  if(!backupBeforeReplace("before-restore", next)) return close("Could not back up your progress. Nothing was restored.");
+  // An older copy is brought up to the current schemaVersion like any loaded data (D101).
+  next = migrate(next);
+  replaceState(next);
+  // Saved on the device; signed in, sent through the checked write queue (D105).
+  saveState();
+  close(pick.at ? "Progress restored from " + formatLocalTime(pick.at) + ". Your previous progress was backed up on this device." : "Progress restored from the file. Your previous progress was backed up on this device.");
 }
 
 // Calendar carousel scroll listener for fluid swiping and month preview
@@ -158,6 +240,12 @@ document.addEventListener("click",function(e){
       // "newer": loadFromCloud already showed the newer-version message.
     }).catch(() => showToast("Error loading from cloud."));
   }
+  else if(a==="downloadbackup"){ downloadBackup(); }
+  else if(a==="openrestore"){ openRestore(); }
+  else if(a==="cancelrestore"){ cancelRestore(); }
+  else if(a==="pickrestore"){ pickDeviceBackup(parseInt(t.dataset.index,10)); }
+  else if(a==="pickrestorefile"){ pickBackupFile(); }
+  else if(a==="confirmrestore"){ confirmRestore(); }
   else if(a==="reset"){ handleReset(); }
   else if(a==="cancelreset"){ cancelReset(); }
   else if(a==="confirmreset"){ confirmReset(); }

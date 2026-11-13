@@ -5,8 +5,8 @@ import { DAY_FULL } from "../data/days.js?v=1";
 import { saveState, state } from "../store.js?v=5";
 import { showToast } from "../ui.js?v=1";
 import { todayISO, isWeekendDay, activeDay, ensureDailyReset } from "./dates.js?v=7";
-import { applyStateChange } from "./technique.js?v=9";
-import { render } from "../render.js?v=9";
+import { applyStateChange } from "./technique.js?v=10";
+import { render } from "../render.js?v=10";
 
 export function blockPKey(name,day){ return name+"."+day; }
 export function isBlockPracticed(name,day){ return !!state.practiced[blockPKey(name,day)]; }
