@@ -3,12 +3,12 @@
 import { hasFirebase, currentUser } from "./firebase.js?v=5";
 import { ui } from "./ui.js?v=1";
 import { ensureDailyReset } from "./logic/dates.js?v=7";
-import { progressBar } from "./views/components.js?v=9";
-import { initCalCarousel } from "./views/calendar.js?v=9";
-import { renderHome } from "./views/home.js?v=9";
-import { renderDaily } from "./views/daily.js?v=9";
+import { progressBar } from "./views/components.js?v=10";
+import { initCalCarousel } from "./views/calendar.js?v=10";
+import { renderHome } from "./views/home.js?v=10";
+import { renderDaily } from "./views/daily.js?v=10";
 import { renderImprov } from "./views/improv.js?v=5";
-import { renderLibrary } from "./views/library.js?v=9";
+import { renderLibrary } from "./views/library.js?v=10";
 import { renderSetup } from "./views/setup.js?v=6";
 import { renderDojoView } from "./views/dojo.js?v=5";
 
