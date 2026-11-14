@@ -2,14 +2,16 @@
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
 // Slice 4.2a (D119): desktop sidebar = brand, Search, menu, account row; phone bottom bar = HOME, DAILY, IMPROV,
 // THEORY, MORE (More sheet: Library, Tools); DOJO shown as THEORY (D114), SETUP as TOOLS; the phase bar moved to HOME (D25).
+// Slice 4.2b (D113, D119 point 6): with the BHGS pack off, LIBRARY sits in the phone bar instead of More.
 import { hasFirebase, currentUser } from "./firebase.js?v=5";
 import { ui } from "./ui.js?v=1";
+import { BHGS_PACK } from "./pack.js?v=1";
 import { ensureDailyReset } from "./logic/dates.js?v=7";
-import { initCalCarousel } from "./views/calendar.js?v=12";
-import { renderHome } from "./views/home.js?v=12";
-import { renderDaily } from "./views/daily.js?v=12";
+import { initCalCarousel } from "./views/calendar.js?v=13";
+import { renderHome } from "./views/home.js?v=13";
+import { renderDaily } from "./views/daily.js?v=13";
 import { renderImprov } from "./views/improv.js?v=6";
-import { renderLibrary } from "./views/library.js?v=12";
+import { renderLibrary } from "./views/library.js?v=13";
 import { renderSetup } from "./views/setup.js?v=7";
 import { renderDojoView } from "./views/dojo.js?v=6";
 
@@ -49,14 +51,16 @@ const NAV_ITEMS = [
   { view: "library", ic: "\ud83d\udcda", label: "Library", more: "Resources" },
   { view: "setup", ic: "\ud83d\udee0\ufe0f", label: "Tools", more: "Tools", moreLabel: "Setup" }
 ];
-const MORE_VIEWS = NAV_ITEMS.filter(function(n){ return n.more; }).map(function(n){ return n.view; });
+// LIBRARY goes into More only with the BHGS pack on (D117 point 3; until the Explorer exists, D119 point 6).
+function inMore(n){ return !!n.more && !(n.view === "library" && !BHGS_PACK); }
+const MORE_VIEWS = NAV_ITEMS.filter(inMore).map(function(n){ return n.view; });
 
 export function updateNav() {
   var sideHTML = NAV_ITEMS.map(function(n){ return navBtn(n.view, n.ic, n.label, n.cls); }).join("");
   var sidebarNav = document.getElementById('sidebar-nav-inner');
   if(sidebarNav) sidebarNav.innerHTML = sideHTML;
 
-  var barHTML = NAV_ITEMS.filter(function(n){ return !n.more; }).map(function(n){ return navBtn(n.view, n.ic, n.label, n.cls); }).join("");
+  var barHTML = NAV_ITEMS.filter(function(n){ return !inMore(n); }).map(function(n){ return navBtn(n.view, n.ic, n.label, n.cls); }).join("");
   var moreActive = ui.moreOpen || MORE_VIEWS.indexOf(ui.view) >= 0;
   barHTML += '<button data-action="more" class="more-btn'+(moreActive ? ' active' : '')+'" aria-expanded="'+(ui.moreOpen ? 'true' : 'false')+'"><span class="ic">\u22ef</span>More</button>';
   var botnav = document.getElementById('botnav');
@@ -69,7 +73,7 @@ export function updateNav() {
       html += '<div class="more-backdrop" data-action="closemore"></div><div class="more-panel" role="dialog" aria-label="More">';
       var group = null;
       NAV_ITEMS.forEach(function(n){
-        if(!n.more) return;
+        if(!inMore(n)) return;
         if(n.more !== group){ group = n.more; html += '<div class="more-group">' + group + '</div>'; }
         html += '<button data-action="go" data-view="'+n.view+'" class="more-item'+(ui.view===n.view ? ' active' : '')+'"><span class="ic">'+n.ic+'</span>'+(n.moreLabel || n.label)+'</button>';
       });

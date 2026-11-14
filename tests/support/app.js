@@ -20,9 +20,10 @@ const DEFAULT_NOW = '2026-11-10T12:00:00Z'; // a Tuesday
  *   docs       - cloud documents by path, e.g. { 'users/test-uid': {...} }
  *   localState - value placed in localStorage before the app starts (first load only)
  *   now        - fixed clock time (ISO string); defaults to DEFAULT_NOW
+ *   bhgsPack   - false serves js/pack.js with the BHGS pack switched off (slice 4.2b, D113)
  */
 async function openApp(page, options = {}) {
-  const { user = null, docs = {}, localState, now = DEFAULT_NOW } = options;
+  const { user = null, docs = {}, localState, now = DEFAULT_NOW, bhgsPack = true } = options;
   const monitor = { consoleErrors: [], pageErrors: [], blockedRequests: [], firebaseBackendRequests: [] };
 
   page.on('console', (msg) => {
@@ -44,6 +45,10 @@ async function openApp(page, options = {}) {
   const appOrigin = new URL(page.context()._options.baseURL).origin;
   await page.route('**/*', async (route) => {
     const url = route.request().url();
+    // Slice 4.2b (D113): `bhgsPack: false` serves the pack switch turned off.
+    if (!bhgsPack && url.startsWith(appOrigin + '/js/pack.js')) {
+      return route.fulfill({ status: 200, contentType: 'text/javascript; charset=utf-8', body: 'export const BHGS_PACK = false;\n' });
+    }
     if (url.startsWith(appOrigin)) return route.continue();
 
     const stub = url.match(FIREBASE_CDN);
