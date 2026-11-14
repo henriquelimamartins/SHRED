@@ -6,8 +6,8 @@ import { DAY_FULL } from "../data/days.js?v=1";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=1";
 import { todayISO, todayName, isWeekendDay, activeDay } from "../logic/dates.js?v=7";
-import { k } from "../logic/technique.js?v=10";
-import { linked, checkItem, prereqItem, docItem, chopRow, dayPicker, blk, getDailyActiveSequence } from "./components.js?v=10";
+import { k } from "../logic/technique.js?v=11";
+import { linked, checkItem, prereqItem, docItem, chopRow, dayPicker, blk, getDailyActiveSequence } from "./components.js?v=11";
 
 export function renderDaily(){
   var idx=state.phaseIndex,p=PHASES[idx];
@@ -20,7 +20,7 @@ export function renderDaily(){
 
   if(!editable){
     var notePrefix = state.activeDayOverride ? "Currently selected practice session is" : "Suggested practice session is";
-    html+='<div class="note">'+notePrefix+' <b>'+DAY_FULL[act]+'</b>. <button class="tbtn" data-action="activateday" data-day="'+day+'" style="margin-top:10px;display:block;">Switch to '+DAY_FULL[day]+' instead \u2192</button></div>';
+    html+='<div class="note">'+notePrefix+' <b>'+DAY_FULL[act]+'</b>. <button class="tbtn u-mt-10 u-block" data-action="activateday" data-day="'+day+'">Switch to '+DAY_FULL[day]+' instead \u2192</button></div>';
   }
 
   if(p.kind==="setup"){
@@ -48,10 +48,10 @@ export function renderDaily(){
       for(var i=0; i<gateObj.exercises.length; i++){
         if(!state.improvChecks["g"+actGate+"e"+i]) { nextEx = gateObj.exercises[i]; break; }
       }
-      var body = '<p style="color:var(--text); font-weight:600; margin-bottom:6px;">Gate '+(actGate+1)+': '+gateObj.title+'</p>';
-      if(nextEx) body += '<p style="font-size:13px; margin-bottom:10px;"><b>Next up:</b> '+nextEx.t+'</p>';
-      else body += '<p style="font-size:13px; margin-bottom:10px;">Ready to unlock the next gate!</p>';
-      body += '<button class="tbtn purple" data-action="go" data-view="improv" style="width:100%; text-align:center;">Open Improv Masterclass</button>';
+      var body = '<p class="gate-line">Gate '+(actGate+1)+': '+gateObj.title+'</p>';
+      if(nextEx) body += '<p class="u-fs-13 u-mb-10"><b>Next up:</b> '+nextEx.t+'</p>';
+      else body += '<p class="u-fs-13 u-mb-10">Ready to unlock the next gate!</p>';
+      body += '<button class="tbtn purple u-w100 u-center" data-action="go" data-view="improv">Open Improv Masterclass</button>';
       html+=blk("casual",day,"Improv & Expression","45 min",body,editable,"improv");
     }
     return html;
@@ -75,18 +75,18 @@ export function renderDaily(){
       var kk = k(p.id,"e",i);
       return checkItem(t.t, kk, t.url, editable);
     }).join("");
-    if(monExHtml) focusBody+='<p style="margin-top:8px;">Exercises in rotation (check off once solid):</p><ul class="check">'+monExHtml+'</ul>';
-    else focusBody+='<p style="margin-top:8px;color:var(--muted);">All exercises mastered for this phase! \ud83c\udfb8</p>';
+    if(monExHtml) focusBody+='<p class="u-mt-8">Exercises in rotation (check off once solid):</p><ul class="check">'+monExHtml+'</ul>';
+    else focusBody+='<p class="u-mt-8 u-muted">All exercises mastered for this phase! \ud83c\udfb8</p>';
 
   } else if(day==="Tue"){
     var tueExHtml = p.exercises.map(function(t,i){
       var kk = k(p.id,"e",i);
       return checkItem(t.t, kk, t.url, editable);
     }).join("");
-    if(tueExHtml) focusBody+='<p style="margin-bottom:8px;">Exercises in rotation (check off once solid):</p><ul class="check">'+tueExHtml+'</ul>';
-    else focusBody+='<p style="margin-bottom:8px;color:var(--muted);">All exercises mastered for this phase! \ud83c\udfb8</p>';
+    if(tueExHtml) focusBody+='<p class="u-mb-8">Exercises in rotation (check off once solid):</p><ul class="check">'+tueExHtml+'</ul>';
+    else focusBody+='<p class="u-mb-8 u-muted">All exercises mastered for this phase! \ud83c\udfb8</p>';
     
-    focusBody+='<p style="margin:8px 0;">Chop-builders (picking) - protect ~15 min:</p>'+chopRow(p.target,["alt","sweep"]);
+    focusBody+='<p class="u-my-8">Chop-builders (picking) - protect ~15 min:</p>'+chopRow(p.target,["alt","sweep"]);
   } else if(day==="Wed"){
     var theoryHtml = "";
     THEORY_DOCS.forEach(function(docItemObj){
@@ -113,19 +113,19 @@ export function renderDaily(){
     if(theorySeq) {
       theoryHtml += theorySeq;
     } else {
-      theoryHtml += '<p style="margin-top:8px;color:var(--muted);">All theory items completed!</p>';
+      theoryHtml += '<p class="u-mt-8 u-muted">All theory items completed!</p>';
     }
-    focusBody+='<p style="margin-bottom:8px;">Theory in rotation:</p><ul class="check">'+theoryHtml+'</ul>';
+    focusBody+='<p class="u-mb-8">Theory in rotation:</p><ul class="check">'+theoryHtml+'</ul>';
   } else if(day==="Thu"){
-    focusBody+='<p style="margin-bottom:8px;">Chop-builders (legato/economy/tapping):</p>'+chopRow(p.target,["legato","econ","tap"]);
+    focusBody+='<p class="u-mb-8">Chop-builders (legato/economy/tapping):</p>'+chopRow(p.target,["legato","econ","tap"]);
   } else if(day==="Fri"){
     focusBody+='<p>Revisit your hardest exercise or chop-builder from the week, then spend the micro-dose reinforcing whichever skill felt weakest.</p>';
     if(p.testReq){
       var met=TESTCATS.filter(function(c){return (state.testLevel[c.key]||0)>=p.testReq;}).length;
-      focusBody+='<div class="note" style="margin-top:10px;">Phase Transition Test: '+met+'/'+TESTCATS.length+' at Level '+p.testReq+'+. <button class="tbtn" data-action="go" data-view="home" style="margin-top:8px;display:block;">Retake Phase Test \u2192</button></div>';
+      focusBody+='<div class="note u-mt-10">Phase Transition Test: '+met+'/'+TESTCATS.length+' at Level '+p.testReq+'+. <button class="tbtn u-mt-8 u-block" data-action="go" data-view="home">Retake Phase Test \u2192</button></div>';
     }
   }
-  if(day!=="Fri") focusBody+='<p style="margin-top:10px;">+ 5 min: '+linked(essential+" micro-dose",essUrl)+'</p>';
+  if(day!=="Fri") focusBody+='<p class="u-mt-10">+ 5 min: '+linked(essential+" micro-dose",essUrl)+'</p>';
   html+=blk("focused",day,"Focused","30 + 5 min",focusBody,editable);
 
   if(day==="Mon"||day==="Thu"){ 
@@ -141,10 +141,10 @@ export function renderDaily(){
     for(var i=0; i<gateObj.exercises.length; i++){
       if(!state.improvChecks["g"+actGate+"e"+i]) { nextEx = gateObj.exercises[i]; break; }
     }
-    var body = '<p style="color:var(--text); font-weight:600; margin-bottom:6px;">Gate '+(actGate+1)+': '+gateObj.title+'</p>';
-    if(nextEx) body += '<p style="font-size:13px; margin-bottom:10px;"><b>Next up:</b> '+nextEx.t+'</p>';
-    else body += '<p style="font-size:13px; margin-bottom:10px;">Ready to unlock the next gate!</p>';
-    body += '<button class="tbtn purple" data-action="go" data-view="improv" style="width:100%; text-align:center;">Open Improv Masterclass</button>';
+    var body = '<p class="gate-line">Gate '+(actGate+1)+': '+gateObj.title+'</p>';
+    if(nextEx) body += '<p class="u-fs-13 u-mb-10"><b>Next up:</b> '+nextEx.t+'</p>';
+    else body += '<p class="u-fs-13 u-mb-10">Ready to unlock the next gate!</p>';
+    body += '<button class="tbtn purple u-w100 u-center" data-action="go" data-view="improv">Open Improv Masterclass</button>';
     html+=blk("casual",day,"Improv & Expression","15 min",body,editable,"improv");
   }
 
