@@ -14,18 +14,24 @@ async function homePhaseStat(page) {
   return { pct: await stat.locator('.bignum').textContent(), label: await stat.locator('.lbl').textContent() };
 }
 
-/** Widths of the 5 segments of the red phase bar at the top, e.g. ['100%', '38%', '0%', '0%', '0%']. */
+/** Widths of the 5 segments of the red phase bar (on HOME since slice 4.2a, D25), e.g. ['100%', '38%', '0%', '0%', '0%']. */
 async function topBar(page) {
-  return page.locator('#topbar .pseg i').evaluateAll((els) => els.map((e) => e.style.width));
+  return page.locator('#panel-home .pseg i').evaluateAll((els) => els.map((e) => e.style.width));
 }
 
 async function currentPhaseLabel(page) {
-  return page.locator('#topbar .plabels span.cur').textContent();
+  return page.locator('#panel-home .plabels span.cur').textContent();
 }
 
 async function goTo(page, view) {
   const nav = page.locator('#botnav:visible, #sidebar-nav-inner:visible').first();
-  await nav.locator(`[data-action="go"][data-view="${view}"]`).click();
+  const btn = nav.locator(`[data-action="go"][data-view="${view}"]`);
+  // Slice 4.2a (D119): on the phone, Library and Tools (SETUP) are opened from the More sheet.
+  if (await btn.count()) await btn.click();
+  else {
+    await nav.locator('[data-action="more"]').click();
+    await page.locator(`#more-sheet [data-action="go"][data-view="${view}"]`).click();
+  }
   await expect(page.locator(`#panel-${view}`)).toHaveClass(/active/);
 }
 

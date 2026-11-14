@@ -12,7 +12,7 @@ const { progressState } = require('./support/fixtures');
 const TOKENS = {
   '--bg': '#0D0D0F', '--chrome': '#111114', '--card': '#16161A', '--card2': '#1E1E23',
   '--border': '#26262C', '--text': '#F2F2F4', '--muted': '#A0A0AA',
-  '--red': '#E5484D', '--red-fill': '#DC3D43', '--red-tint': '#FF7A7E',
+  '--red': '#E5484D', '--red-fill': '#D83A40', '--red-tint': '#FF5C61',
   '--purple': '#8B4CF0', '--purple-fill': '#6E3BD0', '--purple-tint': '#B79CFF',
   '--blue': '#4CA8F5', '--blue-tint': '#6DB8F7', '--green': '#46A758', '--green-tint': '#86D294',
 };
@@ -20,7 +20,13 @@ const rgb = (hex) => `rgb(${[1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 1
 
 async function goTo(page, view) {
   const nav = page.locator('#botnav:visible, #sidebar-nav-inner:visible').first();
-  await nav.locator(`[data-action="go"][data-view="${view}"]`).click();
+  const btn = nav.locator(`[data-action="go"][data-view="${view}"]`);
+  // Slice 4.2a (D119): on the phone, Library and Tools (SETUP) are opened from the More sheet.
+  if (await btn.count()) await btn.click();
+  else {
+    await nav.locator('[data-action="more"]').click();
+    await page.locator(`#more-sheet [data-action="go"][data-view="${view}"]`).click();
+  }
   await expect(page.locator(`#panel-${view}`)).toHaveClass(/active/);
   await settle(page);
 }

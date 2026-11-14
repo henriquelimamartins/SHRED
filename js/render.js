@@ -1,14 +1,15 @@
 // Page layout, navigation and the main render() that redraws every view.
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
+// Slice 4.2a (D119): desktop sidebar = brand, Search, menu, account row; phone bottom bar = HOME, DAILY, IMPROV,
+// THEORY, MORE (More sheet: Library, Tools); DOJO shown as THEORY (D114), SETUP as TOOLS; the phase bar moved to HOME (D25).
 import { hasFirebase, currentUser } from "./firebase.js?v=5";
 import { ui } from "./ui.js?v=1";
 import { ensureDailyReset } from "./logic/dates.js?v=7";
-import { progressBar } from "./views/components.js?v=11";
-import { initCalCarousel } from "./views/calendar.js?v=11";
-import { renderHome } from "./views/home.js?v=11";
-import { renderDaily } from "./views/daily.js?v=11";
+import { initCalCarousel } from "./views/calendar.js?v=12";
+import { renderHome } from "./views/home.js?v=12";
+import { renderDaily } from "./views/daily.js?v=12";
 import { renderImprov } from "./views/improv.js?v=6";
-import { renderLibrary } from "./views/library.js?v=11";
+import { renderLibrary } from "./views/library.js?v=12";
 import { renderSetup } from "./views/setup.js?v=7";
 import { renderDojoView } from "./views/dojo.js?v=6";
 
@@ -19,7 +20,9 @@ export function initAppLayout() {
       <div class="sidebar-header">
         <div class="brand brand-side">THE <span>SHRED</span><br><span class="brand-sub">ROADMAP</span></div>
       </div>
+      <div id="sidebar-search" class="sidebar-search"></div>
       <div id="sidebar-nav-inner" class="sidebar-nav"></div>
+      <div id="sidebar-account" class="sidebar-account"></div>
     </nav>
     <main class="main-area">
       <header class="topbar" id="topbar"></header>
@@ -31,25 +34,50 @@ export function initAppLayout() {
         <div class="view-panel" data-view-id="library" id="panel-library"></div>
         <div class="view-panel" data-view-id="setup" id="panel-setup"></div>
       </div>
+      <div id="more-sheet" class="more-sheet"></div>
       <nav class="botnav" id="botnav"></nav>
     </main>
   `;
 }
 
+// Destinations in D117 order. TECHNIQUE joins in 4.3, when its page exists (D119).
+const NAV_ITEMS = [
+  { view: "home", ic: "\ud83c\udfe0", label: "Home" },
+  { view: "daily", ic: "\ud83c\udfaf", label: "Daily" },
+  { view: "improv", ic: "\ud83e\udde0", label: "Improv", cls: "improv-nav" },
+  { view: "dojo", ic: "\ud83d\udcd6", label: "Theory", cls: "theory-nav" },
+  { view: "library", ic: "\ud83d\udcda", label: "Library", more: "Resources" },
+  { view: "setup", ic: "\ud83d\udee0\ufe0f", label: "Tools", more: "Tools", moreLabel: "Setup" }
+];
+const MORE_VIEWS = NAV_ITEMS.filter(function(n){ return n.more; }).map(function(n){ return n.view; });
+
 export function updateNav() {
-  var innerHTML =
-    navBtn("home","\ud83c\udfe0","Home") + 
-    navBtn("daily","\ud83c\udfaf","Daily") + 
-    navBtn("improv","\ud83e\udde0","Improv", "improv-nav") + 
-    navBtn("dojo","⚔️","Dojo", "dojo-nav") + 
-    navBtn("library","\ud83d\udcda","Library") + 
-    navBtn("setup","\ud83d\udee0\ufe0f","Setup");
-
-  var botnav = document.getElementById('botnav');
-  if(botnav) botnav.innerHTML = '<div class="botnav-inner">' + innerHTML + '</div>';
-
+  var sideHTML = NAV_ITEMS.map(function(n){ return navBtn(n.view, n.ic, n.label, n.cls); }).join("");
   var sidebarNav = document.getElementById('sidebar-nav-inner');
-  if(sidebarNav) sidebarNav.innerHTML = innerHTML;
+  if(sidebarNav) sidebarNav.innerHTML = sideHTML;
+
+  var barHTML = NAV_ITEMS.filter(function(n){ return !n.more; }).map(function(n){ return navBtn(n.view, n.ic, n.label, n.cls); }).join("");
+  var moreActive = ui.moreOpen || MORE_VIEWS.indexOf(ui.view) >= 0;
+  barHTML += '<button data-action="more" class="more-btn'+(moreActive ? ' active' : '')+'" aria-expanded="'+(ui.moreOpen ? 'true' : 'false')+'"><span class="ic">\u22ef</span>More</button>';
+  var botnav = document.getElementById('botnav');
+  if(botnav) botnav.innerHTML = '<div class="botnav-inner">' + barHTML + '</div>';
+
+  var sheet = document.getElementById('more-sheet');
+  if(sheet){
+    var html = '';
+    if(ui.moreOpen){
+      html += '<div class="more-backdrop" data-action="closemore"></div><div class="more-panel" role="dialog" aria-label="More">';
+      var group = null;
+      NAV_ITEMS.forEach(function(n){
+        if(!n.more) return;
+        if(n.more !== group){ group = n.more; html += '<div class="more-group">' + group + '</div>'; }
+        html += '<button data-action="go" data-view="'+n.view+'" class="more-item'+(ui.view===n.view ? ' active' : '')+'"><span class="ic">'+n.ic+'</span>'+(n.moreLabel || n.label)+'</button>';
+      });
+      html += '</div>';
+    }
+    sheet.innerHTML = html;
+    sheet.classList.toggle('open', !!ui.moreOpen);
+  }
 }
 export function navBtn(view,ic,label, customClass){ 
   var cl = ui.view===view ? "active" : "";
@@ -65,22 +93,26 @@ export function render(){
     var tops = {};
     document.querySelectorAll('.view-panel').forEach(function(p){ tops[p.id] = p.scrollTop; });
 
+    var authHTML = '';
+    var sideAccount = '';
+    if(hasFirebase){
+      var shortName = (currentUser && currentUser.email) ? currentUser.email.split('@')[0] : '';
+      authHTML += '<div class="auth-container">';
+      if(shortName) authHTML += '<span class="user-email">' + shortName + '</span>';
+      authHTML += '<button id="authBtn" class="dchip2 auth-btn">' + (currentUser ? "Logout" : "Login") + '</button></div>';
+      sideAccount += '<span class="side-user">' + (shortName || 'Not signed in') + '</span>';
+      sideAccount += '<button class="dchip2 auth-btn side-auth">' + (currentUser ? "Logout" : "Login") + '</button>';
+    }
+
+    // Phone top bar (hidden on desktop, where Search and the account row live in the sidebar).
     var topbarHTML = '<div class="topbar-header">';
     topbarHTML += '<div class="brand mobile-brand">THE <span>SHRED</span> ROADMAP</div>';
-    
-    // Future search integration
-    topbarHTML += '<div class="shell-search"><span class="ic">🔍</span><span class="srch-txt">Search...</span></div>';
-    
-    if(hasFirebase){
-      topbarHTML += '<div class="auth-container">';
-      if(currentUser && currentUser.email){
-        var shortName = currentUser.email.split('@')[0];
-        topbarHTML += '<span class="user-email">' + shortName + '</span>';
-      }
-      topbarHTML += '<button id="authBtn" class="dchip2 auth-btn">' + (currentUser ? "Logout" : "Login") + '</button></div>';
-    }
-    topbarHTML += '</div>' + progressBar();
+    topbarHTML += '<div class="shell-search"><span class="ic">\ud83d\udd0d</span><span class="srch-txt">Search...</span></div>';
+    topbarHTML += authHTML + '</div>';
     document.getElementById('topbar').innerHTML = topbarHTML;
+
+    document.getElementById('sidebar-search').innerHTML = '<div class="side-search"><span class="ic">\ud83d\udd0d</span><span>Search...</span></div>';
+    document.getElementById('sidebar-account').innerHTML = sideAccount;
 
     document.getElementById('panel-home').innerHTML = '<div class="panel-content">' + renderHome() + '</div>';
     document.getElementById('panel-daily').innerHTML = '<div class="panel-content">' + renderDaily() + '</div>';

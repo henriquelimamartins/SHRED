@@ -1,14 +1,15 @@
 // HOME view.
 // Slice 3.5 (D106): Reset Everything confirmation text says what is erased and what is kept.
 // Slice 3.8 (D110): Download backup / Restore backup in the "Cloud Sync" card (list + confirmation).
+// Slice 4.2a (D119, D25): the Technique phase bar sits at the top of HOME instead of the top of every page.
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
 import { PHASES, TESTCATS } from "../data/bhgs.js?v=1";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=1";
 import { totalStreak, currentStreak } from "../logic/dates.js?v=7";
-import { phasePercent } from "../logic/technique.js?v=11";
-import { testRow } from "./components.js?v=11";
-import { renderStreakCalendar } from "./calendar.js?v=11";
+import { phasePercent } from "../logic/technique.js?v=12";
+import { testRow, progressBar } from "./components.js?v=12";
+import { renderStreakCalendar } from "./calendar.js?v=12";
 import { listDeviceBackups, formatLocalTime, reasonLabel } from "../logic/backup.js?v=1";
 
 function esc(t){ return String(t).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]; }); }
@@ -41,7 +42,8 @@ function renderRestore(){
 export function renderHome(){
   var cur=PHASES[state.phaseIndex],pct=phasePercent(state.phaseIndex);
   var req=cur.testReq||null;
-  var html='<div class="eyebrow">Daily Practice System</div>';
+  var html='<div class="home-phasebar">'+progressBar()+'</div>';
+  html+='<div class="eyebrow">Daily Practice System</div>';
   
   html+='<div class="statrow"><div class="stat"><div class="bignum">'+pct+'%</div><div class="lbl">'+cur.label+'</div></div>'+
     '<div class="stat"><div class="bignum">\ud83d\udd25'+totalStreak()+'</div><div class="lbl">Days Logged</div></div></div>';

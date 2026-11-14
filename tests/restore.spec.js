@@ -287,7 +287,13 @@ test.describe('restore from a file', () => {
     expect(saved.chop).toEqual(currentState().chop); // not in the file: kept from the current state
     expect(saved.streakDates).toEqual(currentState().streakDates);
     for (const view of ['daily', 'improv', 'library', 'setup', 'home']) {
-      await page.locator(`[data-action="go"][data-view="${view}"]:visible`).first().click();
+      // Slice 4.2a (D119): on the phone, Library and Tools are opened from the More sheet.
+      const btn = page.locator(`#botnav:visible [data-view="${view}"], #sidebar-nav-inner:visible [data-view="${view}"]`).first();
+      if (await btn.count()) await btn.click();
+      else {
+        await page.locator('#botnav [data-action="more"]').click();
+        await page.locator(`#more-sheet [data-view="${view}"]`).click();
+      }
       await expect(page.locator(`#panel-${view}`)).toHaveClass(/active/);
     }
     expect(monitor.pageErrors).toEqual([]);

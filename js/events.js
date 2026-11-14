@@ -9,17 +9,18 @@
 // DAILY session, SETUP, sync fields and unknown fields; signed in, it waits for the first cloud read.
 // Slice 3.8 (D110): Download backup / Restore backup (Home, card "Cloud Sync"). A restore replaces the
 // state like Reset: newer-version stop, cloud read first when signed in, backup first, then a checked write.
+// Slice 4.2a (D119): the sidebar Search and Login/Logout behave like the top-bar ones; the phone More sheet opens and closes.
 // Slice 2.5: the SETUP video button ("openvideo") and the search box are handled here only (no inline onclick).
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
 import { CODEX_DATA } from "./data/dojo.js?v=1";
 import { defaultState, defaultDojoState, saveState, state, replaceState, backupBeforeReplace, migrate, newerSchema, NEWER_SCHEMA_MSG } from "./store.js?v=5";
 import { hasFirebase, auth, db, googleProvider, currentUser, cloudReady, cloudReadFailed, CLOUD_READ_FAILED_MSG, requestCloudWrite, loadFromCloud, signInWithPopup, signOut } from "./firebase.js?v=5";
 import { ui, showToast } from "./ui.js?v=1";
-import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=11";
-import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=11";
-import { changeCalMonth } from "./views/calendar.js?v=11";
+import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=12";
+import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=12";
+import { changeCalMonth } from "./views/calendar.js?v=12";
 import { currentMinigame, addXP, startArchitectGame, handleDojoAnswer, renderCodexList } from "./views/dojo.js?v=6";
-import { updateNav, render } from "./render.js?v=11";
+import { updateNav, render } from "./render.js?v=12";
 import { buildBackupFile, backupFileName, listDeviceBackups, parseBackupFile, isNewerCopy, restoredState, formatLocalTime, reasonLabel, MAX_BACKUP_FILE_BYTES, INVALID_BACKUP_MSG, NEWER_BACKUP_MSG } from "./logic/backup.js?v=1";
 
 export function handleReset(){ ui.resetConfirm=true; render(); }
@@ -174,15 +175,15 @@ document.addEventListener("scroll", function(e) {
 document.addEventListener("click",function(e){
 
   if(e.target.closest("a")) return;
-  var t=e.target.closest("[data-action],[data-toggle],#authBtn,.shell-search");
+  var t=e.target.closest("[data-action],[data-toggle],#authBtn,.side-auth,.shell-search,.side-search");
   if(!t) return;
 
-  if(t.id === "authBtn"){
+  if(t.id === "authBtn" || t.classList.contains("side-auth")){
     if(currentUser){ signOut(auth).then(() => { showToast("Logged out"); render(); }); } 
     else { signInWithPopup(auth, googleProvider).catch(err => showToast("Login failed")); }
     return;
   }
-  if(t.classList.contains("shell-search")){
+  if(t.classList.contains("shell-search") || t.classList.contains("side-search")){
     showToast("Global search coming in a future phase");
     return;
   }
@@ -190,7 +191,11 @@ document.addEventListener("click",function(e){
   if(t.dataset.toggle){ toggleCheck(t.dataset.toggle); return; }
   var a=t.dataset.action;
   
+  if(a==="more"){ ui.moreOpen=!ui.moreOpen; updateNav(); return; }
+  if(a==="closemore"){ ui.moreOpen=false; updateNav(); return; }
+
   if(a==="go"){
+    ui.moreOpen=false;
     ui.view=t.dataset.view;
     var panel = document.getElementById('panel-' + ui.view);
     if(panel) panel.scrollTo({top: 0, behavior: 'smooth'});
