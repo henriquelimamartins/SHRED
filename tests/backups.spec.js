@@ -4,12 +4,13 @@
 // - If a backup cannot be written, no migration happens and the app works as before.
 // - Backups never go to the cloud; the cloud path and the main localStorage key are unchanged.
 const { test, expect } = require('@playwright/test');
-const { openApp, cloudWrites, localSaved, settle, unexpectedConsoleErrors, STORAGE_KEY } = require('./support/app');
+const { openApp, cloudWrites, localSaved, settle, unexpectedConsoleErrors, STORAGE_KEY, bumpTest, testStepper } = require('./support/app');
 const { TEST_USER, USER_DOC, baseState, progressState } = require('./support/fixtures');
 
 const BACKUP_KEY = 'shredRoadmapBackups_v1';
 
-const altPlus = (page) => page.locator('#panel-home [data-action="test"][data-t="alt"][data-d="1"]');
+// Slice 4.3 (D122): the Phase Transition Test moved from HOME to the TECHNIQUE page.
+const altPlus = (page) => testStepper(page, 'alt', 1);
 const altLevel = (page) => altPlus(page).locator('xpath=preceding-sibling::div[contains(@class,"lvl")]');
 
 async function backups(page) {
@@ -47,7 +48,7 @@ test.describe('schemaVersion migration (signed out)', () => {
 
     await expect(altLevel(page)).toHaveText('3/5');
     // A real change makes the app save, so the stored copy shows the migrated state.
-    await altPlus(page).click();
+    await bumpTest(page);
     const after = await localSaved(page);
     expect(after.schemaVersion).toBe(1);
     expect(after.futureField).toEqual({ keep: 'me' });
@@ -73,10 +74,10 @@ test.describe('schemaVersion migration (signed out)', () => {
 
   test('the migration runs once: a reload makes no new migration backup', async ({ page }) => {
     await openApp(page, { localState: progressState() });
-    await altPlus(page).click();
+    await bumpTest(page);
     await page.reload();
     await expect(page.locator('#splash')).toHaveCount(0);
-    await altPlus(page).click();
+    await bumpTest(page);
     const list = await backups(page);
     expect(list.filter((b) => b.reason === 'migration')).toHaveLength(1);
     expect((await localSaved(page)).schemaVersion).toBe(1);
@@ -84,7 +85,7 @@ test.describe('schemaVersion migration (signed out)', () => {
 
   test('a new device starts at version 1 with no migration backup', async ({ page }) => {
     await openApp(page);
-    await altPlus(page).click();
+    await bumpTest(page);
     expect((await localSaved(page)).schemaVersion).toBe(1);
     const list = await backups(page);
     expect(list.filter((b) => b.reason === 'migration')).toHaveLength(0);
@@ -97,7 +98,7 @@ test.describe('schemaVersion migration (signed out)', () => {
     await expect(altLevel(page)).toHaveText('3/5');
     await expect(page.locator('#toast')).toHaveText('Your progress was saved by a newer version of the app. Reload the page to update.');
     expect(await backups(page)).toBeNull(); // D105 point 7: this app writes nothing over newer data
-    await altPlus(page).click();
+    await bumpTest(page);
     const saved = await localSaved(page);
     expect(saved).toEqual(newer);
   });
@@ -155,7 +156,7 @@ test.describe('when a backup cannot be written', () => {
     const monitor = await openApp(page, { localState: original });
 
     await expect(altLevel(page)).toHaveText('3/5');
-    await altPlus(page).click();
+    await bumpTest(page);
     await expect(altLevel(page)).toHaveText('4/5');
     const saved = await localSaved(page);
     expect(saved.schemaVersion).toBeUndefined(); // migration skipped
@@ -170,7 +171,7 @@ test.describe('when a backup cannot be written', () => {
   test('an unreadable backup list is never overwritten, and no migration happens', async ({ page }) => {
     await seedBackups(page, '{not json');
     const monitor = await openApp(page, { localState: progressState() });
-    await altPlus(page).click();
+    await bumpTest(page);
     expect(await page.evaluate((key) => localStorage.getItem(key), BACKUP_KEY)).toBe('{not json');
     const saved = await localSaved(page);
     expect(saved.schemaVersion).toBeUndefined();
@@ -191,7 +192,7 @@ test.describe('signed in', () => {
     expect(migration[0].state).toEqual(cloud); // the cloud copy, as it was
     expect((await localSaved(page)).schemaVersion).toBe(1);
 
-    await altPlus(page).click();
+    await bumpTest(page);
     const writes = await cloudWrites(page);
     expect(writes.length).toBeGreaterThan(0);
     for (const w of writes) {
@@ -232,7 +233,7 @@ test.describe('signed in', () => {
 
   test('the main localStorage key is unchanged', async ({ page }) => {
     await openApp(page, { localState: baseState() });
-    await altPlus(page).click();
+    await bumpTest(page);
     const keys = await page.evaluate(() => Object.keys(localStorage).sort());
     expect(keys).toEqual([BACKUP_KEY, STORAGE_KEY].sort());
   });

@@ -1,13 +1,17 @@
 // Phase 1.3: Technique (BHGS) behaviour on main. D20 protects these calculations and state keys:
 // any change to them must make these tests fail.
+// Slice 4.3 (D112, D115, D122): the phases, chop-builders, Phase Transition Test and Jump to phase moved from
+// LIBRARY and HOME to the TECHNIQUE page; only where the tests click changed, every expected value is the same.
+// Jumping back now saves a backup first (checked in technique-page.spec.js).
 const { test, expect } = require('@playwright/test');
-const { openApp, localSaved, unexpectedConsoleErrors } = require('./support/app');
+const { openApp, localSaved, unexpectedConsoleErrors, openView, settle } = require('./support/app');
 const {
   baseState, TECHNIQUE_PHASES, CHOP_KEYS, TEST_KEYS, phaseKeys, checksFor, levels,
 } = require('./support/fixtures');
 
 const home = (page) => page.locator('#panel-home');
 const library = (page) => page.locator('#panel-library');
+const technique = (page) => page.locator('#panel-technique');
 
 async function homePhaseStat(page) {
   const stat = home(page).locator('.statrow .stat').first();
@@ -23,23 +27,19 @@ async function currentPhaseLabel(page) {
   return page.locator('#panel-home .plabels span.cur').textContent();
 }
 
-async function goTo(page, view) {
-  const nav = page.locator('#botnav:visible, #sidebar-nav-inner:visible').first();
-  const btn = nav.locator(`[data-action="go"][data-view="${view}"]`);
-  // Slice 4.2a (D119): on the phone, Library and Tools (SETUP) are opened from the More sheet.
-  if (await btn.count()) await btn.click();
-  else {
-    await nav.locator('[data-action="more"]').click();
-    await page.locator(`#more-sheet [data-action="go"][data-view="${view}"]`).click();
-  }
-  await expect(page.locator(`#panel-${view}`)).toHaveClass(/active/);
+async function goTo(page, view) { await openView(page, view); }
+
+/** Opens TECHNIQUE; on the phone, picks the tab that holds `tab` (checklist, chops, test). */
+async function openTechnique(page, tab = 'checklist') {
+  await goTo(page, 'technique');
+  const btn = technique(page).locator(`[data-action="techtab"][data-tab="${tab}"]`);
+  if (await btn.isVisible()) { await btn.click(); await settle(page); }
 }
 
-/** Opens Library → Shred Roadmap → the given phase. */
-async function openLibraryPhase(page, index) {
-  await goTo(page, 'library');
-  await library(page).locator('[data-acc="shredroadmap"]').click();
-  await library(page).locator(`[data-acc="p${index}"]`).click();
+/** Opens one phase that is not the current one from TECHNIQUE → All phases (it was Library → Shred Roadmap). */
+async function openOtherPhase(page, index) {
+  await goTo(page, 'technique');
+  await technique(page).locator(`[data-acc="tp${index}"]`).click();
 }
 
 const stepper = (scope, action, key, d) => scope.locator(`[data-action="${action}"][data-t="${key}"][data-d="${d}"]`);
@@ -87,10 +87,10 @@ test.describe('phase percentage', () => {
 test.describe('checklist items', () => {
   test('Mastered stores today\'s date; unmarking stores false', async ({ page }, testInfo) => {
     await openApp(page, { localState: baseState({ phaseIndex: 1 }) });
-    await openLibraryPhase(page, 1);
-    await page.screenshot({ path: testInfo.outputPath('library-beginner.png') });
+    await openTechnique(page, 'checklist');
+    await page.screenshot({ path: testInfo.outputPath('technique-beginner.png') });
 
-    const btn = library(page).locator('[data-action="togm"][data-key="p1.e.0"]');
+    const btn = technique(page).locator('[data-action="togm"][data-key="p1.e.0"]');
     await expect(btn).toHaveText('Unmastered');
     await btn.click();
     await expect(btn).toHaveText('✓ Mastered');
@@ -103,15 +103,14 @@ test.describe('checklist items', () => {
 
   test('concept videos use Watched; Setup prerequisites use Completed', async ({ page }) => {
     await openApp(page, { localState: baseState({ phaseIndex: 1 }) });
-    await openLibraryPhase(page, 1);
-    const video = library(page).locator('[data-action="togm"][data-key="p1.c.0"]');
+    await openTechnique(page, 'checklist');
+    const video = technique(page).locator('[data-action="togm"][data-key="p1.c.0"]');
     await expect(video).toHaveText('Unwatched');
     await video.click();
     await expect(video).toHaveText('✓ Watched');
 
-    await library(page).locator('[data-acc="p1"]').click(); // close p1
-    await library(page).locator('[data-acc="p0"]').click();
-    const prereq = library(page).locator('[data-action="togm"][data-key="p0.pre.1"]');
+    await technique(page).locator('[data-acc="tp0"]').click(); // Setup, from All phases
+    const prereq = technique(page).locator('[data-action="togm"][data-key="p0.pre.1"]');
     await expect(prereq).toHaveText('Incomplete');
     await prereq.click();
     await expect(prereq).toHaveText('✓ Completed');
@@ -125,8 +124,8 @@ test.describe('checklist items', () => {
 test.describe('steppers stay within their limits', () => {
   test('chop-builders: 0 to 10 (shown as level/phase target)', async ({ page }) => {
     await openApp(page, { localState: baseState({ phaseIndex: 1, chop: { alt: 10, sweep: 0, legato: 4, econ: 0, tap: 0 } }) });
-    await openLibraryPhase(page, 1);
-    const scope = library(page);
+    await openTechnique(page, 'chops');
+    const scope = technique(page).locator('.tech-sec-chops');
 
     // Beginner chop target is 3: the display is "level/3" and turns "hit" at 3 or more.
     await stepper(scope, 'chop', 'alt', 1).click();
@@ -143,7 +142,8 @@ test.describe('steppers stay within their limits', () => {
 
   test('transition tests: 0 to 5', async ({ page }) => {
     await openApp(page, { localState: baseState({ testLevel: { alt: 5, sweep: 0, legato: 2, econ: 0, tap: 0, ult: 0 } }) });
-    const scope = home(page);
+    await openTechnique(page, 'test');
+    const scope = technique(page).locator('.tech-sec-test');
 
     await stepper(scope, 'test', 'alt', 1).click();
     await expect(stepperValue(scope, 'test', 'alt')).toHaveText('5/5');
@@ -177,11 +177,12 @@ test.describe('steppers stay within their limits', () => {
 test.describe('advancing', () => {
   test('completing the last Setup prerequisite moves to Beginner automatically', async ({ page }) => {
     const monitor = await openApp(page, { localState: baseState({ checks: checksFor(['p0.pre.0']) }) });
-    await openLibraryPhase(page, 0);
-    await library(page).locator('[data-action="togm"][data-key="p0.pre.1"]').click();
+    await openTechnique(page, 'checklist');
+    await technique(page).locator('[data-action="togm"][data-key="p0.pre.1"]').click();
 
     await expect(page.locator('#toast')).toHaveText('🔥 Phase unlocked: Beginner!');
     expect((await localSaved(page)).phaseIndex).toBe(1);
+    await goTo(page, 'home');
     expect(await currentPhaseLabel(page)).toBe('Phase 1');
     expect(await topBar(page)).toEqual(['100%', '0%', '0%', '0%', '0%']);
     expect(monitor.pageErrors).toEqual([]);
@@ -198,7 +199,8 @@ test.describe('advancing', () => {
     await openApp(page, { localState: state });
     expect((await homePhaseStat(page)).pct).toBe('96%'); // 23/24
 
-    await stepper(home(page), 'test', 'ult', 1).click();
+    await openTechnique(page, 'test');
+    await stepper(technique(page), 'test', 'ult', 1).click();
     await expect(page.locator('#toast')).toHaveText('🔥 Phase unlocked: Intermediate!');
     expect((await localSaved(page)).phaseIndex).toBe(2);
     expect(await homePhaseStat(page)).toEqual({ pct: '0%', label: 'Intermediate' });
@@ -212,18 +214,24 @@ test.describe('advancing', () => {
       testLevel: { ...levels(TEST_KEYS, 5), ult: 4 },
     });
     await openApp(page, { localState: state });
-    await stepper(home(page), 'test', 'ult', 1).click();
-    await expect(stepperValue(home(page), 'test', 'ult')).toHaveText('5/5');
+    await openTechnique(page, 'test');
+    await stepper(technique(page), 'test', 'ult', 1).click();
+    await expect(stepperValue(technique(page), 'test', 'ult')).toHaveText('5/5');
     expect(await homePhaseStat(page)).toEqual({ pct: '100%', label: 'Pro' });
     expect((await localSaved(page)).phaseIndex).toBe(4);
   });
 });
 
-test.describe('Jump to phase', () => {
-  const select = (page) => home(page).locator('select[data-action="setphase"]');
+test.describe('Jump to phase (TECHNIQUE → Phase settings since slice 4.3)', () => {
+  const select = (page) => technique(page).locator('select[data-action="setphase"]');
+  async function openSettings(page) {
+    await goTo(page, 'technique');
+    await technique(page).locator('[data-action="phasesettings"]').click();
+  }
 
   test('jumping forward marks earlier phases complete and raises chops/tests to the target', async ({ page }) => {
     await openApp(page, { localState: baseState({ chop: { alt: 7, sweep: 0, legato: 0, econ: 0, tap: 0 } }) });
+    await openSettings(page);
     await select(page).selectOption('3');
 
     await expect(page.locator('#toast')).toHaveText('Now on Advanced - earlier phases marked complete');
@@ -234,6 +242,7 @@ test.describe('Jump to phase', () => {
     // Raised to the highest completed target (Intermediate: chop 6, test 3); higher values are kept.
     expect(saved.chop).toEqual({ alt: 7, sweep: 6, legato: 6, econ: 6, tap: 6 });
     expect(saved.testLevel).toEqual(levels(TEST_KEYS, 3));
+    await goTo(page, 'home');
     expect(await topBar(page)).toEqual(['100%', '100%', '100%', '0%', '0%']);
   });
 
@@ -247,18 +256,20 @@ test.describe('Jump to phase', () => {
 
   test('jumping back asks first; Cancel changes nothing', async ({ page }) => {
     await openApp(page, { localState: advancedState() });
+    await openSettings(page);
     await select(page).selectOption('1');
-    await expect(home(page)).toContainText('Jump back to Phase 1?');
+    await expect(technique(page)).toContainText('Jump back to Phase 1?');
 
-    await home(page).locator('[data-action="canceljump"]').click();
+    await technique(page).locator('[data-action="canceljump"]').click();
     await expect(select(page)).toHaveValue('3');
     expect(await localSaved(page)).toEqual(advancedState());
   });
 
   test('jumping back + Confirm resets later phases\' checklists but keeps chops and tests', async ({ page }) => {
     await openApp(page, { localState: advancedState() });
+    await openSettings(page);
     await select(page).selectOption('1');
-    await home(page).locator('[data-action="confirmjump"]').click();
+    await technique(page).locator('[data-action="confirmjump"]').click();
 
     await expect(page.locator('#toast')).toHaveText('Now on Beginner - later phases reset');
     const saved = await localSaved(page);
@@ -266,6 +277,7 @@ test.describe('Jump to phase', () => {
     expect(saved.checks).toEqual({ 'p1.e.0': '2026-11-01' });
     expect(saved.chop).toEqual(levels(CHOP_KEYS, 8));
     expect(saved.testLevel).toEqual(levels(TEST_KEYS, 4));
+    await goTo(page, 'home');
     expect(await currentPhaseLabel(page)).toBe('Phase 1');
   });
 });

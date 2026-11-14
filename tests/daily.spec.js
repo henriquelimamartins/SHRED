@@ -3,7 +3,7 @@
 // Tests named "current behaviour:" document known problems on purpose; the phase that fixes
 // them updates the test in the same PR.
 const { test, expect } = require('@playwright/test');
-const { openApp, localSaved, unexpectedConsoleErrors } = require('./support/app');
+const { openApp, localSaved, unexpectedConsoleErrors, bumpTest, testStepper } = require('./support/app');
 const { baseState, checksFor } = require('./support/fixtures');
 
 // The owner's time zone. In winter Lisbon is UTC+0, so the default clock (2026-11-10 12:00 UTC,
@@ -278,8 +278,8 @@ test.describe('Practiced boxes and the streak', () => {
     await openApp(page, {
       localState: baseState({ phaseIndex: 1, practicedDate: '2026-11-09', practiced: { 'warmup.Mon': true }, streakDates: ['2026-11-09'] }),
     });
-    // A Technique change on Home (Phase Transition Test +1), no DAILY block ticked.
-    await home(page).locator('[data-action="test"][data-t="alt"][data-d="1"]').click();
+    // A Technique change (Phase Transition Test +1, on TECHNIQUE since slice 4.3), no DAILY block ticked.
+    await bumpTest(page, 'alt', 1);
     const saved = await localSaved(page);
     expect(saved.testLevel.alt).toBe(1);
     expect(saved.streakDates).toEqual(['2026-11-09']);

@@ -9,7 +9,7 @@
 // - Data from a newer app version (schemaVersion) is never written over.
 // Another device is simulated by changing window.__SHRED_TEST__.docs directly.
 const { test, expect } = require('@playwright/test');
-const { openApp, cloudWrites, localSaved, settle } = require('./support/app');
+const { openApp, cloudWrites, localSaved, settle, bumpTest, testStepper } = require('./support/app');
 const { TEST_USER, USER_DOC, progressState } = require('./support/fixtures');
 
 const BACKUP_KEY = 'shredRoadmapBackups_v1';
@@ -18,7 +18,8 @@ const STALE_MSG = "Newer progress from another device was loaded. Your last chan
 const UPDATED_MSG = 'Updated with newer progress from another device.';
 const NEWER_MSG = 'Your progress was saved by a newer version of the app. Reload the page to update.';
 
-const altPlus = (page) => page.locator('#panel-home [data-action="test"][data-t="alt"][data-d="1"]');
+// Slice 4.3 (D122): the Phase Transition Test moved from HOME to the TECHNIQUE page.
+const altPlus = (page) => testStepper(page, 'alt', 1);
 const altLevel = (page) => altPlus(page).locator('xpath=preceding-sibling::div[contains(@class,"lvl")]');
 const toast = (page) => page.locator('#toast');
 
@@ -63,9 +64,9 @@ const networkBack = (page) => page.evaluate(() => window.dispatchEvent(new Event
 test.describe('syncRev: every cloud write is checked and numbered', () => {
   test('each signed-in change is a transaction that raises syncRev by one; the device keeps the same number', async ({ page }) => {
     await openApp(page, { user: TEST_USER, docs: { [USER_DOC]: saved(3, 7) } });
-    await altPlus(page).click();
+    await bumpTest(page);
     await settle(page);
-    await altPlus(page).click();
+    await bumpTest(page);
     await settle(page);
 
     const writes = await cloudWrites(page);
@@ -78,7 +79,7 @@ test.describe('syncRev: every cloud write is checked and numbered', () => {
 
   test('cloud data without syncRev counts as 0; the first write sets 1', async ({ page }) => {
     await openApp(page, { user: TEST_USER, docs: { [USER_DOC]: saved(3) } });
-    await altPlus(page).click();
+    await bumpTest(page);
     await settle(page);
     const writes = await cloudWrites(page);
     expect(writes).toHaveLength(1);
@@ -97,7 +98,7 @@ test.describe('syncRev: every cloud write is checked and numbered', () => {
 
   test('signed out, nothing gets a syncRev and no pending mark is made', async ({ page }) => {
     await openApp(page, { localState: saved(3) });
-    await altPlus(page).click();
+    await bumpTest(page);
     const local = await localSaved(page);
     expect(local).not.toHaveProperty('syncRev');
     expect(await pending(page)).toBeNull();
@@ -110,7 +111,7 @@ test.describe('a stale session (another device saved after this one read the clo
     await openApp(page, { user: TEST_USER, docs: { [USER_DOC]: saved(3, 4) } });
     await otherDeviceWrites(page, 1, 5); // e.g. the PC lowered it while the phone stayed open
 
-    await altPlus(page).click(); // stale phone: 3 -> 4
+    await bumpTest(page); // stale phone: 3 -> 4
     await expect(toast(page)).toHaveText(STALE_MSG);
     await expect(altLevel(page)).toHaveText('1/5');
     expect(await cloudWrites(page)).toEqual([]);
@@ -126,7 +127,7 @@ test.describe('a stale session (another device saved after this one read the clo
     expect(await pending(page)).toBeNull();
 
     // The session is up to date again: the next change is written on top of the newer copy.
-    await altPlus(page).click();
+    await bumpTest(page);
     await settle(page);
     const writes = await cloudWrites(page);
     expect(writes).toHaveLength(1);
@@ -158,7 +159,7 @@ test.describe('a stale session (another device saved after this one read the clo
   test('an identical copy saved elsewhere is taken over silently (nothing lost, no message)', async ({ page }) => {
     await openApp(page, { user: TEST_USER, docs: { [USER_DOC]: saved(3, 4) } });
     await otherDeviceWrites(page, 4, 5); // the other device already has alt 4
-    await altPlus(page).click(); // this one also goes to 4
+    await bumpTest(page); // this one also goes to 4
     await settle(page);
     expect(await cloudWrites(page)).toEqual([]);
     expect((await localSaved(page)).syncRev).toBe(5);
@@ -172,10 +173,10 @@ test.describe('write queue', () => {
     await setFlags(page, { holdTransaction: true });
     await openApp(page, { user: TEST_USER, docs: { [USER_DOC]: saved(0, 2) } });
 
-    await altPlus(page).click(); // 1: first write starts and waits
+    await bumpTest(page); // 1: first write starts and waits
     await page.waitForFunction(() => typeof window.__SHRED_TEST_RELEASE_TRANSACTION__ === 'function');
-    await altPlus(page).click(); // 2
-    await altPlus(page).click(); // 3
+    await bumpTest(page); // 2
+    await bumpTest(page); // 3
     await expect(altLevel(page)).toHaveText('3/5');
     let calls = await page.evaluate(() => window.__SHRED_TEST__.calls.filter((c) => c === 'runTransaction').length);
     expect(calls).toBe(1);
@@ -210,7 +211,7 @@ test.describe('coming back to the app', () => {
     expect((await localSaved(page)).syncRev).toBe(5);
 
     // alt is at its maximum (5); the next change uses another stepper.
-    await page.locator('#panel-home [data-action="test"][data-t="sweep"][data-d="1"]').click();
+    await bumpTest(page, 'sweep', 1);
     await settle(page);
     expect((await cloudWrites(page)).map((w) => w.data.syncRev)).toEqual([6]);
   });
@@ -247,7 +248,7 @@ test.describe('changes that could not reach the cloud (offline)', () => {
   test('stay on the device, are marked pending and are sent when the network returns', async ({ page }) => {
     await setFlags(page, { failTransaction: true });
     const monitor = await openApp(page, { user: TEST_USER, docs: { [USER_DOC]: saved(3, 4) } });
-    await altPlus(page).click();
+    await bumpTest(page);
     await settle(page);
     expect(await cloudWrites(page)).toEqual([]);
     expect((await localSaved(page)).testLevel.alt).toBe(4);
@@ -275,7 +276,7 @@ test.describe('changes that could not reach the cloud (offline)', () => {
   test('if another device saved meanwhile, the cloud wins when the network returns (backup, message, no write)', async ({ page }) => {
     await setFlags(page, { failTransaction: true });
     await openApp(page, { user: TEST_USER, docs: { [USER_DOC]: saved(3, 4) } });
-    await altPlus(page).click(); // offline: 4, pending
+    await bumpTest(page); // offline: 4, pending
     await settle(page);
     await otherDeviceWrites(page, 1, 5);
 
@@ -332,7 +333,7 @@ test.describe('data saved by a newer app version', () => {
     await expect(altLevel(page)).toHaveText('3/5');
     const before = await localSaved(page);
 
-    await altPlus(page).click();
+    await bumpTest(page);
     await page.locator('#panel-home [data-action="cloudsave"]').click();
     await expect(toast(page)).toHaveText(NEWER_MSG);
     await settle(page);
@@ -344,10 +345,10 @@ test.describe('data saved by a newer app version', () => {
   test('a newer copy found while writing stops all saving', async ({ page }) => {
     await openApp(page, { user: TEST_USER, docs: { [USER_DOC]: saved(3, 4) } });
     await otherDeviceWrites(page, 2, 5, { schemaVersion: 2 });
-    await altPlus(page).click();
+    await bumpTest(page);
     await expect(toast(page)).toHaveText(NEWER_MSG);
     const local = await localSaved(page);
-    await altPlus(page).click();
+    await bumpTest(page);
     await settle(page);
     expect(await cloudWrites(page)).toEqual([]);
     expect(await localSaved(page)).toEqual(local);

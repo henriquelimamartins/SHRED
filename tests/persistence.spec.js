@@ -4,11 +4,12 @@
 // 3.5: Reset Everything, D106).
 // Firebase is stubbed; the "cloud" is window.__SHRED_TEST__.docs and every write is recorded.
 const { test, expect } = require('@playwright/test');
-const { openApp, cloudWrites, localSaved, settle, unexpectedConsoleErrors } = require('./support/app');
+const { openApp, cloudWrites, localSaved, settle, unexpectedConsoleErrors, bumpTest, testStepper } = require('./support/app');
 const { TEST_USER, USER_DOC, baseState, progressState } = require('./support/fixtures');
 
 // Home → Phase Transition Test stepper for Alternate Picking.
-const altPlus = (page) => page.locator('#panel-home [data-action="test"][data-t="alt"][data-d="1"]');
+// Slice 4.3 (D122): the Phase Transition Test moved from HOME to the TECHNIQUE page.
+const altPlus = (page) => testStepper(page, 'alt', 1);
 const altLevel = (page) => altPlus(page).locator('xpath=preceding-sibling::div[contains(@class,"lvl")]');
 
 test.describe('local saving (signed out)', () => {
@@ -16,7 +17,7 @@ test.describe('local saving (signed out)', () => {
     const monitor = await openApp(page);
     await expect(altLevel(page)).toHaveText('0/5');
 
-    await altPlus(page).click();
+    await bumpTest(page);
     await expect(altLevel(page)).toHaveText('1/5');
     expect((await localSaved(page)).testLevel.alt).toBe(1);
 
@@ -41,7 +42,7 @@ test.describe('local saving (signed out)', () => {
     const local = baseState({ futureField: { keep: 'me' }, testLevel: { ...baseState().testLevel, alt: 2 } });
     await openApp(page, { localState: local });
 
-    await altPlus(page).click();
+    await bumpTest(page);
     await expect(altLevel(page)).toHaveText('3/5');
 
     const saved = await localSaved(page);
@@ -89,7 +90,7 @@ test.describe('cloud sync on sign-in', () => {
     expect(local.practiced).toEqual({});
 
     // The next real change carries the daily reset to the cloud.
-    await altPlus(page).click();
+    await bumpTest(page);
     await settle(page);
     const writes = await cloudWrites(page);
     expect(writes.length).toBeGreaterThanOrEqual(1);
@@ -106,7 +107,7 @@ test.describe('signed in', () => {
     await openApp(page, { user: TEST_USER, docs: { [USER_DOC]: progressState() } });
     await expect(altLevel(page)).toHaveText('3/5');
 
-    await altPlus(page).click();
+    await bumpTest(page);
     await expect(altLevel(page)).toHaveText('4/5');
     await settle(page);
 

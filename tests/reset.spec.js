@@ -6,7 +6,7 @@
 // - Signed in: refused until this session has read the cloud; then sent through the checked write
 //   queue (D105), pending while offline.
 const { test, expect } = require('@playwright/test');
-const { openApp, cloudWrites, localSaved, settle, unexpectedConsoleErrors } = require('./support/app');
+const { openApp, cloudWrites, localSaved, settle, unexpectedConsoleErrors, bumpTest, testStepper } = require('./support/app');
 const { TEST_USER, USER_DOC, progressState } = require('./support/fixtures');
 
 const BACKUP_KEY = 'shredRoadmapBackups_v1';
@@ -14,7 +14,8 @@ const PENDING_KEY = 'shredRoadmapSyncPending_v1';
 const RESET_DONE = 'Progress has been reset. Streak, calendar and SETUP were kept.';
 const STILL_LOADING = 'Cloud progress is still loading. Try again in a moment.';
 
-const altPlus = (page) => page.locator('#panel-home [data-action="test"][data-t="alt"][data-d="1"]');
+// Slice 4.3 (D122): the Phase Transition Test moved from HOME to the TECHNIQUE page.
+const altPlus = (page) => testStepper(page, 'alt', 1);
 const altLevel = (page) => altPlus(page).locator('xpath=preceding-sibling::div[contains(@class,"lvl")]');
 const toast = (page) => page.locator('#toast');
 
@@ -106,7 +107,7 @@ test.describe('what is erased and what is kept (signed out)', () => {
 
   test('the backup holds everything that was erased', async ({ page }) => {
     await openApp(page, { localState: fullState() });
-    await altPlus(page).click(); // differs from the daily snapshot taken at start-up
+    await bumpTest(page); // differs from the daily snapshot taken at start-up
     await resetEverything(page);
     await expect(toast(page)).toHaveText(RESET_DONE);
     const reset = (await backups(page)).filter((b) => b.reason === 'before-reset');

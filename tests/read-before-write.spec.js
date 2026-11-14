@@ -4,13 +4,14 @@
 // - If the read fails: no cloud writes for the session, a message, manual Save refused, Load still works.
 // The Firestore stand-in can hold or fail getDoc (window.__SHRED_TEST_FLAGS__, set before the app starts).
 const { test, expect } = require('@playwright/test');
-const { openApp, cloudWrites, localSaved, settle } = require('./support/app');
+const { openApp, cloudWrites, localSaved, settle, bumpTest, testStepper } = require('./support/app');
 const { TEST_USER, USER_DOC, progressState } = require('./support/fixtures');
 
 const BACKUP_KEY = 'shredRoadmapBackups_v1';
 const READ_FAILED = 'Could not reach your cloud progress. Changes are saved on this device only.';
 
-const altPlus = (page) => page.locator('#panel-home [data-action="test"][data-t="alt"][data-d="1"]');
+// Slice 4.3 (D122): the Phase Transition Test moved from HOME to the TECHNIQUE page.
+const altPlus = (page) => testStepper(page, 'alt', 1);
 const altLevel = (page) => altPlus(page).locator('xpath=preceding-sibling::div[contains(@class,"lvl")]');
 
 async function setFlags(page, flags) {
@@ -26,7 +27,7 @@ test.describe('while the first cloud read is still running', () => {
     await setFlags(page, { holdGetDoc: true });
     await openApp(page, { user: TEST_USER, docs: { [USER_DOC]: progressState({ schemaVersion: 1 }) }, localState: progressState({ schemaVersion: 1 }) });
 
-    await altPlus(page).click();
+    await bumpTest(page);
     await expect(altLevel(page)).toHaveText('4/5');
     await settle(page);
     expect((await localSaved(page)).testLevel.alt).toBe(4);
@@ -40,7 +41,7 @@ test.describe('while the first cloud read is still running', () => {
   test('when the read arrives, the cloud wins and the local change is in a backup; later changes are written', async ({ page }) => {
     await setFlags(page, { holdGetDoc: true });
     await openApp(page, { user: TEST_USER, docs: { [USER_DOC]: progressState({ schemaVersion: 1 }) }, localState: progressState({ schemaVersion: 1 }) });
-    await altPlus(page).click(); // local alt 4, not sent
+    await bumpTest(page); // local alt 4, not sent
 
     await page.evaluate(() => window.__SHRED_TEST_RELEASE_GETDOC__());
     await expect(page.locator('#toast')).toHaveText('Progress synced from cloud!');
@@ -50,7 +51,7 @@ test.describe('while the first cloud read is still running', () => {
     expect(sync[0].state.testLevel.alt).toBe(4);
     expect(await cloudWrites(page)).toEqual([]);
 
-    await altPlus(page).click();
+    await bumpTest(page);
     await settle(page);
     const writes = await cloudWrites(page);
     expect(writes.length).toBeGreaterThanOrEqual(1);
@@ -61,7 +62,7 @@ test.describe('while the first cloud read is still running', () => {
   test('a new account (no cloud document yet) uploads the local state once the read has finished', async ({ page }) => {
     await setFlags(page, { holdGetDoc: true });
     await openApp(page, { user: TEST_USER, localState: progressState({ schemaVersion: 1 }) });
-    await altPlus(page).click();
+    await bumpTest(page);
     expect(await cloudWrites(page)).toEqual([]);
 
     await page.evaluate(() => window.__SHRED_TEST_RELEASE_GETDOC__());
@@ -81,7 +82,7 @@ test.describe('when the cloud read fails', () => {
     await expect(page.locator('#toast')).toHaveText(READ_FAILED);
     await expect(altLevel(page)).toHaveText('3/5'); // local state, not replaced
 
-    await altPlus(page).click();
+    await bumpTest(page);
     await expect(altLevel(page)).toHaveText('4/5');
     await settle(page);
     expect((await localSaved(page)).testLevel.alt).toBe(4);
@@ -121,7 +122,7 @@ test.describe('when the cloud read fails', () => {
     await page.locator('#panel-home [data-action="cloudload"]').click();
     await expect(page.locator('#toast')).toHaveText('Progress loaded from cloud!');
 
-    await altPlus(page).click();
+    await bumpTest(page);
     await settle(page);
     const writes = await cloudWrites(page);
     expect(writes.length).toBeGreaterThanOrEqual(1);

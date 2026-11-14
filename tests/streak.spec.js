@@ -6,14 +6,15 @@
 // Clock: 2026-11-10 12:00 UTC (a Tuesday), Europe/Lisbon (UTC+0 in winter), as in daily.spec.js.
 // "Today" is still the UTC date here; the local-day fix is slice 3.7 (D33-2).
 const { test, expect } = require('@playwright/test');
-const { openApp, cloudWrites, localSaved, settle } = require('./support/app');
+const { openApp, cloudWrites, localSaved, settle, bumpTest, testStepper } = require('./support/app');
 const { baseState, progressState, TEST_USER, USER_DOC } = require('./support/fixtures');
 
 test.use({ timezoneId: 'Europe/Lisbon' });
 
 const home = (page) => page.locator('#panel-home');
 const daily = (page) => page.locator('#panel-daily');
-const altPlus = (page) => home(page).locator('[data-action="test"][data-t="alt"][data-d="1"]');
+// Slice 4.3 (D122): the Phase Transition Test moved from HOME to the TECHNIQUE page.
+const altPlus = (page) => testStepper(page, 'alt', 1);
 const practiceBox = (page, block) => daily(page).locator(`[data-action="blockprac"][data-block="${block}"]`);
 
 async function goTo(page, view) {
@@ -98,7 +99,7 @@ test.describe('first load of a new day', () => {
 test.describe('later on the new day', () => {
   test('a Technique change does not log today; ticking a DAILY block does; unticking removes it again', async ({ page }) => {
     await openApp(page, { localState: leftFrom('2026-11-09', { 'warmup.Mon': true }, ['2026-11-09']) });
-    await altPlus(page).click();
+    await bumpTest(page);
     expect((await localSaved(page)).streakDates).toEqual(['2026-11-09']);
 
     await goTo(page, 'daily');
@@ -119,7 +120,7 @@ test.describe('later on the new day', () => {
 
     await page.clock.setFixedTime(new Date('2026-11-10T00:10:00Z'));
     await goTo(page, 'home');
-    await altPlus(page).click();
+    await bumpTest(page);
     const saved = await localSaved(page);
     expect(saved.streakDates).toEqual(['2026-11-09']);
     expect(saved.practiced).toEqual({});
@@ -138,7 +139,7 @@ test.describe('signed in', () => {
     await settle(page);
     expect(await cloudWrites(page)).toEqual([]);
 
-    await altPlus(page).click();
+    await bumpTest(page);
     await settle(page);
     let writes = await cloudWrites(page);
     expect(writes.length).toBe(1);

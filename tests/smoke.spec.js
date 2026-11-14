@@ -3,9 +3,10 @@
 const { test, expect } = require('@playwright/test');
 const { openApp, unexpectedConsoleErrors, cloudWrites } = require('./support/app');
 
-const MAIN_VIEWS = ['home', 'daily', 'improv', 'dojo', 'library', 'setup'];
+const MAIN_VIEWS = ['home', 'daily', 'technique', 'improv', 'dojo', 'library', 'setup'];
 // Slice 4.2a (D119): the phone bottom bar holds HOME, DAILY, IMPROV, THEORY (dojo) and More; Library and Tools are in More.
-const PHONE_BAR_VIEWS = ['home', 'daily', 'improv', 'dojo'];
+// Slice 4.3 (D117, D122): TECHNIQUE joins the menu and the phone bar.
+const PHONE_BAR_VIEWS = ['home', 'daily', 'technique', 'improv', 'dojo'];
 const PHONE_MORE_VIEWS = ['library', 'setup'];
 
 function navFor(page, projectName) {

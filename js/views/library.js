@@ -1,57 +1,21 @@
 // LIBRARY view.
+// Slice 4.3 (D112, D122): the Shred Roadmap section (phases and Essential Skills) moved to the TECHNIQUE page.
 // Slice 4.2b (D113): with the BHGS pack off, the BHGS sections (Shred Roadmap, Theory Track, Creative, Bonus Content),
 // the Weekly Rhythm and the BHGS guide text are hidden; Expression Track, Listening Vault and the guide stay.
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
-import { PHASES, CREATIVE, THEORY_DOCS, THEORY_ROOT_ITEMS, THEORY_GROUPS, ESSENTIAL, ESSENTIAL_URL, PREREQ, WARMUP_URL, WEEKLY_RHYTHM } from "../data/bhgs.js?v=1";
+import { CREATIVE, THEORY_DOCS, THEORY_ROOT_ITEMS, THEORY_GROUPS, WEEKLY_RHYTHM } from "../data/bhgs.js?v=1";
 import { IMPROV_GATES } from "../data/improv.js?v=1";
 import { LISTENING_VAULT } from "../data/listening.js?v=1";
-import { DAY_FULL } from "../data/days.js?v=1";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=1";
 import { BHGS_PACK } from "../pack.js?v=1";
-import { k, phasePercent } from "../logic/technique.js?v=13";
-import { linked, checkItem, watchItem, prereqItem, docItem, chopRow, testRow, renderBonusList } from "./components.js?v=13";
+import { watchItem, docItem, renderBonusList } from "./components.js?v=14";
 
 export function renderLibrary(){
   var html='<div class="eyebrow">Reference &amp; Review</div><div class="h2 h2-lg u-mb-8">Library</div>';
   html+='<p class="lede">Browse and check off any item, anytime - it all counts toward the same progress as Daily Practice.</p>';
   
   if(BHGS_PACK){
-  html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="shredroadmap"><b>Shred Roadmap</b><span class="acc-right"><span class="acc-sub">Essential Skills &amp; Phases</span><span class="chev'+(ui.lib.shredroadmap?" open":"")+'">&#8250;</span></span></div>';
-  if(ui.lib.shredroadmap){
-    html+='<div class="accbody">';
-    html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="essentials"><b>Essential Skills</b><span class="acc-right"><span class="chev'+(ui.lib.essentials?" open":"")+'">&#8250;</span></span></div>';
-    if(ui.lib.essentials){ 
-      html+='<div class="accbody"><div class="card"><ul class="check">'+Object.keys(ESSENTIAL).map(function(d){
-        var label=ESSENTIAL[d], url=ESSENTIAL_URL[label];
-        return '<li class="lib-dayrow"><div class="itxt">'+linked(label,url)+' <span class="tag">('+DAY_FULL[d]+')</span></div></li>';
-      }).join("")+'</ul></div></div>'; 
-    }
-    html+='</div>';
-
-    PHASES.forEach(function(p,i){
-      var open=!!ui.lib["p"+i],pct=phasePercent(i);
-      html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="p'+i+'"><b>'+p.label.toUpperCase()+'</b><span class="acc-right"><span class="acc-sub">Phase '+i+' &middot; '+p.short+' ('+pct+'%)</span><span class="chev'+(open?" open":"")+'">&#8250;</span></span></div>';
-      if(open){
-        html+='<div class="accbody">';
-        if(p.kind==="setup"){
-          html+='<div class="list-card"><h3>Prerequisites</h3><ul class="check">'+PREREQ.map(function(pr,j){return prereqItem(pr.t,k("p0","pre",j),pr.url);}).join("")+'</ul></div>';
-          html+='<div class="list-card"><h3>Warm-Up</h3><p>'+linked("Ultimate 5-Minute Warm-Up",WARMUP_URL)+'</p></div>';
-        } else {
-          if(p.concept&&p.concept.length) html+='<div class="list-card"><h3>Concept Videos</h3><ul class="check">'+p.concept.map(function(t,j){return watchItem(t.t,k(p.id,"c",j),t.url);}).join("")+'</ul></div>';
-          html+='<div class="list-card"><h3>Exercises</h3><ul class="check">'+p.exercises.map(function(t,j){return checkItem(t.t,k(p.id,"e",j),t.url);}).join("")+'</ul></div>';
-          html+='<div class="list-card"><h3>Chop-Builders <span class="tag">target: Level '+p.target+'</span></h3>'+chopRow(p.target)+'</div>';
-          html+='<div class="list-card"><h3>Solos</h3><ul class="check">'+p.songs.map(function(t,j){return checkItem(t.t,k(p.id,"s",j),t.url);}).join("")+'</ul></div>';
-          html+='<div class="list-card"><h3>Phase Transition Test <span class="tag">target: Level '+p.testReq+'</span></h3>'+testRow(p.testReq)+'</div>';
-        }
-        html+='</div>';
-      }
-      html+='</div>';
-    });
-    html+='</div>';
-  }
-  html+='</div>';
-
   html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="theory"><b>Theory Track</b><span class="acc-right"><span class="acc-sub">Intervals, Modes &amp; Chords</span><span class="chev'+(ui.lib.theory?" open":"")+'">&#8250;</span></span></div>';
   if(ui.lib.theory) {
     html+='<div class="accbody">';

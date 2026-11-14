@@ -2,6 +2,7 @@
 // Pure helpers: the backup file, reading a chosen file, labels for the on-device snapshots and the
 // state a restore produces. Nothing here saves or replaces anything; js/events.js does that, in the
 // same order as Reset Everything (D106): newer-version stop, cloud read first, backup first.
+// Slice 4.3 (D115): label for the "before-phase-jump" snapshot.
 import { STORAGE_KEY, SCHEMA_VERSION, defaultState, defaultDojoState, readBackups } from "../store.js?v=5";
 
 export const BACKUP_APP = "shred-roadmap";
@@ -25,7 +26,7 @@ export function formatLocalTime(at){
   return d.getDate() + " " + MONTHS[d.getMonth()] + " " + d.getFullYear() + ", " + pad(d.getHours()) + ":" + pad(d.getMinutes());
 }
 
-// The reason of an on-device snapshot (D101, D102, D105, D106, D110) in plain words.
+// The reason of an on-device snapshot (D101, D102, D105, D106, D110, D115) in plain words.
 var REASON_LABELS = {
   "daily": "Daily backup",
   "migration": "Before app update",
@@ -33,7 +34,8 @@ var REASON_LABELS = {
   "before-cloud-load": "Before Load from cloud",
   "before-reset": "Before reset",
   "before-stale-replace": "Before newer progress from another device",
-  "before-restore": "Before restore"
+  "before-restore": "Before restore",
+  "before-phase-jump": "Before phase change"
 };
 export function reasonLabel(reason){ return REASON_LABELS[reason] || "Backup"; }
 

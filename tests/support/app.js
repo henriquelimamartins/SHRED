@@ -97,4 +97,43 @@ async function settle(page) {
   await page.evaluate(() => new Promise((resolve) => setTimeout(resolve, 50)));
 }
 
-module.exports = { openApp, unexpectedConsoleErrors, cloudWrites, localSaved, settle, STORAGE_KEY, DEFAULT_NOW };
+/**
+ * Opens a destination from the sidebar (desktop), the phone bar or the phone More sheet.
+ * Navigating writes nothing (D119), so tests can move between pages freely.
+ */
+async function openView(page, view) {
+  const nav = page.locator('#botnav:visible, #sidebar-nav-inner:visible').first();
+  const btn = nav.locator(`[data-action="go"][data-view="${view}"]`);
+  if (await btn.count()) await btn.click();
+  else {
+    await nav.locator('[data-action="more"]').click();
+    await page.locator(`#more-sheet [data-action="go"][data-view="${view}"]`).click();
+  }
+  await expect(page.locator(`#panel-${view}`)).toHaveClass(/active/);
+  await settle(page);
+}
+
+/** The current-phase Phase Transition Test stepper on the TECHNIQUE page (slice 4.3; it was on HOME before). */
+function testStepper(page, key = 'alt', d = 1) {
+  return page.locator(`#panel-technique .tech-sec-test [data-action="test"][data-t="${key}"][data-d="${d}"]`);
+}
+
+/**
+ * One Phase Transition Test step (a simple Technique change used by many persistence tests).
+ * Slice 4.3 (D122): the test moved from HOME to TECHNIQUE; this opens TECHNIQUE (Phase test tab on the
+ * phone), clicks the stepper and goes back to the page that was open, so the tests keep their flow.
+ */
+async function bumpTest(page, key = 'alt', d = 1) {
+  const back = await page.evaluate(() => {
+    const p = document.querySelector('.view-panel.active');
+    return p ? p.id.replace('panel-', '') : 'home';
+  });
+  if (back !== 'technique') await openView(page, 'technique');
+  const tab = page.locator('#panel-technique [data-action="techtab"][data-tab="test"]');
+  if (await tab.isVisible()) { await tab.click(); await settle(page); }
+  await testStepper(page, key, d).click();
+  await settle(page);
+  if (back !== 'technique') await openView(page, back);
+}
+
+module.exports = { openApp, unexpectedConsoleErrors, cloudWrites, localSaved, settle, openView, testStepper, bumpTest, STORAGE_KEY, DEFAULT_NOW };
