@@ -22,7 +22,7 @@ async function goTo(page, view) {
 
 test('no inline onclick handlers are left in the page', async ({ page }) => {
   await openApp(page);
-  for (const view of ['home', 'daily', 'improv', 'dojo', 'library', 'setup']) {
+  for (const view of ['home', 'daily', 'technique', 'improv', 'dojo', 'library', 'setup']) {
     await goTo(page, view);
     expect(await page.locator('[onclick]').count(), `inline onclick on ${view}`).toBe(0);
   }

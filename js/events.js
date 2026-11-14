@@ -10,18 +10,19 @@
 // Slice 3.8 (D110): Download backup / Restore backup (Home, card "Cloud Sync"). A restore replaces the
 // state like Reset: newer-version stop, cloud read first when signed in, backup first, then a checked write.
 // Slice 4.2a (D119): the sidebar Search and Login/Logout behave like the top-bar ones; the phone More sheet opens and closes.
+// Slice 4.3 (D122): TECHNIQUE page phone tabs ("techtab") and the Phase settings panel ("phasesettings").
 // Slice 2.5: the SETUP video button ("openvideo") and the search box are handled here only (no inline onclick).
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
 import { CODEX_DATA } from "./data/dojo.js?v=1";
 import { defaultState, defaultDojoState, saveState, state, replaceState, backupBeforeReplace, migrate, newerSchema, NEWER_SCHEMA_MSG } from "./store.js?v=5";
 import { hasFirebase, auth, db, googleProvider, currentUser, cloudReady, cloudReadFailed, CLOUD_READ_FAILED_MSG, requestCloudWrite, loadFromCloud, signInWithPopup, signOut } from "./firebase.js?v=5";
 import { ui, showToast } from "./ui.js?v=1";
-import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=13";
-import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=13";
-import { changeCalMonth } from "./views/calendar.js?v=13";
+import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=14";
+import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=14";
+import { changeCalMonth } from "./views/calendar.js?v=14";
 import { currentMinigame, addXP, startArchitectGame, handleDojoAnswer, renderCodexList } from "./views/dojo.js?v=6";
-import { updateNav, render } from "./render.js?v=13";
-import { buildBackupFile, backupFileName, listDeviceBackups, parseBackupFile, isNewerCopy, restoredState, formatLocalTime, reasonLabel, MAX_BACKUP_FILE_BYTES, INVALID_BACKUP_MSG, NEWER_BACKUP_MSG } from "./logic/backup.js?v=1";
+import { updateNav, render } from "./render.js?v=14";
+import { buildBackupFile, backupFileName, listDeviceBackups, parseBackupFile, isNewerCopy, restoredState, formatLocalTime, reasonLabel, MAX_BACKUP_FILE_BYTES, INVALID_BACKUP_MSG, NEWER_BACKUP_MSG } from "./logic/backup.js?v=2";
 
 export function handleReset(){ ui.resetConfirm=true; render(); }
 export function cancelReset(){ ui.resetConfirm=false; render(); }
@@ -205,6 +206,8 @@ document.addEventListener("click",function(e){
   }
   
   if(a==="toggleacc"){ui.lib[t.dataset.acc]=!ui.lib[t.dataset.acc]; render();}
+  else if(a==="techtab"){ ui.techTab=t.dataset.tab; render(); }
+  else if(a==="phasesettings"){ ui.phaseSettingsOpen=!ui.phaseSettingsOpen; render(); }
   else if(a==="setday"){ ui.dayOverride=t.dataset.day; render(); }
   else if(a==="chop"){ setChop(t.dataset.t,parseInt(t.dataset.d,10)); }
   else if(a==="test"){ setTest(t.dataset.t,parseInt(t.dataset.d,10)); }

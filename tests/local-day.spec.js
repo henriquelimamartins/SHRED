@@ -5,7 +5,7 @@
 // - Dates already stored are never rewritten (D33).
 // Lisbon is UTC+1 in summer and UTC+0 in winter; other time zones check days far from UTC.
 const { test, expect } = require('@playwright/test');
-const { openApp, cloudWrites, localSaved, settle } = require('./support/app');
+const { openApp, cloudWrites, localSaved, settle, bumpTest, testStepper } = require('./support/app');
 const { baseState, progressState, TEST_USER, USER_DOC } = require('./support/fixtures');
 
 const home = (page) => page.locator('#panel-home');
@@ -14,7 +14,8 @@ const library = (page) => page.locator('#panel-library');
 const toast = (page) => page.locator('#toast');
 const practiceBox = (page, block) => daily(page).locator(`[data-action="blockprac"][data-block="${block}"]`);
 const dayChip = (page, day) => daily(page).locator(`.daypick [data-action="setday"][data-day="${day}"]`);
-const altPlus = (page) => home(page).locator('[data-action="test"][data-t="alt"][data-d="1"]');
+// Slice 4.3 (D122): the Phase Transition Test moved from HOME to the TECHNIQUE page.
+const altPlus = (page) => testStepper(page, 'alt', 1);
 
 async function goTo(page, view) {
   const nav = page.locator('#botnav:visible, #sidebar-nav-inner:visible').first();
@@ -58,7 +59,7 @@ test.describe('Lisbon summer time, between 00:00 and 01:00', () => {
 
     await page.clock.setFixedTime(new Date('2026-07-14T23:10:00Z')); // 00:10 Wednesday in Lisbon
     await goTo(page, 'home');
-    await altPlus(page).click();
+    await bumpTest(page);
     const saved = await localSaved(page);
     expect(saved.practiced).toEqual({});
     expect(saved.practicedDate).toBe('2026-07-15');
@@ -67,10 +68,9 @@ test.describe('Lisbon summer time, between 00:00 and 01:00', () => {
 
   test('a Mastered mark is dated with the local day', async ({ page }) => {
     await openApp(page, { now: LISBON_SUMMER_AFTER_MIDNIGHT, localState: baseState({ phaseIndex: 1, practicedDate: '2026-07-15' }) });
-    await goTo(page, 'library');
-    await library(page).locator('[data-acc="shredroadmap"]').click();
-    await library(page).locator('[data-acc="p1"]').click();
-    await library(page).locator('[data-action="togm"][data-key="p1.e.0"]').click();
+    // Slice 4.3 (D122): the current phase's checklist is on the TECHNIQUE page.
+    await goTo(page, 'technique');
+    await page.locator('#panel-technique [data-action="togm"][data-key="p1.e.0"]').click();
     expect((await localSaved(page)).checks['p1.e.0']).toBe('2026-07-15');
   });
 

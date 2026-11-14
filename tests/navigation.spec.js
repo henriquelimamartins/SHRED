@@ -1,7 +1,8 @@
 // Slice 4.2a (DECISIONS D119, D117, D25, D114): the new navigation.
 // Desktop: sidebar = brand, Search, menu (Home, Daily, Improv, Theory, Library, Tools), account row; no top bar.
 // Phone: top bar (brand, search, login) and a bottom bar Home, Daily, Improv, Theory, More; More holds Library and Tools.
-// The Technique phase bar is shown on HOME only. Firebase is stubbed; nothing leaves the machine.
+// Slice 4.3 (D117, D122): TECHNIQUE joins: menu Home, Daily, Technique, Improv, Theory, Library, Tools; phone bar
+// Home, Daily, Technique, Improv, Theory, More. The phase bar is on HOME and at the top of the TECHNIQUE page. Firebase is stubbed; nothing leaves the machine.
 const { test, expect } = require('@playwright/test');
 const { openApp, unexpectedConsoleErrors, cloudWrites } = require('./support/app');
 const { TEST_USER, USER_DOC, progressState } = require('./support/fixtures');
@@ -22,10 +23,9 @@ test.describe('desktop', () => {
     await expect(page.locator('#topbar')).toBeHidden();
     await expect(page.locator('#botnav')).toBeHidden();
 
-    expect(await labels(page.locator('#sidebar-nav-inner [data-action="go"]'))).toEqual(['Home', 'Daily', 'Improv', 'Theory', 'Library', 'Tools']);
+    expect(await labels(page.locator('#sidebar-nav-inner [data-action="go"]'))).toEqual(['Home', 'Daily', 'Technique', 'Improv', 'Theory', 'Library', 'Tools']);
     expect(await page.locator('#sidebar-nav-inner [data-action="go"]').evaluateAll((b) => b.map((x) => x.dataset.view)))
-      .toEqual(['home', 'daily', 'improv', 'dojo', 'library', 'setup']);
-    await expect(page.locator('#sidebar [data-view="technique"]')).toHaveCount(0); // TECHNIQUE joins in 4.3
+      .toEqual(['home', 'daily', 'technique', 'improv', 'dojo', 'library', 'setup']);
     await expect(page.locator('#sidebar').getByText('Dojo', { exact: true })).toHaveCount(0);
 
     // Order inside the sidebar: brand, Search, menu, account row.
@@ -65,11 +65,11 @@ test.describe('desktop', () => {
 test.describe('phone', () => {
   test.skip(({ isMobile }) => !isMobile, 'phone layout');
 
-  test('bottom bar is Home, Daily, Improv, Theory, More; the sidebar is hidden', async ({ page }) => {
+  test('bottom bar is Home, Daily, Technique, Improv, Theory, More; the sidebar is hidden', async ({ page }) => {
     const monitor = await openApp(page);
     await expect(page.locator('#sidebar')).toBeHidden();
     await expect(page.locator('#topbar')).toBeVisible();
-    expect(await labels(page.locator('#botnav button'))).toEqual(['Home', 'Daily', 'Improv', 'Theory', 'More']);
+    expect(await labels(page.locator('#botnav button'))).toEqual(['Home', 'Daily', 'Technique', 'Improv', 'Theory', 'More']);
     await expect(page.locator('#more-sheet')).not.toHaveClass(/open/);
     expect(monitor.pageErrors).toEqual([]);
   });
@@ -113,11 +113,12 @@ test.describe('phone', () => {
   });
 });
 
-test('the Technique phase bar is on HOME only (D25), not on other pages', async ({ page }) => {
+test('the Technique phase bar is on HOME and the TECHNIQUE page (D25, D117), not on other pages', async ({ page }) => {
   await openApp(page, { localState: progressState({ phaseIndex: 1 }) });
   await expect(page.locator('#topbar .phasebar')).toHaveCount(0);
   await expect(page.locator('#panel-home .phasebar')).toHaveCount(1);
   await expect(page.locator('#panel-home .pseg')).toHaveCount(5);
+  await expect(page.locator('#panel-technique .phasebar')).toHaveCount(1);
   for (const v of ['daily', 'improv', 'dojo', 'library', 'setup']) {
     await expect(page.locator(`#panel-${v} .phasebar`)).toHaveCount(0);
   }
@@ -126,7 +127,7 @@ test('the Technique phase bar is on HOME only (D25), not on other pages', async 
 test('navigating changes nothing in the saved data and writes nothing to the cloud', async ({ page }, testInfo) => {
   await openApp(page, { localState: progressState() });
   const before = await page.evaluate(() => localStorage.getItem('shredRoadmapState_v10'));
-  const views = ['daily', 'improv', 'dojo', 'library', 'setup', 'home'];
+  const views = ['daily', 'technique', 'improv', 'dojo', 'library', 'setup', 'home'];
   for (const v of views) {
     const nav = page.locator('#botnav:visible, #sidebar-nav-inner:visible').first();
     const btn = nav.locator(`[data-action="go"][data-view="${v}"]`);

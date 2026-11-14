@@ -1,6 +1,7 @@
 // Slice 4.2b (DECISIONS D113, D119 point 6): the app works complete with the BHGS pack switched off.
 // The tests serve js/pack.js with BHGS_PACK = false (support/app.js, option `bhgsPack: false`); the real file stays on.
 // Out of scope (D113): DAILY content without the pack (Phase 8); DAILY is only checked to open without errors.
+// Slice 4.3 (D113, D122): with the pack off there is no TECHNIQUE destination and no Technique shortcut on HOME.
 const { test, expect } = require('@playwright/test');
 const { openApp, unexpectedConsoleErrors, cloudWrites, STORAGE_KEY } = require('./support/app');
 const { TEST_USER, USER_DOC, progressState } = require('./support/fixtures');
@@ -55,6 +56,7 @@ test('pack off: HOME hides the phase bar, phase %, Phase Transition Test and Jum
   await expect(home.locator('.statrow .stat')).toHaveCount(1);
   await expect(home.locator('.statrow .stat .lbl')).toHaveText('Days Logged');
   await expect(home.locator('[data-action="setphase"]')).toHaveCount(0);
+  await expect(home.locator('[data-view="technique"]')).toHaveCount(0);
   await expect(home.locator('.s-day').first()).toBeVisible();
   await expect(home.locator('[data-action="go"][data-view="library"]')).toContainText('Expression Track, Listening Vault & guide');
 });
@@ -87,11 +89,21 @@ test('pack off: phone bar shows LIBRARY instead of keeping it in More (D119 poin
   await expect(page.locator('#more-sheet [data-view="setup"]')).toHaveCount(1);
 });
 
-test('pack on (as in the app): phone bar keeps LIBRARY in More', async ({ page, isMobile }) => {
+test('pack on (as in the app): phone bar has TECHNIQUE and keeps LIBRARY in More', async ({ page, isMobile }) => {
   test.skip(!isMobile, 'phone bar');
   await openApp(page);
   const views = await page.locator('#botnav [data-action="go"]').evaluateAll((b) => b.map((x) => x.dataset.view));
-  expect(views).toEqual(['home', 'daily', 'improv', 'dojo']);
+  expect(views).toEqual(['home', 'daily', 'technique', 'improv', 'dojo']);
+});
+
+test('pack off: no TECHNIQUE destination anywhere and its page is empty (D113)', async ({ page }) => {
+  const monitor = await openApp(page, { bhgsPack: false, localState: progressState({ phaseIndex: 1 }) });
+  await expect(page.locator('[data-view="technique"]')).toHaveCount(0);
+  await expect(page.locator('#panel-technique')).toBeEmpty();
+  const more = page.locator('#botnav [data-action="more"]');
+  if (await more.isVisible()) await more.click();
+  await expect(page.locator('#more-sheet [data-view="technique"]')).toHaveCount(0);
+  expect(monitor.pageErrors).toEqual([]);
 });
 
 test('pack off: stored BHGS progress is never changed, locally or in the cloud', async ({ page }) => {

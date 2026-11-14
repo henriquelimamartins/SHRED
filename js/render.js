@@ -3,15 +3,18 @@
 // Slice 4.2a (D119): desktop sidebar = brand, Search, menu, account row; phone bottom bar = HOME, DAILY, IMPROV,
 // THEORY, MORE (More sheet: Library, Tools); DOJO shown as THEORY (D114), SETUP as TOOLS; the phase bar moved to HOME (D25).
 // Slice 4.2b (D113, D119 point 6): with the BHGS pack off, LIBRARY sits in the phone bar instead of More.
+// Slice 4.3 (D117, D122): TECHNIQUE joins the menu and the phone bar (HOME, DAILY, TECHNIQUE, IMPROV, THEORY, MORE),
+// only with the BHGS pack on; with it off there is no TECHNIQUE destination (D113).
 import { hasFirebase, currentUser } from "./firebase.js?v=5";
 import { ui } from "./ui.js?v=1";
 import { BHGS_PACK } from "./pack.js?v=1";
 import { ensureDailyReset } from "./logic/dates.js?v=7";
-import { initCalCarousel } from "./views/calendar.js?v=13";
-import { renderHome } from "./views/home.js?v=13";
-import { renderDaily } from "./views/daily.js?v=13";
+import { initCalCarousel } from "./views/calendar.js?v=14";
+import { renderHome } from "./views/home.js?v=14";
+import { renderTechnique } from "./views/technique.js?v=1";
+import { renderDaily } from "./views/daily.js?v=14";
 import { renderImprov } from "./views/improv.js?v=6";
-import { renderLibrary } from "./views/library.js?v=13";
+import { renderLibrary } from "./views/library.js?v=14";
 import { renderSetup } from "./views/setup.js?v=7";
 import { renderDojoView } from "./views/dojo.js?v=6";
 
@@ -31,6 +34,7 @@ export function initAppLayout() {
       <div class="views-container" id="views-container">
         <div class="view-panel" data-view-id="home" id="panel-home"></div>
         <div class="view-panel" data-view-id="daily" id="panel-daily"></div>
+        <div class="view-panel" data-view-id="technique" id="panel-technique"></div>
         <div class="view-panel" data-view-id="improv" id="panel-improv"></div>
         <div class="view-panel" data-view-id="dojo" id="panel-dojo"></div>
         <div class="view-panel" data-view-id="library" id="panel-library"></div>
@@ -42,15 +46,16 @@ export function initAppLayout() {
   `;
 }
 
-// Destinations in D117 order. TECHNIQUE joins in 4.3, when its page exists (D119).
+// Destinations in D117 order. TECHNIQUE only with the BHGS pack on (D113).
 const NAV_ITEMS = [
   { view: "home", ic: "\ud83c\udfe0", label: "Home" },
   { view: "daily", ic: "\ud83c\udfaf", label: "Daily" },
+  { view: "technique", ic: "\ud83d\udd25", label: "Technique", pack: true },
   { view: "improv", ic: "\ud83e\udde0", label: "Improv", cls: "improv-nav" },
   { view: "dojo", ic: "\ud83d\udcd6", label: "Theory", cls: "theory-nav" },
   { view: "library", ic: "\ud83d\udcda", label: "Library", more: "Resources" },
   { view: "setup", ic: "\ud83d\udee0\ufe0f", label: "Tools", more: "Tools", moreLabel: "Setup" }
-];
+].filter(function(n){ return !n.pack || BHGS_PACK; });
 // LIBRARY goes into More only with the BHGS pack on (D117 point 3; until the Explorer exists, D119 point 6).
 function inMore(n){ return !!n.more && !(n.view === "library" && !BHGS_PACK); }
 const MORE_VIEWS = NAV_ITEMS.filter(inMore).map(function(n){ return n.view; });
@@ -120,6 +125,7 @@ export function render(){
 
     document.getElementById('panel-home').innerHTML = '<div class="panel-content">' + renderHome() + '</div>';
     document.getElementById('panel-daily').innerHTML = '<div class="panel-content">' + renderDaily() + '</div>';
+    document.getElementById('panel-technique').innerHTML = BHGS_PACK ? '<div class="panel-content">' + renderTechnique() + '</div>' : '';
     document.getElementById('panel-improv').innerHTML = '<div class="panel-content">' + renderImprov() + '</div>';
     document.getElementById('panel-dojo').innerHTML = '<div class="panel-content">' + renderDojoView() + '</div>';
     document.getElementById('panel-library').innerHTML = '<div class="panel-content">' + renderLibrary() + '</div>';

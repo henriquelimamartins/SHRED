@@ -1,6 +1,8 @@
 // Phase 1.5: LIBRARY as it behaves on main TODAY. Technique items inside Library are covered by
 // technique.spec.js and the Expression Track by improv.spec.js; this file covers the rest:
 // sections, Theory Track and Creative "Watched" marks, Bonus steppers, Listening Vault and Guide.
+// Slice 4.3 (D122): the Shred Roadmap section (phases, Essential Skills) moved to the TECHNIQUE page
+// (technique.spec.js, technique-page.spec.js); LIBRARY now has 6 sections.
 const { test, expect } = require('@playwright/test');
 const { openApp, localSaved, unexpectedConsoleErrors } = require('./support/app');
 const { baseState } = require('./support/fixtures');
@@ -31,11 +33,11 @@ const THEORY_KEYS = [
   'theory.6', 'theory.7', 'theory.10',
 ];
 
-test('Library shows its 7 sections, all closed', async ({ page }, testInfo) => {
+test('Library shows its 6 sections, all closed', async ({ page }, testInfo) => {
   const monitor = await openApp(page);
   await goTo(page, 'library');
   expect(await library(page).locator(':scope .panel-content > .acc > .acchead > b').allTextContents()).toEqual([
-    'Shred Roadmap', 'Theory Track', 'Expression Track', 'Listening Vault', 'Creative', 'Bonus Content', 'Guide & Info',
+    'Theory Track', 'Expression Track', 'Listening Vault', 'Creative', 'Bonus Content', 'Guide & Info',
   ]);
   await expect(library(page).locator('.accbody')).toHaveCount(0);
   await page.screenshot({ path: testInfo.outputPath('library-closed.png'), fullPage: true });
@@ -151,14 +153,3 @@ test('Guide & Info: plan text and the 7-day Weekly Rhythm table', async ({ page 
   await expect(body).toContainText("Bradley Hall's Guitar School");
 });
 
-test('Essential Skills lists the 5 weekday micro-doses', async ({ page }) => {
-  await openApp(page);
-  await goTo(page, 'library');
-  await section(page, 'shredroadmap').click();
-  await section(page, 'essentials').click();
-  const items = library(page).locator('.acc:has(> [data-acc="essentials"]) > .accbody .itxt');
-  expect((await items.allTextContents()).map((t) => t.replace(/\s+/g, ' ').trim())).toEqual([
-    'Ear Training (Monday)', 'Rhythm (Tuesday)', 'Time Signatures (Wednesday)',
-    'Sight-Reading (Thursday)', 'Reinforce Weakest (Friday)',
-  ]);
-});

@@ -3,13 +3,14 @@
 // - No backup when there is nothing to lose (local equals the incoming state or the newest backup).
 // - Backup impossible: sign-in sync and Load still replace (D80); Reset does not run.
 const { test, expect } = require('@playwright/test');
-const { openApp, cloudWrites, localSaved, settle, unexpectedConsoleErrors } = require('./support/app');
+const { openApp, cloudWrites, localSaved, settle, unexpectedConsoleErrors, bumpTest, testStepper } = require('./support/app');
 const { TEST_USER, USER_DOC, progressState } = require('./support/fixtures');
 
 const BACKUP_KEY = 'shredRoadmapBackups_v1';
 const RESET_DONE = 'Progress has been reset. Streak, calendar and SETUP were kept.'; // slice 3.5 (D106)
 
-const altPlus = (page) => page.locator('#panel-home [data-action="test"][data-t="alt"][data-d="1"]');
+// Slice 4.3 (D122): the Phase Transition Test moved from HOME to the TECHNIQUE page.
+const altPlus = (page) => testStepper(page, 'alt', 1);
 const altLevel = (page) => altPlus(page).locator('xpath=preceding-sibling::div[contains(@class,"lvl")]');
 
 async function backups(page) {
@@ -113,7 +114,7 @@ test.describe('manual "Load from cloud"', () => {
   test('local state is backed up before Load replaces it', async ({ page }) => {
     await openApp(page, { user: TEST_USER, docs: { [USER_DOC]: progressState({ schemaVersion: 1 }) } });
     await settle(page);
-    await altPlus(page).click(); // local (and cloud) alt = 4
+    await bumpTest(page); // local (and cloud) alt = 4
     await page.evaluate((path) => { window.__SHRED_TEST__.docs[path].testLevel.alt = 1; }, USER_DOC); // another device
 
     await page.locator('#panel-home [data-action="cloudload"]').click();
@@ -136,7 +137,7 @@ test.describe('manual "Load from cloud"', () => {
 test.describe('Reset Everything', () => {
   test('progress is backed up before the reset', async ({ page }) => {
     await openApp(page, { localState: progressState({ schemaVersion: 1 }) });
-    await altPlus(page).click(); // differs from the daily snapshot taken at start-up
+    await bumpTest(page); // differs from the daily snapshot taken at start-up
     await resetEverything(page);
     await expect(page.locator('#toast')).toHaveText(RESET_DONE);
     await expect(altLevel(page)).toHaveText('0/5');

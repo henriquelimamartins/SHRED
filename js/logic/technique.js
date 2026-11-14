@@ -1,12 +1,14 @@
 // Technique (BHGS) progress: phase items, phase %, automatic advance, steppers and Jump to phase.
 // applyStateChange() is the shared "after a change" step (daily reset, streak, advance, save, render).
+// Slice 4.3 (D115, D122): jumping back to an earlier phase first saves an on-device backup ("before-phase-jump");
+// no backup, no jump. Nothing is changed over data saved by a newer app version.
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
 import { PHASES, CHOP, TESTCATS, PREREQ } from "../data/bhgs.js?v=1";
-import { saveState, state } from "../store.js?v=5";
+import { saveState, state, backupBeforeReplace, newerSchema, NEWER_SCHEMA_MSG } from "../store.js?v=5";
 import { ui, showToast } from "../ui.js?v=1";
 import { todayISO, ensureDailyReset, updateStreakStatus } from "./dates.js?v=7";
-import { isFullyDoneToday } from "./daily.js?v=13";
-import { render } from "../render.js?v=13";
+import { isFullyDoneToday } from "./daily.js?v=14";
+import { render } from "../render.js?v=14";
 
 export function k(){return Array.prototype.slice.call(arguments).join(".");}
 
@@ -79,6 +81,15 @@ export function handlePhaseSelect(newIdx){
 }
 export function confirmPhaseJumpBack(){
   var newIdx=ui.phaseJumpPending, oldIdx=state.phaseIndex;
+  // Slice 4.3 (D115): nothing changes over data saved by a newer app version (as Reset, D105, D106).
+  if(newerSchema){ ui.phaseJumpPending=null; render(); showToast(NEWER_SCHEMA_MSG); return; }
+  // Slice 4.3 (D115): no jump back without a backup of the current state (as Reset, D102).
+  if(!backupBeforeReplace("before-phase-jump")){
+    ui.phaseJumpPending=null;
+    render();
+    showToast("Could not back up your progress. The phase was not changed.");
+    return;
+  }
   resetPhaseChecks(newIdx+1,oldIdx);
   state.phaseIndex=newIdx;
   ui.phaseJumpPending=null;

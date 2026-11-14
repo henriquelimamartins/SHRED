@@ -4,7 +4,7 @@ const { test, expect } = require('@playwright/test');
 const { openApp, unexpectedConsoleErrors } = require('./support/app');
 const { TEST_USER, USER_DOC, progressState } = require('./support/fixtures');
 
-const VIEWS = ['home', 'daily', 'improv', 'dojo', 'library', 'setup'];
+const VIEWS = ['home', 'daily', 'technique', 'improv', 'dojo', 'library', 'setup'];
 
 /** Records every policy violation the page reports, from the very first moment. */
 async function watchViolations(page) {
@@ -52,9 +52,13 @@ for (const signed of ['out', 'in']) {
     }
     // Open the Library sections and the Dojo Codex too, so their content is drawn.
     await goTo(page, 'library');
-    for (const acc of ['shredroadmap', 'theory', 'expression', 'listening', 'creative', 'bonuslib', 'guide']) {
+    for (const acc of ['theory', 'expression', 'listening', 'creative', 'bonuslib', 'guide']) {
       await page.locator(`#panel-library [data-acc="${acc}"]`).first().click();
     }
+    // Slice 4.3: the TECHNIQUE page's other phases, Essential Skills and Phase settings.
+    await goTo(page, 'technique');
+    for (const acc of ['tp2', 'techessentials']) await page.locator(`#panel-technique [data-acc="${acc}"]`).click();
+    await page.locator('#panel-technique [data-action="phasesettings"]').click();
     await goTo(page, 'dojo');
     await page.locator('#panel-dojo [data-action="dojoopen"]').click();
     expect(await violations(page)).toEqual([]);

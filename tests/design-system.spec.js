@@ -99,13 +99,17 @@ test('no inline style attributes in any view or panel', async ({ page }) => {
   await click(page, '#panel-dojo [data-action="dojoans"]'); await check('dojo: game answered');
 
   await goTo(page, 'setup'); await check('setup');
+  // Slice 4.3: the TECHNIQUE page, with another phase, Essential Skills and Phase settings open.
+  await goTo(page, 'technique'); await check('technique');
+  await click(page, '#panel-technique [data-acc="tp2"]'); await click(page, '#panel-technique [data-acc="techessentials"]');
+  await click(page, '#panel-technique [data-action="phasesettings"]'); await check('technique-open');
 
   for (const [name, bad] of Object.entries(seen)) expect(bad, name).toEqual([]);
 });
 
 test('no visible scrollbars, and pages still scroll (D17)', async ({ page }) => {
   await openApp(page, { localState: progressState({ phaseIndex: 1 }) });
-  for (const view of ['home', 'daily', 'improv', 'dojo', 'library', 'setup']) {
+  for (const view of ['home', 'daily', 'technique', 'improv', 'dojo', 'library', 'setup']) {
     await goTo(page, view);
     const visible = await page.evaluate(() => {
       const out = [];
