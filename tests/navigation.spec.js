@@ -23,7 +23,7 @@ test.describe('desktop', () => {
     await expect(page.locator('#topbar')).toBeHidden();
     await expect(page.locator('#botnav')).toBeHidden();
 
-    expect(await labels(page.locator('#sidebar-nav-inner [data-action="go"]'))).toEqual(['Home', 'Daily', 'Technique', 'Improv', 'Theory', 'Library', 'Tools']);
+    expect(await labels(page.locator('#sidebar-nav-inner [data-action="go"]'))).toEqual(['Home', 'Daily', 'Technique', 'Improvisation', 'Theory', 'Library', 'Tools']); // D123: full name where there is room
     expect(await page.locator('#sidebar-nav-inner [data-action="go"]').evaluateAll((b) => b.map((x) => x.dataset.view)))
       .toEqual(['home', 'daily', 'technique', 'improv', 'dojo', 'library', 'setup']);
     await expect(page.locator('#sidebar').getByText('Dojo', { exact: true })).toHaveCount(0);
@@ -113,14 +113,15 @@ test.describe('phone', () => {
   });
 });
 
-test('the Technique phase bar is on HOME and the TECHNIQUE page (D25, D117), not on other pages', async ({ page }) => {
+// Slice 4.4 (D123): the Technique rail replaced the 5-segment phase bar; rails.spec.js covers the rails in detail.
+test('the Technique rail is on HOME and the TECHNIQUE page (D25, D117), not in the page body elsewhere', async ({ page }) => {
   await openApp(page, { localState: progressState({ phaseIndex: 1 }) });
-  await expect(page.locator('#topbar .phasebar')).toHaveCount(0);
-  await expect(page.locator('#panel-home .phasebar')).toHaveCount(1);
-  await expect(page.locator('#panel-home .pseg')).toHaveCount(5);
-  await expect(page.locator('#panel-technique .phasebar')).toHaveCount(1);
+  await expect(page.locator('#topbar [data-rail]')).toHaveCount(0);
+  await expect(page.locator('#panel-home [data-rail="technique"]')).toHaveCount(1);
+  await expect(page.locator('#panel-home [data-rail="technique"] .rail-node')).toHaveCount(5);
+  await expect(page.locator('#panel-technique [data-rail="technique"]')).toHaveCount(1);
   for (const v of ['daily', 'improv', 'dojo', 'library', 'setup']) {
-    await expect(page.locator(`#panel-${v} .phasebar`)).toHaveCount(0);
+    await expect(page.locator(`#panel-${v} [data-rail="technique"]`)).toHaveCount(0);
   }
 });
 

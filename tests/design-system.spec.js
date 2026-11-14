@@ -39,7 +39,6 @@ async function click(page, selector) {
 async function unexpectedInlineStyles(page) {
   return page.evaluate(() => {
     const allowed = [
-      { sel: '.pseg i', props: ['width'] },        // Technique phase bar fill
       { sel: '.xp-bar-fill', props: ['width'] },   // DOJO XP bar fill
       { sel: '.opt-btn', props: ['pointer-events'] }, // DOJO answers locked after a choice (CSSOM)
     ];

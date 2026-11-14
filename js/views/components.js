@@ -1,11 +1,11 @@
-// Small HTML builders shared by the views (checklist rows, steppers, phase bar, day picker, DAILY blocks).
+// Small HTML builders shared by the views (checklist rows, steppers, day picker, DAILY blocks).
+// Slice 4.4 (D123): the 5-segment phase bar (progressBar) is gone; the pillar rails (views/rails.js) replace it.
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
-import { PHASES, CHOP, TESTCATS, BONUS } from "../data/bhgs.js?v=1";
+import { CHOP, TESTCATS, BONUS } from "../data/bhgs.js?v=1";
 import { DAY_ORDER } from "../data/days.js?v=1";
 import { state } from "../store.js?v=5";
 import { todayISO, todayName, activeDay } from "../logic/dates.js?v=7";
-import { phasePercent } from "../logic/technique.js?v=14";
-import { isBlockPracticed } from "../logic/daily.js?v=14";
+import { isBlockPracticed } from "../logic/daily.js?v=15";
 
 /* ---------- render helpers ---------- */
 export function linked(label,url){ return url? '<a href="'+url+'" target="_blank" rel="noopener">'+label+'</a>' : label; }
@@ -66,15 +66,6 @@ export function renderBonusList(){
     }
     return '<div class="chop"><div class="nm">'+linked(b.t,b.url)+'</div></div>';
   }).join("");
-}
-export function progressBar(){
-  var segs="",labels="";
-  PHASES.forEach(function(p,i){
-    var pct=phasePercent(i);
-    segs+='<div class="pseg"><i style="width:'+pct+'%"></i></div>';
-    labels+='<span class="'+(i===state.phaseIndex?"cur":"")+'">Phase '+i+'</span>';
-  });
-  return '<div class="phasebar-wrapper"><div class="phasebar">'+segs+'</div><div class="plabels">'+labels+'</div></div>';
 }
 export function dayPicker(selectedDay){
   var today=todayName(), act=activeDay();
