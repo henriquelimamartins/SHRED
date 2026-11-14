@@ -1,15 +1,17 @@
 // HOME view.
 // Slice 3.5 (D106): Reset Everything confirmation text says what is erased and what is kept.
 // Slice 3.8 (D110): Download backup / Restore backup in the "Cloud Sync" card (list + confirmation).
+// Slice 4.2b (D113): with the BHGS pack off, the phase bar, phase %, Phase Transition Test and Jump to phase are hidden.
 // Slice 4.2a (D119, D25): the Technique phase bar sits at the top of HOME instead of the top of every page.
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
 import { PHASES, TESTCATS } from "../data/bhgs.js?v=1";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=1";
+import { BHGS_PACK } from "../pack.js?v=1";
 import { totalStreak, currentStreak } from "../logic/dates.js?v=7";
-import { phasePercent } from "../logic/technique.js?v=12";
-import { testRow, progressBar } from "./components.js?v=12";
-import { renderStreakCalendar } from "./calendar.js?v=12";
+import { phasePercent } from "../logic/technique.js?v=13";
+import { testRow, progressBar } from "./components.js?v=13";
+import { renderStreakCalendar } from "./calendar.js?v=13";
 import { listDeviceBackups, formatLocalTime, reasonLabel } from "../logic/backup.js?v=1";
 
 function esc(t){ return String(t).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]; }); }
@@ -42,10 +44,10 @@ function renderRestore(){
 export function renderHome(){
   var cur=PHASES[state.phaseIndex],pct=phasePercent(state.phaseIndex);
   var req=cur.testReq||null;
-  var html='<div class="home-phasebar">'+progressBar()+'</div>';
+  var html=BHGS_PACK?'<div class="home-phasebar">'+progressBar()+'</div>':'';
   html+='<div class="eyebrow">Daily Practice System</div>';
   
-  html+='<div class="statrow"><div class="stat"><div class="bignum">'+pct+'%</div><div class="lbl">'+cur.label+'</div></div>'+
+  html+='<div class="statrow">'+(BHGS_PACK?'<div class="stat"><div class="bignum">'+pct+'%</div><div class="lbl">'+cur.label+'</div></div>':'')+
     '<div class="stat"><div class="bignum">\ud83d\udd25'+totalStreak()+'</div><div class="lbl">Days Logged</div></div></div>';
     
   var streakText = currentStreak() === 1 ? "You've practiced 1 day in a row!" : "You've practiced " + currentStreak() + " days in a row!";
@@ -53,15 +55,16 @@ export function renderHome(){
   html+=renderStreakCalendar();
   html+='</div>';
 
-  html+='<div class="card"><h3>\ud83e\uddea Phase Transition Test <span class="tag">1-Minute Workout</span></h3>'+
+  if(BHGS_PACK) html+='<div class="card"><h3>\ud83e\uddea Phase Transition Test <span class="tag">1-Minute Workout</span></h3>'+
     (req?'<p class="u-mb-12">Reach Level '+req+' on all '+TESTCATS.length+' to unlock '+(PHASES[state.phaseIndex+1]?PHASES[state.phaseIndex+1].label:"the next phase")+'.</p>':'<p class="u-mb-12">Track your baseline here - informational at this stage.</p>')+
     testRow(req)+'</div>';
     
   html+='<button class="navbtn accent" data-action="go" data-view="daily"><div class="ic">\ud83c\udfaf</div><div><b>Daily Practice</b><span>Structured session, any day you pick</span></div></button>';
   html+='<button class="navbtn purple" data-action="go" data-view="improv"><div class="ic">\ud83e\udde0</div><div><b>Improv Masterclass</b><span>The 5 Gates of Freedom</span></div></button>';
-  html+='<button class="navbtn" data-action="go" data-view="library"><div class="ic">\ud83d\udcda</div><div><b>Library &amp; Info</b><span>Browse phases & essential skills</span></div></button>';
+  html+='<button class="navbtn" data-action="go" data-view="library"><div class="ic">\ud83d\udcda</div><div><b>Library &amp; Info</b><span>'+(BHGS_PACK?'Browse phases & essential skills':'Expression Track, Listening Vault & guide')+'</span></div></button>';
   html+='<button class="navbtn setupbtn" data-action="go" data-view="setup"><div class="ic">\ud83d\udee0\ufe0f</div><div><b>Setup Companion</b><span>Optimize your gear for shredding</span></div></button>';
 
+  if(BHGS_PACK){
   html+='<div class="card"><h3>Jump to phase</h3>';
   if(ui.phaseJumpPending!==null){
     html+='<p class="text-warn u-justify u-mb-12"><b>Jump back to Phase '+ui.phaseJumpPending+'?</b> This resets Phase '+(ui.phaseJumpPending+1)+' through Phase '+state.phaseIndex+"'s checklist items. Chop-builder and test levels are left as they are.</p>";
@@ -72,6 +75,7 @@ export function renderHome(){
     html+='</select>';
   }
   html+='</div>';
+  }
 
   html+='<div class="card"><h3>Cloud Sync</h3>';
   if(ui.resetConfirm){

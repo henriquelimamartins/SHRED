@@ -1,4 +1,6 @@
 // LIBRARY view.
+// Slice 4.2b (D113): with the BHGS pack off, the BHGS sections (Shred Roadmap, Theory Track, Creative, Bonus Content),
+// the Weekly Rhythm and the BHGS guide text are hidden; Expression Track, Listening Vault and the guide stay.
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
 import { PHASES, CREATIVE, THEORY_DOCS, THEORY_ROOT_ITEMS, THEORY_GROUPS, ESSENTIAL, ESSENTIAL_URL, PREREQ, WARMUP_URL, WEEKLY_RHYTHM } from "../data/bhgs.js?v=1";
 import { IMPROV_GATES } from "../data/improv.js?v=1";
@@ -6,13 +8,15 @@ import { LISTENING_VAULT } from "../data/listening.js?v=1";
 import { DAY_FULL } from "../data/days.js?v=1";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=1";
-import { k, phasePercent } from "../logic/technique.js?v=12";
-import { linked, checkItem, watchItem, prereqItem, docItem, chopRow, testRow, renderBonusList } from "./components.js?v=12";
+import { BHGS_PACK } from "../pack.js?v=1";
+import { k, phasePercent } from "../logic/technique.js?v=13";
+import { linked, checkItem, watchItem, prereqItem, docItem, chopRow, testRow, renderBonusList } from "./components.js?v=13";
 
 export function renderLibrary(){
   var html='<div class="eyebrow">Reference &amp; Review</div><div class="h2 h2-lg u-mb-8">Library</div>';
   html+='<p class="lede">Browse and check off any item, anytime - it all counts toward the same progress as Daily Practice.</p>';
   
+  if(BHGS_PACK){
   html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="shredroadmap"><b>Shred Roadmap</b><span class="acc-right"><span class="acc-sub">Essential Skills &amp; Phases</span><span class="chev'+(ui.lib.shredroadmap?" open":"")+'">&#8250;</span></span></div>';
   if(ui.lib.shredroadmap){
     html+='<div class="accbody">';
@@ -66,6 +70,8 @@ export function renderLibrary(){
   }
   html+='</div>';
 
+  }
+
   html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="expression"><b>Expression Track</b><span class="acc-right"><span class="acc-sub">The 5 Gates</span><span class="chev'+(ui.lib.expression?" open":"")+'">&#8250;</span></span></div>';
   if(ui.lib.expression){
     html+='<div class="accbody purple-tree">';
@@ -117,6 +123,7 @@ export function renderLibrary(){
   }
   html+='</div>';
 
+  if(BHGS_PACK){
   html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="creative"><b>Creative</b><span class="acc-right"><span class="acc-sub">Songwriting &amp; Production</span><span class="chev'+(ui.lib.creative?" open":"")+'">&#8250;</span></span></div>';
   if(ui.lib.creative){
     html+='<div class="accbody"><div class="list-card"><h3>Songwriting</h3><ul class="check">'+CREATIVE.songwriting.map(function(t,j){return watchItem(t.t,"creative.sw."+j,t.url);}).join("")+'</ul></div>'+
@@ -128,16 +135,23 @@ export function renderLibrary(){
   if(ui.lib.bonuslib) html+='<div class="accbody"><div class="list-card">'+renderBonusList()+'</div></div>';
   html+='</div>';
   
+  }
+
   html+='<hr class="divider">';
   html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="guide"><b>Guide &amp; Info</b><span class="acc-right"><span class="acc-sub">App Instructions</span><span class="chev'+(ui.lib.guide?" open":"")+'">&#8250;</span></span></div>';
   if(ui.lib.guide) {
     html+='<div class="accbody">';
-    html+='<div class="list-card"><h3>How This Plan Works</h3><p class="u-mb-8 u-justify">Technique is sequential and full-coverage: start at Beginner regardless of ability, and work every exercise, chop-builder and solo in every tier before advancing.</p>'+
-      '<p class="u-mb-8 u-justify">To unlock the next phase, you must master all checklist items, hit your chop-builder targets, and reach the required level in all 6 categories of the <b>Phase Transition Test</b> (which includes the Ultimate Technique Workout).</p>'+
-      '<p class="u-mb-8 u-justify">Theory and Creative run on their own independent tracks - always available in Library, never gating a phase.</p></div>';
-    html+='<div class="list-card"><h3>Weekly Rhythm</h3><table class="info"><tr><th>Day</th><th>Focused</th><th>Casual / Improv</th></tr>'+
-      WEEKLY_RHYTHM.map(function(r){return '<tr><td class="day">'+r.day+'</td><td>'+r.focused+'</td><td>'+r.casual+'</td></tr>';}).join("")+'</table></div>';
-    html+='<div class="note u-mt-6">This guide and app are based on <b>Bradley Hall\'s Guitar School</b> (BHGS) Official Roadmap. Improv module custom tailored for expression.</div>';
+    if(BHGS_PACK){
+      html+='<div class="list-card"><h3>How This Plan Works</h3><p class="u-mb-8 u-justify">Technique is sequential and full-coverage: start at Beginner regardless of ability, and work every exercise, chop-builder and solo in every tier before advancing.</p>'+
+        '<p class="u-mb-8 u-justify">To unlock the next phase, you must master all checklist items, hit your chop-builder targets, and reach the required level in all 6 categories of the <b>Phase Transition Test</b> (which includes the Ultimate Technique Workout).</p>'+
+        '<p class="u-mb-8 u-justify">Theory and Creative run on their own independent tracks - always available in Library, never gating a phase.</p></div>';
+      html+='<div class="list-card"><h3>Weekly Rhythm</h3><table class="info"><tr><th>Day</th><th>Focused</th><th>Casual / Improv</th></tr>'+
+        WEEKLY_RHYTHM.map(function(r){return '<tr><td class="day">'+r.day+'</td><td>'+r.focused+'</td><td>'+r.casual+'</td></tr>';}).join("")+'</table></div>';
+      html+='<div class="note u-mt-6">This guide and app are based on <b>Bradley Hall\'s Guitar School</b> (BHGS) Official Roadmap. Improv module custom tailored for expression.</div>';
+    } else {
+      html+='<div class="list-card"><h3>How This App Works</h3><p class="u-mb-8 u-justify">IMPROV takes you through 5 Gates; the Expression Track above lists the same exercises, and the Listening Vault gathers listening references.</p>'+
+        '<p class="u-justify">THEORY is always open and never gates anything.</p></div>';
+    }
     html+='</div>';
   }
   html+='</div>';
