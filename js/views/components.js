@@ -4,8 +4,8 @@ import { PHASES, CHOP, TESTCATS, BONUS } from "../data/bhgs.js?v=1";
 import { DAY_ORDER } from "../data/days.js?v=1";
 import { state } from "../store.js?v=5";
 import { todayISO, todayName, activeDay } from "../logic/dates.js?v=7";
-import { phasePercent } from "../logic/technique.js?v=10";
-import { isBlockPracticed } from "../logic/daily.js?v=10";
+import { phasePercent } from "../logic/technique.js?v=11";
+import { isBlockPracticed } from "../logic/daily.js?v=11";
 
 /* ---------- render helpers ---------- */
 export function linked(label,url){ return url? '<a href="'+url+'" target="_blank" rel="noopener">'+label+'</a>' : label; }
@@ -48,7 +48,7 @@ export function chopRow(target,onlyKeys,editable){
 export function testRow(req){
   return TESTCATS.map(function(c){
     var lvl=state.testLevel[c.key]||0,hit=req&&lvl>=req;
-    var displayTitle = linked(c.label,c.url) + (c.emoji ? ' <span style="text-decoration:none; display:inline-block;">'+c.emoji+'</span>' : '');
+    var displayTitle = linked(c.label,c.url) + (c.emoji ? ' <span class="emoji-inline">'+c.emoji+'</span>' : '');
     return '<div class="chop"><div class="nm">'+displayTitle+(req?'<b>need: Level '+req+'</b>':'<b>baseline</b>')+'</div><div class="stepper">'+
       '<button data-action="test" data-t="'+c.key+'" data-d="-1"> - </button><div class="lvl'+(hit?" hit":"")+'">'+lvl+'/5</div>'+
       '<button data-action="test" data-t="'+c.key+'" data-d="1">+</button></div></div>';

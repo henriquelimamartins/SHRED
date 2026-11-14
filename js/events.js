@@ -15,11 +15,11 @@ import { CODEX_DATA } from "./data/dojo.js?v=1";
 import { defaultState, defaultDojoState, saveState, state, replaceState, backupBeforeReplace, migrate, newerSchema, NEWER_SCHEMA_MSG } from "./store.js?v=5";
 import { hasFirebase, auth, db, googleProvider, currentUser, cloudReady, cloudReadFailed, CLOUD_READ_FAILED_MSG, requestCloudWrite, loadFromCloud, signInWithPopup, signOut } from "./firebase.js?v=5";
 import { ui, showToast } from "./ui.js?v=1";
-import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=10";
-import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=10";
-import { changeCalMonth } from "./views/calendar.js?v=10";
-import { currentMinigame, addXP, startArchitectGame, handleDojoAnswer, renderCodexList } from "./views/dojo.js?v=5";
-import { updateNav, render } from "./render.js?v=10";
+import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=11";
+import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=11";
+import { changeCalMonth } from "./views/calendar.js?v=11";
+import { currentMinigame, addXP, startArchitectGame, handleDojoAnswer, renderCodexList } from "./views/dojo.js?v=6";
+import { updateNav, render } from "./render.js?v=11";
 import { buildBackupFile, backupFileName, listDeviceBackups, parseBackupFile, isNewerCopy, restoredState, formatLocalTime, reasonLabel, MAX_BACKUP_FILE_BYTES, INVALID_BACKUP_MSG, NEWER_BACKUP_MSG } from "./logic/backup.js?v=1";
 
 export function handleReset(){ ui.resetConfirm=true; render(); }
@@ -272,7 +272,7 @@ document.addEventListener("click",function(e){
     }
     document.querySelectorAll('.codex-view').forEach(e=>e.classList.remove('active'));
     let reader = document.getElementById('dojo-codex-reader');
-    reader.innerHTML = '<div class="game-header" style="margin-bottom:8px;"><button class="tbtn" data-action="dojoopen" data-target="codex-list">&lsaquo; Back to Library</button></div>' + 
+    reader.innerHTML = '<div class="game-header u-mb-8"><button class="tbtn" data-action="dojoopen" data-target="codex-list">&lsaquo; Back to Library</button></div>' + 
       '<h2>' + CODEX_DATA[id].title + '</h2>' + CODEX_DATA[id].content;
     reader.classList.add('active');
   }

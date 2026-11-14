@@ -72,11 +72,11 @@ export function handleDojoAnswer(idx) {
   if(idx === currentQuestion.ans) {
     btns[idx].classList.add('correct');
     addXP(50);
-    fbox.innerHTML = '<b>✔️ Architect&apos;s Analysis (Correct!)</b><p>' + currentQuestion.exp + '</p><button class="tbtn primary" style="margin-top:12px;" data-action="dojonext">Next Scenario &rsaquo;</button>';
+    fbox.innerHTML = '<b>✔️ Architect&apos;s Analysis (Correct!)</b><p>' + currentQuestion.exp + '</p><button class="tbtn primary u-mt-12" data-action="dojonext">Next Scenario &rsaquo;</button>';
   } else {
     btns[idx].classList.add('wrong');
     btns[currentQuestion.ans].classList.add('correct');
-    fbox.innerHTML = '<b>❌ Architect&apos;s Analysis (Incorrect)</b><p>' + currentQuestion.exp + '</p><button class="tbtn" style="margin-top:12px;" data-action="dojoback">Back to Dojo</button>';
+    fbox.innerHTML = '<b>❌ Architect&apos;s Analysis (Incorrect)</b><p>' + currentQuestion.exp + '</p><button class="tbtn u-mt-12" data-action="dojoback">Back to Dojo</button>';
   }
   fbox.classList.add('show');
 }
@@ -85,23 +85,23 @@ export function renderDojoDashboard() {
   let info = getDojoLevelInfo(state.dojo.xp);
   let isMuted = state.dojo.audioMuted;
   
-  let html = '<div class="eyebrow" style="color:var(--blue);">THEORY DOJO</div>';
-  html += '<div class="h2" style="font-size:24px; margin-bottom:4px;">Level ' + info.level + ' - ' + info.title + '</div>';
+  let html = '<div class="eyebrow theory">THEORY DOJO</div>';
+  html += '<div class="h2 h2-xl u-mb-4">Level ' + info.level + ' - ' + info.title + '</div>';
   
-  html += '<div class="xp-bar-container" style="margin-bottom:18px;">';
+  html += '<div class="xp-bar-container u-mb-18">';
   html += '<div class="xp-bar-fill" style="width:'+info.pct+'%;"></div>';
   html += '<div class="xp-text">' + state.dojo.xp + ' / ' + (info.nextReq === 999999 ? 'MAX' : info.nextReq) + ' XP</div>';
   html += '</div>';
   
-  html += '<div style="display:flex; justify-content:flex-end; margin-bottom:18px; align-items:center; gap:10px;">';
-  html += '<span style="font-size:12px; font-weight:700; color:var(--muted); text-transform:uppercase;">Audio: '+(isMuted?'OFF':'ON')+'</span>';
+  html += '<div class="audio-row">';
+  html += '<span class="audio-label">Audio: '+(isMuted?'OFF':'ON')+'</span>';
   html += '<div class="custom-toggle '+(isMuted?'':'on')+'" data-action="togglemute"><div class="knob"></div></div>';
   html += '</div>';
   
   html += '<div class="dojo-dash">';
   
   // Codex Library
-  html += '<button class="dojo-btn" style="border-color:var(--blue);" data-action="dojoopen" data-target="codex-list"><div class="ic">📜</div><div class="info"><b>The Architect&apos;s Codex</b><span>Read the theory and context before playing. New modules unlock as you level up.</span></div></button>';
+  html += '<button class="dojo-btn theory" data-action="dojoopen" data-target="codex-list"><div class="ic">📜</div><div class="info"><b>The Architect&apos;s Codex</b><span>Read the theory and context before playing. New modules unlock as you level up.</span></div></button>';
   
   // Games
   html += '<button class="dojo-btn" data-action="dojoplay" data-game="architect"><div class="ic">🏛️</div><div class="info"><b>The Harmonic Architect</b><span>Songwriting decisions and modal tension.</span></div></button>';

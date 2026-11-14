@@ -3,21 +3,21 @@
 import { hasFirebase, currentUser } from "./firebase.js?v=5";
 import { ui } from "./ui.js?v=1";
 import { ensureDailyReset } from "./logic/dates.js?v=7";
-import { progressBar } from "./views/components.js?v=10";
-import { initCalCarousel } from "./views/calendar.js?v=10";
-import { renderHome } from "./views/home.js?v=10";
-import { renderDaily } from "./views/daily.js?v=10";
-import { renderImprov } from "./views/improv.js?v=5";
-import { renderLibrary } from "./views/library.js?v=10";
-import { renderSetup } from "./views/setup.js?v=6";
-import { renderDojoView } from "./views/dojo.js?v=5";
+import { progressBar } from "./views/components.js?v=11";
+import { initCalCarousel } from "./views/calendar.js?v=11";
+import { renderHome } from "./views/home.js?v=11";
+import { renderDaily } from "./views/daily.js?v=11";
+import { renderImprov } from "./views/improv.js?v=6";
+import { renderLibrary } from "./views/library.js?v=11";
+import { renderSetup } from "./views/setup.js?v=7";
+import { renderDojoView } from "./views/dojo.js?v=6";
 
 export function initAppLayout() {
   var root = document.getElementById("root");
   root.innerHTML = `
     <nav id="sidebar" class="sidebar">
       <div class="sidebar-header">
-        <div class="brand" style="font-size:22px; margin-bottom:0;">THE <span style="color:var(--accent);">SHRED</span><br><span style="font-size:16px;color:#fff;letter-spacing:2px;">ROADMAP</span></div>
+        <div class="brand brand-side">THE <span>SHRED</span><br><span class="brand-sub">ROADMAP</span></div>
       </div>
       <div id="sidebar-nav-inner" class="sidebar-nav"></div>
     </nav>
@@ -77,7 +77,7 @@ export function render(){
         var shortName = currentUser.email.split('@')[0];
         topbarHTML += '<span class="user-email">' + shortName + '</span>';
       }
-      topbarHTML += '<button id="authBtn" class="dchip2" style="padding:7px 12px; margin:0; border-color:var(--border); color:var(--text);">' + (currentUser ? "Logout" : "Login") + '</button></div>';
+      topbarHTML += '<button id="authBtn" class="dchip2 auth-btn">' + (currentUser ? "Logout" : "Login") + '</button></div>';
     }
     topbarHTML += '</div>' + progressBar();
     document.getElementById('topbar').innerHTML = topbarHTML;
@@ -105,6 +105,6 @@ export function render(){
   } catch(err) {
     console.error("Render error:", err);
     var root=document.getElementById("root");
-    if(root) { root.innerHTML = '<div style="padding: 20px; color: #ff3b30; font-family: monospace;"><h3>Render Error:</h3><p>' + err.message + '</p><pre>' + err.stack + '</pre></div>'; }
+    if(root) { root.innerHTML = '<div class="render-error"><h3>Render Error:</h3><p>' + err.message + '</p><pre>' + err.stack + '</pre></div>'; }
   }
 }

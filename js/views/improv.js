@@ -5,7 +5,7 @@ import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=1";
 
 export function renderImprov(){
-  var html='<div class="eyebrow" style="color:var(--purple);">Expression Track</div><div class="h2" style="font-size:22px;margin-bottom:12px;">The 5 Gates of Freedom</div>';
+  var html='<div class="eyebrow improv">Expression Track</div><div class="h2 h2-lg u-mb-12">The 5 Gates of Freedom</div>';
   html+='<p class="lede">Destroy your muscle memory. This is your progressive masterclass to unlock pure musical audiation. Do not advance until you master every exercise in a Gate.</p>';
 
   var actGate = Math.min(state.improvIndex, IMPROV_GATES.length - 1);
@@ -31,16 +31,16 @@ export function renderImprov(){
   var tKey = IMPROV_KEYS[dayIndex];
 
   if (!allDone) {
-    html+='<div class="note purple" style="text-align:center; margin-bottom:18px; padding:16px;">'+
-          '<div style="font-size:11.5px; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px; color:#d8b8ff;">Daily Transposition Target</div>'+
-          '<b style="font-size:18px;">'+tKey.k+'</b> <span style="font-size:13px; opacity:0.8;">('+tKey.t+')</span>'+
-          '<div style="font-size:12.5px; margin-top:10px; color:#eef0f4; font-weight:normal; line-height:1.5;">Read the exercises below in their example keys, but <b>force yourself to transpose and play them in '+tKey.k+' today</b>. This breaks vertical habits and builds true neck mastery.</div>'+
+    html+='<div class="note purple transpose-card">'+
+          '<div class="transpose-label">Daily Transposition Target</div>'+
+          '<b class="u-fs-18">'+tKey.k+'</b> <span class="transpose-style">('+tKey.t+')</span>'+
+          '<div class="transpose-help">Read the exercises below in their example keys, but <b>force yourself to transpose and play them in '+tKey.k+' today</b>. This breaks vertical habits and builds true neck mastery.</div>'+
           '</div>';
   }
 
 
   if(allDone){
-    html+='<div class="note purple" style="text-align:center;"><b>\ud83c\udfc6 YOU HAVE MASTERED THE 5 GATES!</b><br>You are now a free player. Keep using these tools in your daily jams.</div>';
+    html+='<div class="note purple u-center"><b>\ud83c\udfc6 YOU HAVE MASTERED THE 5 GATES!</b><br>You are now a free player. Keep using these tools in your daily jams.</div>';
   }
 
   IMPROV_GATES.forEach(function(g, i){
@@ -49,16 +49,16 @@ export function renderImprov(){
     var isLocked = i > actGate;
 
     if(isLocked){
-      html+='<div class="card" style="opacity:0.5;"><h3>\ud83d\udd12 Gate '+(i+1)+': '+g.title+'</h3></div>';
+      html+='<div class="card is-locked"><h3>\ud83d\udd12 Gate '+(i+1)+': '+g.title+'</h3></div>';
       return;
     }
 
     if(isPast){
-      html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="improvG'+i+'"><b style="color:var(--purple);">\u2713 GATE '+(i+1)+': '+g.title.toUpperCase()+'</b><span class="chev'+(ui.lib["improvG"+i]?" open":"")+'">\u203a</span></div>';
+      html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="improvG'+i+'"><b class="improv">\u2713 GATE '+(i+1)+': '+g.title.toUpperCase()+'</b><span class="chev'+(ui.lib["improvG"+i]?" open":"")+'">\u203a</span></div>';
       if(ui.lib["improvG"+i]){
         html+='<div class="accbody">';
         g.exercises.forEach(function(ex){
-          html+='<p style="font-size:13px; margin-bottom:10px; color:var(--muted);">\u2713 '+ex.t+'</p>';
+          html+='<p class="done-ex">\u2713 '+ex.t+'</p>';
         });
         html+='</div>';
       }
@@ -66,9 +66,9 @@ export function renderImprov(){
       return;
     }
 
-    html+='<div class="card" style="border-color:var(--purple); box-shadow: 0 0 12px rgba(176,82,255,0.1);">'+
-          '<h3 style="color:var(--purple); font-size:18px;">Gate '+(i+1)+': '+g.title+'</h3>'+
-          '<p style="font-size:13.5px; margin-bottom:14px; text-align:justify;">'+g.desc+'</p>';
+    html+='<div class="card card-improv glow">'+
+          '<h3 class="h3-improv h3-lg">Gate '+(i+1)+': '+g.title+'</h3>'+
+          '<p class="gate-desc">'+g.desc+'</p>';
     
     var exercisesDone = 0;
     html+='<ul class="check">';
@@ -76,21 +76,21 @@ export function renderImprov(){
       var isChecked = !!state.improvChecks["g"+i+"e"+j];
       if(isChecked) exercisesDone++;
       var btn = '<button class="mbtn purple'+(isChecked?" on":"")+'" data-action="togimprov" data-g="'+i+'" data-e="'+j+'">'+(isChecked?"\u2713 Mastered":"Unmastered")+'</button>';
-      html+='<li class="mrow" style="flex-direction:column; align-items:stretch; gap:8px;">'+
-            '<div style="display:flex; justify-content:space-between; align-items:center; gap:12px;">'+
-              '<b style="color:var(--text); font-size:14px; flex:1; min-width:0;">'+ex.t+'</b>'+
-              '<div style="flex:0 0 auto;">'+btn+'</div>'+
+      html+='<li class="mrow mrow-stack">'+
+            '<div class="ex-head">'+
+              '<b class="ex-title lg">'+ex.t+'</b>'+
+              '<div class="ex-btn">'+btn+'</div>'+
             '</div>'+
-            '<div style="font-size:13px; line-height:1.5; color:var(--muted); text-align:justify;">'+
+            '<div class="ex-desc lg">'+
               ex.desc+
-              '<div class="note purple" style="margin-top:10px; margin-bottom:4px; padding:10px; font-size:12px; text-align:justify;">'+ex.listen+'</div>'+
+              '<div class="note purple ex-listen lg">'+ex.listen+'</div>'+
             '</div>'+
             '</li>';
     });
     html+='</ul>';
 
     if(exercisesDone === g.exercises.length){
-      html+='<button class="tbtn purple" style="width:100%; margin-top:18px;" data-action="advanceimprov">\ud83d\udd13 Unlock Gate '+(i+2)+'</button>';
+      html+='<button class="tbtn purple u-w100 u-mt-18" data-action="advanceimprov">\ud83d\udd13 Unlock Gate '+(i+2)+'</button>';
     }
     
     html+='</div>';
