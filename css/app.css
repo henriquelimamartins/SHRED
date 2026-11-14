@@ -28,8 +28,8 @@
   --white:#FFFFFF;
   /* Pillar colours (D117): Technique red, Improv purple, Theory blue */
   --red:#E5484D;
-  --red-fill:#DC3D43;    /* filled buttons with white text */
-  --red-tint:#FF7A7E;    /* small red text */
+  --red-fill:#D83A40;    /* filled buttons with white text (D119: was #DC3D43) */
+  --red-tint:#FF5C61;    /* small red text (D119: was #FF7A7E) */
   --red-soft:#FFB3B5;    /* warning paragraphs */
   --purple:#8B4CF0;
   --purple-fill:#6E3BD0; /* filled purple buttons with white text */
@@ -125,7 +125,19 @@ button:focus-visible, a:focus-visible, select:focus-visible { outline: 2px solid
   flex-direction:column; z-index:100;
 }
 .sidebar-header { padding:24px 20px; border-bottom:1px solid var(--border); }
-.sidebar-nav { flex:1; padding:20px 12px; display:flex; flex-direction:column; gap:8px; overflow-y:auto; }
+.sidebar-search { padding:16px 12px 0; }
+.side-search {
+  display:flex; align-items:center; gap:10px; background:var(--card2); border:1px solid var(--border);
+  border-radius:var(--r-lg); padding:9px 14px; color:var(--muted); font-size:var(--fs-sm); cursor:pointer; transition:0.2s;
+}
+.side-search:hover { border-color:var(--muted); color:var(--text); }
+.sidebar-account {
+  display:flex; align-items:center; gap:10px; padding:14px 16px calc(14px + env(safe-area-inset-bottom,0px));
+  border-top:1px solid var(--border);
+}
+.sidebar-account:empty { display:none; }
+.side-user { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:var(--fs-xs); color:var(--muted); font-weight:500; }
+.sidebar-nav { flex:1; padding:16px 12px 20px; display:flex; flex-direction:column; gap:8px; overflow-y:auto; }
 .sidebar-nav button {
   display:flex; align-items:center; gap:12px; padding:12px 16px; width:100%; border-radius:var(--r-lg);
   background:transparent; border:none; color:var(--muted); font-size:var(--fs-base); font-weight:600;
@@ -134,6 +146,7 @@ button:focus-visible, a:focus-visible, select:focus-visible { outline: 2px solid
 .sidebar-nav button:hover { background:var(--card); color:var(--text); }
 .sidebar-nav button.active { background:var(--card2); color:var(--red-tint); }
 .sidebar-nav button.active.improv-nav { color:var(--purple-tint); }
+.sidebar-nav button.active.theory-nav { color:var(--blue-tint); }
 
 .main-area {
   flex:1; display:flex; flex-direction:column; position:relative; overflow:hidden; height:100%;
@@ -184,12 +197,32 @@ button:focus-visible, a:focus-visible, select:focus-visible { outline: 2px solid
 .botnav button .ic { font-size:var(--fs-lg); }
 .botnav button.active { color:var(--red-tint); }
 .botnav button.active.improv-nav { color:var(--purple-tint); }
+.botnav button.active.theory-nav { color:var(--blue-tint); }
+
+/* Phone "More" sheet (D117, D119): opens above the bottom bar. */
+.more-sheet { display:none; }
+.more-sheet.open { display:block; }
+.more-backdrop { position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:98; }
+.more-panel {
+  position:fixed; left:0; right:0; bottom:calc(58px + env(safe-area-inset-bottom,0px)); z-index:99;
+  background:var(--chrome); border-top:1px solid var(--border); border-radius:var(--r-card) var(--r-card) 0 0;
+  padding:16px 16px 12px; max-width:520px; margin:0 auto;
+}
+.more-group { font-size:var(--fs-2xs); color:var(--muted); text-transform:uppercase; letter-spacing:1.5px; font-weight:700; margin:6px 4px 8px; }
+.more-item {
+  display:flex; align-items:center; gap:12px; width:100%; padding:12px 14px; margin-bottom:6px;
+  background:var(--card); border:1px solid var(--border); border-radius:var(--r-lg); color:var(--text);
+  font-size:var(--fs-base); font-weight:600; text-transform:uppercase; letter-spacing:.5px;
+}
+.more-item.active { color:var(--red-tint); border-color:var(--red-line); }
+.home-phasebar { margin-bottom:18px; }
 
 @media (min-width: 768px) {
   .sidebar { display:flex; }
   .botnav { display:none; }
   .mobile-brand { display:none; }
-  .topbar-header { justify-content:flex-end; }
+  .topbar { display:none; }
+  .more-sheet, .more-sheet.open { display:none; }
   .view-panel { padding:30px 40px 60px; }
 }
 @media (max-width: 767px) {

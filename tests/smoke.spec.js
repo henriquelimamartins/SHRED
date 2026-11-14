@@ -4,6 +4,9 @@ const { test, expect } = require('@playwright/test');
 const { openApp, unexpectedConsoleErrors, cloudWrites } = require('./support/app');
 
 const MAIN_VIEWS = ['home', 'daily', 'improv', 'dojo', 'library', 'setup'];
+// Slice 4.2a (D119): the phone bottom bar holds HOME, DAILY, IMPROV, THEORY (dojo) and More; Library and Tools are in More.
+const PHONE_BAR_VIEWS = ['home', 'daily', 'improv', 'dojo'];
+const PHONE_MORE_VIEWS = ['library', 'setup'];
 
 function navFor(page, projectName) {
   // Desktop uses the sidebar; mobile uses the bottom bar.
@@ -31,15 +34,23 @@ test('app opens on Home without errors (signed out)', async ({ page }, testInfo)
 test('every main view opens from the navigation', async ({ page }, testInfo) => {
   const monitor = await openApp(page);
   const nav = navFor(page, testInfo.project.name);
+  const mobile = testInfo.project.name === 'mobile';
 
   const views = await nav.locator('[data-action="go"]').evaluateAll((btns) => btns.map((b) => b.dataset.view));
-  expect(views).toEqual(MAIN_VIEWS);
+  expect(views).toEqual(mobile ? PHONE_BAR_VIEWS : MAIN_VIEWS);
 
   for (const view of MAIN_VIEWS) {
-    await nav.locator(`[data-action="go"][data-view="${view}"]`).click();
+    const inMore = mobile && PHONE_MORE_VIEWS.includes(view);
+    if (inMore) {
+      await nav.locator('[data-action="more"]').click();
+      await page.locator(`#more-sheet [data-action="go"][data-view="${view}"]`).click();
+      await expect(page.locator('#more-sheet')).not.toHaveClass(/open/);
+    } else {
+      await nav.locator(`[data-action="go"][data-view="${view}"]`).click();
+    }
     await expect(page.locator(`#panel-${view}`)).toHaveClass(/active/);
     await expect(page.locator(`#panel-${view} .panel-content`)).not.toBeEmpty();
-    await expect(nav.locator(`[data-view="${view}"]`)).toHaveClass(/active/);
+    await expect(nav.locator(inMore ? '[data-action="more"]' : `[data-view="${view}"]`)).toHaveClass(/active/);
     await expect(page.getByText('Render Error:')).toHaveCount(0);
     await page.screenshot({ path: testInfo.outputPath(`view-${view}.png`) });
   }

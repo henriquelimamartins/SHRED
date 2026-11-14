@@ -4,8 +4,8 @@
 import { initFirebase } from "./firebase.js?v=5";
 import { showToast } from "./ui.js?v=1";
 import { ensureDailyReset } from "./logic/dates.js?v=7";
-import { render } from "./render.js?v=11";
-import "./events.js?v=11";
+import { render } from "./render.js?v=12";
+import "./events.js?v=12";
 import { newerSchema, NEWER_SCHEMA_MSG } from "./store.js?v=5";
 
 initFirebase(render, showToast);

@@ -18,7 +18,13 @@ const altPlus = (page) => home(page).locator('[data-action="test"][data-t="alt"]
 
 async function goTo(page, view) {
   const nav = page.locator('#botnav:visible, #sidebar-nav-inner:visible').first();
-  await nav.locator(`[data-action="go"][data-view="${view}"]`).click();
+  const btn = nav.locator(`[data-action="go"][data-view="${view}"]`);
+  // Slice 4.2a (D119): on the phone, Library and Tools (SETUP) are opened from the More sheet.
+  if (await btn.count()) await btn.click();
+  else {
+    await nav.locator('[data-action="more"]').click();
+    await page.locator(`#more-sheet [data-action="go"][data-view="${view}"]`).click();
+  }
   await expect(page.locator(`#panel-${view}`)).toHaveClass(/active/);
 }
 
