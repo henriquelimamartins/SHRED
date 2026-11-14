@@ -514,6 +514,8 @@ table.info td.day{font-weight:700;white-space:nowrap;color:var(--red-tint);}
 @media (max-width: 767px){
   .tech-tabs{display:grid;}
   .tech-title-row{margin-bottom:10px;}
+  /* Slice 4.4: no eyebrow on the phone (as on the 4.0 canvas), so the header stays under 120 px with the real web fonts (D112). */
+  .tech-header .eyebrow{display:none;}
   .tech-cols.tab-checklist .tech-sec-chops, .tech-cols.tab-checklist .tech-sec-test,
   .tech-cols.tab-chops .tech-sec-checklist, .tech-cols.tab-chops .tech-sec-test,
   .tech-cols.tab-test .tech-sec-checklist, .tech-cols.tab-test .tech-sec-chops{display:none;}

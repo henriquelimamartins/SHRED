@@ -25,6 +25,7 @@ The previous ChatGPT-era checkpoint is in Git history; it is context only (DECIS
 - Workflow note (2026-11-14): in the Phase 4 conversation the public repo could be cloned read-only into Claude's workspace (`git clone` through the agent proxy), useful for reading `main` when no folder is connected. Writing still goes through the owner's folder (D02, D03).
 - Workflow note (2026-11-14, D121): commit and PR texts prepared for the owner carry no mention of Claude or the session (no Co-Authored-By, session link or "Generated with Claude Code").
 - Workflow note (2026-11-14, slice 4.1): again no shell on the owner's computer; same method as 3.4 (clone of `main` in Claude's workspace, branch and files in the folder checked equal to `main` before writing, files written back with CRLF line endings). Web fonts cannot be downloaded in Claude's workspace: screenshots use Inter (installed) and a condensed stand-in for Oswald, the same for before and after.
+- Test note (2026-11-14, slice 4.4): the first PR run failed 2 phone tests: the TECHNIQUE page header measured 123 px on GitHub (real web fonts) against 114 px in Claude's workspace (stand-in fonts). Fixed by hiding the page eyebrow on the phone, as on the 4.0 canvas (now about 91 px in the workspace). Size limits checked in Claude's workspace need a margin of at least 10 px for the real fonts.
 - PR #3 accidentally committed `Claude outputs/` (two app screenshots the Claude desktop app saved into the repo folder; harmless). Removed and git-ignored in PR #4.
 
 ## Repository clean-up (D104) — docs only
