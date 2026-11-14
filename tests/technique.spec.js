@@ -18,13 +18,20 @@ async function homePhaseStat(page) {
   return { pct: await stat.locator('.bignum').textContent(), label: await stat.locator('.lbl').textContent() };
 }
 
-/** Widths of the 5 segments of the red phase bar (on HOME since slice 4.2a, D25), e.g. ['100%', '38%', '0%', '0%', '0%']. */
+/**
+ * The 5 phases as shown on HOME, e.g. ['100%', '38%', '0%', '0%', '0%'].
+ * Slice 4.4 (D123): read from the Technique rail (completed phase = full disc = 100%, current = its %, later = 0%),
+ * which replaced the 5-segment phase bar; the expected values are unchanged.
+ */
 async function topBar(page) {
-  return page.locator('#panel-home .pseg i').evaluateAll((els) => els.map((e) => e.style.width));
+  const rail = page.locator('#panel-home [data-rail="technique"]');
+  const pct = await rail.getAttribute('data-pct');
+  return rail.locator('.rail-node').evaluateAll((els, p) => els.map((e) => (
+    e.dataset.state === 'done' ? '100%' : (e.dataset.state === 'current' ? p + '%' : '0%'))), pct);
 }
 
 async function currentPhaseLabel(page) {
-  return page.locator('#panel-home .plabels span.cur').textContent();
+  return 'Phase ' + await page.locator('#panel-home [data-rail="technique"]').getAttribute('data-cur');
 }
 
 async function goTo(page, view) { await openView(page, view); }

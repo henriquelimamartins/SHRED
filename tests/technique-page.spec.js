@@ -117,7 +117,7 @@ test('HOME has no Phase Transition Test or Jump to phase; its Technique shortcut
   await expect(home(page).locator('h3', { hasText: 'Jump to phase' })).toHaveCount(0);
   await expect(home(page).locator('[data-action="test"]')).toHaveCount(0);
   await expect(home(page).locator('[data-action="setphase"]')).toHaveCount(0);
-  await expect(home(page).locator('.phasebar')).toHaveCount(1); // stays until the rails (4.4)
+  await expect(home(page).locator('[data-rail="technique"]')).toHaveCount(1); // the rail replaced the phase bar (4.4)
   await expect(home(page).locator('[data-action="go"][data-view="library"]')).toContainText('Theory Track, Expression Track, Listening Vault & more');
   await home(page).locator('[data-action="go"][data-view="technique"]').click();
   await expect(technique(page)).toHaveClass(/active/);

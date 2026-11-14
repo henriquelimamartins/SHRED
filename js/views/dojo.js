@@ -1,9 +1,11 @@
 // Legacy THEORY DOJO (level/XP, Codex, Harmonic Architect). Replaced by THEORY in Phase 6 (DECISIONS D12);
 // its stored data must still be kept.
+// Slice 4.4: Theory rail on top (phone); DOJO content and behaviour unchanged (D114).
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
 import { DOJO_LEVELS, CODEX_DATA, HARMONIC_QUESTIONS } from "../data/dojo.js?v=1";
 import { saveState, state } from "../store.js?v=5";
 import { showToast } from "../ui.js?v=1";
+import { renderRail, theoryRail } from "./rails.js?v=1";
 
 // --- THEORY DOJO LOGIC ---
 
@@ -135,7 +137,9 @@ export function renderCodexList() {
 }
 
 export function renderDojoView() {
-  let html = '<div id="dojo-dash-view" class="codex-view active">' + renderDojoDashboard() + '</div>' +
+  // Slice 4.4 (D117, D123): the Theory rail (Level 1, not started) at the top of the page on the phone.
+  let html = '<div class="pillar-rail">' + renderRail(theoryRail()) + '</div>' +
+    '<div id="dojo-dash-view" class="codex-view active">' + renderDojoDashboard() + '</div>' +
     '<div id="dojo-codex-list" class="codex-view"></div>' +
     '<div id="dojo-codex-reader" class="codex-view codex-content"></div>' +
     '<div id="dojo-game-view" class="codex-view game-area"><div id="dojo-game-container"></div></div>';

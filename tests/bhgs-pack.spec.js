@@ -49,10 +49,11 @@ test('pack off: every page outside DAILY opens with content, no errors and no BH
   expect(unexpectedConsoleErrors(monitor)).toEqual([]);
 });
 
-test('pack off: HOME hides the phase bar, phase %, Phase Transition Test and Jump to phase; keeps streak and calendar', async ({ page }) => {
+test('pack off: HOME hides the Technique rail, phase %, Phase Transition Test and Jump to phase; keeps streak and calendar', async ({ page }) => {
   await openApp(page, { bhgsPack: false, localState: progressState({ phaseIndex: 1 }) });
   const home = page.locator('#panel-home');
-  await expect(home.locator('.phasebar')).toHaveCount(0);
+  await expect(home.locator('[data-rail="technique"]')).toHaveCount(0);
+  await expect(home.locator('[data-rail]')).toHaveCount(2); // Improv and Theory
   await expect(home.locator('.statrow .stat')).toHaveCount(1);
   await expect(home.locator('.statrow .stat .lbl')).toHaveText('Days Logged');
   await expect(home.locator('[data-action="setphase"]')).toHaveCount(0);

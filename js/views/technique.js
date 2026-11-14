@@ -3,14 +3,16 @@
 // every phase (expandable, as in LIBRARY before), Essential Skills and a low-key "Phase settings" (Jump to phase, D115).
 // Part of the BHGS pack (D113): with the pack off this page is not reachable and is not drawn.
 // Calculations and state keys are unchanged (D20): it reuses the same helpers and row builders as LIBRARY did.
+// Slice 4.4 (D123): the Technique rail replaces the phase bar in the header.
 // Phone: the current phase is split in three tabs (Checklist, Chop-builders, Phase test); the desktop shows all of it.
 import { PHASES, CHOP, TESTCATS, ESSENTIAL, ESSENTIAL_URL, PREREQ, WARMUP_URL } from "../data/bhgs.js?v=1";
 import { DAY_FULL } from "../data/days.js?v=1";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=1";
 import { BHGS_PACK } from "../pack.js?v=1";
-import { k, phasePercent, itemKeysForPhase } from "../logic/technique.js?v=14";
-import { linked, checkItem, watchItem, prereqItem, chopRow, testRow, progressBar } from "./components.js?v=14";
+import { k, phasePercent, itemKeysForPhase } from "../logic/technique.js?v=15";
+import { linked, checkItem, watchItem, prereqItem, chopRow, testRow } from "./components.js?v=15";
+import { renderRail, techniqueRail } from "./rails.js?v=1";
 
 export const TECH_TABS = [
   { id: "checklist", label: "Checklist" },
@@ -158,7 +160,7 @@ export function renderTechnique(){
   if(!BHGS_PACK) return '';
   var i = state.phaseIndex, cur = PHASES[i], pct = phasePercent(i), sum = phaseSummary(i);
   var tab = ui.techTab || "checklist";
-  var html = '<div class="tech-header"><div class="eyebrow">Pillar · BHGS Roadmap</div><div class="tech-title-row"><div class="h2 h2-lg">Technique</div><span class="tech-sub">' + cur.label + ' · ' + sum.done + ' of ' + sum.total + '</span></div>' + progressBar() + '</div>';
+  var html = '<div class="tech-header"><div class="eyebrow">Pillar · BHGS Roadmap</div><div class="tech-title-row"><div class="h2 h2-lg">Technique</div><span class="tech-sub">' + cur.label + ' · ' + sum.done + ' of ' + sum.total + '</span></div>' + renderRail(techniqueRail()) + '</div>';
 
   html += '<div class="tech-progress card"><div class="bignum">' + pct + '%</div><div class="tech-progress-txt"><b>Phase ' + i + ' · ' + cur.label + '</b><br>' +
     sum.done + ' of ' + sum.total + ' done in this phase.' + (sum.left.length ? '<br>Left: ' + sum.left.join(" · ") + '.' : '') + '</div></div>';

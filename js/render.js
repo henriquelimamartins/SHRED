@@ -5,18 +5,22 @@
 // Slice 4.2b (D113, D119 point 6): with the BHGS pack off, LIBRARY sits in the phone bar instead of More.
 // Slice 4.3 (D117, D122): TECHNIQUE joins the menu and the phone bar (HOME, DAILY, TECHNIQUE, IMPROV, THEORY, MORE),
 // only with the BHGS pack on; with it off there is no TECHNIQUE destination (D113).
+// Slice 4.4 (D123): the pillar is named IMPROVISATION wherever there is room; the phone bar keeps "Improv" (`short`).
+// Slice 4.4 (D117 point 1, D123): the pillar rails sit in the desktop sidebar under Search, hidden on HOME (which
+// shows them in full).
 import { hasFirebase, currentUser } from "./firebase.js?v=5";
 import { ui } from "./ui.js?v=1";
 import { BHGS_PACK } from "./pack.js?v=1";
 import { ensureDailyReset } from "./logic/dates.js?v=7";
-import { initCalCarousel } from "./views/calendar.js?v=14";
-import { renderHome } from "./views/home.js?v=14";
-import { renderTechnique } from "./views/technique.js?v=1";
-import { renderDaily } from "./views/daily.js?v=14";
-import { renderImprov } from "./views/improv.js?v=6";
-import { renderLibrary } from "./views/library.js?v=14";
+import { initCalCarousel } from "./views/calendar.js?v=15";
+import { renderHome } from "./views/home.js?v=15";
+import { renderTechnique } from "./views/technique.js?v=2";
+import { renderDaily } from "./views/daily.js?v=15";
+import { renderImprov } from "./views/improv.js?v=7";
+import { renderLibrary } from "./views/library.js?v=15";
 import { renderSetup } from "./views/setup.js?v=7";
-import { renderDojoView } from "./views/dojo.js?v=6";
+import { renderDojoView } from "./views/dojo.js?v=7";
+import { renderRails } from "./views/rails.js?v=1";
 
 export function initAppLayout() {
   var root = document.getElementById("root");
@@ -26,6 +30,7 @@ export function initAppLayout() {
         <div class="brand brand-side">THE <span>SHRED</span><br><span class="brand-sub">ROADMAP</span></div>
       </div>
       <div id="sidebar-search" class="sidebar-search"></div>
+      <div id="sidebar-rails" class="sidebar-rails"></div>
       <div id="sidebar-nav-inner" class="sidebar-nav"></div>
       <div id="sidebar-account" class="sidebar-account"></div>
     </nav>
@@ -51,7 +56,7 @@ const NAV_ITEMS = [
   { view: "home", ic: "\ud83c\udfe0", label: "Home" },
   { view: "daily", ic: "\ud83c\udfaf", label: "Daily" },
   { view: "technique", ic: "\ud83d\udd25", label: "Technique", pack: true },
-  { view: "improv", ic: "\ud83e\udde0", label: "Improv", cls: "improv-nav" },
+  { view: "improv", ic: "\ud83e\udde0", label: "Improvisation", short: "Improv", cls: "improv-nav" },
   { view: "dojo", ic: "\ud83d\udcd6", label: "Theory", cls: "theory-nav" },
   { view: "library", ic: "\ud83d\udcda", label: "Library", more: "Resources" },
   { view: "setup", ic: "\ud83d\udee0\ufe0f", label: "Tools", more: "Tools", moreLabel: "Setup" }
@@ -65,7 +70,7 @@ export function updateNav() {
   var sidebarNav = document.getElementById('sidebar-nav-inner');
   if(sidebarNav) sidebarNav.innerHTML = sideHTML;
 
-  var barHTML = NAV_ITEMS.filter(function(n){ return !inMore(n); }).map(function(n){ return navBtn(n.view, n.ic, n.label, n.cls); }).join("");
+  var barHTML = NAV_ITEMS.filter(function(n){ return !inMore(n); }).map(function(n){ return navBtn(n.view, n.ic, n.short || n.label, n.cls); }).join("");
   var moreActive = ui.moreOpen || MORE_VIEWS.indexOf(ui.view) >= 0;
   barHTML += '<button data-action="more" class="more-btn'+(moreActive ? ' active' : '')+'" aria-expanded="'+(ui.moreOpen ? 'true' : 'false')+'"><span class="ic">\u22ef</span>More</button>';
   var botnav = document.getElementById('botnav');
@@ -122,6 +127,9 @@ export function render(){
 
     document.getElementById('sidebar-search').innerHTML = '<div class="side-search"><span class="ic">\ud83d\udd0d</span><span>Search...</span></div>';
     document.getElementById('sidebar-account').innerHTML = sideAccount;
+    var sideRails = document.getElementById('sidebar-rails');
+    sideRails.innerHTML = ui.view === 'home' ? '' : renderRails('side');
+    sideRails.classList.toggle('is-empty', ui.view === 'home');
 
     document.getElementById('panel-home').innerHTML = '<div class="panel-content">' + renderHome() + '</div>';
     document.getElementById('panel-daily').innerHTML = '<div class="panel-content">' + renderDaily() + '</div>';
