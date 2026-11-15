@@ -1,15 +1,18 @@
 // IMPROV view (the 5 Gates).
+// Slice 4.5b (D125, D126): the drawn page header (muted eyebrow + large title).
 // Slice 4.4: Improv rail on top (phone).
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
 import { IMPROV_GATES } from "../data/improv.js?v=1";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=1";
-import { renderRail, improvRail } from "./rails.js?v=2";
+import { pageHeader } from "./shell.js?v=1";
+import { renderRail, improvRail } from "./rails.js?v=3";
 
 export function renderImprov(){
   // Slice 4.4 (D117, D123): the Improv rail at the top of the page on the phone (the desktop sidebar shows it).
-  var html='<div class="pillar-rail">'+renderRail(improvRail())+'</div>';
-  html+='<div class="eyebrow improv">Expression Track</div><div class="h2 h2-lg u-mb-12">The 5 Gates of Freedom</div>';
+  var html=pageHeader('Pillar \u00b7 Musical Development','Improvisation');
+  html+='<div class="pillar-rail">'+renderRail(improvRail())+'</div>';
+  html+='<div class="eyebrow improv">Expression Track</div><div class="h2 h2-lg u-mb-12 gates-title">The 5 Gates of Freedom</div>';
   html+='<p class="lede">Destroy your muscle memory. This is your progressive masterclass to unlock pure musical audiation. Do not advance until you master every exercise in a Gate.</p>';
 
   var actGate = Math.min(state.improvIndex, IMPROV_GATES.length - 1);

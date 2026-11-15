@@ -1,6 +1,8 @@
 // SETUP view (Guitar Setup Companion).
+// Slice 4.5b (D125, D126): the drawn page header (muted eyebrow + large title).
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
 import { setupData } from "../data/setup.js?v=1";
+import { pageHeader } from "./shell.js?v=1";
 import { state } from "../store.js?v=5";
 
 export function formatGauge(g){
@@ -19,7 +21,7 @@ export function renderSetup(){
   var isPrs = state.setupGuitar === "prs";
   var conf = setupData[state.setupGuitar][state.setupTuning];
   
-  var html='<div class="eyebrow">Gear Optimization</div><div class="h2 h2-lg u-mb-12">Guitar Setup Companion</div>';
+  var html=pageHeader('Tools \u00b7 Gear optimization','Guitar Setup');
   html+='<p class="lede">Follow these mechanical adjustments in exactly this order to achieve optimal low string action suitable for shredding without excessive fret buzz.</p>';
 
   html+='<div class="select-row">';

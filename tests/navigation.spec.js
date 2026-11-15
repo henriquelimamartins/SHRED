@@ -23,17 +23,16 @@ test.describe('desktop', () => {
     await expect(page.locator('#topbar')).toBeHidden();
     await expect(page.locator('#botnav')).toBeHidden();
 
-    expect(await labels(page.locator('#sidebar-nav-inner [data-action="go"]'))).toEqual(['Home', 'Daily', 'Technique', 'Improvisation', 'Theory', 'Library', 'Tools']); // D123: full name where there is room
+    expect(await labels(page.locator('#sidebar-nav-inner [data-action="go"] .side-label'))).toEqual(['Home', 'Daily', 'Technique', 'Improvisation', 'Theory', 'Library', 'Tools']); // D123: full name where there is room
     expect(await page.locator('#sidebar-nav-inner [data-action="go"]').evaluateAll((b) => b.map((x) => x.dataset.view)))
       .toEqual(['home', 'daily', 'technique', 'improv', 'dojo', 'library', 'setup']);
     await expect(page.locator('#sidebar').getByText('Dojo', { exact: true })).toHaveCount(0);
 
-    // Order inside the sidebar: brand, Search, menu, account row.
-    const tops = await page.evaluate(() => ['.sidebar-header', '#sidebar-search', '#sidebar-nav-inner', '#sidebar-account']
+    // Order inside the sidebar (D117, D126): brand, Search, rails, menu, Today, account row.
+    const tops = await page.evaluate(() => ['.sidebar-header', '#sidebar-search', '#sidebar-rails', '#sidebar-nav-inner', '#sidebar-today', '#sidebar-account']
       .map((s) => document.querySelector(s).getBoundingClientRect().top));
     expect([...tops].sort((a, b) => a - b)).toEqual(tops);
-    await expect(page.locator('#sidebar-account .side-auth')).toHaveText('Login');
-    await expect(page.locator('#sidebar-account .side-user')).toHaveText('Not signed in');
+    await expect(page.locator('#sidebar-account .side-acct-name')).toHaveText('Not signed in');
 
     expect(monitor.pageErrors).toEqual([]);
     expect(unexpectedConsoleErrors(monitor)).toEqual([]);
@@ -45,10 +44,9 @@ test.describe('desktop', () => {
     await expect(page.locator('#toast')).toHaveText('Global search coming in a future phase');
   });
 
-  test('signed in: the account row shows the name and Logout', async ({ page }) => {
+  test('signed in: the account row shows the name (Logout is on the Account & data page, D126)', async ({ page }) => {
     await openApp(page, { user: TEST_USER, docs: { [USER_DOC]: progressState() } });
-    await expect(page.locator('#sidebar-account .side-user')).toHaveText('tester');
-    await expect(page.locator('#sidebar-account .side-auth')).toHaveText('Logout');
+    await expect(page.locator('#sidebar-account .side-acct-name')).toHaveText('tester');
   });
 
   test('active menu colours: Technique red, Improv purple, Theory blue', async ({ page }) => {

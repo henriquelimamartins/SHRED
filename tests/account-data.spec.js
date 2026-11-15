@@ -18,7 +18,8 @@ test('HOME no longer holds Cloud Sync, the backup buttons or Reset Everything', 
 test('the page holds the Cloud Sync card with every button, as it was on HOME', async ({ page }) => {
   const monitor = await openApp(page, { localState: progressState({ phaseIndex: 1 }) });
   const account = await accountPanel(page);
-  await expect(account.locator('.eyebrow')).toHaveText('Account & data');
+  await expect(account.locator('.page-eyebrow')).toHaveText('Account');
+  await expect(account.locator('.page-title')).toHaveText('Account & data');
   const card = account.locator('.card', { has: page.locator('[data-action="cloudsave"]') });
   await expect(card.locator('h3')).toHaveText('Cloud Sync');
   await expect(card).toContainText('Your progress syncs automatically when logged in.');
@@ -40,7 +41,10 @@ test('signed out, the page says progress is saved on this device only', async ({
 test('signed in, the page names the account', async ({ page }) => {
   await openApp(page, { user: TEST_USER, docs: { [USER_DOC]: progressState({ phaseIndex: 1 }) } });
   const account = await accountPanel(page);
-  await expect(account.locator('.account-card')).toContainText('Signed in as tester.');
+  // Slice 4.5b (D126): name, email and sync state; Logout sits here.
+  await expect(account.locator('.account-card .account-name')).toHaveText('tester');
+  await expect(account.locator('.account-card .account-email')).toHaveText('tester@example.com');
+  await expect(account.locator('.account-card .account-auth')).toHaveText('Logout');
 });
 
 test('opening the page writes nothing (device or cloud)', async ({ page }) => {
@@ -78,23 +82,16 @@ test('with the BHGS pack off, the page opens with every button and no errors', a
 test.describe('desktop', () => {
   test.skip(({ isMobile }) => isMobile, 'desktop layout');
 
-  test('the sidebar account row starts with "Account & data", above the name and Login', async ({ page }) => {
+  test('the sidebar account row opens the page; Login is on the page, not in the sidebar (D125, D126)', async ({ page }) => {
     await openApp(page);
-    const btn = page.locator('#sidebar-account [data-action="go"][data-view="account"]');
-    await expect(btn).toBeVisible();
-    await expect(btn).toContainText('Account & data');
-    await expect(page.locator('#sidebar-account .side-auth')).toHaveText('Login');
-    await expect(page.locator('#sidebar-account .side-user')).toHaveText('Not signed in');
-    const [b, u] = await Promise.all([btn.boundingBox(), page.locator('#sidebar-account .side-user').boundingBox()]);
-    expect(b.y + b.height).toBeLessThanOrEqual(u.y);
+    const row = page.locator('#sidebar-account [data-action="go"][data-view="account"]');
+    await expect(row).toBeVisible();
+    await expect(row.locator('.side-acct-name')).toHaveText('Not signed in');
+    await expect(page.locator('#sidebar .account-auth, #sidebar .side-auth')).toHaveCount(0);
     // Not part of the menu (not one of the 7 destinations, D11).
     await expect(page.locator('#sidebar-nav-inner [data-view="account"]')).toHaveCount(0);
-  });
-
-  test('signed in, the button is still there next to Logout', async ({ page }) => {
-    await openApp(page, { user: TEST_USER, docs: { [USER_DOC]: progressState() } });
-    await expect(page.locator('#sidebar-account [data-view="account"]')).toBeVisible();
-    await expect(page.locator('#sidebar-account .side-auth')).toHaveText('Logout');
+    await row.click();
+    await expect(page.locator('#panel-account .account-auth')).toHaveText('Login');
   });
 
   test('clicking it opens the page; the button shows as active and no menu item is', async ({ page }) => {
@@ -132,11 +129,10 @@ test.describe('phone', () => {
     await expect(page.locator('#more-sheet [data-view="account"]')).toBeVisible();
   });
 
-  test('Login stays in the top bar (one Login button on the page)', async ({ page }) => {
+  test('Login is on the page; the top bar keeps its Login until slice 4.5b2 (D126 point 4)', async ({ page }) => {
     await openApp(page);
-    await accountPanel(page);
+    const account = await accountPanel(page);
+    await expect(account.locator('.account-auth')).toHaveText('Login');
     await expect(page.locator('#authBtn')).toHaveCount(1);
-    await expect(page.locator('#authBtn')).toBeVisible();
-    await expect(page.locator('#panel-account .auth-btn')).toHaveCount(0);
   });
 });

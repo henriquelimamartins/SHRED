@@ -1,4 +1,5 @@
 // HOME view.
+// Slice 4.5b (D125, D126): the drawn page header (muted eyebrow + large title).
 // Slice 4.5a (D124): the "Cloud Sync" card (Save/Load, Download/Restore backup, Reset Everything) moved unchanged
 // to the Account & data page (js/views/account.js).
 // Slice 3.5 (D106): Reset Everything confirmation text says what is erased and what is kept.
@@ -13,15 +14,21 @@ import { PHASES } from "../data/bhgs.js?v=1";
 import { state } from "../store.js?v=5";
 import { BHGS_PACK } from "../pack.js?v=1";
 import { totalStreak, currentStreak } from "../logic/dates.js?v=7";
-import { phasePercent } from "../logic/technique.js?v=16";
-import { renderRails } from "./rails.js?v=2";
-import { renderStreakCalendar } from "./calendar.js?v=16";
+import { phasePercent } from "../logic/technique.js?v=17";
+import { renderRails } from "./rails.js?v=3";
+import { pageHeader } from "./shell.js?v=1";
+import { DAY_FULL } from "../data/days.js?v=1";
+import { todayName } from "../logic/dates.js?v=7";
+import { renderStreakCalendar } from "./calendar.js?v=17";
 
 /* ---------- views ---------- */
 export function renderHome(){
   var cur=PHASES[state.phaseIndex],pct=phasePercent(state.phaseIndex);
   // Slice 4.4 (D123): the pillar rails replace the phase bar at the top of HOME (with the pack off: Improv and Theory).
-  var html='<div class="card home-progress"><h3>Progress</h3>'+renderRails('home')+'</div>';
+  var now=new Date(), MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var html=pageHeader(DAY_FULL[todayName()]+' \u00b7 '+now.getDate()+' '+MON[now.getMonth()],'Home');
+  // D127 (owner): on desktop the rails live only in the sidebar; the Progress card shows on the phone.
+  html+='<div class="card home-progress"><h3>Progress</h3>'+renderRails('home')+'</div>';
   html+='<div class="eyebrow">Daily Practice System</div>';
   
   html+='<div class="statrow">'+(BHGS_PACK?'<div class="stat"><div class="bignum">'+pct+'%</div><div class="lbl">'+cur.label+'</div></div>':'')+

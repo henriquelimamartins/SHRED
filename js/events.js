@@ -11,17 +11,21 @@
 // state like Reset: newer-version stop, cloud read first when signed in, backup first, then a checked write.
 // Slice 4.2a (D119): the sidebar Search and Login/Logout behave like the top-bar ones; the phone More sheet opens and closes.
 // Slice 4.3 (D122): TECHNIQUE page phone tabs ("techtab") and the Phase settings panel ("phasesettings").
+// Slice 4.5b (D126): Login / Logout on the Account & data page (`.account-auth`, same code as the top-bar button);
+// sidebar sub-items ("subnav") open their page and scroll to that part; an account photo that fails to load is
+// replaced by the initial; the account row's sync state is re-read every few seconds and on online/offline.
 // Slice 2.5: the SETUP video button ("openvideo") and the search box are handled here only (no inline onclick).
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
 import { CODEX_DATA } from "./data/dojo.js?v=1";
 import { defaultState, defaultDojoState, saveState, state, replaceState, backupBeforeReplace, migrate, newerSchema, NEWER_SCHEMA_MSG } from "./store.js?v=5";
 import { hasFirebase, auth, db, googleProvider, currentUser, cloudReady, cloudReadFailed, CLOUD_READ_FAILED_MSG, requestCloudWrite, loadFromCloud, signInWithPopup, signOut } from "./firebase.js?v=5";
 import { ui, showToast } from "./ui.js?v=1";
-import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=16";
-import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=16";
-import { changeCalMonth } from "./views/calendar.js?v=16";
-import { currentMinigame, addXP, startArchitectGame, handleDojoAnswer, renderCodexList } from "./views/dojo.js?v=8";
-import { updateNav, render } from "./render.js?v=16";
+import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=17";
+import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=17";
+import { changeCalMonth } from "./views/calendar.js?v=17";
+import { currentMinigame, addXP, startArchitectGame, handleDojoAnswer, renderCodexList } from "./views/dojo.js?v=9";
+import { updateNav, render, updateAccountRow } from "./render.js?v=17";
+import { SUB_ITEMS } from "./views/shell.js?v=1";
 import { buildBackupFile, backupFileName, listDeviceBackups, parseBackupFile, isNewerCopy, restoredState, formatLocalTime, reasonLabel, MAX_BACKUP_FILE_BYTES, INVALID_BACKUP_MSG, NEWER_BACKUP_MSG } from "./logic/backup.js?v=2";
 
 export function handleReset(){ ui.resetConfirm=true; render(); }
@@ -176,10 +180,10 @@ document.addEventListener("scroll", function(e) {
 document.addEventListener("click",function(e){
 
   if(e.target.closest("a")) return;
-  var t=e.target.closest("[data-action],[data-toggle],#authBtn,.side-auth,.shell-search,.side-search");
+  var t=e.target.closest("[data-action],[data-toggle],#authBtn,.account-auth,.shell-search,.side-search");
   if(!t) return;
 
-  if(t.id === "authBtn" || t.classList.contains("side-auth")){
+  if(t.id === "authBtn" || t.classList.contains("account-auth")){
     if(currentUser){ signOut(auth).then(() => { showToast("Logged out"); render(); }); } 
     else { signInWithPopup(auth, googleProvider).catch(err => showToast("Login failed")); }
     return;
@@ -195,9 +199,21 @@ document.addEventListener("click",function(e){
   if(a==="more"){ ui.moreOpen=!ui.moreOpen; updateNav(); return; }
   if(a==="closemore"){ ui.moreOpen=false; updateNav(); return; }
 
+  if(a==="subnav"){
+    var sv=t.dataset.subview, si=parseInt(t.dataset.index,10), sub=(SUB_ITEMS[sv]||[])[si];
+    ui.sub = ui.sub || {};
+    ui.sub[sv]=si;
+    if(ui.view!==sv){ ui.moreOpen=false; ui.view=sv; updateNav(); render(); }
+    else updateNav();
+    var el = sub ? document.querySelector(sub.target) : null;
+    if(el) el.scrollIntoView({block:'start', behavior:'smooth'});
+    return;
+  }
+
   if(a==="go"){
     ui.moreOpen=false;
     ui.view=t.dataset.view;
+    if(ui.sub) ui.sub[ui.view]=0; // slice 4.5b: the first sub-item marks the page top
     var panel = document.getElementById('panel-' + ui.view);
     if(panel) panel.scrollTo({top: 0, behavior: 'smooth'});
     updateNav();
@@ -306,3 +322,17 @@ document.addEventListener("change",function(e){
   if(e.target.dataset.action==="setGuitar") { state.setupGuitar = e.target.value; saveState(); render(); }
   if(e.target.dataset.action==="setTuning") { state.setupTuning = e.target.value; saveState(); render(); }
 });
+
+// Slice 4.5b (D126 point 3): an account photo that cannot load is replaced by the initial (not retried).
+document.addEventListener("error", function(e){
+  var img = e.target;
+  if(!img || !img.classList || !img.classList.contains("avatar-img")) return;
+  ui.avatarFailed = img.getAttribute("src");
+  var box = img.parentNode;
+  if(box){ box.classList.add("avatar-initial"); box.textContent = img.dataset.initial || "?"; }
+}, true);
+
+// Slice 4.5b (D126 point 5): keep the account row's sync state current (reads only).
+window.addEventListener("online", updateAccountRow);
+window.addEventListener("offline", updateAccountRow);
+setInterval(updateAccountRow, 3000);

@@ -136,7 +136,9 @@ test('no visible scrollbars, and pages still scroll (D17)', async ({ page }) => 
 
 test('small coloured text uses the tints; filled buttons use the filled colours (D117)', async ({ page }) => {
   await openApp(page, { localState: progressState({ phaseIndex: 1 }) });
-  await expect(page.locator('#panel-home .eyebrow').first()).toHaveCSS('color', rgb(TOKENS['--red-tint']));
+  // Slice 4.5b (D126): page eyebrows are muted, as drawn; other eyebrows keep their pillar tint.
+  await expect(page.locator('#panel-home .page-eyebrow')).toHaveCSS('color', rgb(TOKENS['--muted']));
+  await expect(page.locator('#panel-home .eyebrow:not(.page-eyebrow)').first()).toHaveCSS('color', rgb(TOKENS['--red-tint']));
   await expect(page.locator('.s-day.today .s-date')).toHaveCSS('color', rgb(TOKENS['--red-tint']));
   await expect(page.locator('[data-action="caltoday"]')).toHaveCSS('background-color', rgb(TOKENS['--red-fill']));
   const activeNav = page.locator('#botnav:visible, #sidebar-nav-inner:visible').first().locator('.active');
@@ -147,12 +149,12 @@ test('small coloured text uses the tints; filled buttons use the filled colours 
   await expect(page.locator('#panel-daily .tbtn.purple').first()).toHaveCSS('background-color', rgb(TOKENS['--purple-fill']));
 
   await goTo(page, 'improv');
-  await expect(page.locator('#panel-improv .eyebrow')).toHaveCSS('color', rgb(TOKENS['--purple-tint']));
+  await expect(page.locator('#panel-improv .eyebrow.improv')).toHaveCSS('color', rgb(TOKENS['--purple-tint']));
   await expect(page.locator('#panel-improv .card-improv h3')).toHaveCSS('color', rgb(TOKENS['--purple-tint']));
   await expect(activeNav).toHaveCSS('color', rgb(TOKENS['--purple-tint']));
 
   await goTo(page, 'dojo');
-  await expect(page.locator('#panel-dojo .eyebrow')).toHaveCSS('color', rgb(TOKENS['--blue-tint']));
+  await expect(page.locator('#panel-dojo .eyebrow.theory')).toHaveCSS('color', rgb(TOKENS['--blue-tint']));
 });
 
 test('main text colour pairs meet WCAG AA contrast (4.5:1)', () => {

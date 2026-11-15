@@ -1,4 +1,5 @@
 // LIBRARY view.
+// Slice 4.5b (D125, D126): the drawn page header (muted eyebrow + large title).
 // Slice 4.3 (D112, D122): the Shred Roadmap section (phases and Essential Skills) moved to the TECHNIQUE page.
 // Slice 4.2b (D113): with the BHGS pack off, the BHGS sections (Shred Roadmap, Theory Track, Creative, Bonus Content),
 // the Weekly Rhythm and the BHGS guide text are hidden; Expression Track, Listening Vault and the guide stay.
@@ -9,10 +10,11 @@ import { LISTENING_VAULT } from "../data/listening.js?v=1";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=1";
 import { BHGS_PACK } from "../pack.js?v=1";
-import { watchItem, docItem, renderBonusList } from "./components.js?v=16";
+import { pageHeader } from "./shell.js?v=1";
+import { watchItem, docItem, renderBonusList } from "./components.js?v=17";
 
 export function renderLibrary(){
-  var html='<div class="eyebrow">Reference &amp; Review</div><div class="h2 h2-lg u-mb-8">Library</div>';
+  var html=pageHeader('Reference &amp; Review','Library');
   html+='<p class="lede">Browse and check off any item, anytime - it all counts toward the same progress as Daily Practice.</p>';
   
   if(BHGS_PACK){
