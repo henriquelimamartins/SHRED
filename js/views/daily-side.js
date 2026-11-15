@@ -7,7 +7,7 @@ import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=1";
 import { BHGS_PACK } from "../pack.js?v=1";
 import { todayName, isWeekendDay, localISO } from "../logic/dates.js?v=7";
-import { improvKeyOfDay } from "./improv.js?v=14";
+import { improvKeyOfDay } from "./improv.js?v=15";
 
 function svg(path, cls){
   return '<svg class="ico' + (cls ? ' ' + cls : '') + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + path + '"></path></svg>';
@@ -64,9 +64,10 @@ const LETTERS = 'CDEFGAB', NATURAL = [0, 2, 4, 5, 7, 9, 11];
 const SCALE = { maj: [0, 2, 4, 5, 7, 9, 11], min: [0, 2, 3, 5, 7, 8, 10] };
 const NUMERALS = { maj: ['I', 'ii', 'iii', 'IV', 'V', 'vi', 'vii°'], min: ['i', 'ii°', 'III', 'iv', 'v', 'VI', 'VII'] };
 const QUALITY = { maj: ['', 'm', 'm', '', '', 'm', '°'], min: ['m', '°', '', 'm', 'm', '', ''] };
-// Clockwise from the top. The minor ring is spelled as the app's key list (E♭ minor, B♭ minor).
+// Clockwise from the top. The minor ring is spelled as the app's key list (E♭ minor, B♭ minor); slice 4.7c (D136):
+// position 7 is G♭ major / E♭ minor, so each major sits with its relative minor (same key signature, 6 flats).
 const RING = {
-  maj: ["C", "G", "D", "A", "E", "B", "F#", "Db", "Ab", "Eb", "Bb", "F"],
+  maj: ["C", "G", "D", "A", "E", "B", "Gb", "Db", "Ab", "Eb", "Bb", "F"],
   min: ["A", "E", "B", "F#", "C#", "G#", "Eb", "Bb", "F", "C", "G", "D"]
 };
 function pretty(n){ return n.replace(/#/g, '♯').replace(/([A-G])b/g, '$1♭'); }
@@ -88,6 +89,44 @@ function todayKey(){
 }
 function keyLabel(m, i){ return pretty(RING[m][i]) + (m === 'min' ? ' minor' : ' major'); }
 
+// Slice 4.7c (D136): the chosen key (and its relative) is marked by its slice of the ring, not by a circle:
+// curved inner and outer edges on the ring lines, straight sides between keys. Drawn as SVG paths (no inline style).
+const C = 140, R_OUT = 135.5, R_MID = 97.5, R_IN = 47.5;
+function pt(r, deg){ var a = deg * Math.PI / 180; return (C + r * Math.cos(a)).toFixed(2) + ' ' + (C + r * Math.sin(a)).toFixed(2); }
+function sector(r0, r1, i){
+  var a0 = i * 30 - 90 - 15, a1 = a0 + 30;
+  return 'M' + pt(r1, a0) + ' A' + r1 + ' ' + r1 + ' 0 0 1 ' + pt(r1, a1) + ' L' + pt(r0, a1) + ' A' + r0 + ' ' + r0 + ' 0 0 0 ' + pt(r0, a0) + ' Z';
+}
+// An arc inside the inner ring from angle a0 to a1 (degrees, 0 = right, clockwise positive) with an arrowhead at a1.
+function arrowArc(a0, a1, clockwise){
+  var r = 38, sweep = clockwise ? 1 : 0;
+  var d = 'M' + pt(r, a0) + ' A' + r + ' ' + r + ' 0 0 ' + sweep + ' ' + pt(r, a1);
+  // Arrowhead: two short strokes at the end, pointing along the direction of travel.
+  var t = (a1 + (clockwise ? 90 : -90)) * Math.PI / 180, e = a1 * Math.PI / 180;
+  var ex = C + r * Math.cos(e), ey = C + r * Math.sin(e), L = 6;
+  var h = function(da){ var a = t + Math.PI + da; return (ex + L * Math.cos(a)).toFixed(2) + ' ' + (ey + L * Math.sin(a)).toFixed(2); };
+  d += ' M' + h(0.5) + ' L' + ex.toFixed(2) + ' ' + ey.toFixed(2) + ' L' + h(-0.5);
+  return '<path class="kc-arrow" d="' + d + '"></path>';
+}
+function circleSvg(sel){
+  var svg = '<svg class="kc-svg" viewBox="0 0 280 280" aria-hidden="true">';
+  [['maj', R_MID, R_OUT], ['min', R_IN, R_MID]].forEach(function(ring){
+    for(var i = 0; i < 12; i++){
+      var on = sel.m === ring[0] && sel.i === i, rel = !on && sel.i === i;
+      if(on || rel) svg += '<path class="kc-sector' + (on ? ' on' : ' rel') + '" data-ring="' + ring[0] + '" d="' + sector(ring[1], ring[2], i) + '"></path>';
+    }
+  });
+  [R_OUT, R_MID, R_IN].forEach(function(r){ svg += '<circle class="kc-line" cx="' + C + '" cy="' + C + '" r="' + r + '"></circle>'; });
+  // Centre (owner, slice 4.7c): clockwise = fifths (upper arrow), anticlockwise = fourths (lower arrow).
+  svg += arrowArc(-140, -40, true) + arrowArc(140, 40, false);
+  // The words follow the arrows (owner): along an arc inside each one, read left to right.
+  svg += '<path id="kc-fifths-path" class="kc-guide" d="M' + pt(25, -155) + ' A25 25 0 0 1 ' + pt(25, -25) + '"></path>';
+  svg += '<path id="kc-fourths-path" class="kc-guide" d="M' + pt(31, 155) + ' A31 31 0 0 0 ' + pt(31, 25) + '"></path>';
+  svg += '<text class="kc-dir"><textPath href="#kc-fifths-path" startOffset="50%" text-anchor="middle">Fifths</textPath></text>';
+  svg += '<text class="kc-dir"><textPath href="#kc-fourths-path" startOffset="50%" text-anchor="middle">Fourths</textPath></text>';
+  return svg + '</svg>';
+}
+
 function keyCard(){
   var today = todayKey(), tk = improvKeyOfDay();
   var sel = ui.dailyKey || today || { m: 'min', i: 0 };
@@ -99,7 +138,7 @@ function keyCard(){
       : (today ? '<button type="button" class="dc-today" data-action="keytoday">' + svg(BACK) + 'Today: ' + keyLabel(today.m, today.i) + '</button>' : '')) +
     '</div>' +
     '<div class="dc-keyname">' + keyLabel(sel.m, sel.i) + '</div>' +
-    '<div class="kc"><div class="kc-ring kc-ring-out"></div><div class="kc-ring kc-ring-mid"></div><div class="kc-ring kc-ring-in">Major outside<br>minor inside</div>';
+    '<div class="kc">' + circleSvg(sel);
   ['maj', 'min'].forEach(function(m){
     RING[m].forEach(function(t, i){
       var on = sel.m === m && sel.i === i, rel = !on && sel.i === i;
@@ -108,7 +147,6 @@ function keyCard(){
     });
   });
   html += '</div>';
-  html += '<div class="kc-notes">' + notes.map(function(n, k){ return '<span class="kc-note' + (k === 0 ? ' root' : '') + '">' + pretty(n) + '</span>'; }).join('') + '</div>';
   html += '<div class="kc-degrees">' + notes.map(function(n, k){
     return '<div class="kc-deg' + (k === 0 ? ' root' : '') + '"><span class="kc-num">' + NUMERALS[sel.m][k] + '</span><span class="kc-chord">' + pretty(n) + QUALITY[sel.m][k] + '</span></div>';
   }).join('') + '</div>';

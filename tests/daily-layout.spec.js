@@ -171,7 +171,8 @@ test.describe('companion column (desktop)', () => {
     await expect(card.locator('.dc-keyname')).toHaveText('C♯ minor');
     await expect(card.locator('.kc-key.on')).toHaveAttribute('aria-label', 'C♯ minor');
     await expect(card.locator('.kc-key')).toHaveCount(24);
-    await expect(card.locator('.kc-note')).toHaveText(['C♯', 'D♯', 'E', 'F♯', 'G♯', 'A', 'B']);
+    // Slice 4.7c (D136): no row of notes under the circle; the degrees row carries the chords.
+    await expect(card.locator('.kc-note')).toHaveCount(0);
     await expect(card.locator('.kc-num')).toHaveText(['i', 'ii°', 'III', 'iv', 'v', 'VI', 'VII']);
     await expect(card.locator('.kc-chord')).toHaveText(['C♯m', 'D♯°', 'E', 'F♯m', 'G♯m', 'A', 'B']);
     await expect(card.locator('.dc-today')).toHaveCount(0);
@@ -187,7 +188,7 @@ test.describe('companion column (desktop)', () => {
     await card().locator('.kc-key[aria-label="E♭ minor"]').click();
     await expect(card().locator('.dc-label')).toHaveText('Key');
     await expect(card().locator('.dc-keyname')).toHaveText('E♭ minor');
-    await expect(card().locator('.kc-note')).toHaveText(['E♭', 'F', 'G♭', 'A♭', 'B♭', 'C♭', 'D♭']);
+    await expect(card().locator('.kc-chord')).toHaveText(['E♭m', 'F°', 'G♭', 'A♭m', 'B♭m', 'C♭', 'D♭']);
     await expect(card().locator('.kc-key[aria-label="E♭ minor"]')).toBeFocused();
 
     await card().locator('.kc-key[aria-label="C major"]').click();
