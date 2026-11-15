@@ -75,9 +75,9 @@ test.describe('phone', () => {
     expect(monitor.pageErrors).toEqual([]);
   });
 
-  test('other pages keep their own title as the header', async ({ page }) => {
+  test('other pages keep their own title as the header (pillar pages: pillar-headers.spec.js, D131)', async ({ page }) => {
     await openApp(page);
-    for (const [view, title] of [['daily', 'Daily'], ['improv', 'Improvisation'], ['dojo', 'Theory'], ['account', 'Account & data']]) {
+    for (const [view, title] of [['daily', 'Daily'], ['account', 'Account & data']]) {
       await openView(page, view);
       await expect(page.locator(`#panel-${view} .page-title`).first()).toBeVisible();
       await expect(page.locator(`#panel-${view} .page-title`).first()).toHaveText(title);
