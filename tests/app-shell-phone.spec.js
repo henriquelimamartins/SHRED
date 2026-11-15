@@ -33,8 +33,9 @@ test.describe('phone', () => {
       await expect(b).toHaveCSS('text-transform', 'uppercase');
     }
     const boxes = await items.evaluateAll((els) => els.map((e) => e.getBoundingClientRect()));
+    // Sizes are rounded to whole pixels: GitHub's runner can measure 47.99... for a 48 px box.
     for (const r of boxes) {
-      expect(r.height).toBeGreaterThanOrEqual(48);
+      expect(Math.round(r.height)).toBeGreaterThanOrEqual(48);
       expect(Math.abs(r.width - boxes[0].width)).toBeLessThan(1);
     }
     await expect(page.locator('#botnav [data-view="home"]')).toHaveAttribute('aria-current', 'page');
@@ -96,7 +97,7 @@ test.describe('phone', () => {
     expect(await rowTexts(more.locator('[data-group="account"] .more-row'))).toEqual(['Cloud sync', 'Download backup', 'Restore backup', 'Reset progress']);
     await expect(more.locator('[data-group="tools"] .more-row-sub')).toHaveText('PRS SE CE 24 · E Standard');
     await expect(more.locator('[data-row="reset"] .more-row-label')).toHaveCSS('color', 'rgb(255, 92, 97)');
-    for (const r of await more.locator('.more-row').evaluateAll((els) => els.map((e) => e.getBoundingClientRect().height))) expect(r).toBeGreaterThanOrEqual(44);
+    for (const r of await more.locator('.more-row').evaluateAll((els) => els.map((e) => e.getBoundingClientRect().height))) expect(Math.round(r)).toBeGreaterThanOrEqual(44);
     expect(monitor.pageErrors).toEqual([]);
     expect(unexpectedConsoleErrors(monitor)).toEqual([]);
   });
@@ -124,8 +125,8 @@ test.describe('phone', () => {
     await expect(btn).toHaveAttribute('aria-label', 'Account and data');
     await expect(btn.locator('.avatar-none svg')).toHaveCount(1);
     const b = await btn.boundingBox();
-    expect(b.width).toBeGreaterThanOrEqual(44);
-    expect(b.height).toBeGreaterThanOrEqual(44);
+    expect(Math.round(b.width)).toBeGreaterThanOrEqual(44); // whole pixels: GitHub measured 43.99999...
+    expect(Math.round(b.height)).toBeGreaterThanOrEqual(44);
     await btn.click();
     await expect(page.locator('#panel-account')).toHaveClass(/active/);
   });
