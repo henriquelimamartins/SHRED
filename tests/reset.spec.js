@@ -6,7 +6,7 @@
 // - Signed in: refused until this session has read the cloud; then sent through the checked write
 //   queue (D105), pending while offline.
 const { test, expect } = require('@playwright/test');
-const { openApp, cloudWrites, localSaved, settle, unexpectedConsoleErrors, bumpTest, testStepper } = require('./support/app');
+const { openApp, cloudWrites, localSaved, settle, unexpectedConsoleErrors, bumpTest, testStepper, accountPanel } = require('./support/app');
 const { TEST_USER, USER_DOC, progressState } = require('./support/fixtures');
 
 const BACKUP_KEY = 'shredRoadmapBackups_v1';
@@ -31,8 +31,8 @@ const cloudDoc = (page) => page.evaluate((path) => window.__SHRED_TEST__.docs[pa
 const networkBack = (page) => page.evaluate(() => window.dispatchEvent(new Event('online')));
 
 async function resetEverything(page) {
-  await page.locator('#panel-home [data-action="reset"]').click();
-  await page.locator('#panel-home [data-action="confirmreset"]').click();
+  await (await accountPanel(page)).locator('[data-action="reset"]').click();
+  await (await accountPanel(page)).locator('[data-action="confirmreset"]').click();
 }
 
 /** Progress in every area, plus today's DAILY session (the test clock is 2026-11-10). */
@@ -59,11 +59,11 @@ function fullState(overrides = {}) {
 test.describe('confirmation', () => {
   test('says what is erased and what is kept; Cancel changes nothing', async ({ page }) => {
     await openApp(page, { localState: fullState() });
-    await page.locator('#panel-home [data-action="reset"]').click();
-    const card = page.locator('#panel-home .card', { has: page.locator('[data-action="confirmreset"]') });
+    await (await accountPanel(page)).locator('[data-action="reset"]').click();
+    const card = (await accountPanel(page)).locator('.card', { has: page.locator('[data-action="confirmreset"]') });
     await expect(card).toContainText('Reset all progress? This erases Technique, Improv, Theory and Creative progress. Your streak, calendar and SETUP are kept. A backup is saved on this device first.');
-    await expect(page.locator('#panel-home [data-action="confirmreset"]')).toHaveText('Yes, reset progress');
-    await page.locator('#panel-home [data-action="cancelreset"]').click();
+    await expect((await accountPanel(page)).locator('[data-action="confirmreset"]')).toHaveText('Yes, reset progress');
+    await (await accountPanel(page)).locator('[data-action="cancelreset"]').click();
     expect(await localSaved(page)).toEqual(fullState());
   });
 });
@@ -137,7 +137,7 @@ test.describe('signed in', () => {
     await openApp(page, { user: TEST_USER, docs: { [USER_DOC]: fullState() }, localState: fullState() });
     await resetEverything(page);
     await expect(toast(page)).toHaveText(STILL_LOADING);
-    await expect(page.locator('#panel-home [data-action="confirmreset"]')).toHaveCount(0);
+    await expect((await accountPanel(page)).locator('[data-action="confirmreset"]')).toHaveCount(0);
     await settle(page);
     expect((await localSaved(page)).checks).toEqual(fullState().checks);
     expect(await cloudWrites(page)).toEqual([]);

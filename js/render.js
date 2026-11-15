@@ -8,19 +8,23 @@
 // Slice 4.4 (D123): the pillar is named IMPROVISATION wherever there is room; the phone bar keeps "Improv" (`short`).
 // Slice 4.4 (D117 point 1, D123): the pillar rails sit in the desktop sidebar under Search, hidden on HOME (which
 // shows them in full).
+// Slice 4.5a (D124): new page "Account & data" (view id `account`, not one of the 7 destinations): opened from an
+// "Account & data" button in the desktop sidebar account row (signed in or out) and from an "Account & data" group in
+// the phone More sheet.
 import { hasFirebase, currentUser } from "./firebase.js?v=5";
 import { ui } from "./ui.js?v=1";
 import { BHGS_PACK } from "./pack.js?v=1";
 import { ensureDailyReset } from "./logic/dates.js?v=7";
-import { initCalCarousel } from "./views/calendar.js?v=15";
-import { renderHome } from "./views/home.js?v=15";
-import { renderTechnique } from "./views/technique.js?v=2";
-import { renderDaily } from "./views/daily.js?v=15";
-import { renderImprov } from "./views/improv.js?v=7";
-import { renderLibrary } from "./views/library.js?v=15";
+import { initCalCarousel } from "./views/calendar.js?v=16";
+import { renderHome } from "./views/home.js?v=16";
+import { renderTechnique } from "./views/technique.js?v=3";
+import { renderDaily } from "./views/daily.js?v=16";
+import { renderImprov } from "./views/improv.js?v=8";
+import { renderLibrary } from "./views/library.js?v=16";
 import { renderSetup } from "./views/setup.js?v=7";
-import { renderDojoView } from "./views/dojo.js?v=7";
-import { renderRails } from "./views/rails.js?v=1";
+import { renderDojoView } from "./views/dojo.js?v=8";
+import { renderRails } from "./views/rails.js?v=2";
+import { renderAccount } from "./views/account.js?v=1";
 
 export function initAppLayout() {
   var root = document.getElementById("root");
@@ -44,6 +48,7 @@ export function initAppLayout() {
         <div class="view-panel" data-view-id="dojo" id="panel-dojo"></div>
         <div class="view-panel" data-view-id="library" id="panel-library"></div>
         <div class="view-panel" data-view-id="setup" id="panel-setup"></div>
+        <div class="view-panel" data-view-id="account" id="panel-account"></div>
       </div>
       <div id="more-sheet" class="more-sheet"></div>
       <nav class="botnav" id="botnav"></nav>
@@ -63,7 +68,9 @@ const NAV_ITEMS = [
 ].filter(function(n){ return !n.pack || BHGS_PACK; });
 // LIBRARY goes into More only with the BHGS pack on (D117 point 3; until the Explorer exists, D119 point 6).
 function inMore(n){ return !!n.more && !(n.view === "library" && !BHGS_PACK); }
-const MORE_VIEWS = NAV_ITEMS.filter(inMore).map(function(n){ return n.view; });
+// Slice 4.5a (D124): the Account & data page sits in More (phone) and in the account row (desktop), not in the menu.
+const ACCOUNT_ITEM = { view: "account", ic: "\ud83d\udc64", label: "Account & data", more: "Account & data" };
+const MORE_VIEWS = NAV_ITEMS.filter(inMore).map(function(n){ return n.view; }).concat([ACCOUNT_ITEM.view]);
 
 export function updateNav() {
   var sideHTML = NAV_ITEMS.map(function(n){ return navBtn(n.view, n.ic, n.label, n.cls); }).join("");
@@ -82,10 +89,9 @@ export function updateNav() {
     if(ui.moreOpen){
       html += '<div class="more-backdrop" data-action="closemore"></div><div class="more-panel" role="dialog" aria-label="More">';
       var group = null;
-      NAV_ITEMS.forEach(function(n){
-        if(!inMore(n)) return;
-        if(n.more !== group){ group = n.more; html += '<div class="more-group">' + group + '</div>'; }
-        html += '<button data-action="go" data-view="'+n.view+'" class="more-item'+(ui.view===n.view ? ' active' : '')+'"><span class="ic">'+n.ic+'</span>'+(n.moreLabel || n.label)+'</button>';
+      NAV_ITEMS.filter(inMore).concat([ACCOUNT_ITEM]).forEach(function(n){
+        if(n.more !== group){ group = n.more; html += '<div class="more-group">' + esc(group) + '</div>'; }
+        html += '<button data-action="go" data-view="'+n.view+'" class="more-item'+(ui.view===n.view ? ' active' : '')+'"><span class="ic">'+n.ic+'</span>'+esc(n.moreLabel || n.label)+'</button>';
       });
       html += '</div>';
     }
@@ -93,6 +99,7 @@ export function updateNav() {
     sheet.classList.toggle('open', !!ui.moreOpen);
   }
 }
+function esc(t){ return String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;"); }
 export function navBtn(view,ic,label, customClass){ 
   var cl = ui.view===view ? "active" : "";
   if(ui.view===view && customClass) cl += " " + customClass;
@@ -108,7 +115,8 @@ export function render(){
     document.querySelectorAll('.view-panel').forEach(function(p){ tops[p.id] = p.scrollTop; });
 
     var authHTML = '';
-    var sideAccount = '';
+    // Slice 4.5a (D124): the Account & data button comes first and is shown signed in or out.
+    var sideAccount = '<button data-action="go" data-view="account" class="side-account-btn'+(ui.view==='account' ? ' active' : '')+'"><span class="ic">\ud83d\udc64</span><span class="side-account-label">Account &amp; data</span><span class="side-account-arrow" aria-hidden="true">\u203a</span></button>';
     if(hasFirebase){
       var shortName = (currentUser && currentUser.email) ? currentUser.email.split('@')[0] : '';
       authHTML += '<div class="auth-container">';
@@ -138,6 +146,7 @@ export function render(){
     document.getElementById('panel-dojo').innerHTML = '<div class="panel-content">' + renderDojoView() + '</div>';
     document.getElementById('panel-library').innerHTML = '<div class="panel-content">' + renderLibrary() + '</div>';
     document.getElementById('panel-setup').innerHTML = '<div class="panel-content">' + renderSetup() + '</div>';
+    document.getElementById('panel-account').innerHTML = '<div class="panel-content">' + renderAccount() + '</div>';
 
     updateNav();
 

@@ -4,7 +4,7 @@
 import { IMPROV_GATES } from "../data/improv.js?v=1";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=1";
-import { renderRail, improvRail } from "./rails.js?v=1";
+import { renderRail, improvRail } from "./rails.js?v=2";
 
 export function renderImprov(){
   // Slice 4.4 (D117, D123): the Improv rail at the top of the page on the phone (the desktop sidebar shows it).

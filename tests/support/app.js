@@ -104,13 +104,26 @@ async function settle(page) {
 async function openView(page, view) {
   const nav = page.locator('#botnav:visible, #sidebar-nav-inner:visible').first();
   const btn = nav.locator(`[data-action="go"][data-view="${view}"]`);
+  // Slice 4.5a (D124): on the desktop, Account & data is opened from the sidebar account row.
+  const sideAccount = page.locator(`#sidebar-account:visible [data-action="go"][data-view="${view}"]`);
   if (await btn.count()) await btn.click();
+  else if (await sideAccount.count()) await sideAccount.click();
   else {
     await nav.locator('[data-action="more"]').click();
     await page.locator(`#more-sheet [data-action="go"][data-view="${view}"]`).click();
   }
   await expect(page.locator(`#panel-${view}`)).toHaveClass(/active/);
   await settle(page);
+}
+
+/**
+ * The Account & data page (slice 4.5a, D124), opened first if another page is showing.
+ * Cloud Sync (Save/Load), Download/Restore backup and Reset Everything live there (they were on HOME).
+ */
+async function accountPanel(page) {
+  const panel = page.locator('#panel-account');
+  if (!(await panel.evaluate((el) => el.classList.contains('active')))) await openView(page, 'account');
+  return panel;
 }
 
 /** The current-phase Phase Transition Test stepper on the TECHNIQUE page (slice 4.3; it was on HOME before). */
@@ -136,4 +149,4 @@ async function bumpTest(page, key = 'alt', d = 1) {
   if (back !== 'technique') await openView(page, back);
 }
 
-module.exports = { openApp, unexpectedConsoleErrors, cloudWrites, localSaved, settle, openView, testStepper, bumpTest, STORAGE_KEY, DEFAULT_NOW };
+module.exports = { openApp, unexpectedConsoleErrors, cloudWrites, localSaved, settle, openView, accountPanel, testStepper, bumpTest, STORAGE_KEY, DEFAULT_NOW };

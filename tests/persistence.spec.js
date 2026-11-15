@@ -4,7 +4,7 @@
 // 3.5: Reset Everything, D106).
 // Firebase is stubbed; the "cloud" is window.__SHRED_TEST__.docs and every write is recorded.
 const { test, expect } = require('@playwright/test');
-const { openApp, cloudWrites, localSaved, settle, unexpectedConsoleErrors, bumpTest, testStepper } = require('./support/app');
+const { openApp, cloudWrites, localSaved, settle, unexpectedConsoleErrors, bumpTest, testStepper, accountPanel } = require('./support/app');
 const { TEST_USER, USER_DOC, baseState, progressState } = require('./support/fixtures');
 
 // Home → Phase Transition Test stepper for Alternate Picking.
@@ -131,7 +131,7 @@ test.describe('signed in', () => {
   test('manual Save writes the current state; manual Load replaces local with the cloud copy', async ({ page }) => {
     await openApp(page, { user: TEST_USER, docs: { [USER_DOC]: progressState() } });
 
-    await page.locator('#panel-home [data-action="cloudsave"]').click();
+    await (await accountPanel(page)).locator('[data-action="cloudsave"]').click();
     await expect(page.locator('#toast')).toHaveText('Progress manually saved to cloud!');
     let writes = await cloudWrites(page);
     expect(writes[writes.length - 1].path).toBe(USER_DOC);
@@ -141,7 +141,7 @@ test.describe('signed in', () => {
     await page.evaluate((path) => {
       window.__SHRED_TEST__.docs[path].testLevel.alt = 5;
     }, USER_DOC);
-    await page.locator('#panel-home [data-action="cloudload"]').click();
+    await (await accountPanel(page)).locator('[data-action="cloudload"]').click();
     await expect(page.locator('#toast')).toHaveText('Progress loaded from cloud!');
     await expect(altLevel(page)).toHaveText('5/5');
     expect((await localSaved(page)).testLevel.alt).toBe(5);
@@ -151,8 +151,8 @@ test.describe('signed in', () => {
 test.describe('Reset Everything', () => {
   test('Cancel keeps all progress', async ({ page }) => {
     await openApp(page, { localState: progressState() });
-    await page.locator('#panel-home [data-action="reset"]').click();
-    await page.locator('#panel-home [data-action="cancelreset"]').click();
+    await (await accountPanel(page)).locator('[data-action="reset"]').click();
+    await (await accountPanel(page)).locator('[data-action="cancelreset"]').click();
 
     await expect(altLevel(page)).toHaveText('3/5');
     const saved = await localSaved(page);
@@ -163,8 +163,8 @@ test.describe('Reset Everything', () => {
   test('confirm erases progress only and keeps streak, calendar, SETUP and unknown fields (D83, D106)', async ({ page }) => {
     // Replaced on purpose in slice 3.5: before D106 the reset also wiped streak, calendar, SETUP and unknown fields.
     await openApp(page, { localState: progressState({ schemaVersion: 1, futureField: 'x' }) });
-    await page.locator('#panel-home [data-action="reset"]').click();
-    await page.locator('#panel-home [data-action="confirmreset"]').click();
+    await (await accountPanel(page)).locator('[data-action="reset"]').click();
+    await (await accountPanel(page)).locator('[data-action="confirmreset"]').click();
     await expect(page.locator('#toast')).toHaveText('Progress has been reset. Streak, calendar and SETUP were kept.');
 
     await expect(altLevel(page)).toHaveText('0/5');
@@ -184,8 +184,8 @@ test.describe('Reset Everything', () => {
   test('while signed in, confirm sends the reset to the cloud as a checked write, streak and SETUP kept (D106)', async ({ page }) => {
     // Replaced on purpose in slice 3.5: before D106 the cloud document lost the streak and SETUP too.
     await openApp(page, { user: TEST_USER, docs: { [USER_DOC]: progressState({ schemaVersion: 1, syncRev: 2 }) } });
-    await page.locator('#panel-home [data-action="reset"]').click();
-    await page.locator('#panel-home [data-action="confirmreset"]').click();
+    await (await accountPanel(page)).locator('[data-action="reset"]').click();
+    await (await accountPanel(page)).locator('[data-action="confirmreset"]').click();
     await settle(page);
 
     const writes = await cloudWrites(page);

@@ -8,7 +8,7 @@
 //   nothing changes over data from a newer app version.
 // The behaviour and numbers themselves are covered by technique.spec.js (D20). Firebase is stubbed.
 const { test, expect } = require('@playwright/test');
-const { openApp, localSaved, settle, openView, cloudWrites, unexpectedConsoleErrors } = require('./support/app');
+const { openApp, localSaved, settle, openView, accountPanel, cloudWrites, unexpectedConsoleErrors } = require('./support/app');
 const { baseState, checksFor, levels } = require('./support/fixtures');
 
 const BACKUP_KEY = 'shredRoadmapBackups_v1';
@@ -207,9 +207,10 @@ test.describe('Phase settings (D115)', () => {
     expect((await localSaved(page)).phaseIndex).toBe(1);
 
     // The Restore list names it in plain words.
-    await openView(page, 'home');
-    await home(page).locator('[data-action="openrestore"]').click();
-    await expect(home(page).locator('[data-action="pickrestore"]').first()).toContainText('Before phase change');
+    // Slice 4.5a (D124): the Restore list is on the Account & data page.
+    const account = await accountPanel(page);
+    await account.locator('[data-action="openrestore"]').click();
+    await expect(account.locator('[data-action="pickrestore"]').first()).toContainText('Before phase change');
   });
 
   test('when the current state already equals the newest backup, no duplicate is added', async ({ page }) => {

@@ -74,14 +74,15 @@ test.describe('phone', () => {
     expect(monitor.pageErrors).toEqual([]);
   });
 
-  test('More opens a sheet with Library and Tools; choosing one opens it and closes the sheet', async ({ page }) => {
+  test('More opens a sheet with Library, Tools and Account & data; choosing one opens it and closes the sheet', async ({ page }) => {
     await openApp(page);
     const more = page.locator('#botnav [data-action="more"]');
     await more.click();
     await expect(page.locator('#more-sheet')).toHaveClass(/open/);
     await expect(more).toHaveAttribute('aria-expanded', 'true');
-    expect(await labels(page.locator('#more-sheet .more-group'))).toEqual(['Resources', 'Tools']);
-    expect(await labels(page.locator('#more-sheet .more-item'))).toEqual(['Library', 'Setup']);
+    // Slice 4.5a (D124): Account & data joins More.
+    expect(await labels(page.locator('#more-sheet .more-group'))).toEqual(['Resources', 'Tools', 'Account  data']); // labels() keeps letters and spaces only
+    expect(await labels(page.locator('#more-sheet .more-item'))).toEqual(['Library', 'Setup', 'Account  data']);
 
     await page.locator('#more-sheet [data-view="setup"]').click();
     await expect(page.locator('#panel-setup')).toHaveClass(/active/);
