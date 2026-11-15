@@ -4,7 +4,7 @@
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=1";
 import { todayISO } from "../logic/dates.js?v=7";
-import { render } from "../render.js?v=22";
+import { render } from "../render.js?v=23";
 
 export function getEarliestYearMonth() {
   if(!state.streakDates || state.streakDates.length === 0) return { y: new Date().getFullYear(), m: new Date().getMonth() };
@@ -18,9 +18,8 @@ export function buildMonthGrid(y, m){
   var startDayOfWeek = (firstDayOfMonth.getDay() + 6) % 7; 
   var startDate = new Date(y, m, 1 - startDayOfWeek);
 
-  var lastDayOfMonth = new Date(y, m + 1, 0);
-  var endDayOfWeek = (lastDayOfMonth.getDay() + 6) % 7; 
-  var endDate = new Date(y, m + 1, 0 + (6 - endDayOfWeek));
+  // Slice 4.7c (D136): every month shows 6 weeks (42 days), so all months have the same height.
+  var endDate = new Date(y, m, 1 - startDayOfWeek + 41);
 
   var shortDays = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
   var shortMonths = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
@@ -67,10 +66,6 @@ export function renderStreakCalendar(){
   var y = ui.calYear;
   var earliest = getEarliestYearMonth();
 
-  var prevM = m - 1, prevY = y;
-  if(prevM < 0) { prevM = 11; prevY--; }
-  var nextM = m + 1, nextY = y;
-  if(nextM > 11) { nextM = 0; nextY++; }
 
   var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
@@ -89,17 +84,34 @@ export function renderStreakCalendar(){
 
   html += '<div class="streak-wrapper" id="cal-swipe-area">';
   html += '<div class="cal-carousel" id="cal-carousel">';
-  
-  if(canGoBack) {
-    html += '<div class="cal-panel" data-ym="'+prevY+'-'+prevM+'">' + buildMonthGrid(prevY, prevM) + '</div>';
-  }
-  html += '<div class="cal-panel" data-ym="'+y+'-'+m+'">' + buildMonthGrid(y, m) + '</div>';
-  if(canGoFwd) {
-    html += '<div class="cal-panel" data-ym="'+nextY+'-'+nextM+'">' + buildMonthGrid(nextY, nextM) + '</div>';
-  }
-  
+  // Slice 4.7c (D136): every month from the first logged day to the current month is in the carousel, so swiping
+  // goes back as far as the arrows do (before, only the previous and next month were there until a redraw).
+  calMonths().forEach(function(cm){
+    html += '<div class="cal-panel" data-ym="'+cm.y+'-'+cm.m+'">' + buildMonthGrid(cm.y, cm.m) + '</div>';
+  });
   html += '</div></div>';
   return html;
+}
+
+// The months the calendar can show: from the first logged day's month to the current month (always at least one).
+export function calMonths(){
+  var now = new Date(), e = getEarliestYearMonth(), out = [];
+  var y = e.y, m = e.m;
+  if(y > now.getFullYear() || (y === now.getFullYear() && m > now.getMonth())) { y = now.getFullYear(); m = now.getMonth(); }
+  while(y < now.getFullYear() || (y === now.getFullYear() && m <= now.getMonth())){
+    out.push({ y: y, m: m });
+    m++; if(m > 11){ m = 0; y++; }
+  }
+  return out;
+}
+
+// Prev / Next enabled state for the month on screen (also used while swiping).
+export function calCanGo(y, m){
+  var now = new Date(), e = getEarliestYearMonth();
+  return {
+    back: (y > e.y) || (y === e.y && m > e.m),
+    fwd: (y < now.getFullYear()) || (y === now.getFullYear() && m < now.getMonth())
+  };
 }
 
 export function changeCalMonth(dir) {

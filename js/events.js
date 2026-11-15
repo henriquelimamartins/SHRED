@@ -22,13 +22,13 @@ import { CODEX_DATA } from "./data/dojo.js?v=1";
 import { defaultState, defaultDojoState, saveState, state, replaceState, backupBeforeReplace, migrate, newerSchema, NEWER_SCHEMA_MSG } from "./store.js?v=5";
 import { hasFirebase, auth, db, googleProvider, currentUser, cloudReady, cloudReadFailed, CLOUD_READ_FAILED_MSG, requestCloudWrite, loadFromCloud, signInWithPopup, signOut } from "./firebase.js?v=5";
 import { ui, showToast } from "./ui.js?v=1";
-import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=22";
-import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=22";
-import { changeCalMonth } from "./views/calendar.js?v=22";
-import { currentMinigame, addXP, startArchitectGame, handleDojoAnswer, renderCodexList } from "./views/dojo.js?v=14";
-import { updateNav, render, updateAccountRow } from "./render.js?v=22";
-import { SUB_ITEMS } from "./views/shell.js?v=6";
-import { initDailySwipe } from "./views/daily-swipe.js?v=1";
+import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=23";
+import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=23";
+import { changeCalMonth, calCanGo } from "./views/calendar.js?v=23";
+import { currentMinigame, addXP, startArchitectGame, handleDojoAnswer, renderCodexList } from "./views/dojo.js?v=15";
+import { updateNav, render, updateAccountRow } from "./render.js?v=23";
+import { SUB_ITEMS } from "./views/shell.js?v=7";
+import { initDailySwipe } from "./views/daily-swipe.js?v=2";
 import { buildBackupFile, backupFileName, listDeviceBackups, parseBackupFile, isNewerCopy, restoredState, formatLocalTime, reasonLabel, MAX_BACKUP_FILE_BYTES, INVALID_BACKUP_MSG, NEWER_BACKUP_MSG } from "./logic/backup.js?v=2";
 
 export function handleReset(){ ui.resetConfirm=true; render(); }
@@ -180,6 +180,12 @@ document.addEventListener("scroll", function(e) {
         // Slice 4.5c (D129): "Today" shows only while another month is on screen.
         var now = new Date(), todayBtn = document.querySelector('.calendar-header-nav .cal-today');
         if(todayBtn) todayBtn.hidden = (y === now.getFullYear() && m === now.getMonth());
+        // Slice 4.7c (D136): the arrows follow the month reached by swiping.
+        var can = calCanGo(y, m);
+        var prevBtn = document.querySelector('.calendar-header-nav [data-action="calprev"]');
+        var nextBtn = document.querySelector('.calendar-header-nav [data-action="calnext"]');
+        if(prevBtn) prevBtn.disabled = !can.back;
+        if(nextBtn) nextBtn.disabled = !can.fwd;
       }
     }
   }
