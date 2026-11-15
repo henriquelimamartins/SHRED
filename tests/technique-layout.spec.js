@@ -64,7 +64,7 @@ test.describe('desktop', () => {
 test.describe('phone', () => {
   test.skip(({ isMobile }) => !isMobile, 'phone layout');
 
-  test('header as drawn: title, "Beginner · 13 of 24" and the rail with the %, at most 112 px (+10 for real fonts)', async ({ page }) => {
+  test('header as drawn: title, "Beginner · 13 of 24" and the rail with the %, at most 120 px (D112; drawn at 112)', async ({ page }) => {
     const monitor = await openApp(page, { localState: beginner() });
     await openView(page, 'technique');
     const head = tech(page).locator('.tech-header');
@@ -72,8 +72,10 @@ test.describe('phone', () => {
     await expect(head.locator('.tech-sub')).toHaveText('Beginner · 13 of 24');
     await expect(head.locator('[data-rail="technique"] .rail-status')).toHaveText('54%');
     await expect(head.locator('.page-eyebrow')).toBeHidden();
+    // The board draws 112 px; the hard limit is 120 px (D112). GitHub's real web fonts measure a few px more than
+    // Claude's workspace (CHECKPOINT test notes), so the test checks the hard limit.
     const h = await head.evaluate((el) => el.getBoundingClientRect().height);
-    expect(h).toBeLessThanOrEqual(112);
+    expect(h).toBeLessThanOrEqual(120);
     await expect(tech(page).locator('.tech-progress')).toBeHidden();
     expect(monitor.pageErrors).toEqual([]);
   });
