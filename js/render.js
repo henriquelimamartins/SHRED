@@ -15,21 +15,24 @@
 // per item and the active page's sub-items; the read-only Today block; the account row (Google photo or initial,
 // name, real sync state) that opens Account & data. Login / Logout leave the sidebar (Account & data page). The
 // account row refreshes itself every few seconds (reads only). D127 (owner): the sidebar rails show on HOME too.
-import { hasFirebase, currentUser } from "./firebase.js?v=5";
+// Slice 4.5b2 (D126 point 1, D128): phone shell as drawn. The shared phone top bar (brand, Search, Login) is gone:
+// each page shows its own header (HOME: brand, date, streak). The bottom bar uses the line icons. MORE is a page
+// (view id `more`, phone only) instead of a sheet. Login / Logout live only on the Account & data page (D125 point 4).
 import { ui } from "./ui.js?v=1";
 import { BHGS_PACK } from "./pack.js?v=1";
 import { ensureDailyReset } from "./logic/dates.js?v=7";
-import { initCalCarousel } from "./views/calendar.js?v=17";
-import { renderHome } from "./views/home.js?v=17";
-import { renderTechnique } from "./views/technique.js?v=4";
-import { renderDaily } from "./views/daily.js?v=17";
-import { renderImprov } from "./views/improv.js?v=9";
-import { renderLibrary } from "./views/library.js?v=17";
-import { renderSetup } from "./views/setup.js?v=8";
-import { renderDojoView } from "./views/dojo.js?v=9";
-import { renderRails } from "./views/rails.js?v=3";
-import { renderAccount } from "./views/account.js?v=2";
-import { icon, sidebarMenu, todayBlock, accountRow } from "./views/shell.js?v=1";
+import { initCalCarousel } from "./views/calendar.js?v=18";
+import { renderHome } from "./views/home.js?v=18";
+import { renderTechnique } from "./views/technique.js?v=5";
+import { renderDaily } from "./views/daily.js?v=18";
+import { renderImprov } from "./views/improv.js?v=10";
+import { renderLibrary } from "./views/library.js?v=18";
+import { renderSetup } from "./views/setup.js?v=9";
+import { renderDojoView } from "./views/dojo.js?v=10";
+import { renderRails } from "./views/rails.js?v=4";
+import { renderAccount } from "./views/account.js?v=3";
+import { renderMore } from "./views/more.js?v=1";
+import { icon, sidebarMenu, todayBlock, accountRow, syncState } from "./views/shell.js?v=2";
 
 export function initAppLayout() {
   var root = document.getElementById("root");
@@ -45,7 +48,6 @@ export function initAppLayout() {
       <div id="sidebar-account" class="sidebar-account"></div>
     </nav>
     <main class="main-area">
-      <header class="topbar" id="topbar"></header>
       <div class="views-container" id="views-container">
         <div class="view-panel" data-view-id="home" id="panel-home"></div>
         <div class="view-panel" data-view-id="daily" id="panel-daily"></div>
@@ -55,8 +57,8 @@ export function initAppLayout() {
         <div class="view-panel" data-view-id="library" id="panel-library"></div>
         <div class="view-panel" data-view-id="setup" id="panel-setup"></div>
         <div class="view-panel" data-view-id="account" id="panel-account"></div>
+        <div class="view-panel" data-view-id="more" id="panel-more"></div>
       </div>
-      <div id="more-sheet" class="more-sheet"></div>
       <nav class="botnav" id="botnav"></nav>
     </main>
   `;
@@ -64,52 +66,37 @@ export function initAppLayout() {
 
 // Destinations in D117 order. TECHNIQUE only with the BHGS pack on (D113).
 const NAV_ITEMS = [
-  { view: "home", ic: "\ud83c\udfe0", label: "Home" },
-  { view: "daily", ic: "\ud83c\udfaf", label: "Daily" },
-  { view: "technique", ic: "\ud83d\udd25", label: "Technique", pack: true },
-  { view: "improv", ic: "\ud83e\udde0", label: "Improvisation", short: "Improv", cls: "improv-nav" },
-  { view: "dojo", ic: "\ud83d\udcd6", label: "Theory", cls: "theory-nav" },
-  { view: "library", ic: "\ud83d\udcda", label: "Library", more: "Resources" },
-  { view: "setup", ic: "\ud83d\udee0\ufe0f", label: "Tools", more: "Tools", moreLabel: "Setup" }
+  { view: "home", label: "Home" },
+  { view: "daily", label: "Daily" },
+  { view: "technique", label: "Technique", pack: true },
+  { view: "improv", label: "Improvisation", short: "Improv", cls: "improv-nav" },
+  { view: "dojo", label: "Theory", cls: "theory-nav" },
+  { view: "library", label: "Library", more: "Resources" },
+  { view: "setup", label: "Tools", more: "Tools" }
 ].filter(function(n){ return !n.pack || BHGS_PACK; });
 // LIBRARY goes into More only with the BHGS pack on (D117 point 3; until the Explorer exists, D119 point 6).
 function inMore(n){ return !!n.more && !(n.view === "library" && !BHGS_PACK); }
 // Slice 4.5a (D124): the Account & data page sits in More (phone) and in the account row (desktop), not in the menu.
-const ACCOUNT_ITEM = { view: "account", ic: "\ud83d\udc64", label: "Account & data", more: "Account & data" };
-const MORE_VIEWS = NAV_ITEMS.filter(inMore).map(function(n){ return n.view; }).concat([ACCOUNT_ITEM.view]);
+// On these pages (and on the MORE page itself) the phone bar shows MORE as active.
+const MORE_VIEWS = NAV_ITEMS.filter(inMore).map(function(n){ return n.view; }).concat(["account", "more"]);
 
 export function updateNav() {
   var sideHTML = sidebarMenu(NAV_ITEMS);
   var sidebarNav = document.getElementById('sidebar-nav-inner');
   if(sidebarNav) sidebarNav.innerHTML = sideHTML;
 
-  var barHTML = NAV_ITEMS.filter(function(n){ return !inMore(n); }).map(function(n){ return navBtn(n.view, n.ic, n.short || n.label, n.cls); }).join("");
-  var moreActive = ui.moreOpen || MORE_VIEWS.indexOf(ui.view) >= 0;
-  barHTML += '<button data-action="more" class="more-btn'+(moreActive ? ' active' : '')+'" aria-expanded="'+(ui.moreOpen ? 'true' : 'false')+'"><span class="ic">\u22ef</span>More</button>';
+  // Phone bottom bar (slice 4.5b2, D128): line icons and short labels, as drawn; MORE opens the MORE page.
+  var barHTML = NAV_ITEMS.filter(function(n){ return !inMore(n); }).map(function(n){ return navBtn(n.view, n.short || n.label, n.cls); }).join("");
+  var moreActive = MORE_VIEWS.indexOf(ui.view) >= 0;
+  barHTML += '<button data-action="more" class="more-btn'+(moreActive ? ' active' : '')+'"'+(moreActive ? ' aria-current="page"' : '')+'>'+icon("more")+'<span class="bn-label">More</span></button>';
   var botnav = document.getElementById('botnav');
   if(botnav) botnav.innerHTML = '<div class="botnav-inner">' + barHTML + '</div>';
-
-  var sheet = document.getElementById('more-sheet');
-  if(sheet){
-    var html = '';
-    if(ui.moreOpen){
-      html += '<div class="more-backdrop" data-action="closemore"></div><div class="more-panel" role="dialog" aria-label="More">';
-      var group = null;
-      NAV_ITEMS.filter(inMore).concat([ACCOUNT_ITEM]).forEach(function(n){
-        if(n.more !== group){ group = n.more; html += '<div class="more-group">' + esc(group) + '</div>'; }
-        html += '<button data-action="go" data-view="'+n.view+'" class="more-item'+(ui.view===n.view ? ' active' : '')+'"><span class="ic">'+n.ic+'</span>'+esc(n.moreLabel || n.label)+'</button>';
-      });
-      html += '</div>';
-    }
-    sheet.innerHTML = html;
-    sheet.classList.toggle('open', !!ui.moreOpen);
-  }
 }
-function esc(t){ return String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;"); }
-export function navBtn(view,ic,label, customClass){ 
-  var cl = ui.view===view ? "active" : "";
-  if(ui.view===view && customClass) cl += " " + customClass;
-  return '<button data-action="go" data-view="'+view+'" class="'+cl+'"><span class="ic">'+ic+'</span>'+label+'</button>'; 
+export function navBtn(view, label, customClass){
+  var on = ui.view===view;
+  var cl = on ? "active" : "";
+  if(on && customClass) cl += " " + customClass;
+  return '<button data-action="go" data-view="'+view+'" class="'+cl+'"'+(on ? ' aria-current="page"' : '')+'>'+icon(view)+'<span class="bn-label">'+label+'</span></button>';
 }
 
 // Slice 4.5b (D126 point 5): the account row's sync state is re-read every few seconds and on online/offline,
@@ -120,6 +107,13 @@ export function updateAccountRow(){
   if(!el) return;
   var html = accountRow();
   if(html !== lastAccountRow){ el.innerHTML = html; lastAccountRow = html; }
+  // Slice 4.5b2 (D128): the same for the Cloud sync row of the phone MORE page.
+  var sub = document.querySelector('#panel-more [data-row="sync"] .more-row-sub');
+  if(sub){
+    var s = syncState();
+    var line = '<i class="sync-dot ' + s.tone + '"></i><span class="sync-text">' + s.text + '</span>';
+    if(sub.innerHTML !== line) sub.innerHTML = line;
+  }
 }
 
 export function render(){
@@ -129,21 +123,6 @@ export function render(){
 
     var tops = {};
     document.querySelectorAll('.view-panel').forEach(function(p){ tops[p.id] = p.scrollTop; });
-
-    var authHTML = '';
-    if(hasFirebase){
-      var shortName = (currentUser && currentUser.email) ? currentUser.email.split('@')[0] : '';
-      authHTML += '<div class="auth-container">';
-      if(shortName) authHTML += '<span class="user-email">' + shortName + '</span>';
-      authHTML += '<button id="authBtn" class="dchip2 auth-btn">' + (currentUser ? "Logout" : "Login") + '</button></div>';
-    }
-
-    // Phone top bar (hidden on desktop, where Search and the account row live in the sidebar).
-    var topbarHTML = '<div class="topbar-header">';
-    topbarHTML += '<div class="brand mobile-brand">THE <span>SHRED</span> ROADMAP</div>';
-    topbarHTML += '<div class="shell-search"><span class="ic">\ud83d\udd0d</span><span class="srch-txt">Search...</span></div>';
-    topbarHTML += authHTML + '</div>';
-    document.getElementById('topbar').innerHTML = topbarHTML;
 
     document.getElementById('sidebar-search').innerHTML = '<div class="side-search">' + icon("search") + '<span>Search\u2026</span></div>';
     document.getElementById('sidebar-today').innerHTML = todayBlock();
@@ -161,6 +140,7 @@ export function render(){
     document.getElementById('panel-library').innerHTML = '<div class="panel-content">' + renderLibrary() + '</div>';
     document.getElementById('panel-setup').innerHTML = '<div class="panel-content">' + renderSetup() + '</div>';
     document.getElementById('panel-account').innerHTML = '<div class="panel-content">' + renderAccount() + '</div>';
+    document.getElementById('panel-more').innerHTML = '<div class="panel-content">' + renderMore() + '</div>';
 
     updateNav();
 

@@ -1,4 +1,6 @@
 // HOME view.
+// Slice 4.5b2 (D126 point 1, D128): on the phone HOME has its own header as drawn (brand, date, streak) instead of the
+// shared top bar; the desktop keeps the page header. The Explorer icon of the board comes with the Explorer (Phase 5).
 // Slice 4.5b (D125, D126): the drawn page header (muted eyebrow + large title).
 // Slice 4.5a (D124): the "Cloud Sync" card (Save/Load, Download/Restore backup, Reset Everything) moved unchanged
 // to the Account & data page (js/views/account.js).
@@ -14,19 +16,24 @@ import { PHASES } from "../data/bhgs.js?v=1";
 import { state } from "../store.js?v=5";
 import { BHGS_PACK } from "../pack.js?v=1";
 import { totalStreak, currentStreak } from "../logic/dates.js?v=7";
-import { phasePercent } from "../logic/technique.js?v=17";
-import { renderRails } from "./rails.js?v=3";
-import { pageHeader } from "./shell.js?v=1";
+import { phasePercent } from "../logic/technique.js?v=18";
+import { renderRails } from "./rails.js?v=4";
+import { pageHeader, icon } from "./shell.js?v=2";
 import { DAY_FULL } from "../data/days.js?v=1";
 import { todayName } from "../logic/dates.js?v=7";
-import { renderStreakCalendar } from "./calendar.js?v=17";
+import { renderStreakCalendar } from "./calendar.js?v=18";
 
 /* ---------- views ---------- */
 export function renderHome(){
   var cur=PHASES[state.phaseIndex],pct=phasePercent(state.phaseIndex);
   // Slice 4.4 (D123): the pillar rails replace the phase bar at the top of HOME (with the pack off: Improv and Theory).
   var now=new Date(), MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  var html=pageHeader(DAY_FULL[todayName()]+' \u00b7 '+now.getDate()+' '+MON[now.getMonth()],'Home');
+  var dateLine=DAY_FULL[todayName()]+' \u00b7 '+now.getDate()+' '+MON[now.getMonth()];
+  var streak=currentStreak();
+  var html='<header class="home-phone-head"><div class="home-phone-brand"><div class="brand home-brand">THE <span>SHRED</span> <small>ROADMAP</small></div>'+
+    '<div class="home-date">'+dateLine+'</div></div>'+
+    '<div class="streak-pill" aria-label="'+streak+'-day streak">'+icon("flame")+'<strong>'+streak+'</strong></div></header>';
+  html+=pageHeader(dateLine,'Home');
   // D127 (owner): on desktop the rails live only in the sidebar; the Progress card shows on the phone.
   html+='<div class="card home-progress"><h3>Progress</h3>'+renderRails('home')+'</div>';
   html+='<div class="eyebrow">Daily Practice System</div>';

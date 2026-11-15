@@ -292,7 +292,7 @@ test.describe('restore from a file', () => {
       if (await btn.count()) await btn.click();
       else {
         await page.locator('#botnav [data-action="more"]').click();
-        await page.locator(`#more-sheet [data-view="${view}"]`).click();
+        await page.locator(`#panel-more [data-action="go"][data-view="${view}"]`).first().click();
       }
       await expect(page.locator(`#panel-${view}`)).toHaveClass(/active/);
     }

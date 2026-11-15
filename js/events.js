@@ -14,18 +14,20 @@
 // Slice 4.5b (D126): Login / Logout on the Account & data page (`.account-auth`, same code as the top-bar button);
 // sidebar sub-items ("subnav") open their page and scroll to that part; an account photo that fails to load is
 // replaced by the initial; the account row's sync state is re-read every few seconds and on online/offline.
+// Slice 4.5b2 (D128): the phone MORE button opens the MORE page; its Restore and Reset rows open the Account & data
+// page with that panel open (same confirmations as there). The phone top bar (Search, Login) is gone.
 // Slice 2.5: the SETUP video button ("openvideo") and the search box are handled here only (no inline onclick).
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
 import { CODEX_DATA } from "./data/dojo.js?v=1";
 import { defaultState, defaultDojoState, saveState, state, replaceState, backupBeforeReplace, migrate, newerSchema, NEWER_SCHEMA_MSG } from "./store.js?v=5";
 import { hasFirebase, auth, db, googleProvider, currentUser, cloudReady, cloudReadFailed, CLOUD_READ_FAILED_MSG, requestCloudWrite, loadFromCloud, signInWithPopup, signOut } from "./firebase.js?v=5";
 import { ui, showToast } from "./ui.js?v=1";
-import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=17";
-import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=17";
-import { changeCalMonth } from "./views/calendar.js?v=17";
-import { currentMinigame, addXP, startArchitectGame, handleDojoAnswer, renderCodexList } from "./views/dojo.js?v=9";
-import { updateNav, render, updateAccountRow } from "./render.js?v=17";
-import { SUB_ITEMS } from "./views/shell.js?v=1";
+import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=18";
+import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=18";
+import { changeCalMonth } from "./views/calendar.js?v=18";
+import { currentMinigame, addXP, startArchitectGame, handleDojoAnswer, renderCodexList } from "./views/dojo.js?v=10";
+import { updateNav, render, updateAccountRow } from "./render.js?v=18";
+import { SUB_ITEMS } from "./views/shell.js?v=2";
 import { buildBackupFile, backupFileName, listDeviceBackups, parseBackupFile, isNewerCopy, restoredState, formatLocalTime, reasonLabel, MAX_BACKUP_FILE_BYTES, INVALID_BACKUP_MSG, NEWER_BACKUP_MSG } from "./logic/backup.js?v=2";
 
 export function handleReset(){ ui.resetConfirm=true; render(); }
@@ -177,18 +179,28 @@ document.addEventListener("scroll", function(e) {
 }, {capture: true, passive: true});
 
 
+// Opens a page at its top (the "go" action; since slice 4.5b2 also the MORE page and its rows).
+function openPage(view){
+  ui.view=view;
+  if(ui.sub) ui.sub[ui.view]=0; // slice 4.5b: the first sub-item marks the page top
+  var panel = document.getElementById('panel-' + ui.view);
+  if(panel) panel.scrollTo({top: 0, behavior: 'smooth'});
+  updateNav();
+  render();
+}
+
 document.addEventListener("click",function(e){
 
   if(e.target.closest("a")) return;
-  var t=e.target.closest("[data-action],[data-toggle],#authBtn,.account-auth,.shell-search,.side-search");
+  var t=e.target.closest("[data-action],[data-toggle],.account-auth,.side-search");
   if(!t) return;
 
-  if(t.id === "authBtn" || t.classList.contains("account-auth")){
+  if(t.classList.contains("account-auth")){
     if(currentUser){ signOut(auth).then(() => { showToast("Logged out"); render(); }); } 
     else { signInWithPopup(auth, googleProvider).catch(err => showToast("Login failed")); }
     return;
   }
-  if(t.classList.contains("shell-search") || t.classList.contains("side-search")){
+  if(t.classList.contains("side-search")){
     showToast("Global search coming in a future phase");
     return;
   }
@@ -196,30 +208,22 @@ document.addEventListener("click",function(e){
   if(t.dataset.toggle){ toggleCheck(t.dataset.toggle); return; }
   var a=t.dataset.action;
   
-  if(a==="more"){ ui.moreOpen=!ui.moreOpen; updateNav(); return; }
-  if(a==="closemore"){ ui.moreOpen=false; updateNav(); return; }
+  if(a==="more"){ openPage("more"); return; }
+  if(a==="morerestore"){ openPage("account"); openRestore(); return; }
+  if(a==="morereset"){ ui.restoreOpen=false; ui.restorePick=null; openPage("account"); handleReset(); return; }
 
   if(a==="subnav"){
     var sv=t.dataset.subview, si=parseInt(t.dataset.index,10), sub=(SUB_ITEMS[sv]||[])[si];
     ui.sub = ui.sub || {};
     ui.sub[sv]=si;
-    if(ui.view!==sv){ ui.moreOpen=false; ui.view=sv; updateNav(); render(); }
+    if(ui.view!==sv){ ui.view=sv; updateNav(); render(); }
     else updateNav();
     var el = sub ? document.querySelector(sub.target) : null;
     if(el) el.scrollIntoView({block:'start', behavior:'smooth'});
     return;
   }
 
-  if(a==="go"){
-    ui.moreOpen=false;
-    ui.view=t.dataset.view;
-    if(ui.sub) ui.sub[ui.view]=0; // slice 4.5b: the first sub-item marks the page top
-    var panel = document.getElementById('panel-' + ui.view);
-    if(panel) panel.scrollTo({top: 0, behavior: 'smooth'});
-    updateNav();
-    render();
-    return;
-  }
+  if(a==="go"){ openPage(t.dataset.view); return; }
   
   if(a==="toggleacc"){ui.lib[t.dataset.acc]=!ui.lib[t.dataset.acc]; render();}
   else if(a==="techtab"){ ui.techTab=t.dataset.tab; render(); }

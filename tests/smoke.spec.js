@@ -19,8 +19,10 @@ test('app opens on Home without errors (signed out)', async ({ page }, testInfo)
 
   await expect(page.locator('#panel-home')).toHaveClass(/active/);
   await expect(page.locator('#panel-home .panel-content')).not.toBeEmpty();
-  await expect(page.locator('#topbar')).toContainText('SHRED');
-  await expect(page.locator('#authBtn')).toHaveText('Login');
+  // Slice 4.5b2 (D128): no shared top bar; the brand is in the sidebar (desktop) or the HOME header (phone),
+  // and Login is on the Account & data page.
+  await expect(page.locator('.brand:visible').first()).toContainText('SHRED');
+  await expect(page.locator('#panel-account .account-auth')).toHaveText('Login');
   await expect(navFor(page, testInfo.project.name)).toBeVisible();
   await expect(page.getByText('Render Error:')).toHaveCount(0);
 
@@ -44,8 +46,8 @@ test('every main view opens from the navigation', async ({ page }, testInfo) => 
     const inMore = mobile && PHONE_MORE_VIEWS.includes(view);
     if (inMore) {
       await nav.locator('[data-action="more"]').click();
-      await page.locator(`#more-sheet [data-action="go"][data-view="${view}"]`).click();
-      await expect(page.locator('#more-sheet')).not.toHaveClass(/open/);
+      await expect(page.locator('#panel-more')).toHaveClass(/active/);
+      await page.locator(`#panel-more [data-action="go"][data-view="${view}"]`).first().click();
     } else {
       await nav.locator(`[data-action="go"][data-view="${view}"]`).click();
     }

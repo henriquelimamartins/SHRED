@@ -218,26 +218,10 @@ button:focus-visible, a:focus-visible, select:focus-visible { outline: 2px solid
   flex:1; display:flex; flex-direction:column; position:relative; overflow:hidden; height:100%;
 }
 
-.topbar {
-  background:var(--chrome); padding:calc(12px + env(safe-area-inset-top,0px)) 16px 10px;
-  border-bottom:1px solid var(--border); z-index:50; flex:0 0 auto;
-}
-.topbar-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; gap:10px; max-width:800px; margin-left:auto; margin-right:auto;}
 .brand { font-family:var(--font-head); font-weight:700; font-size:15px; letter-spacing:1px; flex:1; margin-bottom:0; }
 .brand span { color:var(--red); }
 .brand.brand-side { font-size:var(--fs-2xl); margin-bottom:0; }
 .brand .brand-sub { font-size:var(--fs-lg); color:var(--white); letter-spacing:2px; }
-.mobile-brand { display:block; }
-.auth-container { display:flex; align-items:center; gap:8px; }
-.user-email { font-size:var(--fs-xs); color:var(--muted); font-family:var(--font-body); font-weight:500; }
-
-.shell-search {
-  display:flex; align-items:center; gap:8px; background:var(--card2); border:1px solid var(--border);
-  border-radius:20px; padding:6px 12px; color:var(--muted); font-size:var(--fs-sm); cursor:pointer; flex:1;
-  max-width:300px; margin:0 10px; transition:0.2s;
-}
-.shell-search:hover { border-color:var(--muted); color:var(--text); }
-.shell-search .ic { font-size:var(--fs-sm); }
 
 .views-container {
   flex:1; position:relative; overflow:hidden; background:var(--bg);
@@ -245,59 +229,69 @@ button:focus-visible, a:focus-visible, select:focus-visible { outline: 2px solid
 
 .view-panel {
   display:none; width:100%; height:100%; overflow-y:auto; -webkit-overflow-scrolling:touch;
-  padding:20px 16px calc(90px + env(safe-area-inset-bottom, 0px));
+  padding:calc(16px + env(safe-area-inset-top, 0px)) 16px calc(96px + env(safe-area-inset-bottom, 0px));
 }
 .view-panel.active { display:block; animation:fadein 0.25s ease; }
 .panel-content { max-width:800px; margin:0 auto; width:100%; }
 
+/* Phone bottom bar as drawn (slice 4.5b2, D128): six equal slots, line icons, Oswald labels. */
 .botnav {
   position:fixed; bottom:0; left:0; right:0; background:var(--chrome); border-top:1px solid var(--border);
-  display:flex; padding:6px 2px calc(6px + env(safe-area-inset-bottom,0px)); z-index:100;
+  padding:8px 4px calc(8px + env(safe-area-inset-bottom,0px)); z-index:100;
 }
-.botnav-inner { display:flex; width:100%; max-width:520px; margin:0 auto; }
+.botnav-inner { display:grid; grid-auto-flow:column; grid-auto-columns:minmax(0,1fr); width:100%; max-width:520px; margin:0 auto; }
 .botnav button {
-  flex:1; background:none; border:none; color:var(--muted); font-size:8.5px; text-transform:uppercase;
-  letter-spacing:.2px; padding:6px 1px; display:flex; flex-direction:column; align-items:center;
-  gap:3px; font-weight:600; border-radius:var(--r-md);
+  min-width:0; min-height:48px; background:none; border:none; color:var(--muted); padding:6px 0 2px;
+  display:flex; flex-direction:column; align-items:center; justify-content:flex-start; gap:4px;
+  font-family:var(--font-head); font-size:10px; font-weight:500; letter-spacing:.04em; text-transform:uppercase;
+  border-radius:var(--r-md); cursor:pointer;
 }
-.botnav button .ic { font-size:var(--fs-lg); }
+.botnav button .ico { width:22px; height:22px; flex:0 0 22px; }
+.botnav .bn-label { display:block; width:100%; overflow:hidden; white-space:nowrap; text-align:center; }
 .botnav button.active { color:var(--red-tint); }
 .botnav button.active.improv-nav { color:var(--purple-tint); }
 .botnav button.active.theory-nav { color:var(--blue-tint); }
 
-/* Phone "More" sheet (D117, D119): opens above the bottom bar. */
-.more-sheet { display:none; }
-.more-sheet.open { display:block; }
-.more-backdrop { position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:98; }
-.more-panel {
-  position:fixed; left:0; right:0; bottom:calc(58px + env(safe-area-inset-bottom,0px)); z-index:99;
-  background:var(--chrome); border-top:1px solid var(--border); border-radius:var(--r-card) var(--r-card) 0 0;
-  padding:16px 16px 12px; max-width:520px; margin:0 auto;
-}
-.more-group { font-size:var(--fs-2xs); color:var(--muted); text-transform:uppercase; letter-spacing:1.5px; font-weight:700; margin:6px 4px 8px; }
-.more-item {
-  display:flex; align-items:center; gap:12px; width:100%; padding:12px 14px; margin-bottom:6px;
-  background:var(--card); border:1px solid var(--border); border-radius:var(--r-lg); color:var(--text);
-  font-size:var(--fs-base); font-weight:600; text-transform:uppercase; letter-spacing:.5px;
-}
-.more-item.active { color:var(--red-tint); border-color:var(--red-line); }
+/* Phone HOME header as drawn (slice 4.5b2): brand, date, streak pill. Desktop keeps the page header. */
+.home-phone-head { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:14px; }
+.home-brand { font-size:22px; line-height:1; letter-spacing:.02em; }
+.home-brand small { font-size:15px; letter-spacing:.16em; font-weight:600; }
+.home-date { font-family:var(--font-head); font-size:11px; letter-spacing:.14em; color:var(--muted); margin-top:6px; text-transform:uppercase; }
+.streak-pill { display:flex; align-items:center; gap:6px; height:44px; padding:0 12px; box-sizing:border-box; border:1px solid #2A2A31; border-radius:var(--r-pill); font-size:var(--fs-md); }
+.streak-pill .ico { width:16px; height:16px; color:var(--red); stroke-width:2; }
+.streak-pill strong { font-weight:600; }
+
+/* Phone MORE page as drawn (slice 4.5b2, D128): grouped rows with subtitles. */
+.more-acct { width:44px; height:44px; padding:0; border:none; background:none; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+.avatar-md { width:40px; height:40px; font-size:var(--fs-lg); }
+.avatar-md.avatar-none .ico { width:22px; height:22px; }
+#panel-more .page-head { align-items:center; }
+#panel-more .page-eyebrow { display:none; } /* the board shows the title only */
+.more-group { display:flex; flex-direction:column; margin-bottom:16px; }
+.more-group-title { margin:0 0 6px; padding:0 4px; font-family:var(--font-head); font-size:11px; font-weight:500; letter-spacing:.16em; color:var(--muted); text-transform:uppercase; }
+.more-list { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:0 14px; }
+.more-row { display:flex; align-items:center; gap:12px; width:100%; min-height:52px; padding:8px 0; background:none; border:none; border-top:1px solid var(--line); color:var(--text); text-align:left; font:inherit; cursor:pointer; }
+.more-row:first-child { border-top:0; }
+.more-row-text { flex:1; min-width:0; }
+.more-row-label { display:block; font-size:15px; font-weight:500; }
+.more-row-sub { display:flex; align-items:center; gap:6px; font-size:12px; color:var(--muted); margin-top:1px; }
+.more-row-arrow { color:var(--muted); font-size:18px; }
+.more-row-danger .more-row-label { color:var(--red-tint); }
 
 @media (min-width: 768px) {
   .sidebar { display:flex; }
   .botnav { display:none; }
-  .mobile-brand { display:none; }
-  .topbar { display:none; }
-  .more-sheet, .more-sheet.open { display:none; }
+  .home-phone-head { display:none; }
   .view-panel { padding:28px 32px 40px; }
   .panel-content { max-width:none; }
 }
 @media (max-width: 767px) {
-  /* Slice 4.5b: smaller page header on the phone (the per-page phone headers come in 4.5b2). */
+  /* Slice 4.5b / 4.5b2: each page has its own header on the phone (no shared top bar). */
   .page-head { margin-bottom:14px; }
   .page-title { font-size:22px; }
   .tech-header .page-head { margin-bottom:10px; }
-  .shell-search .srch-txt { display:none; }
-  .shell-search { max-width:36px; padding:6px; justify-content:center; border-radius:50%; margin:0; }
+  #panel-home .page-head { display:none; } /* HOME shows its drawn phone header instead */
+  #panel-more .page-title { font-size:26px; margin-top:0; }
 }
 
 /* --- REUSABLE UI COMPONENTS --- */
@@ -392,7 +386,6 @@ ul.check li.lib-dayrow, ul.check li.lib-dayrow:last-child{display:flex;align-ite
 .dchip2.on{background:var(--red-fill);border-color:var(--red-fill);color:var(--white);}
 .dchip2.istoday:after{content:' •';margin-left:3px;}
 .dchip2.isactive{border-color:var(--red);}
-.dchip2.auth-btn{padding:7px 12px;margin:0;border-color:var(--border);color:var(--text);}
 
 .calendar-header-nav { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; font-size:var(--fs-md); font-weight:600; color:var(--muted); }
 .calendar-header-nav button { flex-direction:column; background:var(--card2); border:1px solid var(--border); color:var(--text); padding:6px; border-radius:var(--r-sm); font-size:var(--fs-2xs); height:auto; gap:3px; min-width:44px; display:inline-flex; align-items:center; justify-content:center; line-height:1; text-transform:uppercase; font-weight:bold; transition:0.2s;}
