@@ -21,18 +21,18 @@
 import { ui } from "./ui.js?v=1";
 import { BHGS_PACK } from "./pack.js?v=1";
 import { ensureDailyReset } from "./logic/dates.js?v=7";
-import { initCalCarousel } from "./views/calendar.js?v=18";
-import { renderHome } from "./views/home.js?v=18";
-import { renderTechnique } from "./views/technique.js?v=5";
-import { renderDaily } from "./views/daily.js?v=18";
-import { renderImprov } from "./views/improv.js?v=10";
-import { renderLibrary } from "./views/library.js?v=18";
-import { renderSetup } from "./views/setup.js?v=9";
-import { renderDojoView } from "./views/dojo.js?v=10";
-import { renderRails } from "./views/rails.js?v=4";
-import { renderAccount } from "./views/account.js?v=3";
-import { renderMore } from "./views/more.js?v=1";
-import { icon, sidebarMenu, todayBlock, accountRow, syncState } from "./views/shell.js?v=2";
+import { initCalCarousel } from "./views/calendar.js?v=19";
+import { renderHome } from "./views/home.js?v=19";
+import { renderTechnique } from "./views/technique.js?v=6";
+import { renderDaily } from "./views/daily.js?v=19";
+import { renderImprov } from "./views/improv.js?v=11";
+import { renderLibrary } from "./views/library.js?v=19";
+import { renderSetup } from "./views/setup.js?v=10";
+import { renderDojoView } from "./views/dojo.js?v=11";
+import { renderRails } from "./views/rails.js?v=5";
+import { renderAccount } from "./views/account.js?v=4";
+import { renderMore } from "./views/more.js?v=2";
+import { icon, sidebarMenu, todayBlock, accountRow, syncState } from "./views/shell.js?v=3";
 
 export function initAppLayout() {
   var root = document.getElementById("root");

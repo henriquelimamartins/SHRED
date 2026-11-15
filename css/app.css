@@ -313,9 +313,6 @@ button:focus-visible, a:focus-visible, select:focus-visible { outline: 2px solid
 .tag{color:var(--muted);font-size:var(--fs-xs);text-transform:none;letter-spacing:0;font-weight:500;}
 
 .bignum{font-family:var(--font-head);font-size:32px;font-weight:700;}
-.statrow{display:flex;gap:12px;margin-bottom:16px;}
-.stat{flex:1;background:var(--card);border:1px solid var(--border);border-radius:var(--r-xl);padding:16px;text-align:center;}
-.stat .lbl{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:4px;}
 
 .navbtn{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--border);border-radius:var(--r-card);padding:16px 20px;margin-bottom:12px;width:100%;text-align:left;color:var(--text);transition:transform 0.1s;}
 .navbtn:active{transform:scale(0.98);}
@@ -387,23 +384,23 @@ ul.check li.lib-dayrow, ul.check li.lib-dayrow:last-child{display:flex;align-ite
 .dchip2.istoday:after{content:' •';margin-left:3px;}
 .dchip2.isactive{border-color:var(--red);}
 
-.calendar-header-nav { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; font-size:var(--fs-md); font-weight:600; color:var(--muted); }
-.calendar-header-nav button { flex-direction:column; background:var(--card2); border:1px solid var(--border); color:var(--text); padding:6px; border-radius:var(--r-sm); font-size:var(--fs-2xs); height:auto; gap:3px; min-width:44px; display:inline-flex; align-items:center; justify-content:center; line-height:1; text-transform:uppercase; font-weight:bold; transition:0.2s;}
+/* Calendar header as drawn (slice 4.5c): month title, ‹ › and "Today" only on another month. */
+.calendar-header-nav { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:12px; }
+.cal-title { margin:0; font-family:var(--font-head); font-size:16px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--text); }
+.cal-btns { display:flex; gap:6px; align-items:center; }
+.calendar-header-nav button { min-width:44px; height:44px; padding:0 10px; display:inline-flex; align-items:center; justify-content:center; background:transparent; border:1px solid #2A2A31; border-radius:10px; color:var(--text-2); font-family:var(--font-body); font-size:var(--fs-sm); font-weight:500; line-height:1; cursor:pointer; transition:border-color .2s; }
+.calendar-header-nav button.cal-arrow { font-size:20px; }
 .calendar-header-nav button:hover:not(:disabled) { border-color:var(--muted); }
-.calendar-header-nav button:disabled { opacity:0.2; pointer-events:none; }
-.calendar-header-nav button.cal-today { background:var(--red-fill) !important; color:var(--white) !important; border-color:var(--red-fill) !important; }
-.cal-btns { display:flex; gap:4px; }
-.cal-month { font-weight:700; color:var(--red-tint); text-transform:uppercase; font-size:var(--fs-md); letter-spacing:1px; }
-.cal-year { color:var(--muted); font-weight:600; }
-.center-date { text-align:center; line-height:1.2; font-size:var(--fs-sm); }
-.center-date span { display:block; }
+.calendar-header-nav button:disabled { opacity:0.25; pointer-events:none; }
+.calendar-header-nav button.cal-today { background:var(--red-fill); color:var(--white); border-color:var(--red-fill); }
+.calendar-header-nav button[hidden] { display:none; }
 
 .streak-wrapper { overflow:hidden; position:relative; touch-action:pan-y; }
 .cal-carousel { display:flex; width:100%; overflow-x:auto; scroll-snap-type:x mandatory; scroll-behavior:smooth; }
 .cal-panel { flex:0 0 100%; width:100%; scroll-snap-align:start; }
-.streak-grid { display:grid; grid-template-columns:repeat(7, 1fr); gap:6px; }
+.streak-grid { display:grid; grid-template-columns:repeat(7, 1fr); gap:5px; }
 
-.s-day { background:var(--day); border-radius:var(--r-sm); height:50px; text-align:center; display:flex; flex-direction:column; justify-content:center; align-items:center; border:1px solid var(--border); position:relative; }
+.s-day { background:var(--day); border-radius:7px; height:46px; text-align:center; display:flex; flex-direction:column; justify-content:center; align-items:center; border:1px solid var(--border); position:relative; }
 .s-month-badge { position:absolute; top:2px; left:0; right:0; text-align:center; font-size:8px; font-weight:700; color:var(--muted); opacity:0.8; letter-spacing:0.5px; }
 .s-day .s-date { font-family:var(--font-head); font-size:15px; font-weight:700; color:var(--text); line-height:1; margin-top:2px; transition:color 0.2s;}
 .s-day .s-wkd { font-size:9px; text-transform:uppercase; color:var(--muted); margin-top:2px; font-weight:600; letter-spacing:.3px; transition:color 0.2s;}
@@ -670,3 +667,33 @@ table.info td.day{font-weight:700;white-space:nowrap;color:var(--red-tint);}
 .u-mb-10{margin-bottom:10px !important;}
 .u-mb-12{margin-bottom:12px !important;}
 .u-mb-18{margin-bottom:18px !important;}
+
+/* HOME as drawn (slice 4.5c, D129): streak in the header, Today's session, calendar, Today's Improv; two columns on desktop. */
+.home-streak { display:flex; align-items:center; gap:8px; padding:9px 14px; border:1px solid #2A2A31; border-radius:var(--r-pill); font-size:13px; color:var(--text-2); }
+.home-streak .ico { width:16px; height:16px; color:var(--red); stroke-width:2; }
+.home-streak strong { font-weight:600; color:var(--text); }
+.home-cols { display:flex; flex-direction:column; gap:14px; }
+.home-col { display:flex; flex-direction:column; gap:14px; min-width:0; }
+.home-cols .card { margin-bottom:0; }
+.home-card-head { display:flex; justify-content:space-between; align-items:baseline; gap:8px; margin-bottom:6px; }
+.home-card-title { margin:0; font-family:var(--font-head); font-size:18px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; }
+.home-card-meta { font-size:12px; color:var(--muted); white-space:nowrap; }
+.hs-row { display:flex; align-items:center; gap:12px; padding:8px 0; border-top:1px solid var(--line); }
+.hs-box { width:20px; height:20px; flex:none; box-sizing:border-box; border-radius:6px; border:1.5px solid #4A4A52; display:flex; align-items:center; justify-content:center; }
+.hs-box.on { border:0; background:var(--red); color:var(--white); }
+.hs-box .ico { width:12px; height:12px; stroke-width:3.5; }
+.hs-title { flex:1; min-width:0; font-family:var(--font-head); font-size:14px; letter-spacing:.08em; text-transform:uppercase; color:var(--text); }
+.hs-row.done .hs-title { color:var(--muted); }
+.hs-min { font-size:12px; color:var(--muted); }
+.home-continue { display:flex; align-items:center; justify-content:center; width:100%; min-height:48px; margin-top:10px; border:0; border-radius:10px; background:var(--red-fill); color:var(--white); font-family:var(--font-head); font-size:16px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; cursor:pointer; }
+.home-link { display:flex; align-items:center; gap:14px; width:100%; text-align:left; color:var(--text); font:inherit; cursor:pointer; }
+.home-link-text { flex:1; min-width:0; }
+.home-link-label { display:block; font-family:var(--font-head); font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); }
+.home-improv .home-link-label { color:var(--purple-tint); }
+.home-link-title { display:block; font-size:16px; font-weight:500; margin-top:6px; }
+.home-link-sub { display:block; font-size:13px; color:var(--muted); margin-top:4px; }
+.home-link-arrow { color:var(--muted); font-size:22px; }
+@media (min-width: 1024px){
+  .home-cols { flex-direction:row; align-items:flex-start; gap:20px; }
+  .home-col { flex:1 1 380px; gap:20px; }
+}

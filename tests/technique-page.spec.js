@@ -111,16 +111,15 @@ test('Essential Skills lists the 5 weekday micro-doses (moved from LIBRARY)', as
   ]);
 });
 
-test('HOME has no Phase Transition Test or Jump to phase; its Technique shortcut opens the page', async ({ page }) => {
+// Slice 4.5c (D129): the HOME shortcut buttons left; TECHNIQUE is reached from the menu and the phone bar.
+test('HOME has no Phase Transition Test, Jump to phase or shortcut buttons', async ({ page }) => {
   await openApp(page, { localState: beginner() });
   await expect(home(page).locator('h3', { hasText: 'Phase Transition Test' })).toHaveCount(0);
   await expect(home(page).locator('h3', { hasText: 'Jump to phase' })).toHaveCount(0);
   await expect(home(page).locator('[data-action="test"]')).toHaveCount(0);
   await expect(home(page).locator('[data-action="setphase"]')).toHaveCount(0);
   await expect(home(page).locator('[data-rail="technique"]')).toHaveCount(1); // the rail replaced the phase bar (4.4)
-  await expect(home(page).locator('[data-action="go"][data-view="library"]')).toContainText('Theory Track, Expression Track, Listening Vault & more');
-  await home(page).locator('[data-action="go"][data-view="technique"]').click();
-  await expect(technique(page)).toHaveClass(/active/);
+  await expect(home(page).locator('.navbtn, [data-action="go"][data-view="technique"], [data-action="go"][data-view="library"]')).toHaveCount(0);
 });
 
 test('LIBRARY no longer holds the phases or Essential Skills', async ({ page }) => {

@@ -1,9 +1,10 @@
 // Consistency Grid (streak calendar) on Home: month grid, navigation and carousel position.
+// Slice 4.5c (D129): header as drawn (month title with ‹ ›; Today only when another month is shown).
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=1";
 import { todayISO } from "../logic/dates.js?v=7";
-import { render } from "../render.js?v=18";
+import { render } from "../render.js?v=19";
 
 export function getEarliestYearMonth() {
   if(!state.streakDates || state.streakDates.length === 0) return { y: new Date().getFullYear(), m: new Date().getMonth() };
@@ -76,17 +77,14 @@ export function renderStreakCalendar(){
   var canGoBack = (y > earliest.y) || (y === earliest.y && m > earliest.m);
   var canGoFwd = (y < now.getFullYear()) || (y === now.getFullYear() && m < now.getMonth());
 
+  // Slice 4.5c (D129): header as drawn: month title, ‹ › (same actions, same limits); "Today" only on another month.
+  var onCurrent = (y === now.getFullYear() && m === now.getMonth());
   var html = '<div class="calendar-header-nav">';
+  html += '<h2 class="cal-title"><span class="cal-month" id="cal-month-title">' + monthNames[m] + '</span> <span class="cal-year" id="cal-year-title">' + y + '</span></h2>';
   html += '<div class="cal-btns">';
-  html += '<button data-action="calprev" ' + (!canGoBack ? 'disabled' : '') + '><span>&lsaquo;</span><span>Prev</span></button>';
-  html += '</div>';
-  html += '<div class="center-date">';
-  html += '<span class="cal-month" id="cal-month-title">' + monthNames[m] + '</span>';
-  html += '<span class="cal-year" id="cal-year-title">' + y + '</span>';
-  html += '</div>';
-  html += '<div class="cal-btns">';
-  html += '<button data-action="calnext" ' + (!canGoFwd ? 'disabled' : '') + '><span>&rsaquo;</span><span>Next</span></button>';
-  html += '<button data-action="caltoday" class="cal-today"><span>&#9660;</span><span>Today</span></button>';
+  html += '<button data-action="caltoday" class="cal-today"' + (onCurrent ? ' hidden' : '') + '>Today</button>';
+  html += '<button data-action="calprev" class="cal-arrow" aria-label="Previous month" ' + (!canGoBack ? 'disabled' : '') + '>&lsaquo;</button>';
+  html += '<button data-action="calnext" class="cal-arrow" aria-label="Next month" ' + (!canGoFwd ? 'disabled' : '') + '>&rsaquo;</button>';
   html += '</div></div>';
 
   html += '<div class="streak-wrapper" id="cal-swipe-area">';

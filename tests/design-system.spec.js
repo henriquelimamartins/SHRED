@@ -129,8 +129,9 @@ test('no visible scrollbars, and pages still scroll (D17)', async ({ page }) => 
     });
     expect(visible, view).toEqual([]);
   }
-  await goTo(page, 'home');
-  const scrolled = await page.locator('#panel-home').evaluate((el) => { el.scrollTop = 400; return el.scrollTop; });
+  // Slice 4.5c: HOME on a desktop screen can now fit without scrolling, so the check uses TECHNIQUE (always long).
+  await goTo(page, 'technique');
+  const scrolled = await page.locator('#panel-technique').evaluate((el) => { el.scrollTop = 400; return el.scrollTop; });
   expect(scrolled).toBeGreaterThan(0);
 });
 
@@ -138,9 +139,9 @@ test('small coloured text uses the tints; filled buttons use the filled colours 
   await openApp(page, { localState: progressState({ phaseIndex: 1 }) });
   // Slice 4.5b (D126): page eyebrows are muted, as drawn; other eyebrows keep their pillar tint.
   await expect(page.locator('#panel-home .page-eyebrow')).toHaveCSS('color', rgb(TOKENS['--muted']));
-  await expect(page.locator('#panel-home .eyebrow:not(.page-eyebrow)').first()).toHaveCSS('color', rgb(TOKENS['--red-tint']));
+  await expect(page.locator('#panel-home .home-improv .home-link-label')).toHaveCSS('color', rgb(TOKENS['--purple-tint'])); // slice 4.5c
   await expect(page.locator('.s-day.today .s-date')).toHaveCSS('color', rgb(TOKENS['--red-tint']));
-  await expect(page.locator('[data-action="caltoday"]')).toHaveCSS('background-color', rgb(TOKENS['--red-fill']));
+  await expect(page.locator('#panel-home .home-continue')).toHaveCSS('background-color', rgb(TOKENS['--red-fill'])); // slice 4.5c: Today shows only on another month
   const activeNav = page.locator('#botnav:visible, #sidebar-nav-inner:visible').first().locator('.active');
   await expect(activeNav).toHaveCSS('color', rgb(TOKENS['--red-tint']));
 

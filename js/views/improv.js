@@ -5,19 +5,12 @@
 import { IMPROV_GATES } from "../data/improv.js?v=1";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=1";
-import { pageHeader } from "./shell.js?v=2";
-import { renderRail, improvRail } from "./rails.js?v=4";
+import { pageHeader } from "./shell.js?v=3";
+import { renderRail, improvRail } from "./rails.js?v=5";
 
-export function renderImprov(){
-  // Slice 4.4 (D117, D123): the Improv rail at the top of the page on the phone (the desktop sidebar shows it).
-  var html=pageHeader('Pillar \u00b7 Musical Development','Improvisation');
-  html+='<div class="pillar-rail">'+renderRail(improvRail())+'</div>';
-  html+='<div class="eyebrow improv">Expression Track</div><div class="h2 h2-lg u-mb-12 gates-title">The 5 Gates of Freedom</div>';
-  html+='<p class="lede">Destroy your muscle memory. This is your progressive masterclass to unlock pure musical audiation. Do not advance until you master every exercise in a Gate.</p>';
-
-  var actGate = Math.min(state.improvIndex, IMPROV_GATES.length - 1);
-  var allDone = state.improvIndex >= IMPROV_GATES.length;
-
+// The Daily Transposition Target (one key per day of the year). Slice 4.5c (D129): moved out of renderImprov()
+// unchanged so HOME's "Today's Improv" card shows the same key as this page.
+export function improvKeyOfDay(){
   var IMPROV_KEYS = [
     {k:"E minor", t:"Classic Heavy / Thrash"},
     {k:"B minor", t:"Prog / Melodic Death"},
@@ -35,7 +28,20 @@ export function renderImprov(){
   var d = new Date();
   var dayOfYear = Math.floor((Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) - Date.UTC(d.getFullYear(), 0, 0)) / 24 / 60 / 60 / 1000);
   var dayIndex = dayOfYear % IMPROV_KEYS.length;
-  var tKey = IMPROV_KEYS[dayIndex];
+  return IMPROV_KEYS[dayIndex];
+}
+
+export function renderImprov(){
+  // Slice 4.4 (D117, D123): the Improv rail at the top of the page on the phone (the desktop sidebar shows it).
+  var html=pageHeader('Pillar \u00b7 Musical Development','Improvisation');
+  html+='<div class="pillar-rail">'+renderRail(improvRail())+'</div>';
+  html+='<div class="eyebrow improv">Expression Track</div><div class="h2 h2-lg u-mb-12 gates-title">The 5 Gates of Freedom</div>';
+  html+='<p class="lede">Destroy your muscle memory. This is your progressive masterclass to unlock pure musical audiation. Do not advance until you master every exercise in a Gate.</p>';
+
+  var actGate = Math.min(state.improvIndex, IMPROV_GATES.length - 1);
+  var allDone = state.improvIndex >= IMPROV_GATES.length;
+
+  var tKey = improvKeyOfDay();
 
   if (!allDone) {
     html+='<div class="note purple transpose-card">'+
