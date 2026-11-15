@@ -9,7 +9,7 @@
 // - Data from a newer app version (schemaVersion) is never written over.
 // Another device is simulated by changing window.__SHRED_TEST__.docs directly.
 const { test, expect } = require('@playwright/test');
-const { openApp, cloudWrites, localSaved, settle, bumpTest, testStepper } = require('./support/app');
+const { openApp, cloudWrites, localSaved, settle, bumpTest, testStepper, accountPanel } = require('./support/app');
 const { TEST_USER, USER_DOC, progressState } = require('./support/fixtures');
 
 const BACKUP_KEY = 'shredRoadmapBackups_v1';
@@ -138,7 +138,7 @@ test.describe('a stale session (another device saved after this one read the clo
   test('manual "Save to cloud" does not overwrite the newer copy', async ({ page }) => {
     await openApp(page, { user: TEST_USER, docs: { [USER_DOC]: saved(3, 4) } });
     await otherDeviceWrites(page, 5, 5);
-    await page.locator('#panel-home [data-action="cloudsave"]').click();
+    await (await accountPanel(page)).locator('[data-action="cloudsave"]').click();
     await expect(toast(page)).toHaveText(STALE_MSG);
     expect(await cloudWrites(page)).toEqual([]);
     await expect(altLevel(page)).toHaveText('5/5');
@@ -147,8 +147,8 @@ test.describe('a stale session (another device saved after this one read the clo
   test('Reset Everything does not overwrite the newer copy', async ({ page }) => {
     await openApp(page, { user: TEST_USER, docs: { [USER_DOC]: saved(3, 4) } });
     await otherDeviceWrites(page, 5, 5);
-    await page.locator('#panel-home [data-action="reset"]').click();
-    await page.locator('#panel-home [data-action="confirmreset"]').click();
+    await (await accountPanel(page)).locator('[data-action="reset"]').click();
+    await (await accountPanel(page)).locator('[data-action="confirmreset"]').click();
     await expect(toast(page)).toHaveText(STALE_MSG);
     expect(await cloudWrites(page)).toEqual([]);
     expect((await cloudDoc(page)).testLevel.alt).toBe(5);
@@ -268,7 +268,7 @@ test.describe('changes that could not reach the cloud (offline)', () => {
   test('manual "Save to cloud" while offline says it could not save and keeps the change pending', async ({ page }) => {
     await setFlags(page, { failTransaction: true });
     await openApp(page, { user: TEST_USER, docs: { [USER_DOC]: saved(3, 4) } });
-    await page.locator('#panel-home [data-action="cloudsave"]').click();
+    await (await accountPanel(page)).locator('[data-action="cloudsave"]').click();
     await expect(toast(page)).toHaveText('Error saving to cloud.');
     expect(await pending(page)).toEqual({ uid: TEST_USER.uid, baseRev: 4 });
   });
@@ -334,7 +334,7 @@ test.describe('data saved by a newer app version', () => {
     const before = await localSaved(page);
 
     await bumpTest(page);
-    await page.locator('#panel-home [data-action="cloudsave"]').click();
+    await (await accountPanel(page)).locator('[data-action="cloudsave"]').click();
     await expect(toast(page)).toHaveText(NEWER_MSG);
     await settle(page);
     expect(await cloudWrites(page)).toEqual([]);
@@ -359,8 +359,8 @@ test.describe('data saved by a newer app version', () => {
     await openApp(page, { user: TEST_USER, localState: newer, docs: { [USER_DOC]: saved(1, 4) } });
     await expect(toast(page)).toHaveText(NEWER_MSG);
     await expect(altLevel(page)).toHaveText('3/5');
-    await page.locator('#panel-home [data-action="reset"]').click();
-    await page.locator('#panel-home [data-action="confirmreset"]').click();
+    await (await accountPanel(page)).locator('[data-action="reset"]').click();
+    await (await accountPanel(page)).locator('[data-action="confirmreset"]').click();
     await expect(toast(page)).toHaveText(NEWER_MSG);
     await settle(page);
     expect(await cloudWrites(page)).toEqual([]);

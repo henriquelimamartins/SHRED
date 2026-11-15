@@ -1,4 +1,5 @@
-// Phase 3, slice 3.8 (DECISIONS D110): Download backup / Restore backup (Home, card "Cloud Sync").
+// Phase 3, slice 3.8 (DECISIONS D110): Download backup / Restore backup (card "Cloud Sync"; on the Account & data
+// page since slice 4.5a, D124; it was on Home).
 // - Download: a JSON file with the current state and the on-device snapshots; changes nothing.
 // - Restore: an on-device snapshot or a file. The chosen copy replaces progress, but streak and
 //   calendar days are the union of both (owner's choice A), today's DAILY session and syncRev stay,
@@ -7,7 +8,7 @@
 //   backup of the current state first, then a checked cloud write (D105).
 const fs = require('fs');
 const { test, expect } = require('@playwright/test');
-const { openApp, cloudWrites, localSaved, settle, unexpectedConsoleErrors, STORAGE_KEY } = require('./support/app');
+const { openApp, cloudWrites, localSaved, settle, unexpectedConsoleErrors, accountPanel, STORAGE_KEY } = require('./support/app');
 const { TEST_USER, USER_DOC, progressState, baseState } = require('./support/fixtures');
 
 test.use({ timezoneId: 'Europe/Lisbon' });
@@ -19,7 +20,6 @@ const NEWER_LOCAL = 'Your progress was saved by a newer version of the app. Relo
 const STILL_LOADING = 'Cloud progress is still loading. Try again in a moment.';
 const RESTORED_FILE = 'Progress restored from the file. Your previous progress was backed up on this device.';
 
-const home = (page) => page.locator('#panel-home');
 const toast = (page) => page.locator('#toast');
 const backups = (page) => page.evaluate((key) => JSON.parse(localStorage.getItem(key) || '[]'), BACKUP_KEY);
 const setBackups = (page, list) => page.evaluate(([key, l]) => localStorage.setItem(key, typeof l === 'string' ? l : JSON.stringify(l)), [BACKUP_KEY, list]);
@@ -85,20 +85,20 @@ const SNAPSHOTS = [
 ];
 
 async function openRestore(page) {
-  await home(page).locator('[data-action="openrestore"]').click();
+  await (await accountPanel(page)).locator('[data-action="openrestore"]').click();
 }
 
 async function restoreFromFile(page, name, content) {
   await openRestore(page);
   const chooser = page.waitForEvent('filechooser');
-  await home(page).locator('[data-action="pickrestorefile"]').click();
+  await (await accountPanel(page)).locator('[data-action="pickrestorefile"]').click();
   await (await chooser).setFiles({ name, mimeType: 'application/json', buffer: Buffer.from(content) });
 }
 
-test.describe('Home buttons', () => {
+test.describe('Account & data buttons', () => {
   test('Download backup and Restore backup sit in the Cloud Sync card next to Save, Load and Reset', async ({ page }) => {
     await openApp(page, { localState: currentState() });
-    const card = home(page).locator('.card', { has: page.locator('[data-action="cloudsave"]') });
+    const card = (await accountPanel(page)).locator('.card', { has: page.locator('[data-action="cloudsave"]') });
     await expect(card.locator('[data-action="downloadbackup"]')).toHaveText(/Download backup/);
     await expect(card.locator('[data-action="openrestore"]')).toHaveText(/Restore backup/);
     await expect(card.locator('[data-action="cloudload"]')).toBeVisible();
@@ -112,7 +112,7 @@ test.describe('download', () => {
     await setBackups(page, SNAPSHOTS);
     const before = await localSaved(page);
     const downloadP = page.waitForEvent('download');
-    await home(page).locator('[data-action="downloadbackup"]').click();
+    await (await accountPanel(page)).locator('[data-action="downloadbackup"]').click();
     const download = await downloadP;
     expect(download.suggestedFilename()).toBe('shred-roadmap-backup-2026-11-10.json');
     const file = JSON.parse(fs.readFileSync(await download.path(), 'utf8'));
@@ -134,7 +134,7 @@ test.describe('download', () => {
     await settle(page);
     const writesBefore = (await cloudWrites(page)).length;
     const downloadP = page.waitForEvent('download');
-    await home(page).locator('[data-action="downloadbackup"]').click();
+    await (await accountPanel(page)).locator('[data-action="downloadbackup"]').click();
     const text = fs.readFileSync(await (await downloadP).path(), 'utf8');
     expect(text).not.toContain(TEST_USER.uid);
     expect(text).not.toContain(TEST_USER.email);
@@ -146,7 +146,7 @@ test.describe('download', () => {
   test('works even when the progress was saved by a newer app version (nothing is written)', async ({ page }) => {
     await openApp(page, { localState: currentState({ schemaVersion: 99 }) });
     const downloadP = page.waitForEvent('download');
-    await home(page).locator('[data-action="downloadbackup"]').click();
+    await (await accountPanel(page)).locator('[data-action="downloadbackup"]').click();
     const file = JSON.parse(fs.readFileSync(await (await downloadP).path(), 'utf8'));
     expect(file.state.schemaVersion).toBe(99);
     expect((await localSaved(page)).schemaVersion).toBe(99);
@@ -158,16 +158,16 @@ test.describe('restore list', () => {
     await openApp(page, { localState: currentState() });
     await setBackups(page, SNAPSHOTS);
     await openRestore(page);
-    const rows = home(page).locator('[data-action="pickrestore"]');
+    const rows = (await accountPanel(page)).locator('[data-action="pickrestore"]');
     await expect(rows).toHaveText([
       '9 Nov 2026, 10:05 · Before newer progress from another device',
       '8 Nov 2026, 23:30 · Before cloud sync',
       '5 Nov 2026, 09:00 · Daily backup',
     ]);
-    await expect(home(page).locator('[data-action="downloadbackup"]')).toHaveCount(0);
-    await home(page).locator('[data-action="cancelrestore"]').click();
+    await expect((await accountPanel(page)).locator('[data-action="downloadbackup"]')).toHaveCount(0);
+    await (await accountPanel(page)).locator('[data-action="cancelrestore"]').click();
     await expect(rows).toHaveCount(0);
-    await expect(home(page).locator('[data-action="openrestore"]')).toBeVisible();
+    await expect((await accountPanel(page)).locator('[data-action="openrestore"]')).toBeVisible();
     expect(await localSaved(page)).toEqual(currentState());
   });
 
@@ -175,8 +175,8 @@ test.describe('restore list', () => {
     await openApp(page, { localState: currentState() });
     await setBackups(page, []);
     await openRestore(page);
-    await expect(home(page)).toContainText('No backups on this device yet.');
-    await expect(home(page).locator('[data-action="pickrestorefile"]')).toBeVisible();
+    await expect((await accountPanel(page))).toContainText('No backups on this device yet.');
+    await expect((await accountPanel(page)).locator('[data-action="pickrestorefile"]')).toBeVisible();
   });
 });
 
@@ -185,10 +185,10 @@ test.describe('restore from this device (signed out)', () => {
     await openApp(page, { localState: currentState() });
     await setBackups(page, SNAPSHOTS);
     await openRestore(page);
-    await home(page).locator('[data-action="pickrestore"][data-index="0"]').click();
-    await expect(home(page)).toContainText('Restore progress from 5 Nov 2026, 09:00? (Daily backup) Your current progress is replaced by this copy. Streak and calendar days from both are kept, and so is today\'s DAILY session. A backup of your current progress is saved on this device first.');
-    await expect(home(page).locator('[data-action="confirmrestore"]')).toHaveText('Yes, restore');
-    await home(page).locator('[data-action="cancelrestore"]').click();
+    await (await accountPanel(page)).locator('[data-action="pickrestore"][data-index="0"]').click();
+    await expect((await accountPanel(page))).toContainText('Restore progress from 5 Nov 2026, 09:00? (Daily backup) Your current progress is replaced by this copy. Streak and calendar days from both are kept, and so is today\'s DAILY session. A backup of your current progress is saved on this device first.');
+    await expect((await accountPanel(page)).locator('[data-action="confirmrestore"]')).toHaveText('Yes, restore');
+    await (await accountPanel(page)).locator('[data-action="cancelrestore"]').click();
     expect(await localSaved(page)).toEqual(currentState());
     expect(await backups(page)).toEqual(SNAPSHOTS);
   });
@@ -197,16 +197,16 @@ test.describe('restore from this device (signed out)', () => {
     const monitor = await openApp(page, { localState: currentState() });
     await setBackups(page, SNAPSHOTS);
     await openRestore(page);
-    await home(page).locator('[data-action="pickrestore"][data-index="0"]').click();
-    await home(page).locator('[data-action="confirmrestore"]').click();
+    await (await accountPanel(page)).locator('[data-action="pickrestore"][data-index="0"]').click();
+    await (await accountPanel(page)).locator('[data-action="confirmrestore"]').click();
     await expect(toast(page)).toHaveText('Progress restored from 5 Nov 2026, 09:00. Your previous progress was backed up on this device.');
     const saved = await localSaved(page);
     expect(saved).toEqual(expectedRestore());
     expect(saved.streakDates).toEqual(['2026-11-01', '2026-11-05', '2026-11-08', '2026-11-09', '2026-11-10']);
     expect(saved.syncRev).toBeUndefined(); // the current state had none; the copy's old one is not taken
     // The panel is closed and the app shows the restored progress.
-    await expect(home(page).locator('[data-action="openrestore"]')).toBeVisible();
-    await expect(home(page).locator('.bignum').nth(1)).toHaveText(/5$/); // Days Logged
+    await expect((await accountPanel(page)).locator('[data-action="openrestore"]')).toBeVisible();
+    await expect(page.locator('#panel-home .bignum').nth(1)).toHaveText(/5$/); // Days Logged (HOME)
     // The previous progress is in a new backup.
     const list = await backups(page);
     expect(list).toHaveLength(SNAPSHOTS.length + 1);
@@ -224,14 +224,14 @@ test.describe('restore from this device (signed out)', () => {
     await openApp(page, { localState: currentState() });
     await setBackups(page, SNAPSHOTS);
     await openRestore(page);
-    await home(page).locator('[data-action="pickrestore"][data-index="2"]').click();
-    await home(page).locator('[data-action="confirmrestore"]').click();
+    await (await accountPanel(page)).locator('[data-action="pickrestore"][data-index="2"]').click();
+    await (await accountPanel(page)).locator('[data-action="confirmrestore"]').click();
     expect((await localSaved(page)).phaseIndex).toBe(4);
     await openRestore(page);
-    const first = home(page).locator('[data-action="pickrestore"]').first();
+    const first = (await accountPanel(page)).locator('[data-action="pickrestore"]').first();
     await expect(first).toHaveText('10 Nov 2026, 12:00 · Before restore');
     await first.click();
-    await home(page).locator('[data-action="confirmrestore"]').click();
+    await (await accountPanel(page)).locator('[data-action="confirmrestore"]').click();
     const saved = await localSaved(page);
     expect(saved.phaseIndex).toBe(1);
     expect(saved.checks).toEqual(currentState().checks);
@@ -244,8 +244,8 @@ test.describe('restore from a file', () => {
     await openApp(page, { localState: currentState() });
     const file = { app: 'shred-roadmap', kind: 'backup', exportedAt: '2026-11-03T18:45:00Z', schemaVersion: 1, state: olderCopy(), backups: [] };
     await restoreFromFile(page, 'shred-roadmap-backup-2026-11-03.json', JSON.stringify(file));
-    await expect(home(page)).toContainText('Restore progress from 3 Nov 2026, 18:45? (File shred-roadmap-backup-2026-11-03.json)');
-    await home(page).locator('[data-action="confirmrestore"]').click();
+    await expect((await accountPanel(page))).toContainText('Restore progress from 3 Nov 2026, 18:45? (File shred-roadmap-backup-2026-11-03.json)');
+    await (await accountPanel(page)).locator('[data-action="confirmrestore"]').click();
     await expect(toast(page)).toHaveText('Progress restored from 3 Nov 2026, 18:45. Your previous progress was backed up on this device.');
     expect(await localSaved(page)).toEqual(expectedRestore());
     // The previous progress is safe: here the day's "daily" snapshot already holds it, so no
@@ -260,8 +260,8 @@ test.describe('restore from a file', () => {
     delete old.schemaVersion;
     delete old.syncRev;
     await restoreFromFile(page, 'my-backup.json', JSON.stringify(old));
-    await expect(home(page)).toContainText('Restore progress from the file? (File my-backup.json)');
-    await home(page).locator('[data-action="confirmrestore"]').click();
+    await expect((await accountPanel(page))).toContainText('Restore progress from the file? (File my-backup.json)');
+    await (await accountPanel(page)).locator('[data-action="confirmrestore"]').click();
     await expect(toast(page)).toHaveText(RESTORED_FILE);
     const saved = await localSaved(page);
     expect(saved.schemaVersion).toBe(1);
@@ -273,14 +273,14 @@ test.describe('restore from a file', () => {
   test('an export of the localStorage key (state as JSON text)', async ({ page }) => {
     await openApp(page, { localState: currentState() });
     await restoreFromFile(page, 'export.json', JSON.stringify({ [STORAGE_KEY]: JSON.stringify(olderCopy()) }));
-    await home(page).locator('[data-action="confirmrestore"]').click();
+    await (await accountPanel(page)).locator('[data-action="confirmrestore"]').click();
     expect(await localSaved(page)).toEqual(expectedRestore());
   });
 
   test('missing app fields get their defaults, so every view still opens', async ({ page }) => {
     const monitor = await openApp(page, { localState: currentState() });
     await restoreFromFile(page, 'partial.json', JSON.stringify({ phaseIndex: 2, checks: { 'p2.e.0': '2026-11-01' } }));
-    await home(page).locator('[data-action="confirmrestore"]').click();
+    await (await accountPanel(page)).locator('[data-action="confirmrestore"]').click();
     const saved = await localSaved(page);
     expect(saved.phaseIndex).toBe(2);
     expect(saved.checks).toEqual({ 'p2.e.0': '2026-11-01' });
@@ -310,7 +310,7 @@ test.describe('restore from a file', () => {
       await setBackups(page, SNAPSHOTS);
       await restoreFromFile(page, 'bad.json', content);
       await expect(toast(page)).toHaveText(INVALID);
-      await expect(home(page).locator('[data-action="confirmrestore"]')).toHaveCount(0);
+      await expect((await accountPanel(page)).locator('[data-action="confirmrestore"]')).toHaveCount(0);
       expect(await localSaved(page)).toEqual(currentState());
       expect(await backups(page)).toEqual(SNAPSHOTS);
     });
@@ -320,7 +320,7 @@ test.describe('restore from a file', () => {
     await openApp(page, { localState: currentState() });
     await restoreFromFile(page, 'newer.json', JSON.stringify(olderCopy({ schemaVersion: 2 })));
     await expect(toast(page)).toHaveText(NEWER_COPY);
-    await expect(home(page).locator('[data-action="confirmrestore"]')).toHaveCount(0);
+    await expect((await accountPanel(page)).locator('[data-action="confirmrestore"]')).toHaveCount(0);
     expect(await localSaved(page)).toEqual(currentState());
   });
 });
@@ -330,7 +330,7 @@ test.describe('safety', () => {
     await openApp(page, { localState: currentState() });
     await setBackups(page, '{"not":"a list"}'); // unreadable backup list: nothing can be added to it
     await restoreFromFile(page, 'ok.json', JSON.stringify(olderCopy()));
-    await home(page).locator('[data-action="confirmrestore"]').click();
+    await (await accountPanel(page)).locator('[data-action="confirmrestore"]').click();
     await expect(toast(page)).toHaveText('Could not back up your progress. Nothing was restored.');
     expect(await localSaved(page)).toEqual(currentState());
   });
@@ -338,7 +338,7 @@ test.describe('safety', () => {
   test('progress saved by a newer app version: restore refused, nothing written', async ({ page }) => {
     await openApp(page, { localState: currentState({ schemaVersion: 99 }) });
     await restoreFromFile(page, 'ok.json', JSON.stringify(olderCopy()));
-    await home(page).locator('[data-action="confirmrestore"]').click();
+    await (await accountPanel(page)).locator('[data-action="confirmrestore"]').click();
     await expect(toast(page)).toHaveText(NEWER_LOCAL);
     expect(await localSaved(page)).toEqual(currentState({ schemaVersion: 99 }));
   });
@@ -350,8 +350,8 @@ test.describe('signed in', () => {
     await openApp(page, { user: TEST_USER, docs: { [USER_DOC]: currentState() }, localState: currentState() });
     await setBackups(page, SNAPSHOTS);
     await openRestore(page);
-    await home(page).locator('[data-action="pickrestore"][data-index="0"]').click();
-    await home(page).locator('[data-action="confirmrestore"]').click();
+    await (await accountPanel(page)).locator('[data-action="pickrestore"][data-index="0"]').click();
+    await (await accountPanel(page)).locator('[data-action="confirmrestore"]').click();
     await expect(toast(page)).toHaveText(STILL_LOADING);
     await settle(page);
     expect(await localSaved(page)).toEqual(currentState());
@@ -364,8 +364,8 @@ test.describe('signed in', () => {
     await settle(page);
     await setBackups(page, SNAPSHOTS);
     await openRestore(page);
-    await home(page).locator('[data-action="pickrestore"][data-index="0"]').click();
-    await home(page).locator('[data-action="confirmrestore"]').click();
+    await (await accountPanel(page)).locator('[data-action="pickrestore"][data-index="0"]').click();
+    await (await accountPanel(page)).locator('[data-action="confirmrestore"]').click();
     await settle(page);
     const cloud = await cloudDoc(page);
     const expected = expectedRestore(currentState({ syncRev: 4 }));
@@ -380,8 +380,8 @@ test.describe('signed in', () => {
     // Another device saves while this one stays open (no return to the page, so no refresh).
     await page.evaluate((path) => { const d = window.__SHRED_TEST__.docs[path]; d.syncRev = 5; d.phaseIndex = 0; }, USER_DOC);
     await openRestore(page);
-    await home(page).locator('[data-action="pickrestore"][data-index="0"]').click();
-    await home(page).locator('[data-action="confirmrestore"]').click();
+    await (await accountPanel(page)).locator('[data-action="pickrestore"][data-index="0"]').click();
+    await (await accountPanel(page)).locator('[data-action="confirmrestore"]').click();
     await settle(page);
     const saved = await localSaved(page);
     expect(saved.syncRev).toBe(5);

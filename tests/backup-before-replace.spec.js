@@ -3,7 +3,7 @@
 // - No backup when there is nothing to lose (local equals the incoming state or the newest backup).
 // - Backup impossible: sign-in sync and Load still replace (D80); Reset does not run.
 const { test, expect } = require('@playwright/test');
-const { openApp, cloudWrites, localSaved, settle, unexpectedConsoleErrors, bumpTest, testStepper } = require('./support/app');
+const { openApp, cloudWrites, localSaved, settle, unexpectedConsoleErrors, bumpTest, testStepper, accountPanel } = require('./support/app');
 const { TEST_USER, USER_DOC, progressState } = require('./support/fixtures');
 
 const BACKUP_KEY = 'shredRoadmapBackups_v1';
@@ -37,8 +37,8 @@ async function reload(page) {
 }
 
 async function resetEverything(page) {
-  await page.locator('#panel-home [data-action="reset"]').click();
-  await page.locator('#panel-home [data-action="confirmreset"]').click();
+  await (await accountPanel(page)).locator('[data-action="reset"]').click();
+  await (await accountPanel(page)).locator('[data-action="confirmreset"]').click();
 }
 
 test.describe('sign-in sync', () => {
@@ -117,7 +117,7 @@ test.describe('manual "Load from cloud"', () => {
     await bumpTest(page); // local (and cloud) alt = 4
     await page.evaluate((path) => { window.__SHRED_TEST__.docs[path].testLevel.alt = 1; }, USER_DOC); // another device
 
-    await page.locator('#panel-home [data-action="cloudload"]').click();
+    await (await accountPanel(page)).locator('[data-action="cloudload"]').click();
     await expect(page.locator('#toast')).toHaveText('Progress loaded from cloud!');
     await expect(altLevel(page)).toHaveText('1/5');
     const load = byReason(await backups(page), 'before-cloud-load');
@@ -128,7 +128,7 @@ test.describe('manual "Load from cloud"', () => {
   test('no backup when the cloud copy equals local state', async ({ page }) => {
     await openApp(page, { user: TEST_USER, docs: { [USER_DOC]: progressState({ schemaVersion: 1 }) } });
     await settle(page);
-    await page.locator('#panel-home [data-action="cloudload"]').click();
+    await (await accountPanel(page)).locator('[data-action="cloudload"]').click();
     await expect(page.locator('#toast')).toHaveText('Progress loaded from cloud!');
     expect(byReason(await backups(page), 'before-cloud-load')).toHaveLength(0);
   });
@@ -167,7 +167,7 @@ test.describe('Reset Everything', () => {
     await resetEverything(page);
     await expect(page.locator('#toast')).toHaveText('Could not back up your progress. Nothing was reset.');
     await expect(altLevel(page)).toHaveText('3/5');
-    await expect(page.locator('#panel-home [data-action="confirmreset"]')).toHaveCount(0);
+    await expect((await accountPanel(page)).locator('[data-action="confirmreset"]')).toHaveCount(0);
     const saved = await localSaved(page);
     expect(saved.testLevel.alt).toBe(3);
     expect(saved.streakDates).toEqual(progressState().streakDates);

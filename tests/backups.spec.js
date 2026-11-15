@@ -4,7 +4,7 @@
 // - If a backup cannot be written, no migration happens and the app works as before.
 // - Backups never go to the cloud; the cloud path and the main localStorage key are unchanged.
 const { test, expect } = require('@playwright/test');
-const { openApp, cloudWrites, localSaved, settle, unexpectedConsoleErrors, STORAGE_KEY, bumpTest, testStepper } = require('./support/app');
+const { openApp, cloudWrites, localSaved, settle, unexpectedConsoleErrors, STORAGE_KEY, bumpTest, testStepper, accountPanel } = require('./support/app');
 const { TEST_USER, USER_DOC, baseState, progressState } = require('./support/fixtures');
 
 const BACKUP_KEY = 'shredRoadmapBackups_v1';
@@ -219,7 +219,7 @@ test.describe('signed in', () => {
       delete window.__SHRED_TEST__.docs[path].schemaVersion;
       window.__SHRED_TEST__.docs[path].testLevel.alt = 5;
     }, USER_DOC);
-    await page.locator('#panel-home [data-action="cloudload"]').click();
+    await (await accountPanel(page)).locator('[data-action="cloudload"]').click();
     await expect(page.locator('#toast')).toHaveText('Progress loaded from cloud!');
     await expect(altLevel(page)).toHaveText('5/5');
 

@@ -1,0 +1,142 @@
+// Slice 4.5a (DECISIONS D124, D117 point 2): the "Account & data" page.
+// Cloud Sync (Save / Load), Download backup / Restore backup and Reset Everything leave HOME for this page,
+// unchanged. Desktop: an "Account & data" button in the sidebar account row (signed in or out). Phone: an
+// "Account & data" group in More. Opening the page writes nothing. Firebase is stubbed; nothing leaves the machine.
+const { test, expect } = require('@playwright/test');
+const { openApp, openView, accountPanel, unexpectedConsoleErrors, cloudWrites, localSaved, settle } = require('./support/app');
+const { TEST_USER, USER_DOC, progressState } = require('./support/fixtures');
+
+const DATA_ACTIONS = ['cloudsave', 'cloudload', 'downloadbackup', 'openrestore', 'reset'];
+const labels = (loc) => loc.evaluateAll((els) => els.map((e) => e.textContent.replace(/[^A-Za-z& ]/g, '').trim()));
+
+test('HOME no longer holds Cloud Sync, the backup buttons or Reset Everything', async ({ page }) => {
+  await openApp(page, { localState: progressState({ phaseIndex: 1 }) });
+  for (const a of DATA_ACTIONS) await expect(page.locator(`#panel-home [data-action="${a}"]`)).toHaveCount(0);
+  await expect(page.locator('#panel-home').getByText('Cloud Sync')).toHaveCount(0);
+});
+
+test('the page holds the Cloud Sync card with every button, as it was on HOME', async ({ page }) => {
+  const monitor = await openApp(page, { localState: progressState({ phaseIndex: 1 }) });
+  const account = await accountPanel(page);
+  await expect(account.locator('.eyebrow')).toHaveText('Account & data');
+  const card = account.locator('.card', { has: page.locator('[data-action="cloudsave"]') });
+  await expect(card.locator('h3')).toHaveText('Cloud Sync');
+  await expect(card).toContainText('Your progress syncs automatically when logged in.');
+  await expect(card.locator('[data-action="cloudsave"]')).toHaveText(/Save/);
+  await expect(card.locator('[data-action="cloudload"]')).toHaveText(/Load/);
+  await expect(card.locator('[data-action="downloadbackup"]')).toHaveText(/Download backup/);
+  await expect(card.locator('[data-action="openrestore"]')).toHaveText(/Restore backup/);
+  await expect(card.locator('[data-action="reset"]')).toHaveText(/Reset Everything/);
+  expect(monitor.pageErrors).toEqual([]);
+  expect(unexpectedConsoleErrors(monitor)).toEqual([]);
+});
+
+test('signed out, the page says progress is saved on this device only', async ({ page }) => {
+  await openApp(page);
+  const account = await accountPanel(page);
+  await expect(account.locator('.account-card')).toContainText('Not signed in. Your progress is saved on this device only.');
+});
+
+test('signed in, the page names the account', async ({ page }) => {
+  await openApp(page, { user: TEST_USER, docs: { [USER_DOC]: progressState({ phaseIndex: 1 }) } });
+  const account = await accountPanel(page);
+  await expect(account.locator('.account-card')).toContainText('Signed in as tester.');
+});
+
+test('opening the page writes nothing (device or cloud)', async ({ page }) => {
+  await openApp(page, { user: TEST_USER, docs: { [USER_DOC]: progressState({ phaseIndex: 1 }) } });
+  await settle(page);
+  const before = await localSaved(page);
+  const writes = (await cloudWrites(page)).length;
+  await accountPanel(page);
+  await openView(page, 'home');
+  await accountPanel(page);
+  expect(await localSaved(page)).toEqual(before);
+  expect((await cloudWrites(page)).length).toBe(writes);
+});
+
+test('Reset confirmation and the restore list open and close on the page', async ({ page }) => {
+  await openApp(page, { localState: progressState({ phaseIndex: 1 }) });
+  const account = await accountPanel(page);
+  await account.locator('[data-action="reset"]').click();
+  await expect(account.locator('[data-action="confirmreset"]')).toHaveText('Yes, reset progress');
+  await account.locator('[data-action="cancelreset"]').click();
+  await account.locator('[data-action="openrestore"]').click();
+  await expect(account.locator('[data-action="pickrestorefile"]')).toBeVisible();
+  await account.locator('[data-action="cancelrestore"]').click();
+  await expect(account.locator('[data-action="openrestore"]')).toBeVisible();
+});
+
+test('with the BHGS pack off, the page opens with every button and no errors', async ({ page }) => {
+  const monitor = await openApp(page, { bhgsPack: false });
+  const account = await accountPanel(page);
+  for (const a of DATA_ACTIONS) await expect(account.locator(`[data-action="${a}"]`)).toBeVisible();
+  expect(monitor.pageErrors).toEqual([]);
+  expect(unexpectedConsoleErrors(monitor)).toEqual([]);
+});
+
+test.describe('desktop', () => {
+  test.skip(({ isMobile }) => isMobile, 'desktop layout');
+
+  test('the sidebar account row starts with "Account & data", above the name and Login', async ({ page }) => {
+    await openApp(page);
+    const btn = page.locator('#sidebar-account [data-action="go"][data-view="account"]');
+    await expect(btn).toBeVisible();
+    await expect(btn).toContainText('Account & data');
+    await expect(page.locator('#sidebar-account .side-auth')).toHaveText('Login');
+    await expect(page.locator('#sidebar-account .side-user')).toHaveText('Not signed in');
+    const [b, u] = await Promise.all([btn.boundingBox(), page.locator('#sidebar-account .side-user').boundingBox()]);
+    expect(b.y + b.height).toBeLessThanOrEqual(u.y);
+    // Not part of the menu (not one of the 7 destinations, D11).
+    await expect(page.locator('#sidebar-nav-inner [data-view="account"]')).toHaveCount(0);
+  });
+
+  test('signed in, the button is still there next to Logout', async ({ page }) => {
+    await openApp(page, { user: TEST_USER, docs: { [USER_DOC]: progressState() } });
+    await expect(page.locator('#sidebar-account [data-view="account"]')).toBeVisible();
+    await expect(page.locator('#sidebar-account .side-auth')).toHaveText('Logout');
+  });
+
+  test('clicking it opens the page; the button shows as active and no menu item is', async ({ page }) => {
+    await openApp(page);
+    await page.locator('#sidebar-account [data-view="account"]').click();
+    await expect(page.locator('#panel-account')).toHaveClass(/active/);
+    await expect(page.locator('#sidebar-account [data-view="account"]')).toHaveClass(/active/);
+    await expect(page.locator('#sidebar-nav-inner .active')).toHaveCount(0);
+    await page.locator('#sidebar-nav-inner [data-view="home"]').click();
+    await expect(page.locator('#panel-home')).toHaveClass(/active/);
+    await expect(page.locator('#sidebar-account [data-view="account"]')).not.toHaveClass(/active/);
+  });
+});
+
+test.describe('phone', () => {
+  test.skip(({ isMobile }) => !isMobile, 'phone layout');
+
+  test('More has an "Account & data" group that opens the page; More shows as active there', async ({ page }) => {
+    await openApp(page);
+    const more = page.locator('#botnav [data-action="more"]');
+    await more.click();
+    const groups = await labels(page.locator('#more-sheet .more-group'));
+    expect(groups[groups.length - 1]).toBe('Account & data');
+    await page.locator('#more-sheet [data-view="account"]').click();
+    await expect(page.locator('#panel-account')).toHaveClass(/active/);
+    await expect(page.locator('#more-sheet')).not.toHaveClass(/open/);
+    await expect(more).toHaveClass(/active/);
+    // The bottom bar itself is unchanged.
+    await expect(page.locator('#botnav [data-view="account"]')).toHaveCount(0);
+  });
+
+  test('with the BHGS pack off, More still holds Account & data', async ({ page }) => {
+    await openApp(page, { bhgsPack: false });
+    await page.locator('#botnav [data-action="more"]').click();
+    await expect(page.locator('#more-sheet [data-view="account"]')).toBeVisible();
+  });
+
+  test('Login stays in the top bar (one Login button on the page)', async ({ page }) => {
+    await openApp(page);
+    await accountPanel(page);
+    await expect(page.locator('#authBtn')).toHaveCount(1);
+    await expect(page.locator('#authBtn')).toBeVisible();
+    await expect(page.locator('#panel-account .auth-btn')).toHaveCount(0);
+  });
+});

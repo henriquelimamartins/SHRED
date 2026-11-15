@@ -132,9 +132,19 @@ button:focus-visible, a:focus-visible, select:focus-visible { outline: 2px solid
 }
 .side-search:hover { border-color:var(--muted); color:var(--text); }
 .sidebar-account {
-  display:flex; align-items:center; gap:10px; padding:14px 16px calc(14px + env(safe-area-inset-bottom,0px));
+  display:flex; flex-wrap:wrap; align-items:center; gap:10px; padding:14px 16px calc(14px + env(safe-area-inset-bottom,0px));
   border-top:1px solid var(--border);
 }
+/* Slice 4.5a (D124): "Account & data" button at the top of the sidebar account row. */
+.side-account-btn {
+  flex:1 0 100%; display:flex; align-items:center; gap:10px; min-height:40px; padding:0 12px;
+  background:transparent; border:1px solid var(--border); border-radius:var(--r-lg); color:var(--text-2);
+  font-size:var(--fs-sm); font-weight:600; text-align:left; cursor:pointer; transition:background 0.2s, color 0.2s, border-color 0.2s;
+}
+.side-account-btn:hover { background:var(--card2); color:var(--text); }
+.side-account-btn.active { background:var(--card2); color:var(--red-tint); border-color:var(--red-line); }
+.side-account-label { flex:1; min-width:0; }
+.side-account-arrow { color:var(--muted); font-size:var(--fs-lg); line-height:1; }
 .sidebar-account:empty { display:none; }
 .side-user { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:var(--fs-xs); color:var(--muted); font-weight:500; }
 .sidebar-nav { flex:1; padding:16px 12px 20px; display:flex; flex-direction:column; gap:8px; overflow-y:auto; }

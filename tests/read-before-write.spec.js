@@ -4,7 +4,7 @@
 // - If the read fails: no cloud writes for the session, a message, manual Save refused, Load still works.
 // The Firestore stand-in can hold or fail getDoc (window.__SHRED_TEST_FLAGS__, set before the app starts).
 const { test, expect } = require('@playwright/test');
-const { openApp, cloudWrites, localSaved, settle, bumpTest, testStepper } = require('./support/app');
+const { openApp, cloudWrites, localSaved, settle, bumpTest, testStepper, accountPanel } = require('./support/app');
 const { TEST_USER, USER_DOC, progressState } = require('./support/fixtures');
 
 const BACKUP_KEY = 'shredRoadmapBackups_v1';
@@ -33,7 +33,7 @@ test.describe('while the first cloud read is still running', () => {
     expect((await localSaved(page)).testLevel.alt).toBe(4);
     expect(await cloudWrites(page)).toEqual([]);
 
-    await page.locator('#panel-home [data-action="cloudsave"]').click();
+    await (await accountPanel(page)).locator('[data-action="cloudsave"]').click();
     await expect(page.locator('#toast')).toHaveText('Cloud progress is still loading. Try again in a moment.');
     expect(await cloudWrites(page)).toEqual([]);
   });
@@ -94,7 +94,7 @@ test.describe('when the cloud read fails', () => {
   test('manual "Save to cloud" is refused with the same message', async ({ page }) => {
     await setFlags(page, { failGetDoc: true });
     await openApp(page, { user: TEST_USER, docs: { [USER_DOC]: progressState({ schemaVersion: 1 }) } });
-    await page.locator('#panel-home [data-action="cloudsave"]').click();
+    await (await accountPanel(page)).locator('[data-action="cloudsave"]').click();
     await expect(page.locator('#toast')).toHaveText(READ_FAILED);
     expect(await cloudWrites(page)).toEqual([]);
   });
@@ -103,8 +103,8 @@ test.describe('when the cloud read fails', () => {
     // Changed on purpose in slice 3.5: before D106 the reset ran on the device only and was undone at the next sign-in.
     await setFlags(page, { failGetDoc: true });
     await openApp(page, { user: TEST_USER, docs: { [USER_DOC]: progressState({ schemaVersion: 1 }) }, localState: progressState({ schemaVersion: 1 }) });
-    await page.locator('#panel-home [data-action="reset"]').click();
-    await page.locator('#panel-home [data-action="confirmreset"]').click();
+    await (await accountPanel(page)).locator('[data-action="reset"]').click();
+    await (await accountPanel(page)).locator('[data-action="confirmreset"]').click();
     await expect(page.locator('#toast')).toHaveText(READ_FAILED);
     await expect(altLevel(page)).toHaveText('3/5');
     await settle(page);
@@ -119,7 +119,7 @@ test.describe('when the cloud read fails', () => {
     await expect(page.locator('#toast')).toHaveText(READ_FAILED);
 
     await page.evaluate(() => { window.__SHRED_TEST_FLAGS__.failGetDoc = false; }); // connection is back
-    await page.locator('#panel-home [data-action="cloudload"]').click();
+    await (await accountPanel(page)).locator('[data-action="cloudload"]').click();
     await expect(page.locator('#toast')).toHaveText('Progress loaded from cloud!');
 
     await bumpTest(page);

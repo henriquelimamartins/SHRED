@@ -9,7 +9,7 @@ import { LISTENING_VAULT } from "../data/listening.js?v=1";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=1";
 import { BHGS_PACK } from "../pack.js?v=1";
-import { watchItem, docItem, renderBonusList } from "./components.js?v=15";
+import { watchItem, docItem, renderBonusList } from "./components.js?v=16";
 
 export function renderLibrary(){
   var html='<div class="eyebrow">Reference &amp; Review</div><div class="h2 h2-lg u-mb-8">Library</div>';

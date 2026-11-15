@@ -1,4 +1,6 @@
 // HOME view.
+// Slice 4.5a (D124): the "Cloud Sync" card (Save/Load, Download/Restore backup, Reset Everything) moved unchanged
+// to the Account & data page (js/views/account.js).
 // Slice 3.5 (D106): Reset Everything confirmation text says what is erased and what is kept.
 // Slice 3.8 (D110): Download backup / Restore backup in the "Cloud Sync" card (list + confirmation).
 // Slice 4.2b (D113): with the BHGS pack off, the phase bar, phase %, Phase Transition Test and Jump to phase are hidden.
@@ -9,39 +11,11 @@
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
 import { PHASES } from "../data/bhgs.js?v=1";
 import { state } from "../store.js?v=5";
-import { ui } from "../ui.js?v=1";
 import { BHGS_PACK } from "../pack.js?v=1";
 import { totalStreak, currentStreak } from "../logic/dates.js?v=7";
-import { phasePercent } from "../logic/technique.js?v=15";
-import { renderRails } from "./rails.js?v=1";
-import { renderStreakCalendar } from "./calendar.js?v=15";
-import { listDeviceBackups, formatLocalTime, reasonLabel } from "../logic/backup.js?v=2";
-
-function esc(t){ return String(t).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]; }); }
-
-// Slice 3.8 (D110): the restore list and its confirmation.
-function renderRestore(){
-  var html='';
-  if(ui.restorePick){
-    var p=ui.restorePick;
-    var when=p.at?formatLocalTime(p.at):"the file";
-    html+='<p class="text-warn u-justify"><b>Restore progress from '+esc(when)+'?</b> ('+esc(p.label)+') Your current progress is replaced by this copy. Streak and calendar days from both are kept, and so is today\'s DAILY session. A backup of your current progress is saved on this device first.</p>'+
-      '<div class="u-row u-mt-14"><button class="tbtn u-flex1" data-action="cancelrestore">Cancel</button><button class="tbtn danger u-flex1" data-action="confirmrestore">Yes, restore</button></div>';
-    return html;
-  }
-  var list=listDeviceBackups();
-  html+='<p class="u-justify"><b>Restore backup</b> \u2014 choose a copy saved on this device (newest first), or a backup file you downloaded.</p>';
-  if(!list.length) html+='<p class="u-mt-10">No backups on this device yet.</p>';
-  else {
-    html+='<div class="u-stack u-mt-12">';
-    list.forEach(function(b){
-      html+='<button class="tbtn u-w100 u-left" data-action="pickrestore" data-index="'+b.index+'">'+esc(formatLocalTime(b.at))+' \u00b7 '+esc(reasonLabel(b.reason))+'</button>';
-    });
-    html+='</div>';
-  }
-  html+='<div class="u-row u-mt-14"><button class="tbtn u-flex1" data-action="cancelrestore">Cancel</button><button class="tbtn u-flex1" data-action="pickrestorefile">\ud83d\udcc4 From file\u2026</button></div>';
-  return html;
-}
+import { phasePercent } from "../logic/technique.js?v=16";
+import { renderRails } from "./rails.js?v=2";
+import { renderStreakCalendar } from "./calendar.js?v=16";
 
 /* ---------- views ---------- */
 export function renderHome(){
@@ -64,18 +38,5 @@ export function renderHome(){
   html+='<button class="navbtn" data-action="go" data-view="library"><div class="ic">\ud83d\udcda</div><div><b>Library &amp; Info</b><span>'+(BHGS_PACK?'Theory Track, Expression Track, Listening Vault & more':'Expression Track, Listening Vault & guide')+'</span></div></button>';
   html+='<button class="navbtn setupbtn" data-action="go" data-view="setup"><div class="ic">\ud83d\udee0\ufe0f</div><div><b>Setup Companion</b><span>Optimize your gear for shredding</span></div></button>';
 
-  html+='<div class="card"><h3>Cloud Sync</h3>';
-  if(ui.resetConfirm){
-    html+='<p class="text-warn u-justify"><b>Reset all progress?</b> This erases Technique, Improv, Theory and Creative progress. Your streak, calendar and SETUP are kept. A backup is saved on this device first.</p>'+
-      '<div class="u-row u-mt-14"><button class="tbtn u-flex1" data-action="cancelreset">Cancel</button><button class="tbtn danger u-flex1" data-action="confirmreset">Yes, reset progress</button></div>';
-  } else if(ui.restoreOpen || ui.restorePick){
-    html+=renderRestore();
-  } else {
-    html+='<p class="u-justify">Your progress syncs automatically when logged in. You can also manually push a save or pull your latest cloud backup here.</p>'+
-      '<div class="u-row u-mt-14"><button class="tbtn u-flex1" data-action="cloudsave">\u2601\ufe0f Save</button><button class="tbtn u-flex1" data-action="cloudload">\u2601\ufe0f Load</button></div>'+
-      '<div class="u-row u-mt-12"><button class="tbtn u-flex1" data-action="downloadbackup">\u2b07\ufe0f Download backup</button><button class="tbtn u-flex1" data-action="openrestore">\u21a9\ufe0f Restore backup</button></div>'+
-      '<button class="tbtn danger u-w100 u-mt-12" data-action="reset">\u26a0\ufe0f Reset Everything</button>';
-  }
-  html+='</div>';
   return html;
 }

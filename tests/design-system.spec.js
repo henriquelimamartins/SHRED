@@ -21,8 +21,11 @@ const rgb = (hex) => `rgb(${[1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 1
 async function goTo(page, view) {
   const nav = page.locator('#botnav:visible, #sidebar-nav-inner:visible').first();
   const btn = nav.locator(`[data-action="go"][data-view="${view}"]`);
+  // Slice 4.5a (D124): on the desktop, Account & data is opened from the sidebar account row.
+  const sideAccount = page.locator(`#sidebar-account:visible [data-action="go"][data-view="${view}"]`);
   // Slice 4.2a (D119): on the phone, Library and Tools (SETUP) are opened from the More sheet.
   if (await btn.count()) await btn.click();
+  else if (await sideAccount.count()) await sideAccount.click();
   else {
     await nav.locator('[data-action="more"]').click();
     await page.locator(`#more-sheet [data-action="go"][data-view="${view}"]`).click();
@@ -70,11 +73,13 @@ test('no inline style attributes in any view or panel', async ({ page }) => {
   const check = async (name) => { seen[name] = await unexpectedInlineStyles(page); };
 
   await check('home');
-  await click(page, '[data-action="reset"]'); await check('home: reset confirmation');
-  await click(page, '[data-action="cancelreset"]');
-  await click(page, '[data-action="openrestore"]'); await check('home: restore list');
-  await click(page, '[data-action="pickrestore"]'); await check('home: restore confirmation');
-  await click(page, '[data-action="cancelrestore"]');
+  // Slice 4.5a (D124): Reset and Restore are on the Account & data page.
+  await goTo(page, 'account'); await check('account');
+  await click(page, '#panel-account [data-action="reset"]'); await check('account: reset confirmation');
+  await click(page, '#panel-account [data-action="cancelreset"]');
+  await click(page, '#panel-account [data-action="openrestore"]'); await check('account: restore list');
+  await click(page, '#panel-account [data-action="pickrestore"]'); await check('account: restore confirmation');
+  await click(page, '#panel-account [data-action="cancelrestore"]');
 
   await goTo(page, 'daily'); await check('daily');
   await click(page, '#panel-daily [data-action="setday"]:not(.on)'); await check('daily: other day');
@@ -108,7 +113,7 @@ test('no inline style attributes in any view or panel', async ({ page }) => {
 
 test('no visible scrollbars, and pages still scroll (D17)', async ({ page }) => {
   await openApp(page, { localState: progressState({ phaseIndex: 1 }) });
-  for (const view of ['home', 'daily', 'technique', 'improv', 'dojo', 'library', 'setup']) {
+  for (const view of ['home', 'daily', 'technique', 'improv', 'dojo', 'library', 'setup', 'account']) {
     await goTo(page, view);
     const visible = await page.evaluate(() => {
       const out = [];
