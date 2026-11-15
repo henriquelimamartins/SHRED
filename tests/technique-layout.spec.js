@@ -87,7 +87,8 @@ test.describe('phone', () => {
     const top0 = (await head.boundingBox()).y;
     await tech(page).evaluate((el) => { el.scrollTop = 600; });
     await expect.poll(() => tech(page).evaluate((el) => el.scrollTop)).toBeGreaterThan(100);
-    expect(Math.abs((await head.boundingBox()).y - top0)).toBeLessThan(1);
+    // A header that scrolled away would move by hundreds of px; GitHub's runner shows ~1 px of sub-pixel drift.
+    expect(Math.abs((await head.boundingBox()).y - top0)).toBeLessThan(4);
   });
 
   test('link rows to All phases, Essential Skills and Phase settings (dashed); the parts are not on the main page', async ({ page }) => {
