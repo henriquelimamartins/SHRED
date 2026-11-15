@@ -1,6 +1,6 @@
 // Slice 4.5d (DECISIONS D130): the TECHNIQUE page as drawn on the 4.0 canvas.
 // Desktop: the rail inside the progress card (status = phase name), no count beside the title, every part on the page.
-// Phone: a sticky header (title, "Beginner · n of N", rail) of at most 112 px (+ margin for real fonts), no progress card,
+// Phone: the pillar header of slice 4.6b (D131: small line, "Beginner · n of N", rail; not sticky), no progress card,
 // link rows to three sub-pages (All phases, Essential Skills, Phase settings) with "‹ Technique" to come back.
 // Firebase is stubbed; nothing leaves the machine.
 const { test, expect } = require('@playwright/test');
@@ -64,31 +64,34 @@ test.describe('desktop', () => {
 test.describe('phone', () => {
   test.skip(({ isMobile }) => !isMobile, 'phone layout');
 
-  test('header as drawn: title, "Beginner · 13 of 24" and the rail with the %, at most 120 px (D112; drawn at 112)', async ({ page }) => {
+  test('pillar header (D131): small line, "Beginner · 13 of 24" and the rail with the %, at most 120 px (D112)', async ({ page }) => {
     const monitor = await openApp(page, { localState: beginner() });
     await openView(page, 'technique');
     const head = tech(page).locator('.tech-header');
-    await expect(head.locator('.page-title')).toHaveText('Technique');
+    await expect(head.locator('.page-eyebrow')).toBeVisible();
+    await expect(head.locator('.page-eyebrow')).toHaveText(/pillar · bhgs roadmap/i);
     await expect(head.locator('.tech-sub')).toHaveText('Beginner · 13 of 24');
     await expect(head.locator('[data-rail="technique"] .rail-status')).toHaveText('54%');
-    await expect(head.locator('.page-eyebrow')).toBeHidden();
-    // The board draws 112 px; the hard limit is 120 px (D112). GitHub's real web fonts measure a few px more than
-    // Claude's workspace (CHECKPOINT test notes), so the test checks the hard limit.
+    // The title stays in the page for screen readers only.
+    await expect(head.locator('.page-title')).toHaveText('Technique');
+    const t = await head.locator('.page-title').boundingBox();
+    expect(Math.round(t.width) <= 1 && Math.round(t.height) <= 1).toBe(true);
+    // Hard limit 120 px (D112); GitHub's real web fonts measure a few px more than Claude's workspace.
     const h = await head.evaluate((el) => el.getBoundingClientRect().height);
     expect(h).toBeLessThanOrEqual(120);
     await expect(tech(page).locator('.tech-progress')).toBeHidden();
     expect(monitor.pageErrors).toEqual([]);
   });
 
-  test('the header stays at the top while the page scrolls', async ({ page }) => {
+  test('the header scrolls away with the page (not sticky, D131)', async ({ page }) => {
     await openApp(page, { localState: beginner() });
     await openView(page, 'technique');
     const head = tech(page).locator('.tech-header');
+    await expect(head).toHaveCSS('position', 'static');
     const top0 = (await head.boundingBox()).y;
     await tech(page).evaluate((el) => { el.scrollTop = 600; });
-    await expect.poll(() => tech(page).evaluate((el) => el.scrollTop)).toBeGreaterThan(100);
-    // A header that scrolled away would move by hundreds of px; GitHub's runner shows ~1 px of sub-pixel drift.
-    expect(Math.abs((await head.boundingBox()).y - top0)).toBeLessThan(4);
+    await expect.poll(() => tech(page).evaluate((el) => el.scrollTop)).toBeGreaterThan(300);
+    expect(top0 - (await head.boundingBox()).y).toBeGreaterThan(200);
   });
 
   test('link rows to All phases, Essential Skills and Phase settings (dashed); the parts are not on the main page', async ({ page }) => {
