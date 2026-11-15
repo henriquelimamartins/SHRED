@@ -11,20 +11,25 @@
 // Slice 4.5a (D124): new page "Account & data" (view id `account`, not one of the 7 destinations): opened from an
 // "Account & data" button in the desktop sidebar account row (signed in or out) and from an "Account & data" group in
 // the phone More sheet.
+// Slice 4.5b (D125, D126): desktop sidebar as drawn: menu with line icons, PILLARS / RESOURCES headings, a real value
+// per item and the active page's sub-items; the read-only Today block; the account row (Google photo or initial,
+// name, real sync state) that opens Account & data. Login / Logout leave the sidebar (Account & data page). The
+// account row refreshes itself every few seconds (reads only). D127 (owner): the sidebar rails show on HOME too.
 import { hasFirebase, currentUser } from "./firebase.js?v=5";
 import { ui } from "./ui.js?v=1";
 import { BHGS_PACK } from "./pack.js?v=1";
 import { ensureDailyReset } from "./logic/dates.js?v=7";
-import { initCalCarousel } from "./views/calendar.js?v=16";
-import { renderHome } from "./views/home.js?v=16";
-import { renderTechnique } from "./views/technique.js?v=3";
-import { renderDaily } from "./views/daily.js?v=16";
-import { renderImprov } from "./views/improv.js?v=8";
-import { renderLibrary } from "./views/library.js?v=16";
-import { renderSetup } from "./views/setup.js?v=7";
-import { renderDojoView } from "./views/dojo.js?v=8";
-import { renderRails } from "./views/rails.js?v=2";
-import { renderAccount } from "./views/account.js?v=1";
+import { initCalCarousel } from "./views/calendar.js?v=17";
+import { renderHome } from "./views/home.js?v=17";
+import { renderTechnique } from "./views/technique.js?v=4";
+import { renderDaily } from "./views/daily.js?v=17";
+import { renderImprov } from "./views/improv.js?v=9";
+import { renderLibrary } from "./views/library.js?v=17";
+import { renderSetup } from "./views/setup.js?v=8";
+import { renderDojoView } from "./views/dojo.js?v=9";
+import { renderRails } from "./views/rails.js?v=3";
+import { renderAccount } from "./views/account.js?v=2";
+import { icon, sidebarMenu, todayBlock, accountRow } from "./views/shell.js?v=1";
 
 export function initAppLayout() {
   var root = document.getElementById("root");
@@ -36,6 +41,7 @@ export function initAppLayout() {
       <div id="sidebar-search" class="sidebar-search"></div>
       <div id="sidebar-rails" class="sidebar-rails"></div>
       <div id="sidebar-nav-inner" class="sidebar-nav"></div>
+      <div id="sidebar-today" class="sidebar-today"></div>
       <div id="sidebar-account" class="sidebar-account"></div>
     </nav>
     <main class="main-area">
@@ -73,7 +79,7 @@ const ACCOUNT_ITEM = { view: "account", ic: "\ud83d\udc64", label: "Account & da
 const MORE_VIEWS = NAV_ITEMS.filter(inMore).map(function(n){ return n.view; }).concat([ACCOUNT_ITEM.view]);
 
 export function updateNav() {
-  var sideHTML = NAV_ITEMS.map(function(n){ return navBtn(n.view, n.ic, n.label, n.cls); }).join("");
+  var sideHTML = sidebarMenu(NAV_ITEMS);
   var sidebarNav = document.getElementById('sidebar-nav-inner');
   if(sidebarNav) sidebarNav.innerHTML = sideHTML;
 
@@ -106,6 +112,16 @@ export function navBtn(view,ic,label, customClass){
   return '<button data-action="go" data-view="'+view+'" class="'+cl+'"><span class="ic">'+ic+'</span>'+label+'</button>'; 
 }
 
+// Slice 4.5b (D126 point 5): the account row's sync state is re-read every few seconds and on online/offline,
+// so it never shows an old state. Reads only; nothing is written.
+var lastAccountRow = '';
+export function updateAccountRow(){
+  var el = document.getElementById('sidebar-account');
+  if(!el) return;
+  var html = accountRow();
+  if(html !== lastAccountRow){ el.innerHTML = html; lastAccountRow = html; }
+}
+
 export function render(){
   try {
     ensureDailyReset();
@@ -115,15 +131,11 @@ export function render(){
     document.querySelectorAll('.view-panel').forEach(function(p){ tops[p.id] = p.scrollTop; });
 
     var authHTML = '';
-    // Slice 4.5a (D124): the Account & data button comes first and is shown signed in or out.
-    var sideAccount = '<button data-action="go" data-view="account" class="side-account-btn'+(ui.view==='account' ? ' active' : '')+'"><span class="ic">\ud83d\udc64</span><span class="side-account-label">Account &amp; data</span><span class="side-account-arrow" aria-hidden="true">\u203a</span></button>';
     if(hasFirebase){
       var shortName = (currentUser && currentUser.email) ? currentUser.email.split('@')[0] : '';
       authHTML += '<div class="auth-container">';
       if(shortName) authHTML += '<span class="user-email">' + shortName + '</span>';
       authHTML += '<button id="authBtn" class="dchip2 auth-btn">' + (currentUser ? "Logout" : "Login") + '</button></div>';
-      sideAccount += '<span class="side-user">' + (shortName || 'Not signed in') + '</span>';
-      sideAccount += '<button class="dchip2 auth-btn side-auth">' + (currentUser ? "Logout" : "Login") + '</button>';
     }
 
     // Phone top bar (hidden on desktop, where Search and the account row live in the sidebar).
@@ -133,11 +145,13 @@ export function render(){
     topbarHTML += authHTML + '</div>';
     document.getElementById('topbar').innerHTML = topbarHTML;
 
-    document.getElementById('sidebar-search').innerHTML = '<div class="side-search"><span class="ic">\ud83d\udd0d</span><span>Search...</span></div>';
-    document.getElementById('sidebar-account').innerHTML = sideAccount;
+    document.getElementById('sidebar-search').innerHTML = '<div class="side-search">' + icon("search") + '<span>Search\u2026</span></div>';
+    document.getElementById('sidebar-today').innerHTML = todayBlock();
+    lastAccountRow = accountRow();
+    document.getElementById('sidebar-account').innerHTML = lastAccountRow;
     var sideRails = document.getElementById('sidebar-rails');
-    sideRails.innerHTML = ui.view === 'home' ? '' : renderRails('side');
-    sideRails.classList.toggle('is-empty', ui.view === 'home');
+    // Slice 4.5b (D127, owner): on desktop the rails stay in the sidebar on every page, HOME included.
+    sideRails.innerHTML = renderRails('side');
 
     document.getElementById('panel-home').innerHTML = '<div class="panel-content">' + renderHome() + '</div>';
     document.getElementById('panel-daily').innerHTML = '<div class="panel-content">' + renderDaily() + '</div>';

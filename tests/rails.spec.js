@@ -97,21 +97,12 @@ test('rails are drawn without inline styles and showing them writes nothing', as
 test.describe('desktop', () => {
   test.skip(({ isMobile }) => isMobile, 'desktop sidebar');
 
-  test('sidebar rails: hidden on HOME, shown on every other page; HOME shows the three rails side by side', async ({ page }) => {
+  test('sidebar rails on every page, HOME included; HOME shows no Progress card on desktop (D127, owner)', async ({ page }) => {
     await openApp(page, { localState: sample() });
-    await expect(page.locator('#sidebar-rails')).toBeHidden();
-    // D123 (owner): one row of three rails, a vertical divider between Technique and Musical Development.
-    const boxes = await page.locator('#panel-home [data-rail]').evaluateAll((r) => r.map((e) => {
-      const b = e.getBoundingClientRect(); return { top: Math.round(b.top), left: Math.round(b.left), right: Math.round(b.right) };
-    }));
-    expect(boxes).toHaveLength(3);
-    expect(Math.abs(boxes[0].top - boxes[1].top)).toBeLessThanOrEqual(1);
-    expect(Math.abs(boxes[1].top - boxes[2].top)).toBeLessThanOrEqual(1);
-    expect(boxes[0].right).toBeLessThan(boxes[1].left);
-    expect(boxes[1].right).toBeLessThan(boxes[2].left);
-    const divider = await page.locator('#panel-home .rails-tech').evaluate((e) => getComputedStyle(e).borderRightWidth);
-    expect(divider).toBe('1px');
-    for (const v of ['daily', 'technique', 'improv', 'dojo', 'library', 'setup']) {
+    await expect(page.locator('#sidebar-rails')).toBeVisible();
+    await expect(page.locator('#sidebar-rails [data-rail]')).toHaveCount(3);
+    await expect(page.locator('#panel-home .home-progress')).toBeHidden();
+    for (const v of ['home', 'daily', 'technique', 'improv', 'dojo', 'library', 'setup']) {
       await openView(page, v);
       await expect(page.locator('#sidebar-rails')).toBeVisible();
       await expect(page.locator('#sidebar-rails [data-rail]')).toHaveCount(3);

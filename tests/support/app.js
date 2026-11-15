@@ -12,6 +12,7 @@ const FIREBASE_BACKEND = /(^|\.)(firebaseio\.com|firebaseapp\.com|web\.app|apis\
 
 // All tests run at a fixed moment so dates (streak, calendar, daily reset) are predictable.
 const DEFAULT_NOW = '2026-11-10T12:00:00Z'; // a Tuesday
+const AVATAR_PNG = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
 
 /**
  * @param {import('@playwright/test').Page} page
@@ -21,9 +22,11 @@ const DEFAULT_NOW = '2026-11-10T12:00:00Z'; // a Tuesday
  *   localState - value placed in localStorage before the app starts (first load only)
  *   now        - fixed clock time (ISO string); defaults to DEFAULT_NOW
  *   bhgsPack   - false serves js/pack.js with the BHGS pack switched off (slice 4.2b, D113)
+ *   avatar     - true serves a small test image for Google account photos (googleusercontent.com, slice 4.5b);
+ *                otherwise those requests are blocked like every other outside request
  */
 async function openApp(page, options = {}) {
-  const { user = null, docs = {}, localState, now = DEFAULT_NOW, bhgsPack = true } = options;
+  const { user = null, docs = {}, localState, now = DEFAULT_NOW, bhgsPack = true, avatar = false } = options;
   const monitor = { consoleErrors: [], pageErrors: [], blockedRequests: [], firebaseBackendRequests: [] };
 
   page.on('console', (msg) => {
@@ -50,6 +53,10 @@ async function openApp(page, options = {}) {
       return route.fulfill({ status: 200, contentType: 'text/javascript; charset=utf-8', body: 'export const BHGS_PACK = false;\n' });
     }
     if (url.startsWith(appOrigin)) return route.continue();
+    // Slice 4.5b (D126): a stand-in Google account photo (1 x 1 PNG); nothing leaves the machine.
+    if (avatar && /^https:\/\/[a-z0-9-]+\.googleusercontent\.com\//.test(url)) {
+      return route.fulfill({ status: 200, contentType: 'image/png', body: Buffer.from(AVATAR_PNG, 'base64') });
+    }
 
     const stub = url.match(FIREBASE_CDN);
     if (stub) {

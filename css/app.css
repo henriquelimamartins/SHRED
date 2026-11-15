@@ -122,41 +122,97 @@ button:focus-visible, a:focus-visible, select:focus-visible { outline: 2px solid
 
 .sidebar {
   display:none; width:260px; background:var(--chrome); border-right:1px solid var(--border);
-  flex-direction:column; z-index:100;
+  flex-direction:column; z-index:100; overflow-y:auto;
 }
 .sidebar-header { padding:24px 20px; border-bottom:1px solid var(--border); }
-.sidebar-search { padding:16px 12px 0; }
+.sidebar-search { padding:16px 14px 0; }
 .side-search {
-  display:flex; align-items:center; gap:10px; background:var(--card2); border:1px solid var(--border);
-  border-radius:var(--r-lg); padding:9px 14px; color:var(--muted); font-size:var(--fs-sm); cursor:pointer; transition:0.2s;
+  display:flex; align-items:center; gap:10px; min-height:40px; box-sizing:border-box; background:var(--card2); border:1px solid var(--border);
+  border-radius:var(--r-lg); padding:0 12px; color:var(--muted); font-size:var(--fs-md); cursor:pointer; transition:0.2s;
 }
+.side-search .ico { width:16px; height:16px; flex:none; }
 .side-search:hover { border-color:var(--muted); color:var(--text); }
-.sidebar-account {
-  display:flex; flex-wrap:wrap; align-items:center; gap:10px; padding:14px 16px calc(14px + env(safe-area-inset-bottom,0px));
-  border-top:1px solid var(--border);
+
+/* Slice 4.5b (D125, D126): the sidebar as drawn on the 4.0 canvas. */
+.ico { width:18px; height:18px; flex:none; display:block; }
+.sidebar-nav { padding:14px 14px 6px; display:flex; flex-direction:column; gap:2px; }
+.side-group { font-family:var(--font-head); font-size:var(--fs-xs); letter-spacing:.16em; text-transform:uppercase; color:var(--muted); padding:12px 12px 4px; }
+.sidebar-nav .side-item {
+  display:flex; align-items:center; gap:12px; min-height:40px; padding:0 12px; width:100%; border-radius:var(--r-lg);
+  background:transparent; border:none; color:#B4B4BD; font-family:var(--font-head); font-size:15px; font-weight:500;
+  text-transform:uppercase; letter-spacing:.08em; text-align:left; cursor:pointer; transition:background 0.2s, color 0.2s;
 }
-/* Slice 4.5a (D124): "Account & data" button at the top of the sidebar account row. */
-.side-account-btn {
-  flex:1 0 100%; display:flex; align-items:center; gap:10px; min-height:40px; padding:0 12px;
-  background:transparent; border:1px solid var(--border); border-radius:var(--r-lg); color:var(--text-2);
-  font-size:var(--fs-sm); font-weight:600; text-align:left; cursor:pointer; transition:background 0.2s, color 0.2s, border-color 0.2s;
+.side-item .ico { color:#8E8E98; }
+.side-label { flex:1; min-width:0; }
+.side-val { font-family:var(--font-body); font-size:var(--fs-xs); letter-spacing:0; text-transform:none; color:var(--muted); }
+.sidebar-nav .side-item:hover { background:var(--card); color:var(--text); }
+.sidebar-nav .side-item.active { background:var(--card2); color:var(--red-tint); }
+.sidebar-nav .side-item.active .ico { color:var(--red); }
+.sidebar-nav .side-item.active.improv-nav { color:var(--purple-tint); }
+.sidebar-nav .side-item.active.improv-nav .ico { color:var(--purple); }
+.sidebar-nav .side-item.active.theory-nav { color:var(--blue-tint); }
+.sidebar-nav .side-item.active.theory-nav .ico { color:var(--blue); }
+.side-subs { display:flex; flex-direction:column; margin:2px 0 6px 29px; border-left:1px solid #2A2A31; }
+.side-sub { background:none; border:none; text-align:left; padding:7px 14px; font-size:var(--fs-md); color:var(--muted); cursor:pointer; }
+.side-sub:hover { color:var(--text); }
+.side-sub.on { color:var(--text); box-shadow:inset 2px 0 0 var(--red); }
+
+.sidebar-today { padding:10px 14px 0; }
+.side-today {
+  display:block; width:100%; box-sizing:border-box; text-align:left; background:var(--card2); border:1px solid var(--border);
+  border-radius:var(--r-lg); padding:12px; color:var(--text); cursor:pointer;
 }
-.side-account-btn:hover { background:var(--card2); color:var(--text); }
-.side-account-btn.active { background:var(--card2); color:var(--red-tint); border-color:var(--red-line); }
-.side-account-label { flex:1; min-width:0; }
-.side-account-arrow { color:var(--muted); font-size:var(--fs-lg); line-height:1; }
-.sidebar-account:empty { display:none; }
-.side-user { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:var(--fs-xs); color:var(--muted); font-weight:500; }
-.sidebar-nav { flex:1; padding:16px 12px 20px; display:flex; flex-direction:column; gap:8px; overflow-y:auto; }
-.sidebar-nav button {
-  display:flex; align-items:center; gap:12px; padding:12px 16px; width:100%; border-radius:var(--r-lg);
-  background:transparent; border:none; color:var(--muted); font-size:var(--fs-base); font-weight:600;
-  text-transform:uppercase; letter-spacing:0.5px; transition:background 0.2s, color 0.2s;
+.side-today:hover { border-color:var(--muted); }
+.side-today-head { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px; }
+.side-today-title { font-family:var(--font-head); font-size:var(--fs-md); letter-spacing:.1em; font-weight:600; text-transform:uppercase; }
+.side-today-count { font-size:var(--fs-sm); color:var(--muted); }
+.side-today-row { display:flex; align-items:center; gap:10px; padding:5px 0; font-size:var(--fs-md); color:#E4E4E8; }
+.side-today-row.done { color:var(--muted); }
+.side-today-row.done .side-today-label { text-decoration:line-through; }
+.side-today-label { flex:1; min-width:0; }
+.side-today-min { font-size:var(--fs-xs); color:var(--muted); }
+.side-box { width:14px; height:14px; box-sizing:border-box; border-radius:4px; border:1.5px solid #4A4A52; display:flex; align-items:center; justify-content:center; flex:none; }
+.side-box.on { border:0; background:var(--red); color:var(--white); }
+.side-box .ico { width:10px; height:10px; stroke-width:4; }
+.side-today-streak { display:flex; align-items:center; gap:6px; margin-top:10px; padding-top:10px; border-top:1px solid var(--border); font-size:var(--fs-sm); color:var(--text-2); }
+.side-today-streak .ico { width:14px; height:14px; color:var(--red); }
+
+.sidebar-account { margin-top:auto; padding:14px 14px calc(14px + env(safe-area-inset-bottom,0px)); }
+.side-acct {
+  display:flex; align-items:center; gap:10px; width:100%; padding:12px 8px 0; border:none; border-top:1px solid #24242A;
+  background:transparent; color:var(--text); text-align:left; cursor:pointer;
 }
-.sidebar-nav button:hover { background:var(--card); color:var(--text); }
-.sidebar-nav button.active { background:var(--card2); color:var(--red-tint); }
-.sidebar-nav button.active.improv-nav { color:var(--purple-tint); }
-.sidebar-nav button.active.theory-nav { color:var(--blue-tint); }
+.side-acct-text { flex:1; min-width:0; display:flex; flex-direction:column; }
+.side-acct-name { font-size:var(--fs-md); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.side-acct.active .side-acct-name { color:var(--red-tint); }
+.side-acct-status { display:flex; align-items:center; gap:5px; margin-top:2px; font-size:var(--fs-xs); color:var(--muted); min-width:0; }
+.sync-text { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.side-acct-arrow { color:var(--muted); font-size:var(--fs-lg); line-height:1; }
+.sync-dot { width:6px; height:6px; border-radius:50%; flex:none; background:#6A6A72; display:inline-block; }
+.sync-dot.ok { background:var(--green); }
+.sync-dot.wait { background:var(--amber); }
+.avatar { display:flex; align-items:center; justify-content:center; flex:none; border-radius:50%; overflow:hidden; background:#2A2A31; color:var(--text); font-weight:600; }
+.avatar-sm { width:32px; height:32px; font-size:var(--fs-md); }
+.avatar-lg { width:56px; height:56px; font-size:var(--fs-2xl); }
+.avatar-img { width:100%; height:100%; object-fit:cover; display:block; }
+.avatar-none { color:var(--muted); }
+.avatar-sm.avatar-none .ico { width:18px; height:18px; }
+.avatar-lg.avatar-none .ico { width:28px; height:28px; }
+
+/* Account & data page (slice 4.5b): who is signed in, with Login / Logout. */
+.account-id { display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+.account-who { flex:1; min-width:180px; }
+.account-name { font-size:var(--fs-lg); font-weight:600; }
+.account-email { font-size:var(--fs-md); color:var(--muted); margin-top:2px; }
+.account-sync { display:flex; align-items:center; gap:6px; font-size:var(--fs-sm); color:var(--text-2); margin-top:6px; }
+.account-note { margin:4px 0 0; font-size:var(--fs-md); color:var(--muted); }
+
+/* Page header as drawn (slice 4.5b): muted eyebrow + large title. */
+.page-head { display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:8px 12px; margin-bottom:22px; }
+.page-head-main { min-width:0; }
+.eyebrow.page-eyebrow { font-family:var(--font-head); font-size:var(--fs-sm); font-weight:500; letter-spacing:.16em; color:var(--muted); margin:0; }
+.page-title { margin:6px 0 0; font-family:var(--font-head); font-size:34px; font-weight:700; letter-spacing:.03em; line-height:1; text-transform:uppercase; color:var(--text); }
+.page-head-right { font-size:var(--fs-md); color:var(--muted); }
 
 .main-area {
   flex:1; display:flex; flex-direction:column; position:relative; overflow:hidden; height:100%;
@@ -232,9 +288,14 @@ button:focus-visible, a:focus-visible, select:focus-visible { outline: 2px solid
   .mobile-brand { display:none; }
   .topbar { display:none; }
   .more-sheet, .more-sheet.open { display:none; }
-  .view-panel { padding:30px 40px 60px; }
+  .view-panel { padding:28px 32px 40px; }
+  .panel-content { max-width:none; }
 }
 @media (max-width: 767px) {
+  /* Slice 4.5b: smaller page header on the phone (the per-page phone headers come in 4.5b2). */
+  .page-head { margin-bottom:14px; }
+  .page-title { font-size:22px; }
+  .tech-header .page-head { margin-bottom:10px; }
   .shell-search .srch-txt { display:none; }
   .shell-search { max-width:36px; padding:6px; justify-content:center; border-radius:50%; margin:0; }
 }
@@ -478,6 +539,7 @@ table.info td.day{font-weight:700;white-space:nowrap;color:var(--red-tint);}
 .sidebar-rails .rail-head{gap:6px;}
 .sidebar-rails .rail-status{white-space:nowrap;}
 .sidebar-rails.is-empty{display:none;}
+@media (min-width: 768px){ .home-progress{display:none;} } /* D127: rails only in the sidebar on desktop */
 .tech-header .rail{--rail-surface:var(--bg);}
 .pillar-rail{display:none;}
 @media (max-width: 767px){
@@ -488,7 +550,7 @@ table.info td.day{font-weight:700;white-space:nowrap;color:var(--red-tint);}
 /* --- TECHNIQUE page (slice 4.3, D117 point 6, D122) --- */
 .navbtn.techbtn{border-color:var(--red-line);}
 .tech-header{margin-bottom:16px;}
-.tech-title-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:12px;}
+.tech-header .page-head{margin-bottom:12px;align-items:baseline;}
 .tech-sub{font-size:var(--fs-sm);color:var(--muted);}
 .tech-progress{display:flex;align-items:center;gap:18px;}
 .tech-progress .bignum{font-size:40px;line-height:1;}
@@ -523,7 +585,6 @@ table.info td.day{font-weight:700;white-space:nowrap;color:var(--red-tint);}
 @media (min-width: 1100px){ .tech-cols{grid-template-columns:minmax(0,1fr) minmax(0,1fr);} }
 @media (max-width: 767px){
   .tech-tabs{display:grid;}
-  .tech-title-row{margin-bottom:10px;}
   /* Slice 4.4: no eyebrow on the phone (as on the 4.0 canvas), so the header stays under 120 px with the real web fonts (D112). */
   .tech-header .eyebrow{display:none;}
   .tech-cols.tab-checklist .tech-sec-chops, .tech-cols.tab-checklist .tech-sec-test,

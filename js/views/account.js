@@ -3,9 +3,12 @@
 // same texts, buttons, restore list, confirmations and data-actions (handled in js/events.js, D105, D106, D110).
 // Reached from the desktop sidebar account row and the phone More sheet; it is not one of the 7 destinations (D11).
 // Opening this page writes nothing.
+// Slice 4.5b (D125 point 4, D126): drawn page header; the Account card shows the Google account photo (or initial),
+// name, email, the real sync state and Login / Logout (moved here from the sidebar; same sign-in code).
 import { hasFirebase, currentUser } from "../firebase.js?v=5";
 import { ui } from "../ui.js?v=1";
 import { listDeviceBackups, formatLocalTime, reasonLabel } from "../logic/backup.js?v=2";
+import { pageHeader, avatar, accountName, syncState } from "./shell.js?v=1";
 
 function esc(t){ return String(t).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]; }); }
 
@@ -33,17 +36,27 @@ function renderRestore(){
   return html;
 }
 
-// Who is signed in, in plain words. Login / Logout stays in the sidebar account row and the phone top bar.
-function accountText(){
-  if(!hasFirebase) return 'Cloud sync is not available. Your progress is saved on this device only.';
-  var name = (currentUser && currentUser.email) ? currentUser.email.split('@')[0] : '';
-  if(currentUser) return 'Signed in as <b>'+esc(name || 'your account')+'</b>.';
-  return 'Not signed in. Your progress is saved on this device only. Log in to keep it in your account.';
+// Who is signed in, in plain words, with Login / Logout (D125 point 4).
+function accountCard(){
+  var html='<div class="card account-card"><h3>Account</h3><div class="account-id">'+avatar("lg")+'<div class="account-who">';
+  if(!hasFirebase){
+    html+='<div class="account-name">This device</div><p class="account-note">Cloud sync is not available. Your progress is saved on this device only.</p></div></div>';
+    return html+'</div>';
+  }
+  if(currentUser){
+    var s=syncState();
+    html+='<div class="account-name">'+esc(accountName(true))+'</div>'+(currentUser.email?'<div class="account-email">'+esc(currentUser.email)+'</div>':'')+
+      '<div class="account-sync"><i class="sync-dot '+s.tone+'"></i>'+s.text+'</div>';
+  } else {
+    html+='<div class="account-name">Not signed in</div><p class="account-note">Not signed in. Your progress is saved on this device only. Log in to keep it in your account.</p>';
+  }
+  html+='</div><button class="tbtn account-auth">'+(currentUser?"Logout":"Login")+'</button></div></div>';
+  return html;
 }
 
 export function renderAccount(){
-  var html='<div class="eyebrow">Account &amp; data</div>';
-  html+='<div class="card account-card"><h3>Account</h3><p class="u-justify">'+accountText()+'</p></div>';
+  var html=pageHeader('Account','Account &amp; data');
+  html+=accountCard();
 
   // The "Cloud Sync" card, moved unchanged from HOME (slices 3.5, 3.8).
   html+='<div class="card"><h3>Cloud Sync</h3>';

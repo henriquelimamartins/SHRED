@@ -1,4 +1,5 @@
 // DAILY view.
+// Slice 4.5b (D125, D126): the drawn page header (muted eyebrow + large title).
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
 import { PHASES, TESTCATS, THEORY_DOCS, THEORY_GROUPS, THEORY_ITEMS, ESSENTIAL, ESSENTIAL_URL, PREREQ, WARMUP_URL } from "../data/bhgs.js?v=1";
 import { IMPROV_GATES } from "../data/improv.js?v=1";
@@ -6,8 +7,9 @@ import { DAY_FULL } from "../data/days.js?v=1";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=1";
 import { todayISO, todayName, isWeekendDay, activeDay } from "../logic/dates.js?v=7";
-import { k } from "../logic/technique.js?v=16";
-import { linked, checkItem, prereqItem, docItem, chopRow, dayPicker, blk, getDailyActiveSequence } from "./components.js?v=16";
+import { k } from "../logic/technique.js?v=17";
+import { pageHeader } from "./shell.js?v=1";
+import { linked, checkItem, prereqItem, docItem, chopRow, dayPicker, blk, getDailyActiveSequence } from "./components.js?v=17";
 
 export function renderDaily(){
   var idx=state.phaseIndex,p=PHASES[idx];
@@ -15,7 +17,7 @@ export function renderDaily(){
   var act=activeDay();
   var editable=(day===act);
   var wknd=isWeekendDay(day);
-  var html='<div class="eyebrow">'+DAY_FULL[day]+' &middot; '+p.label+'</div>';
+  var html=pageHeader(DAY_FULL[day]+' &middot; '+p.label,'Daily');
   html+=dayPicker(day);
 
   if(!editable){
