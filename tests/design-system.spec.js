@@ -148,8 +148,12 @@ test('small coloured text uses the tints; filled buttons use the filled colours 
   await expect(activeNav).toHaveCSS('color', rgb(TOKENS['--red-tint']));
 
   await goTo(page, 'daily');
-  await expect(page.locator('#panel-daily .dchip2.on')).toHaveCSS('background-color', rgb(TOKENS['--red-fill']));
-  await expect(page.locator('#panel-daily .tbtn.purple').first()).toHaveCSS('background-color', rgb(TOKENS['--purple-fill']));
+  // Slice 4.7 (D133): as drawn on the 4.6 board, the selected day is red text with a red outline (no fill) and
+  // the "Open Improv Masterclass" button is outlined purple with purple text.
+  await expect(page.locator('#panel-daily .dchip2.on')).toHaveCSS('color', rgb(TOKENS['--red-tint']));
+  await expect(page.locator('#panel-daily .dchip2.on')).toHaveCSS('border-top-color', rgb(TOKENS['--red']));
+  await expect(page.locator('#panel-daily .tbtn.purple').first()).toHaveCSS('color', rgb(TOKENS['--purple-tint']));
+  await expect(page.locator('#panel-daily .tbtn.purple').first()).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
 
   await goTo(page, 'improv');
   await expect(page.locator('#panel-improv .eyebrow.improv')).toHaveCSS('color', rgb(TOKENS['--purple-tint']));

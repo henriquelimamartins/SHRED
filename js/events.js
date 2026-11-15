@@ -22,12 +22,12 @@ import { CODEX_DATA } from "./data/dojo.js?v=1";
 import { defaultState, defaultDojoState, saveState, state, replaceState, backupBeforeReplace, migrate, newerSchema, NEWER_SCHEMA_MSG } from "./store.js?v=5";
 import { hasFirebase, auth, db, googleProvider, currentUser, cloudReady, cloudReadFailed, CLOUD_READ_FAILED_MSG, requestCloudWrite, loadFromCloud, signInWithPopup, signOut } from "./firebase.js?v=5";
 import { ui, showToast } from "./ui.js?v=1";
-import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=20";
-import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=20";
-import { changeCalMonth } from "./views/calendar.js?v=20";
-import { currentMinigame, addXP, startArchitectGame, handleDojoAnswer, renderCodexList } from "./views/dojo.js?v=12";
-import { updateNav, render, updateAccountRow } from "./render.js?v=20";
-import { SUB_ITEMS } from "./views/shell.js?v=4";
+import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=21";
+import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=21";
+import { changeCalMonth } from "./views/calendar.js?v=21";
+import { currentMinigame, addXP, startArchitectGame, handleDojoAnswer, renderCodexList } from "./views/dojo.js?v=13";
+import { updateNav, render, updateAccountRow } from "./render.js?v=21";
+import { SUB_ITEMS } from "./views/shell.js?v=5";
 import { buildBackupFile, backupFileName, listDeviceBackups, parseBackupFile, isNewerCopy, restoredState, formatLocalTime, reasonLabel, MAX_BACKUP_FILE_BYTES, INVALID_BACKUP_MSG, NEWER_BACKUP_MSG } from "./logic/backup.js?v=2";
 
 export function handleReset(){ ui.resetConfirm=true; render(); }
@@ -193,6 +193,9 @@ function openPage(view){
   render();
 }
 
+// Slice 4.7: after the page is drawn again, keep the keyboard focus on the KEY circle.
+function focusDaily(sel){ var b=document.querySelector('#panel-daily '+sel); if(b) b.focus({preventScroll:true}); }
+
 document.addEventListener("click",function(e){
 
   if(e.target.closest("a")) return;
@@ -240,6 +243,9 @@ document.addEventListener("click",function(e){
     render();
   }
   else if(a==="setday"){ ui.dayOverride=t.dataset.day; render(); }
+  // Slice 4.7 (D133 point 5): the KEY circle on DAILY. Page state only (ui.dailyKey), never saved.
+  else if(a==="keypick"){ ui.dailyKey={ m:t.dataset.mode, i:parseInt(t.dataset.i,10) }; render(); focusDaily('.kc-'+ui.dailyKey.m+'-'+ui.dailyKey.i); }
+  else if(a==="keytoday"){ ui.dailyKey=null; render(); focusDaily('.kc-key.on'); }
   else if(a==="chop"){ setChop(t.dataset.t,parseInt(t.dataset.d,10)); }
   else if(a==="test"){ setTest(t.dataset.t,parseInt(t.dataset.d,10)); }
   else if(a==="bonuslvl"){ setBonusLevel(t.dataset.k,parseInt(t.dataset.d,10),parseInt(t.dataset.max,10)); }

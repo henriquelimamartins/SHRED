@@ -11,7 +11,7 @@ import { PHASES } from "../data/bhgs.js?v=1";
 import { IMPROV_GATES } from "../data/improv.js?v=1";
 import { state } from "../store.js?v=5";
 import { BHGS_PACK } from "../pack.js?v=1";
-import { phasePercent } from "../logic/technique.js?v=20";
+import { phasePercent } from "../logic/technique.js?v=21";
 
 function clamp01(x){ return Math.max(0, Math.min(1, x)); }
 
