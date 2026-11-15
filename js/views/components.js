@@ -5,7 +5,7 @@ import { CHOP, TESTCATS, BONUS } from "../data/bhgs.js?v=1";
 import { DAY_ORDER } from "../data/days.js?v=1";
 import { state } from "../store.js?v=5";
 import { todayISO, todayName, activeDay } from "../logic/dates.js?v=7";
-import { isBlockPracticed } from "../logic/daily.js?v=20";
+import { isBlockPracticed } from "../logic/daily.js?v=21";
 
 /* ---------- render helpers ---------- */
 export function linked(label,url){ return url? '<a href="'+url+'" target="_blank" rel="noopener">'+label+'</a>' : label; }
@@ -68,20 +68,24 @@ export function renderBonusList(){
   }).join("");
 }
 export function dayPicker(selectedDay){
+  // Slice 4.7 (D133): the selected day is marked for screen readers (aria-pressed) and today with aria-current.
   var today=todayName(), act=activeDay();
-  return '<div class="daypick">'+DAY_ORDER.map(function(d){
+  return '<div class="daypick" role="group" aria-label="Day">'+DAY_ORDER.map(function(d){
     var cls="dchip2"+(d===selectedDay?" on":"")+(d===today?" istoday":"")+(d===act&&act!==today?" isactive":"");
-    return '<button class="'+cls+'" data-action="setday" data-day="'+d+'">'+d+'</button>';
+    return '<button type="button" class="'+cls+'" data-action="setday" data-day="'+d+'" aria-pressed="'+(d===selectedDay)+'"'+(d===today?' aria-current="date"':'')+'>'+d+'</button>';
   }).join("")+'</div>';
 }
-export function blk(name,day,title,minText,bodyHtml,editable,customClass){
+// Slice 4.7 (D133): `num` (optional) shows the block number (01, 02…) before the title; "Practiced" is a button
+// (the same data-action), with the label before the box as drawn. Read-only days show a disabled button.
+export function blk(name,day,title,minText,bodyHtml,editable,customClass,num){
   if(editable===undefined) editable=true;
   var done=isBlockPracticed(name,day);
   var check = editable
-    ? '<div class="blkcheck" data-action="blockprac" data-block="'+name+'" data-day="'+day+'"><div class="box'+(done?" on":"")+'"></div><span>Practiced</span></div>'
-    : '<div class="blkcheck ro"><div class="box'+(done?" on":"")+'"></div><span>Practiced</span></div>';
+    ? '<button type="button" class="blkcheck" data-action="blockprac" data-block="'+name+'" data-day="'+day+'" aria-pressed="'+done+'"><span>Practiced</span><span class="box'+(done?" on":"")+'"></span></button>'
+    : '<button type="button" class="blkcheck ro" disabled aria-pressed="'+done+'"><span>Practiced</span><span class="box'+(done?" on":"")+'"></span></button>';
   var cClass = customClass ? ' ' + customClass : '';
-  return '<div class="blk'+cClass+(done?" done-today":"")+'"><div class="top"><div class="nm">'+title+'</div><div class="topright">'+(minText?'<div class="min">'+minText+'</div>':'')+check+'</div></div>'+bodyHtml+'</div>';
+  var numHtml = num ? '<span class="blk-num" aria-hidden="true">'+(num<10?"0":"")+num+'</span>' : '';
+  return '<div class="blk'+cClass+(done?" done-today":"")+'"><div class="top">'+numHtml+'<div class="nm">'+title+'</div><div class="topright">'+(minText?'<div class="min">'+minText+'</div>':'')+check+'</div></div>'+bodyHtml+'</div>';
 }
 
 export function getDailyActiveSequence(list, prefix, editable, isWatch){
