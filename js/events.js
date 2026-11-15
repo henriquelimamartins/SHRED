@@ -22,12 +22,12 @@ import { CODEX_DATA } from "./data/dojo.js?v=1";
 import { defaultState, defaultDojoState, saveState, state, replaceState, backupBeforeReplace, migrate, newerSchema, NEWER_SCHEMA_MSG } from "./store.js?v=5";
 import { hasFirebase, auth, db, googleProvider, currentUser, cloudReady, cloudReadFailed, CLOUD_READ_FAILED_MSG, requestCloudWrite, loadFromCloud, signInWithPopup, signOut } from "./firebase.js?v=5";
 import { ui, showToast } from "./ui.js?v=1";
-import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=19";
-import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=19";
-import { changeCalMonth } from "./views/calendar.js?v=19";
-import { currentMinigame, addXP, startArchitectGame, handleDojoAnswer, renderCodexList } from "./views/dojo.js?v=11";
-import { updateNav, render, updateAccountRow } from "./render.js?v=19";
-import { SUB_ITEMS } from "./views/shell.js?v=3";
+import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=20";
+import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=20";
+import { changeCalMonth } from "./views/calendar.js?v=20";
+import { currentMinigame, addXP, startArchitectGame, handleDojoAnswer, renderCodexList } from "./views/dojo.js?v=12";
+import { updateNav, render, updateAccountRow } from "./render.js?v=20";
+import { SUB_ITEMS } from "./views/shell.js?v=4";
 import { buildBackupFile, backupFileName, listDeviceBackups, parseBackupFile, isNewerCopy, restoredState, formatLocalTime, reasonLabel, MAX_BACKUP_FILE_BYTES, INVALID_BACKUP_MSG, NEWER_BACKUP_MSG } from "./logic/backup.js?v=2";
 
 export function handleReset(){ ui.resetConfirm=true; render(); }
@@ -184,6 +184,7 @@ document.addEventListener("scroll", function(e) {
 
 // Opens a page at its top (the "go" action; since slice 4.5b2 also the MORE page and its rows).
 function openPage(view){
+  if(view==="technique") ui.techSub=null; // slice 4.5d: the bar always opens the main TECHNIQUE page
   ui.view=view;
   if(ui.sub) ui.sub[ui.view]=0; // slice 4.5b: the first sub-item marks the page top
   var panel = document.getElementById('panel-' + ui.view);
@@ -231,6 +232,13 @@ document.addEventListener("click",function(e){
   if(a==="toggleacc"){ui.lib[t.dataset.acc]=!ui.lib[t.dataset.acc]; render();}
   else if(a==="techtab"){ ui.techTab=t.dataset.tab; render(); }
   else if(a==="phasesettings"){ ui.phaseSettingsOpen=!ui.phaseSettingsOpen; render(); }
+  // Slice 4.5d (D130): phone sub-pages of TECHNIQUE (All phases, Essential Skills, Phase settings); page state only.
+  else if(a==="techsub"){
+    ui.techSub=t.dataset.sub||null;
+    if(!ui.techSub){ ui.phaseSettingsOpen=false; ui.phaseJumpPending=null; }
+    var tp=document.getElementById('panel-technique'); if(tp) tp.scrollTo({top:0});
+    render();
+  }
   else if(a==="setday"){ ui.dayOverride=t.dataset.day; render(); }
   else if(a==="chop"){ setChop(t.dataset.t,parseInt(t.dataset.d,10)); }
   else if(a==="test"){ setTest(t.dataset.t,parseInt(t.dataset.d,10)); }

@@ -5,8 +5,8 @@
 import { IMPROV_GATES } from "../data/improv.js?v=1";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=1";
-import { pageHeader } from "./shell.js?v=3";
-import { renderRail, improvRail } from "./rails.js?v=5";
+import { pageHeader } from "./shell.js?v=4";
+import { renderRail, improvRail } from "./rails.js?v=6";
 
 // The Daily Transposition Target (one key per day of the year). Slice 4.5c (D129): moved out of renderImprov()
 // unchanged so HOME's "Today's Improv" card shows the same key as this page.

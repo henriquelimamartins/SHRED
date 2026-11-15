@@ -8,7 +8,7 @@
 //   nothing changes over data from a newer app version.
 // The behaviour and numbers themselves are covered by technique.spec.js (D20). Firebase is stubbed.
 const { test, expect } = require('@playwright/test');
-const { openApp, localSaved, settle, openView, accountPanel, cloudWrites, unexpectedConsoleErrors } = require('./support/app');
+const { openApp, localSaved, settle, openView, accountPanel, cloudWrites, unexpectedConsoleErrors, techPart } = require('./support/app');
 const { baseState, checksFor, levels } = require('./support/fixtures');
 
 const BACKUP_KEY = 'shredRoadmapBackups_v1';
@@ -39,6 +39,7 @@ const advanced = () => baseState({
 
 async function chooseBackTo(page, index) {
   await openView(page, 'technique');
+  await techPart(page, 'settings');
   await technique(page).locator('[data-action="phasesettings"]').click();
   await technique(page).locator('select[data-action="setphase"]').selectOption(String(index));
   await expect(technique(page)).toContainText(`Jump back to Phase ${index}?`);
@@ -76,10 +77,11 @@ test('Setup phase: prerequisites, warm-up, lifetime chop levels and the baseline
 test('All phases: the current one is not repeated; another opens with its content and can be marked', async ({ page }) => {
   await openApp(page, { localState: beginner() });
   await openView(page, 'technique');
+  await techPart(page, 'phases');
   const rows = await technique(page).locator('.tech-phases .tech-phase').evaluateAll((r) => r.map((x) => x.textContent.replace(/\s+/g, ' ').trim()));
   expect(rows).toEqual([
     'Phase 0Setup · Setup & BaselineComplete›',
-    'Phase 1Beginner · Levels 1 - 2Current · 54% · shown above',
+    'Phase 1Beginner · Levels 1 - 2Current · 54%›', // slice 4.5d: › back to the current phase
     'Phase 2Intermediate · Level 3›',
     'Phase 3Advanced · Level 4›',
     'Phase 4Pro · Level 5›',
@@ -103,6 +105,7 @@ test('All phases: the current one is not repeated; another opens with its conten
 test('Essential Skills lists the 5 weekday micro-doses (moved from LIBRARY)', async ({ page }) => {
   await openApp(page);
   await openView(page, 'technique');
+  await techPart(page, 'essentials');
   await technique(page).locator('[data-acc="techessentials"]').click();
   const items = technique(page).locator('.acc:has(> [data-acc="techessentials"]) > .accbody .itxt');
   expect((await items.allTextContents()).map((t) => t.replace(/\s+/g, ' ').trim())).toEqual([
@@ -178,6 +181,7 @@ test.describe('Phase settings (D115)', () => {
     await openApp(page, { localState: beginner() });
     await openView(page, 'technique');
     await expect(technique(page).locator('select[data-action="setphase"]')).toHaveCount(0);
+    await techPart(page, 'settings');
     await technique(page).locator('[data-action="phasesettings"]').click();
     await expect(technique(page).locator('select[data-action="setphase"]')).toHaveValue('1');
     await technique(page).locator('[data-action="phasesettings"]').click();
@@ -227,6 +231,7 @@ test.describe('Phase settings (D115)', () => {
     await openApp(page, { localState: beginner() });
     const count = (await backups(page)).length;
     await openView(page, 'technique');
+    await techPart(page, 'settings');
     await technique(page).locator('[data-action="phasesettings"]').click();
     await technique(page).locator('select[data-action="setphase"]').selectOption('2');
     await expect(page.locator('#toast')).toHaveText('Now on Intermediate - earlier phases marked complete');

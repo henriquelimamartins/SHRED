@@ -102,7 +102,7 @@ test('the Technique rail is on HOME and the TECHNIQUE page (D25, D117), not in t
   await openApp(page, { localState: progressState({ phaseIndex: 1 }) });
   await expect(page.locator('#panel-home [data-rail="technique"]')).toHaveCount(1);
   await expect(page.locator('#panel-home [data-rail="technique"] .rail-node')).toHaveCount(5);
-  await expect(page.locator('#panel-technique [data-rail="technique"]')).toHaveCount(1);
+  await expect(page.locator('#panel-technique [data-rail="technique"]')).toHaveCount(2); // slice 4.5d: header (phone) and progress card (desktop), one shown
   for (const v of ['daily', 'improv', 'dojo', 'library', 'setup']) {
     await expect(page.locator(`#panel-${v} [data-rail="technique"]`)).toHaveCount(0);
   }

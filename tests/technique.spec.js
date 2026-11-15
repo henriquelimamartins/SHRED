@@ -4,7 +4,7 @@
 // LIBRARY and HOME to the TECHNIQUE page; only where the tests click changed, every expected value is the same.
 // Jumping back now saves a backup first (checked in technique-page.spec.js).
 const { test, expect } = require('@playwright/test');
-const { openApp, localSaved, unexpectedConsoleErrors, openView, settle } = require('./support/app');
+const { openApp, localSaved, unexpectedConsoleErrors, openView, settle, techPart } = require('./support/app');
 const {
   baseState, TECHNIQUE_PHASES, CHOP_KEYS, TEST_KEYS, phaseKeys, checksFor, levels,
 } = require('./support/fixtures');
@@ -51,6 +51,7 @@ async function openTechnique(page, tab = 'checklist') {
 /** Opens one phase that is not the current one from TECHNIQUE → All phases (it was Library → Shred Roadmap). */
 async function openOtherPhase(page, index) {
   await goTo(page, 'technique');
+  await techPart(page, 'phases');
   await technique(page).locator(`[data-acc="tp${index}"]`).click();
 }
 
@@ -121,6 +122,7 @@ test.describe('checklist items', () => {
     await video.click();
     await expect(video).toHaveText('✓ Watched');
 
+    await techPart(page, 'phases');
     await technique(page).locator('[data-acc="tp0"]').click(); // Setup, from All phases
     const prereq = technique(page).locator('[data-action="togm"][data-key="p0.pre.1"]');
     await expect(prereq).toHaveText('Incomplete');
@@ -238,6 +240,7 @@ test.describe('Jump to phase (TECHNIQUE → Phase settings since slice 4.3)', ()
   const select = (page) => technique(page).locator('select[data-action="setphase"]');
   async function openSettings(page) {
     await goTo(page, 'technique');
+    await techPart(page, 'settings');
     await technique(page).locator('[data-action="phasesettings"]').click();
   }
 

@@ -1,7 +1,7 @@
 // Phase 2.6: Content Security Policy (DECISIONS D96, D98). The app must run with no policy violations,
 // and code that does not come from the allowed places must be refused by the browser.
 const { test, expect } = require('@playwright/test');
-const { openApp, unexpectedConsoleErrors } = require('./support/app');
+const { openApp, unexpectedConsoleErrors, techPart } = require('./support/app');
 const { TEST_USER, USER_DOC, progressState } = require('./support/fixtures');
 
 const VIEWS = ['home', 'daily', 'technique', 'improv', 'dojo', 'library', 'setup'];
@@ -57,8 +57,10 @@ for (const signed of ['out', 'in']) {
     }
     // Slice 4.3: the TECHNIQUE page's other phases, Essential Skills and Phase settings.
     await goTo(page, 'technique');
-    for (const acc of ['tp2', 'techessentials']) await page.locator(`#panel-technique [data-acc="${acc}"]`).click();
-    await page.locator('#panel-technique [data-action="phasesettings"]').click();
+    // Slice 4.5d: on the phone these parts are sub-pages (techPart does nothing on the desktop).
+    await techPart(page, 'phases'); await page.locator('#panel-technique [data-acc="tp2"]').click();
+    await techPart(page, 'essentials'); await page.locator('#panel-technique [data-acc="techessentials"]').click();
+    await techPart(page, 'settings'); await page.locator('#panel-technique [data-action="phasesettings"]').click();
     await goTo(page, 'dojo');
     await page.locator('#panel-dojo [data-action="dojoopen"]').click();
     expect(await violations(page)).toEqual([]);

@@ -6,15 +6,19 @@
 // Calculations and state keys are unchanged (D20): it reuses the same helpers and row builders as LIBRARY did.
 // Slice 4.4 (D123): the Technique rail replaces the phase bar in the header.
 // Phone: the current phase is split in three tabs (Checklist, Chop-builders, Phase test); the desktop shows all of it.
+// Slice 4.5d (D130): as drawn. Desktop: the rail sits in the progress card (status = phase name), no count beside the
+// title. Phone: a sticky 112 px header (title, "Beginner · n of N", rail), no progress card, and link rows to three
+// sub-pages (All phases, Essential Skills, Phase settings) with "‹ Technique" to come back (`ui.techSub`, page state
+// only, never saved). The desktop shows every part on the page as before.
 import { PHASES, CHOP, TESTCATS, ESSENTIAL, ESSENTIAL_URL, PREREQ, WARMUP_URL } from "../data/bhgs.js?v=1";
 import { DAY_FULL } from "../data/days.js?v=1";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=1";
 import { BHGS_PACK } from "../pack.js?v=1";
-import { k, phasePercent, itemKeysForPhase } from "../logic/technique.js?v=19";
-import { linked, checkItem, watchItem, prereqItem, chopRow, testRow } from "./components.js?v=19";
-import { pageHeader } from "./shell.js?v=3";
-import { renderRail, techniqueRail } from "./rails.js?v=5";
+import { k, phasePercent, itemKeysForPhase } from "../logic/technique.js?v=20";
+import { linked, checkItem, watchItem, prereqItem, chopRow, testRow } from "./components.js?v=20";
+import { pageHeader } from "./shell.js?v=4";
+import { renderRail, techniqueRail } from "./rails.js?v=6";
 
 export const TECH_TABS = [
   { id: "checklist", label: "Checklist" },
@@ -118,7 +122,8 @@ function allPhases(){
     var cur = i === state.phaseIndex, pct = phasePercent(i);
     var status = cur ? "Current · " + pct + "%" : (i < state.phaseIndex ? "Complete" : "");
     if(cur){
-      html += '<div class="tech-phase cur"><span class="tech-stage">Phase ' + i + '</span><span class="tech-plabel">' + p.label + ' <span class="u-muted">· ' + p.short + '</span></span><span class="tech-pstate">' + status + ' · shown above</span></div>';
+      // Slice 4.5d (D130): as drawn, every row has ›; the current one leads back to the current phase (page top).
+      html += '<button class="tech-phase cur" data-action="techsub" data-sub=""><span class="tech-stage">Phase ' + i + '</span><span class="tech-plabel">' + p.label + ' <span class="u-muted">· ' + p.short + '</span></span><span class="tech-pstate">' + status + '</span><span class="chev">&#8250;</span></button>';
       return;
     }
     var open = !!ui.lib["tp" + i];
@@ -158,14 +163,32 @@ function phaseSettings(){
   return html + '</div>';
 }
 
+export const TECH_SUBS = [
+  { id: "phases", label: "All phases", sub: "Setup to Pro" },
+  { id: "essentials", label: "Essential Skills", sub: "One a day, in DAILY" },
+  { id: "settings", label: "Phase settings", sub: "Change phase by hand", cls: "tech-link-dashed" }
+];
+
+// Phone sub-page frame: a back link to the main TECHNIQUE page (hidden on the desktop).
+function part(id, body){
+  return '<section class="tech-part tech-part-' + id + '" data-part="' + id + '">' +
+    '<button class="tech-back" data-action="techsub" data-sub="">\u2039 Technique</button>' + body + '</section>';
+}
+
 export function renderTechnique(){
   if(!BHGS_PACK) return '';
   var i = state.phaseIndex, cur = PHASES[i], pct = phasePercent(i), sum = phaseSummary(i);
   var tab = ui.techTab || "checklist";
-  var html = '<div class="tech-header">' + pageHeader('Pillar · BHGS Roadmap', 'Technique', '<span class="tech-sub">' + cur.label + ' · ' + sum.done + ' of ' + sum.total + '</span>') + renderRail(techniqueRail()) + '</div>';
+  var sub = ui.techSub || "";
+  var cardRail = techniqueRail();
+  cardRail.status = cur.label; // as drawn: the % sits next to the rail in the card
+  var html = '<div class="tech-page' + (sub ? ' tech-in-sub sub-' + sub : '') + '">';
+  html += '<div class="tech-header">' + pageHeader('Pillar · BHGS Roadmap', 'Technique', '<span class="tech-sub">' + cur.label + ' · ' + sum.done + ' of ' + sum.total + '</span>') + renderRail(techniqueRail()) + '</div>';
 
-  html += '<div class="tech-progress card"><div class="bignum">' + pct + '%</div><div class="tech-progress-txt"><b>Phase ' + i + ' · ' + cur.label + '</b><br>' +
-    sum.done + ' of ' + sum.total + ' done in this phase.' + (sum.left.length ? '<br>Left: ' + sum.left.join(" · ") + '.' : '') + '</div></div>';
+  html += '<div class="tech-main">';
+  html += '<div class="tech-progress card"><div class="tech-progress-rail">' + renderRail(cardRail) + '</div>' +
+    '<div class="tech-progress-num"><div class="bignum">' + pct + '%</div><div class="tech-progress-txt"><b>Phase ' + i + ' · ' + cur.label + '</b><br>' +
+    sum.done + ' of ' + sum.total + ' done in this phase.' + (sum.left.length ? '<br>Left: ' + sum.left.join(" · ") + '.' : '') + '</div></div></div>';
 
   html += '<div class="tech-tabs" role="tablist">' + TECH_TABS.map(function(t){
     var on = t.id === tab;
@@ -177,8 +200,15 @@ export function renderTechnique(){
     '<div class="tech-col"><div class="tech-sec-chops">' + chopCard(i) + '</div><div class="tech-sec-test">' + testCard(i) + '</div></div>' +
     '</div>';
 
-  html += allPhases();
-  html += '<div class="tech-section-title">Reference</div>' + essentialSkills();
-  html += phaseSettings();
-  return html;
+  // Phone link rows (hidden on the desktop).
+  html += '<div class="tech-links">' + TECH_SUBS.map(function(l){
+    return '<button class="tech-link' + (l.cls ? ' ' + l.cls : '') + '" data-action="techsub" data-sub="' + l.id + '">' +
+      '<span class="tech-link-text">' + l.label + ' <span class="u-muted">\u00b7 ' + l.sub + '</span></span><span class="tech-link-arrow" aria-hidden="true">\u203a</span></button>';
+  }).join("") + '</div>';
+  html += '</div>';
+
+  html += part("phases", allPhases());
+  html += part("essentials", '<div class="tech-section-title">Reference</div>' + essentialSkills());
+  html += part("settings", phaseSettings());
+  return html + '</div>';
 }
