@@ -10,11 +10,11 @@ import { DAY_FULL } from "../data/days.js?v=1";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=1";
 import { todayISO, todayName, isWeekendDay, activeDay } from "../logic/dates.js?v=7";
-import { k } from "../logic/technique.js?v=21";
-import { sessionPlan, isBlockPracticed } from "../logic/daily.js?v=21";
-import { pageHeader } from "./shell.js?v=5";
-import { linked, checkItem, prereqItem, docItem, chopRow, dayPicker, blk, getDailyActiveSequence } from "./components.js?v=21";
-import { renderDailySide } from "./daily-side.js?v=1";
+import { k } from "../logic/technique.js?v=22";
+import { sessionPlan, isBlockPracticed } from "../logic/daily.js?v=22";
+import { pageHeader } from "./shell.js?v=6";
+import { linked, checkItem, prereqItem, docItem, chopRow, dayPicker, blk, getDailyActiveSequence } from "./components.js?v=22";
+import { renderDailySide } from "./daily-side.js?v=2";
 
 // Header detail (D133 point 3): "n of N practiced · M min" on the active day; another day (read-only) shows the minutes only.
 function sessionCount(day, editable){
@@ -174,7 +174,8 @@ export function renderDaily(){
   var html=pageHeader(DAY_FULL[day]+' &middot; '+p.label,'Daily',sessionCount(day,editable));
   html+='<div class="daily-cols"><div class="daily-main">';
   html+=dayPicker(day);
-  html+=renderSession(day,editable);
+  // Slice 4.7b (D135): the session area is what follows the finger when swiping between days on the phone.
+  html+='<div class="daily-swipe">'+renderSession(day,editable)+'</div>';
   html+='</div>'+renderDailySide(day)+'</div>';
   return html;
 }
