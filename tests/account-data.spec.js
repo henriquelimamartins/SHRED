@@ -109,15 +109,15 @@ test.describe('desktop', () => {
 test.describe('phone', () => {
   test.skip(({ isMobile }) => !isMobile, 'phone layout');
 
+  // Slice 4.5b2 (D128): MORE is a page; its last group is Account & data.
   test('More has an "Account & data" group that opens the page; More shows as active there', async ({ page }) => {
     await openApp(page);
     const more = page.locator('#botnav [data-action="more"]');
     await more.click();
-    const groups = await labels(page.locator('#more-sheet .more-group'));
+    const groups = await labels(page.locator('#panel-more .more-group-title'));
     expect(groups[groups.length - 1]).toBe('Account & data');
-    await page.locator('#more-sheet [data-view="account"]').click();
+    await page.locator('#panel-more [data-row="sync"]').click();
     await expect(page.locator('#panel-account')).toHaveClass(/active/);
-    await expect(page.locator('#more-sheet')).not.toHaveClass(/open/);
     await expect(more).toHaveClass(/active/);
     // The bottom bar itself is unchanged.
     await expect(page.locator('#botnav [data-view="account"]')).toHaveCount(0);
@@ -126,13 +126,14 @@ test.describe('phone', () => {
   test('with the BHGS pack off, More still holds Account & data', async ({ page }) => {
     await openApp(page, { bhgsPack: false });
     await page.locator('#botnav [data-action="more"]').click();
-    await expect(page.locator('#more-sheet [data-view="account"]')).toBeVisible();
+    await expect(page.locator('#panel-more [data-view="account"]').first()).toBeVisible();
   });
 
-  test('Login is on the page; the top bar keeps its Login until slice 4.5b2 (D126 point 4)', async ({ page }) => {
+  test('Login is on the page and nowhere else on the phone (D125 point 4, D128)', async ({ page }) => {
     await openApp(page);
     const account = await accountPanel(page);
     await expect(account.locator('.account-auth')).toHaveText('Login');
-    await expect(page.locator('#authBtn')).toHaveCount(1);
+    await expect(page.locator('#authBtn')).toHaveCount(0);
+    await expect(page.getByRole('button', { name: /^(Login|Logout)$/ })).toHaveCount(1);
   });
 });

@@ -1,4 +1,4 @@
-// App shell pieces drawn on the 4.0 canvas (slice 4.5b, DECISIONS D125, D126):
+// App shell pieces drawn on the 4.0 canvas (slice 4.5b, DECISIONS D125, D126; phone bar icon "more" in 4.5b2, D128):
 // line icons, the page header, the desktop sidebar menu (headings, values, sub-items), the Today block and
 // the account row with the Google account photo and the real sync state. Showing any of these writes nothing.
 import { state, newerSchema } from "../store.js?v=5";
@@ -9,7 +9,7 @@ import { PHASES } from "../data/bhgs.js?v=1";
 import { IMPROV_GATES } from "../data/improv.js?v=1";
 import { DAY_FULL } from "../data/days.js?v=1";
 import { activeDay, totalStreak, currentStreak } from "../logic/dates.js?v=7";
-import { sessionPlan, isBlockPracticed } from "../logic/daily.js?v=17";
+import { sessionPlan, isBlockPracticed } from "../logic/daily.js?v=18";
 
 function esc(t){ return String(t).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]; }); }
 
@@ -25,7 +25,8 @@ const ICONS = {
   search: 'M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-4-4',
   person: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0',
   flame: 'M12 3c2 4 6 6 6 11a6 6 0 0 1-12 0c0-3 2-5 3-7 1 2 2 3 3 3 0-3-1-5 0-7z',
-  tick: 'M5 12l5 5 9-10'
+  tick: 'M5 12l5 5 9-10',
+  more: 'M5 12h.01M12 12h.01M19 12h.01'
 };
 export function icon(name, cls){
   return '<svg class="ico' + (cls ? ' ' + cls : '') + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + ICONS[name] + '"></path></svg>';

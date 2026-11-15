@@ -16,7 +16,7 @@ async function openView(page, view) {
   if (await btn.count()) await btn.click();
   else {
     await nav.locator('[data-action="more"]').click();
-    await page.locator(`#more-sheet [data-action="go"][data-view="${view}"]`).click();
+    await page.locator(`#panel-more [data-action="go"][data-view="${view}"]`).first().click();
   }
   await expect(page.locator(`#panel-${view}`)).toHaveClass(/active/);
 }
@@ -86,8 +86,8 @@ test('pack off: phone bar shows LIBRARY instead of keeping it in More (D119 poin
   const views = await page.locator('#botnav [data-action="go"]').evaluateAll((b) => b.map((x) => x.dataset.view));
   expect(views).toEqual(['home', 'daily', 'improv', 'dojo', 'library']);
   await page.locator('#botnav [data-action="more"]').click();
-  await expect(page.locator('#more-sheet [data-view="library"]')).toHaveCount(0);
-  await expect(page.locator('#more-sheet [data-view="setup"]')).toHaveCount(1);
+  await expect(page.locator('#panel-more [data-view="library"]')).toHaveCount(0);
+  await expect(page.locator('#panel-more [data-view="setup"]')).toHaveCount(1);
 });
 
 test('pack on (as in the app): phone bar has TECHNIQUE and keeps LIBRARY in More', async ({ page, isMobile }) => {
@@ -103,7 +103,7 @@ test('pack off: no TECHNIQUE destination anywhere and its page is empty (D113)',
   await expect(page.locator('#panel-technique')).toBeEmpty();
   const more = page.locator('#botnav [data-action="more"]');
   if (await more.isVisible()) await more.click();
-  await expect(page.locator('#more-sheet [data-view="technique"]')).toHaveCount(0);
+  await expect(page.locator('#panel-more [data-view="technique"]')).toHaveCount(0);
   expect(monitor.pageErrors).toEqual([]);
 });
 

@@ -24,7 +24,7 @@ async function goTo(page, view) {
   if (await btn.count()) await btn.click();
   else {
     await nav.locator('[data-action="more"]').click();
-    await page.locator(`#more-sheet [data-action="go"][data-view="${view}"]`).click();
+    await page.locator(`#panel-more [data-action="go"][data-view="${view}"]`).first().click();
   }
   await expect(page.locator(`#panel-${view}`)).toHaveClass(/active/);
 }

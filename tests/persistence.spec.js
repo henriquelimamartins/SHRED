@@ -121,10 +121,11 @@ test.describe('signed in', () => {
     expect((await localSaved(page)).testLevel.alt).toBe(4);
   });
 
-  test('topbar shows the account name and a Logout button', async ({ page }, testInfo) => {
+  // Slice 4.5b2 (D125 point 4, D128): the account name and Logout live on the Account & data page only.
+  test('the Account & data page shows the account name and a Logout button', async ({ page }, testInfo) => {
     await openApp(page, { user: TEST_USER, docs: { [USER_DOC]: progressState() } });
-    await expect(page.locator('#authBtn')).toHaveText('Logout');
-    await expect(page.locator('.user-email')).toHaveText('tester');
+    await expect(page.locator('#panel-account .account-auth')).toHaveText('Logout');
+    await expect(page.locator('#panel-account .account-name')).toHaveText('tester');
     await page.screenshot({ path: testInfo.outputPath('signed-in-home.png') });
   });
 

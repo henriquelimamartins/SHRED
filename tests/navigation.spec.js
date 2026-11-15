@@ -1,6 +1,7 @@
 // Slice 4.2a (DECISIONS D119, D117, D25, D114): the new navigation.
 // Desktop: sidebar = brand, Search, menu (Home, Daily, Improv, Theory, Library, Tools), account row; no top bar.
 // Phone: top bar (brand, search, login) and a bottom bar Home, Daily, Improv, Theory, More; More holds Library and Tools.
+// Slice 4.5b2 (D128): the phone top bar is gone (each page has its own header) and MORE is a page.
 // Slice 4.3 (D117, D122): TECHNIQUE joins: menu Home, Daily, Technique, Improv, Theory, Library, Tools; phone bar
 // Home, Daily, Technique, Improv, Theory, More. The phase bar is on HOME and at the top of the TECHNIQUE page. Firebase is stubbed; nothing leaves the machine.
 const { test, expect } = require('@playwright/test');
@@ -20,7 +21,7 @@ test.describe('desktop', () => {
     const monitor = await openApp(page);
     const sidebar = page.locator('#sidebar');
     await expect(sidebar).toBeVisible();
-    await expect(page.locator('#topbar')).toBeHidden();
+    await expect(page.locator('#topbar')).toHaveCount(0);
     await expect(page.locator('#botnav')).toBeHidden();
 
     expect(await labels(page.locator('#sidebar-nav-inner [data-action="go"] .side-label'))).toEqual(['Home', 'Daily', 'Technique', 'Improvisation', 'Theory', 'Library', 'Tools']); // D123: full name where there is room
@@ -63,28 +64,25 @@ test.describe('desktop', () => {
 test.describe('phone', () => {
   test.skip(({ isMobile }) => !isMobile, 'phone layout');
 
-  test('bottom bar is Home, Daily, Technique, Improv, Theory, More; the sidebar is hidden', async ({ page }) => {
+  // Slice 4.5b2 (D128): no shared top bar; MORE is a page.
+  test('bottom bar is Home, Daily, Technique, Improv, Theory, More; no sidebar and no shared top bar', async ({ page }) => {
     const monitor = await openApp(page);
     await expect(page.locator('#sidebar')).toBeHidden();
-    await expect(page.locator('#topbar')).toBeVisible();
+    await expect(page.locator('#topbar')).toHaveCount(0);
     expect(await labels(page.locator('#botnav button'))).toEqual(['Home', 'Daily', 'Technique', 'Improv', 'Theory', 'More']);
-    await expect(page.locator('#more-sheet')).not.toHaveClass(/open/);
     expect(monitor.pageErrors).toEqual([]);
   });
 
-  test('More opens a sheet with Library, Tools and Account & data; choosing one opens it and closes the sheet', async ({ page }) => {
+  test('More opens the MORE page; its rows open Library and Tools; More stays active there', async ({ page }) => {
     await openApp(page);
     const more = page.locator('#botnav [data-action="more"]');
     await more.click();
-    await expect(page.locator('#more-sheet')).toHaveClass(/open/);
-    await expect(more).toHaveAttribute('aria-expanded', 'true');
-    // Slice 4.5a (D124): Account & data joins More.
-    expect(await labels(page.locator('#more-sheet .more-group'))).toEqual(['Resources', 'Tools', 'Account  data']); // labels() keeps letters and spaces only
-    expect(await labels(page.locator('#more-sheet .more-item'))).toEqual(['Library', 'Setup', 'Account  data']);
+    await expect(page.locator('#panel-more')).toHaveClass(/active/);
+    await expect(more).toHaveClass(/active/);
+    expect(await labels(page.locator('#panel-more .more-group-title'))).toEqual(['Resources', 'Tools', 'Account  data']); // labels() keeps letters and spaces only
 
-    await page.locator('#more-sheet [data-view="setup"]').click();
+    await page.locator('#panel-more [data-view="setup"]').click();
     await expect(page.locator('#panel-setup')).toHaveClass(/active/);
-    await expect(page.locator('#more-sheet')).not.toHaveClass(/open/);
     await expect(more).toHaveClass(/active/);
 
     await page.locator('#botnav [data-view="daily"]').click();
@@ -92,30 +90,16 @@ test.describe('phone', () => {
     await expect(more).not.toHaveClass(/active/);
   });
 
-  test('tapping outside the sheet or More again closes it without changing page', async ({ page }) => {
-    await openApp(page);
-    const more = page.locator('#botnav [data-action="more"]');
-    await more.click();
-    await page.locator('#more-sheet .more-backdrop').click({ position: { x: 20, y: 20 } });
-    await expect(page.locator('#more-sheet')).not.toHaveClass(/open/);
-    await more.click();
-    await expect(page.locator('#more-sheet')).toHaveClass(/open/);
-    await more.click();
-    await expect(page.locator('#more-sheet')).not.toHaveClass(/open/);
-    await expect(page.locator('#panel-home')).toHaveClass(/active/);
-  });
-
   test('page header is at most 120 px (D112)', async ({ page }) => {
     await openApp(page, { localState: progressState({ phaseIndex: 1 }) });
-    const h = await page.locator('#topbar').evaluate((el) => el.getBoundingClientRect().height);
-    expect(h).toBeLessThanOrEqual(120);
+    const h = await page.locator('#panel-home .home-phone-head').evaluate((el) => el.getBoundingClientRect().height);
+    expect(h).toBeLessThanOrEqual(110); // 10 px margin for the real web fonts (CHECKPOINT test note, slice 4.4)
   });
 });
 
 // Slice 4.4 (D123): the Technique rail replaced the 5-segment phase bar; rails.spec.js covers the rails in detail.
 test('the Technique rail is on HOME and the TECHNIQUE page (D25, D117), not in the page body elsewhere', async ({ page }) => {
   await openApp(page, { localState: progressState({ phaseIndex: 1 }) });
-  await expect(page.locator('#topbar [data-rail]')).toHaveCount(0);
   await expect(page.locator('#panel-home [data-rail="technique"]')).toHaveCount(1);
   await expect(page.locator('#panel-home [data-rail="technique"] .rail-node')).toHaveCount(5);
   await expect(page.locator('#panel-technique [data-rail="technique"]')).toHaveCount(1);
@@ -132,7 +116,7 @@ test('navigating changes nothing in the saved data and writes nothing to the clo
     const nav = page.locator('#botnav:visible, #sidebar-nav-inner:visible').first();
     const btn = nav.locator(`[data-action="go"][data-view="${v}"]`);
     if (await btn.count()) await btn.click();
-    else { await nav.locator('[data-action="more"]').click(); await page.locator(`#more-sheet [data-view="${v}"]`).click(); }
+    else { await nav.locator('[data-action="more"]').click(); await page.locator(`#panel-more [data-view="${v}"]`).click(); }
     await expect(page.locator(`#panel-${v}`)).toHaveClass(/active/);
   }
   expect(await page.evaluate(() => localStorage.getItem('shredRoadmapState_v10'))).toBe(before);
