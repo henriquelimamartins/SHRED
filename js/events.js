@@ -22,12 +22,13 @@ import { CODEX_DATA } from "./data/dojo.js?v=1";
 import { defaultState, defaultDojoState, saveState, state, replaceState, backupBeforeReplace, migrate, newerSchema, NEWER_SCHEMA_MSG } from "./store.js?v=5";
 import { hasFirebase, auth, db, googleProvider, currentUser, cloudReady, cloudReadFailed, CLOUD_READ_FAILED_MSG, requestCloudWrite, loadFromCloud, signInWithPopup, signOut } from "./firebase.js?v=5";
 import { ui, showToast } from "./ui.js?v=1";
-import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=21";
-import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=21";
-import { changeCalMonth } from "./views/calendar.js?v=21";
-import { currentMinigame, addXP, startArchitectGame, handleDojoAnswer, renderCodexList } from "./views/dojo.js?v=13";
-import { updateNav, render, updateAccountRow } from "./render.js?v=21";
-import { SUB_ITEMS } from "./views/shell.js?v=5";
+import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=22";
+import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=22";
+import { changeCalMonth } from "./views/calendar.js?v=22";
+import { currentMinigame, addXP, startArchitectGame, handleDojoAnswer, renderCodexList } from "./views/dojo.js?v=14";
+import { updateNav, render, updateAccountRow } from "./render.js?v=22";
+import { SUB_ITEMS } from "./views/shell.js?v=6";
+import { initDailySwipe } from "./views/daily-swipe.js?v=1";
 import { buildBackupFile, backupFileName, listDeviceBackups, parseBackupFile, isNewerCopy, restoredState, formatLocalTime, reasonLabel, MAX_BACKUP_FILE_BYTES, INVALID_BACKUP_MSG, NEWER_BACKUP_MSG } from "./logic/backup.js?v=2";
 
 export function handleReset(){ ui.resetConfirm=true; render(); }
@@ -152,6 +153,9 @@ export function confirmRestore(){
   saveState();
   close(pick.at ? "Progress restored from " + formatLocalTime(pick.at) + ". Your previous progress was backed up on this device." : "Progress restored from the file. Your previous progress was backed up on this device.");
 }
+
+// Slice 4.7b (D135): swipe between days on DAILY (phone).
+initDailySwipe();
 
 // Calendar carousel scroll listener for fluid swiping and month preview
 document.addEventListener("scroll", function(e) {

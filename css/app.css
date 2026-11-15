@@ -912,3 +912,15 @@ button.tech-phase{width:100%;text-align:left;color:var(--text);font:inherit;curs
 .kc-deg.root{background:var(--purple-bg);}
 .kc-num{font-family:var(--font-head);font-size:var(--fs-base);letter-spacing:.04em;color:var(--purple-tint);}
 .kc-chord{font-size:var(--fs-sm);color:var(--text-2);}
+
+/* ---------- DAILY swipe between days on the phone (slice 4.7b, D135) ---------- */
+@media (max-width: 767px){
+  .daily-swipe{touch-action:pan-y pinch-zoom;display:flex;flex-direction:column;gap:14px;}
+  #panel-daily .daily-main{overflow-x:clip;} /* the sliding session never widens the page */
+  .daily-swipe.swipe-in-next{animation:daily-in-next 180ms ease-out;}
+  .daily-swipe.swipe-in-prev{animation:daily-in-prev 180ms ease-out;}
+}
+@media (min-width: 768px){ .daily-swipe{display:flex;flex-direction:column;gap:16px;} }
+@keyframes daily-in-next{ from{transform:translateX(40%);opacity:.3;} to{transform:none;opacity:1;} }
+@keyframes daily-in-prev{ from{transform:translateX(-40%);opacity:.3;} to{transform:none;opacity:1;} }
+@media (prefers-reduced-motion: reduce){ .daily-swipe.swipe-in-next, .daily-swipe.swipe-in-prev{animation:none;} }
