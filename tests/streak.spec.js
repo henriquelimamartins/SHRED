@@ -31,8 +31,10 @@ async function goTo(page, view) {
 
 async function streakOnHome(page) {
   return {
-    logged: await home(page).locator('.statrow .stat').nth(1).locator('.bignum').textContent(),
-    tag: await home(page).locator('.card', { hasText: 'Consistency Grid' }).locator('h3 .tag').textContent(),
+    // Slice 4.5c (D129): the streak sits in the HOME header ("N days in a row · M logged"); the values are read
+    // from there and kept in the old shape, so the expected values below are unchanged.
+    logged: '\u{1F525}' + await home(page).locator('.home-streak .streak-logged').textContent(),
+    tag: `You've practiced ${await home(page).locator('.home-streak .streak-run').textContent()} days in a row!`.replace(/^You've practiced 1 days/, "You've practiced 1 day"),
   };
 }
 

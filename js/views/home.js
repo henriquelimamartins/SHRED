@@ -1,4 +1,10 @@
 // HOME view.
+// Slice 4.5c (D117 point 2, D124 point 3, D127 point 2, D129): HOME as drawn. Header with the streak (desktop:
+// "N days in a row · M logged"; phone: the 4.5b2 header); the Progress card with the rails (phone only, D127);
+// Today's session read-only (blocks, state and minutes from DAILY; CONTINUE SESSION opens DAILY, the only place
+// to tick); the calendar as drawn (month title, ‹ ›, Today only on another month, full month on the phone);
+// Today's Improv (current Gate and the key of the day, as on IMPROV). Desktop: two columns. The shortcut
+// buttons, the stat row and the "Consistency Grid" card leave. Showing HOME writes nothing.
 // Slice 4.5b2 (D126 point 1, D128): on the phone HOME has its own header as drawn (brand, date, streak) instead of the
 // shared top bar; the desktop keeps the page header. The Explorer icon of the board comes with the Explorer (Phase 5).
 // Slice 4.5b (D125, D126): the drawn page header (muted eyebrow + large title).
@@ -12,45 +18,72 @@
 // shortcut joins the HOME buttons (BHGS pack on); the Library shortcut names what LIBRARY now holds.
 // Slice 4.2a (D119, D25): the Technique phase bar sits at the top of HOME instead of the top of every page.
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
-import { PHASES } from "../data/bhgs.js?v=1";
 import { state } from "../store.js?v=5";
-import { BHGS_PACK } from "../pack.js?v=1";
 import { totalStreak, currentStreak } from "../logic/dates.js?v=7";
-import { phasePercent } from "../logic/technique.js?v=18";
-import { renderRails } from "./rails.js?v=4";
-import { pageHeader, icon } from "./shell.js?v=2";
+import { renderRails } from "./rails.js?v=5";
+import { pageHeader, icon } from "./shell.js?v=3";
 import { DAY_FULL } from "../data/days.js?v=1";
-import { todayName } from "../logic/dates.js?v=7";
-import { renderStreakCalendar } from "./calendar.js?v=18";
+import { todayName, activeDay } from "../logic/dates.js?v=7";
+import { renderStreakCalendar } from "./calendar.js?v=19";
+
+import { IMPROV_GATES } from "../data/improv.js?v=1";
+import { sessionPlan, isBlockPracticed } from "../logic/daily.js?v=19";
+import { improvKeyOfDay } from "./improv.js?v=11";
+
+function esc(t){ return String(t).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]; }); }
+
+// Today's session, read-only: the blocks of the active DAILY day with their Practiced state (D124 point 3).
+function todaySession(){
+  var day = activeDay();
+  var plan = sessionPlan(day, state.phaseIndex);
+  var done = 0, mins = 0;
+  var rows = plan.map(function(b){
+    var on = isBlockPracticed(b.name, day);
+    if(on) done++;
+    if(b.min) mins += b.min;
+    return '<div class="hs-row' + (on ? ' done' : '') + '" data-block="' + b.name + '">' +
+      '<span class="hs-box' + (on ? ' on' : '') + '">' + (on ? icon("tick") : '') + '</span>' +
+      '<span class="hs-title">' + esc(b.title) + '</span>' + (b.min ? '<span class="hs-min">' + b.min + '\u2032</span>' : '') + '</div>';
+  }).join("");
+  var meta = done + ' of ' + plan.length + (mins ? ' \u00b7 ' + mins + ' min' : '');
+  return '<section class="card home-session" aria-label="Today\'s session"><div class="home-card-head"><h2 class="home-card-title">Today\'s session</h2>' +
+    '<span class="home-card-meta">' + meta + '</span></div>' + rows +
+    '<button class="home-continue" data-action="go" data-view="daily">Continue session</button></section>';
+}
+
+// Today's Improv: the current Gate and the key of the day, the same values the IMPROV page shows.
+function todayImprov(){
+  var allDone = state.improvIndex >= IMPROV_GATES.length;
+  var title = allDone ? 'All ' + IMPROV_GATES.length + ' Gates complete'
+    : 'Gate ' + (state.improvIndex + 1) + ' \u00b7 ' + IMPROV_GATES[state.improvIndex].title;
+  var key = improvKeyOfDay();
+  return '<button class="card home-link home-improv" data-action="go" data-view="improv">' +
+    '<span class="home-link-text"><span class="home-link-label">Today\'s Improv</span>' +
+    '<span class="home-link-title">' + esc(title) + '</span>' +
+    (allDone ? '' : '<span class="home-link-sub">Today\'s key: ' + esc(key.k) + ' (' + esc(key.t) + ')</span>') + '</span>' +
+    '<span class="home-link-arrow" aria-hidden="true">\u203a</span></button>';
+}
 
 /* ---------- views ---------- */
 export function renderHome(){
-  var cur=PHASES[state.phaseIndex],pct=phasePercent(state.phaseIndex);
-  // Slice 4.4 (D123): the pillar rails replace the phase bar at the top of HOME (with the pack off: Improv and Theory).
   var now=new Date(), MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   var dateLine=DAY_FULL[todayName()]+' \u00b7 '+now.getDate()+' '+MON[now.getMonth()];
-  var streak=currentStreak();
+  var streak=currentStreak(), logged=totalStreak();
+  // Phone header (slice 4.5b2, D128).
   var html='<header class="home-phone-head"><div class="home-phone-brand"><div class="brand home-brand">THE <span>SHRED</span> <small>ROADMAP</small></div>'+
     '<div class="home-date">'+dateLine+'</div></div>'+
     '<div class="streak-pill" aria-label="'+streak+'-day streak">'+icon("flame")+'<strong>'+streak+'</strong></div></header>';
-  html+=pageHeader(dateLine,'Home');
+  // Desktop header: the streak on the right (D129).
+  var streakLine='<span class="home-streak">'+icon("flame")+'<strong class="streak-run">'+streak+'</strong> '+(streak===1?'day':'days')+' in a row \u00b7 <span class="streak-logged">'+logged+'</span> logged</span>';
+  html+=pageHeader(dateLine,'Home',streakLine);
   // D127 (owner): on desktop the rails live only in the sidebar; the Progress card shows on the phone.
   html+='<div class="card home-progress"><h3>Progress</h3>'+renderRails('home')+'</div>';
-  html+='<div class="eyebrow">Daily Practice System</div>';
-  
-  html+='<div class="statrow">'+(BHGS_PACK?'<div class="stat"><div class="bignum">'+pct+'%</div><div class="lbl">'+cur.label+'</div></div>':'')+
-    '<div class="stat"><div class="bignum">\ud83d\udd25'+totalStreak()+'</div><div class="lbl">Days Logged</div></div></div>';
-    
-  var streakText = currentStreak() === 1 ? "You've practiced 1 day in a row!" : "You've practiced " + currentStreak() + " days in a row!";
-  html+='<div class="card"><h3>Consistency Grid <span class="tag">'+streakText+'</span></h3>';
-  html+=renderStreakCalendar();
-  html+='</div>';
 
-  html+='<button class="navbtn accent" data-action="go" data-view="daily"><div class="ic">\ud83c\udfaf</div><div><b>Daily Practice</b><span>Structured session, any day you pick</span></div></button>';
-  if(BHGS_PACK) html+='<button class="navbtn techbtn" data-action="go" data-view="technique"><div class="ic">\ud83d\udd25</div><div><b>Technique Roadmap</b><span>Current phase, chop-builders &amp; Phase Transition Test</span></div></button>';
-  html+='<button class="navbtn purple" data-action="go" data-view="improv"><div class="ic">\ud83e\udde0</div><div><b>Improvisation Masterclass</b><span>The 5 Gates of Freedom</span></div></button>';
-  html+='<button class="navbtn" data-action="go" data-view="library"><div class="ic">\ud83d\udcda</div><div><b>Library &amp; Info</b><span>'+(BHGS_PACK?'Theory Track, Expression Track, Listening Vault & more':'Expression Track, Listening Vault & guide')+'</span></div></button>';
-  html+='<button class="navbtn setupbtn" data-action="go" data-view="setup"><div class="ic">\ud83d\udee0\ufe0f</div><div><b>Setup Companion</b><span>Optimize your gear for shredding</span></div></button>';
-
+  html+='<div class="home-cols"><div class="home-col">';
+  html+=todaySession();
+  html+='<section class="card home-calendar" aria-label="Practice calendar">'+renderStreakCalendar()+'</section>';
+  html+='</div><div class="home-col">';
+  html+=todayImprov();
+  html+='</div></div>';
   return html;
 }

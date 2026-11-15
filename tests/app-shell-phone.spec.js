@@ -66,9 +66,9 @@ test.describe('phone', () => {
     await expect(head.locator('.home-brand')).toHaveText(/THE\s+SHRED\s+ROADMAP/);
     await expect(head.locator('.home-date')).toHaveText('Tuesday · 10 Nov');
     await expect(head.locator('.home-date')).toHaveCSS('text-transform', 'uppercase');
-    // The pill shows the same streak as the HOME consistency card.
-    const cardText = await page.locator('#panel-home .tag').first().textContent();
-    const streak = cardText.match(/(\d+) days? in a row/)[1];
+    // The pill shows the same streak as the HOME header line (desktop) and the consistency of the streak dates.
+    const streak = await page.locator('#panel-home .home-streak .streak-run').textContent();
+    expect(streak).toBe('3');
     await expect(head.locator('.streak-pill strong')).toHaveText(streak);
     await expect(head.locator('.streak-pill')).toHaveAttribute('aria-label', `${streak}-day streak`);
     await expect(page.locator('#panel-home .page-head')).toBeHidden();

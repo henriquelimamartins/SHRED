@@ -206,7 +206,7 @@ test.describe('restore from this device (signed out)', () => {
     expect(saved.syncRev).toBeUndefined(); // the current state had none; the copy's old one is not taken
     // The panel is closed and the app shows the restored progress.
     await expect((await accountPanel(page)).locator('[data-action="openrestore"]')).toBeVisible();
-    await expect(page.locator('#panel-home .bignum').nth(1)).toHaveText(/5$/); // Days Logged (HOME)
+    await expect(page.locator('#panel-home .home-streak .streak-logged')).toHaveText('5'); // days logged (HOME header, 4.5c)
     // The previous progress is in a new backup.
     const list = await backups(page);
     expect(list).toHaveLength(SNAPSHOTS.length + 1);

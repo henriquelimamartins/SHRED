@@ -7,9 +7,9 @@ import { DAY_FULL } from "../data/days.js?v=1";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=1";
 import { todayISO, todayName, isWeekendDay, activeDay } from "../logic/dates.js?v=7";
-import { k } from "../logic/technique.js?v=18";
-import { pageHeader } from "./shell.js?v=2";
-import { linked, checkItem, prereqItem, docItem, chopRow, dayPicker, blk, getDailyActiveSequence } from "./components.js?v=18";
+import { k } from "../logic/technique.js?v=19";
+import { pageHeader } from "./shell.js?v=3";
+import { linked, checkItem, prereqItem, docItem, chopRow, dayPicker, blk, getDailyActiveSequence } from "./components.js?v=19";
 
 export function renderDaily(){
   var idx=state.phaseIndex,p=PHASES[idx];

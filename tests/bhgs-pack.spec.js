@@ -54,12 +54,12 @@ test('pack off: HOME hides the Technique rail, phase %, Phase Transition Test an
   const home = page.locator('#panel-home');
   await expect(home.locator('[data-rail="technique"]')).toHaveCount(0);
   await expect(home.locator('[data-rail]')).toHaveCount(2); // Improv and Theory
-  await expect(home.locator('.statrow .stat')).toHaveCount(1);
-  await expect(home.locator('.statrow .stat .lbl')).toHaveText('Days Logged');
+  await expect(home.locator('.home-streak .streak-logged')).toHaveText('3'); // slice 4.5c: streak in the header, no % stat
   await expect(home.locator('[data-action="setphase"]')).toHaveCount(0);
   await expect(home.locator('[data-view="technique"]')).toHaveCount(0);
   await expect(home.locator('.s-day').first()).toBeVisible();
-  await expect(home.locator('[data-action="go"][data-view="library"]')).toContainText('Expression Track, Listening Vault & guide');
+  await expect(home.locator('.home-session')).toBeAttached(); // Today's session and Today's Improv stay (4.5c)
+  await expect(home.locator('.home-improv')).toBeAttached();
 });
 
 test('pack off: LIBRARY keeps Expression Track, Listening Vault and the guide, with a pack-free guide text', async ({ page }) => {

@@ -11,10 +11,10 @@ import { DAY_FULL } from "../data/days.js?v=1";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=1";
 import { BHGS_PACK } from "../pack.js?v=1";
-import { k, phasePercent, itemKeysForPhase } from "../logic/technique.js?v=18";
-import { linked, checkItem, watchItem, prereqItem, chopRow, testRow } from "./components.js?v=18";
-import { pageHeader } from "./shell.js?v=2";
-import { renderRail, techniqueRail } from "./rails.js?v=4";
+import { k, phasePercent, itemKeysForPhase } from "../logic/technique.js?v=19";
+import { linked, checkItem, watchItem, prereqItem, chopRow, testRow } from "./components.js?v=19";
+import { pageHeader } from "./shell.js?v=3";
+import { renderRail, techniqueRail } from "./rails.js?v=5";
 
 export const TECH_TABS = [
   { id: "checklist", label: "Checklist" },

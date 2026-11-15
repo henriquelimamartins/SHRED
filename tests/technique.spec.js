@@ -13,9 +13,14 @@ const home = (page) => page.locator('#panel-home');
 const library = (page) => page.locator('#panel-library');
 const technique = (page) => page.locator('#panel-technique');
 
+// Slice 4.5c (D127 point 2): the phase % left HOME; the same % and phase name are read from the TECHNIQUE page
+// (rendered on every change, also when not open), with the same expected values.
 async function homePhaseStat(page) {
-  const stat = home(page).locator('.statrow .stat').first();
-  return { pct: await stat.locator('.bignum').textContent(), label: await stat.locator('.lbl').textContent() };
+  const t = page.locator('#panel-technique');
+  return {
+    pct: await t.locator('.tech-progress .bignum').textContent(),
+    label: (await t.locator('.tech-sub').textContent()).split(' · ')[0],
+  };
 }
 
 /**
