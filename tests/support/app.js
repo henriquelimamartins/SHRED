@@ -156,4 +156,16 @@ async function bumpTest(page, key = 'alt', d = 1) {
   if (back !== 'technique') await openView(page, back);
 }
 
-module.exports = { openApp, unexpectedConsoleErrors, cloudWrites, localSaved, settle, openView, accountPanel, testStepper, bumpTest, STORAGE_KEY, DEFAULT_NOW };
+/**
+ * Slice 4.5d (D130): on the phone, All phases, Essential Skills and Phase settings of TECHNIQUE are sub-pages opened
+ * from link rows ("phases", "essentials", "settings"). On the desktop every part is on the page, so this does nothing.
+ */
+async function techPart(page, part) {
+  if ((page.viewportSize() || {}).width >= 768) return;
+  const back = page.locator('#panel-technique .tech-back:visible');
+  if (await back.count()) { await back.first().click(); await settle(page); } // from another sub-page
+  const row = page.locator(`#panel-technique .tech-links [data-sub="${part}"]`);
+  if (await row.isVisible()) { await row.click(); await settle(page); }
+}
+
+module.exports = { openApp, unexpectedConsoleErrors, cloudWrites, localSaved, settle, openView, accountPanel, testStepper, bumpTest, techPart, STORAGE_KEY, DEFAULT_NOW };

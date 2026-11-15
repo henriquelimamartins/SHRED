@@ -10,8 +10,8 @@ import { LISTENING_VAULT } from "../data/listening.js?v=1";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=1";
 import { BHGS_PACK } from "../pack.js?v=1";
-import { pageHeader } from "./shell.js?v=3";
-import { watchItem, docItem, renderBonusList } from "./components.js?v=19";
+import { pageHeader } from "./shell.js?v=4";
+import { watchItem, docItem, renderBonusList } from "./components.js?v=20";
 
 export function renderLibrary(){
   var html=pageHeader('Reference &amp; Review','Library');

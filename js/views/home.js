@@ -20,15 +20,15 @@
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
 import { state } from "../store.js?v=5";
 import { totalStreak, currentStreak } from "../logic/dates.js?v=7";
-import { renderRails } from "./rails.js?v=5";
-import { pageHeader, icon } from "./shell.js?v=3";
+import { renderRails } from "./rails.js?v=6";
+import { pageHeader, icon } from "./shell.js?v=4";
 import { DAY_FULL } from "../data/days.js?v=1";
 import { todayName, activeDay } from "../logic/dates.js?v=7";
-import { renderStreakCalendar } from "./calendar.js?v=19";
+import { renderStreakCalendar } from "./calendar.js?v=20";
 
 import { IMPROV_GATES } from "../data/improv.js?v=1";
-import { sessionPlan, isBlockPracticed } from "../logic/daily.js?v=19";
-import { improvKeyOfDay } from "./improv.js?v=11";
+import { sessionPlan, isBlockPracticed } from "../logic/daily.js?v=20";
+import { improvKeyOfDay } from "./improv.js?v=12";
 
 function esc(t){ return String(t).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]; }); }
 

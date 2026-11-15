@@ -6,7 +6,7 @@
 // - Small coloured text uses the light tints; filled buttons use the filled colours (D117 point 8).
 // - The main text colour pairs meet WCAG AA contrast (4.5:1).
 const { test, expect } = require('@playwright/test');
-const { openApp, settle } = require('./support/app');
+const { openApp, settle, techPart } = require('./support/app');
 const { progressState } = require('./support/fixtures');
 
 const TOKENS = {
@@ -105,8 +105,10 @@ test('no inline style attributes in any view or panel', async ({ page }) => {
   await goTo(page, 'setup'); await check('setup');
   // Slice 4.3: the TECHNIQUE page, with another phase, Essential Skills and Phase settings open.
   await goTo(page, 'technique'); await check('technique');
-  await click(page, '#panel-technique [data-acc="tp2"]'); await click(page, '#panel-technique [data-acc="techessentials"]');
-  await click(page, '#panel-technique [data-action="phasesettings"]'); await check('technique-open');
+  // Slice 4.5d: on the phone these parts are sub-pages, each checked on its own.
+  await techPart(page, 'phases'); await click(page, '#panel-technique [data-acc="tp2"]'); await check('technique: phases');
+  await techPart(page, 'essentials'); await click(page, '#panel-technique [data-acc="techessentials"]'); await check('technique: essentials');
+  await techPart(page, 'settings'); await click(page, '#panel-technique [data-action="phasesettings"]'); await check('technique-open');
 
   for (const [name, bad] of Object.entries(seen)) expect(bad, name).toEqual([]);
 });
