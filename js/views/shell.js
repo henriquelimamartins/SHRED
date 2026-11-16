@@ -9,7 +9,7 @@ import { PHASES } from "../data/bhgs.js?v=1";
 import { IMPROV_GATES } from "../data/improv.js?v=1";
 import { DAY_FULL } from "../data/days.js?v=1";
 import { activeDay, totalStreak, currentStreak } from "../logic/dates.js?v=7";
-import { sessionPlan, isBlockPracticed } from "../logic/daily.js?v=24";
+import { sessionPlan, isBlockPracticed } from "../logic/daily.js?v=25";
 
 function esc(t){ return String(t).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]; }); }
 
@@ -30,6 +30,12 @@ const ICONS = {
 };
 export function icon(name, cls){
   return '<svg class="ico' + (cls ? ' ' + cls : '') + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + ICONS[name] + '"></path></svg>';
+}
+
+// Phone only (CSS): "‹ More" back to MORE, for pages reached from MORE (LIBRARY with the BHGS pack, TOOLS).
+// Slice 4.8a drew it in LIBRARY; 4.8b moved it here so TOOLS uses the same link (D137).
+export function backToMore(){
+  return '<button type="button" class="page-back" data-action="more"><svg class="ico page-back-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg>More</button>';
 }
 
 // Page header as drawn: muted eyebrow + large title, optional detail on the right.

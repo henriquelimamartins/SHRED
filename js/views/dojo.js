@@ -6,8 +6,8 @@
 import { DOJO_LEVELS, CODEX_DATA, HARMONIC_QUESTIONS } from "../data/dojo.js?v=1";
 import { saveState, state } from "../store.js?v=5";
 import { showToast } from "../ui.js?v=1";
-import { pageHeader } from "./shell.js?v=8";
-import { renderRail, theoryRail } from "./rails.js?v=10";
+import { pageHeader } from "./shell.js?v=9";
+import { renderRail, theoryRail } from "./rails.js?v=11";
 
 // --- THEORY DOJO LOGIC ---
 

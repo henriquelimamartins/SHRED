@@ -1,6 +1,9 @@
 // Phase 1.5: SETUP companion as it behaves on main TODAY. SETUP is protected (project rules):
 // the stored choices (setupGuitar, setupTuning) and the measurements shown must not change silently.
 // Tests named "current behaviour:" document known problems on purpose.
+// Slice 4.8b (D138): the page as drawn. The measurements are tiles ({ label: "value sub" }), the steps a numbered
+// list (titles without the number), and the note names the chosen guitar, tuning and scale (its `current behaviour`
+// test is replaced by the fixed version). Stored values and every number shown are unchanged.
 const { test, expect } = require('@playwright/test');
 const { openApp, localSaved, cloudWrites, unexpectedConsoleErrors } = require('./support/app');
 const { baseState, TEST_USER, USER_DOC } = require('./support/fixtures');
@@ -21,20 +24,17 @@ async function goTo(page, view) {
   await expect(page.locator(`#panel-${view}`)).toHaveClass(/active/);
 }
 
-/** The "Recommended Measurements" table as { Adjustment: Target }. */
+/** The "Recommended Measurements" tiles as { Label: "value sub" }. */
 async function measurements(page) {
-  const rows = setup(page).locator('.card', { hasText: 'Recommended Measurements' }).locator('tr');
-  const out = {};
-  for (const r of await rows.all()) {
-    const cells = await r.locator('td').allTextContents();
-    if (cells.length === 2) out[cells[0]] = cells[1];
-  }
-  return out;
+  return setup(page).locator('.setup-tile').evaluateAll((ts) => Object.fromEntries(ts.map((t) => [
+    t.querySelector('.setup-tile-label').textContent,
+    t.querySelector('.setup-tile-val').textContent + ' ' + t.querySelector('.setup-tile-sub').textContent,
+  ])));
 }
 
-const stepTitles = (page) => setup(page).locator('.card h3').allTextContents();
+const stepTitles = (page) => setup(page).locator('.setup-step-title').allTextContents();
 
-test('default: PRS, E Standard, 8 steps including the tremolo float', async ({ page }, testInfo) => {
+test('default: PRS, E Standard, 7 steps including the tremolo float', async ({ page }, testInfo) => {
   const monitor = await openApp(page);
   await goTo(page, 'setup');
   await expect(guitarSelect(page)).toHaveValue('prs');
@@ -43,21 +43,21 @@ test('default: PRS, E Standard, 8 steps including the tremolo float', async ({ p
   expect(await tuningSelect(page).locator('option').allTextContents())
     .toEqual(['E Standard', 'Drop D', 'D Standard', 'Drop C', 'C Standard', 'DADFAE']);
   expect(await measurements(page)).toEqual({
-    'String Gauge': '0.010" - 0.046" (10-46)',
-    'Tremolo Float': '1.6 mm (1/16") off body',
+    'String Gauge': '10-46 0.010" - 0.046"',
+    'Tremolo Float': '1.6 mm 1/16" off body',
     'Neck Relief': '0.15 mm at 8th fret',
-    'String Action (Low E)': '1.5 mm at 12th fret',
-    'String Action (High E)': '1.1 mm at 12th fret',
-    'Pickup Height (Neck)': '2.5 mm to string',
-    'Pickup Height (Bridge)': '1.5 mm to string',
+    'Action · Low E': '1.5 mm at 12th fret',
+    'Action · High E': '1.1 mm at 12th fret',
+    'Pickup · Neck': '2.5 mm to string',
+    'Pickup · Bridge': '1.5 mm to string',
   });
+  // Slice 4.8b (D138): step texts rewritten with the owner; nut lubrication joined step 1.
   expect(await stepTitles(page)).toEqual([
-    'Recommended Measurements', '1. Strip and Clean', '2. Restring and Stretch', '3. Set the Tremolo Float',
-    '4. Adjust Neck Relief (Truss Rod)', '5. Lower the String Action', '6. Lubricate the Nut',
-    '7. Set Intonation', '8. Adjust Pickup Height',
+    'Remove Strings and Clean', 'Restring and Stretch', 'Set the Tremolo Float',
+    'Adjust Neck Relief (Truss Rod)', 'Set the String Action', 'Set Intonation', 'Adjust Pickup Height',
   ]);
-  await expect(setup(page)).toContainText('Fret the highest note (24th fret)');
-  await expect(setup(page)).toContainText('1.1 - 1.2 mm at the 12th fret');
+  await expect(setup(page)).toContainText('at the last fret (24th)');
+  await expect(setup(page)).toContainText('the High E to 1.1 - 1.2 mm');
   await expect(setup(page).locator('button', { hasText: 'Official PRS Setup Guide' })).toBeVisible();
   await page.screenshot({ path: testInfo.outputPath('setup-prs.png'), fullPage: true });
   expect(unexpectedConsoleErrors(monitor)).toEqual([]);
@@ -71,12 +71,13 @@ test('Les Paul: no tremolo row or step, 22nd fret, Les Paul video; choice stored
   expect((await localSaved(page)).setupGuitar).toBe('epi');
   const m = await measurements(page);
   expect(m['Tremolo Float']).toBeUndefined();
-  expect(m['String Gauge']).toBe('0.010" - 0.048" (10-48)');
+  expect(m['String Gauge']).toBe('10-48 0.010" - 0.048"');
   expect(m['Neck Relief']).toBe('0.18 mm at 8th fret');
-  expect(m['String Action (Low E)']).toBe('1.6 mm at 12th fret');
-  expect(m['String Action (High E)']).toBe('1.2 mm at 12th fret');
-  expect(await stepTitles(page)).not.toContain('3. Set the Tremolo Float');
-  await expect(setup(page)).toContainText('Fret the highest note (22nd fret)');
+  expect(m['Action · Low E']).toBe('1.6 mm at 12th fret');
+  expect(m['Action · High E']).toBe('1.2 mm at 12th fret');
+  expect(await stepTitles(page)).not.toContain('Set the Tremolo Float');
+  await expect(setup(page)).toContainText('at the last fret (22nd)');
+  await expect(setup(page)).toContainText('On the Tune-o-matic the intonation screws face the neck.');
   await expect(setup(page)).toContainText('12-inch (305 mm)');
   await expect(setup(page).locator('button', { hasText: 'Epiphone Les Paul Setup Guide' })).toBeVisible();
 
@@ -106,10 +107,10 @@ test('every guitar × tuning shows its own gauge, relief and action; the tuning 
       await tuningSelect(page).selectOption(tuning);
       const m = await measurements(page);
       const label = `${guitar} ${tuning}`;
-      expect(m['String Gauge'], label).toContain(`(${gauge})`);
+      expect(m['String Gauge'], label).toMatch(new RegExp(`^${gauge} `));
       expect(m['Neck Relief'], label).toBe(`${relief} mm at 8th fret`);
-      expect(m['String Action (Low E)'], label).toBe(`${bass} mm at 12th fret`);
-      expect(m['String Action (High E)'], label).toBe(`${treb} mm at 12th fret`);
+      expect(m['Action · Low E'], label).toBe(`${bass} mm at 12th fret`);
+      expect(m['Action · High E'], label).toBe(`${treb} mm at 12th fret`);
       const saved = await localSaved(page);
       expect([saved.setupGuitar, saved.setupTuning]).toEqual([guitar, tuning]);
     }
@@ -121,7 +122,7 @@ test('saved choices from state are shown on load (Les Paul, Drop D)', async ({ p
   await goTo(page, 'setup');
   await expect(guitarSelect(page)).toHaveValue('epi');
   await expect(tuningSelect(page)).toHaveValue('drop_d');
-  expect((await measurements(page))['String Gauge']).toBe('0.010" - 0.054" (10-54)');
+  expect((await measurements(page))['String Gauge']).toBe('10-54 0.010" - 0.054"');
 });
 
 test('changing Setup does not touch progress, streak or other state', async ({ page }) => {
@@ -144,9 +145,12 @@ test('signed in: a Setup change writes the full state to users/{uid} only', asyn
   expect(writes[writes.length - 1].data.setupGuitar).toBe('epi');
 });
 
-test('current behaviour: the note always says "E standard tuning on a 25" scale guitar", whatever is chosen', async ({ page }) => {
+test('the note names the chosen gauge, tuning, guitar and scale (fixed in 4.8b, D138)', async ({ page }) => {
   await openApp(page, { localState: baseState({ setupGuitar: 'epi', setupTuning: 'drop_d' }) });
   await goTo(page, 'setup');
-  await expect(setup(page).locator('.note').first())
-    .toContainText('10-54 string gauge with E standard tuning on a 25" scale guitar');
+  const note = setup(page).locator('.setup-note');
+  await expect(note).toContainText('10-54');
+  await expect(note).toContainText('Drop D');
+  await expect(note).toContainText('Epiphone Les Paul Standard (24.75" scale)');
+  await expect(note).not.toContainText('25" scale');
 });
