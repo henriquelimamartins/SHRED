@@ -10,11 +10,11 @@ import { DAY_FULL } from "../data/days.js?v=1";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=1";
 import { todayISO, todayName, isWeekendDay, activeDay } from "../logic/dates.js?v=7";
-import { k } from "../logic/technique.js?v=23";
-import { sessionPlan, isBlockPracticed } from "../logic/daily.js?v=23";
-import { pageHeader } from "./shell.js?v=7";
-import { linked, checkItem, prereqItem, docItem, chopRow, dayPicker, blk, getDailyActiveSequence } from "./components.js?v=23";
-import { renderDailySide } from "./daily-side.js?v=3";
+import { k } from "../logic/technique.js?v=24";
+import { sessionPlan, isBlockPracticed } from "../logic/daily.js?v=24";
+import { pageHeader } from "./shell.js?v=8";
+import { linked, checkItem, prereqItem, docItem, chopRow, dayPicker, blk, getDailyActiveSequence } from "./components.js?v=24";
+import { renderDailySide } from "./daily-side.js?v=4";
 
 // Header detail (D133 point 3): "n of N practiced · M min" on the active day; another day (read-only) shows the minutes only.
 function sessionCount(day, editable){

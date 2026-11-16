@@ -6,7 +6,7 @@
 import { DAY_ORDER } from "../data/days.js?v=1";
 import { ui } from "../ui.js?v=1";
 import { todayName } from "../logic/dates.js?v=7";
-import { render } from "../render.js?v=23";
+import { render } from "../render.js?v=24";
 
 const PHONE = '(max-width: 767px)';
 const DECIDE_PX = 10;        // movement before the gesture is read as sideways or vertical
