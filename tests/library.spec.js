@@ -3,6 +3,9 @@
 // sections, Theory Track and Creative "Watched" marks, Bonus steppers, Listening Vault and Guide.
 // Slice 4.3 (D122): the Shred Roadmap section (phases, Essential Skills) moved to the TECHNIQUE page
 // (technique.spec.js, technique-page.spec.js); LIBRARY now has 6 sections.
+// Slice 4.8a (D137): LIBRARY as drawn. Theory groups are `.lib-group` cards (a first "Start Here" group holds the
+// documents and root videos), the Listening Vault categories too, and the guide reads "How This App Works"
+// (layout checks in library-layout.spec.js). Stored keys and expected values unchanged.
 const { test, expect } = require('@playwright/test');
 const { openApp, localSaved, unexpectedConsoleErrors } = require('./support/app');
 const { baseState } = require('./support/fixtures');
@@ -62,7 +65,7 @@ test('Theory Track: 3 documents and 13 videos in 3 groups', async ({ page }) => 
   expect(await body.locator('.docli .itxt').allTextContents())
     .toEqual(['Music Theory Cheat Sheet', 'Scales Handbook', 'Modes Cheat Sheet']);
   expect(await body.locator('[data-action="togm"]').evaluateAll((els) => els.map((e) => e.dataset.key))).toEqual(THEORY_KEYS);
-  expect(await body.locator('.list-card h3').allTextContents()).toEqual(['Ear Training', 'Modes', 'Chords & Soloing']);
+  expect(await body.locator('.lib-group h3').allTextContents()).toEqual(['Start Here', 'Ear Training', 'Modes', 'Chords & Soloing']);
   await expect(body.locator('a[href="./music-theory-cheat-sheet.pdf"]')).toHaveCount(1);
   await expect(body.locator('a[href="./scales-handbook.pdf"]')).toHaveCount(1);
 });
@@ -138,17 +141,17 @@ test('Listening Vault: 4 categories, reading only (no marks, no state change)', 
   const before = await localSaved(page);
   await section(page, 'listening').click();
   const body = library(page).locator('.acc:has([data-acc="listening"]) > .accbody');
-  await expect(body.locator('.card h3')).toHaveCount(4);
+  await expect(body.locator('.lib-group h3')).toHaveCount(4);
   await expect(body.locator('[data-action="togm"], [data-action="togimprov"]')).toHaveCount(0);
   expect(await localSaved(page)).toEqual(before);
 });
 
-test('Guide & Info: plan text and the 7-day Weekly Rhythm table', async ({ page }) => {
+test('Guide & Info: app text and the 7-day Weekly Rhythm table', async ({ page }) => {
   await openApp(page);
   await goTo(page, 'library');
   await section(page, 'guide').click();
   const body = library(page).locator('.acc:has([data-acc="guide"]) > .accbody');
-  await expect(body).toContainText('How This Plan Works');
+  await expect(body).toContainText('How This App Works');
   expect(await body.locator('table.info td.day').allTextContents()).toEqual(['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']);
   await expect(body).toContainText("Bradley Hall's Guitar School");
 });

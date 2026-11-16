@@ -60,6 +60,8 @@
   --chip-text:#B4B4BD; --num-text:#8E8E98; --line-2:#2E2E35; --ctl-line:#2A2A31; --ctl-line-hover:#3A3A42;
   --sunk:#131316; --sunk-2:#141418; --red-edge:#6A2C30; --red-edge-soft:#5A2A2D; --red-bg-tile:rgba(229,72,77,0.12);
   --purple-edge:#3A2D5C; --purple-edge-2:#4B3A78;
+  /* LIBRARY (slice 4.8a): an open section's edge and the soft text of the boards */
+  --border-open:#34343C; --text-soft:#C4C4CC;
   --wood:#2a1b15;        /* DOJO fretboard (instrument colour, not UI) */
   --wood-edge:#1a100c;
   /* Old names kept as aliases so existing rules keep working */
@@ -924,3 +926,60 @@ button.tech-phase{width:100%;text-align:left;color:var(--text);font:inherit;curs
 @media (prefers-reduced-motion: reduce){ .daily-swipe.swipe-in-next, .daily-swipe.swipe-in-prev{animation:none;} }
 .kc-guide{fill:none;stroke:none;}
 .kc-dir{font-family:var(--font-head);font-size:9px;letter-spacing:.14em;text-transform:uppercase;fill:var(--muted);}
+
+/* ---------- LIBRARY as drawn (slice 4.8a, D132 point 4, D137) ---------- */
+#panel-library .lib-lede{font-size:var(--fs-base);line-height:1.55;color:var(--text-soft);text-align:left;max-width:760px;margin:0 0 22px;}
+#panel-library .lib-sec{margin-bottom:10px;background:var(--card);border:1px solid var(--border);border-radius:14px;}
+#panel-library .lib-sec.open{border-color:var(--border-open);}
+#panel-library .lib-head{width:100%;min-height:60px;padding:0 18px;gap:14px;background:transparent;border:0;border-radius:14px;text-align:left;color:var(--text);font:inherit;}
+#panel-library .lib-head:hover{background:var(--sunk-2);}
+#panel-library .lib-head:focus-visible, #panel-library .lib-gate-head:focus-visible{outline:2px solid var(--red);outline-offset:2px;}
+#panel-library .lib-head b{font-size:17px;font-weight:600;letter-spacing:.06em;}
+#panel-library .lib-sec-improv > .lib-head b{color:var(--purple-tint);}
+#panel-library .acc-right{gap:14px;}
+#panel-library .acc-sub{font-size:var(--fs-sm);font-weight:400;}
+#panel-library .chev{display:flex;color:var(--muted);}
+#panel-library .lib-chev{width:18px;height:18px;flex:0 0 18px;}
+#panel-library .lib-body{padding:0 18px 18px;margin:0;border:0;}
+#panel-library .lib-groups{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(280px,100%),1fr));gap:14px;align-items:start;}
+#panel-library .lib-groups-wide, #panel-library .lib-groups-guide{grid-template-columns:repeat(auto-fill,minmax(min(380px,100%),1fr));}
+#panel-library .lib-group{min-width:0;background:var(--sunk);border:1px solid var(--line);border-radius:12px;padding:14px 16px 6px;box-sizing:border-box;}
+#panel-library .lib-group h3{margin:0 0 8px;font-family:var(--font-head);font-size:13px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text-2);}
+#panel-library .lib-group-vault h3{color:var(--red-tint);}
+#panel-library .lib-group ul.check li.mrow{min-height:52px;padding:6px 0;border-bottom:0;border-top:1px solid var(--line);}
+#panel-library .lib-group .itxt{font-size:var(--fs-base);}
+#panel-library .lib-group .itxt a{text-decoration-color:var(--box-line);text-underline-offset:3px;}
+#panel-library .lib-group .itxt.done, #panel-library .lib-group .itxt.done a{color:var(--muted);text-decoration:underline;text-decoration-color:var(--box-line);}
+#panel-library .mbtn{min-height:40px;padding-top:0;padding-bottom:0;} /* owner: the app's usual Mastered / Watched buttons, not pills; only taller to tap */
+#panel-library .lib-doc{display:flex;align-items:center;gap:12px;min-height:48px;padding:6px 0;border-bottom:0;border-top:1px solid var(--line);color:var(--muted);box-sizing:border-box;}
+#panel-library .lib-doc-ic{width:18px;height:18px;flex:0 0 18px;}
+#panel-library .lib-doc-kind{font-size:var(--fs-2xs);color:var(--muted);}
+#panel-library .vault-item{padding:10px 0;border-bottom:0;border-top:1px solid var(--line);}
+#panel-library .vault-title{font-size:var(--fs-base);font-weight:600;margin:0;}
+#panel-library .vault-desc{margin-top:3px;font-size:13px;line-height:1.5;color:var(--text-soft);text-align:left;}
+#panel-library .lib-group-bonus .chop{min-height:52px;padding:6px 0;border-bottom:0;border-top:1px solid var(--line);}
+#panel-library .lib-group-bonus .chop:first-child{border-top:0;}
+#panel-library .lib-group-bonus .stepper button{width:40px;height:40px;}
+#panel-library .lib-group-text p{margin:0 0 10px;font-size:var(--fs-base);line-height:1.5;color:var(--text-soft);}
+#panel-library .lib-groups-guide .lib-group{padding-bottom:10px;}
+#panel-library .lib-credit{margin:14px 0 0;font-size:13px;line-height:1.5;color:var(--muted);}
+#panel-library .lib-credit b{color:var(--text-2);font-weight:600;}
+#panel-library .lib-gates{display:flex;flex-direction:column;gap:10px;}
+#panel-library .lib-gate{margin:0;background:var(--sunk);border:1px solid var(--line);border-radius:12px;}
+#panel-library .lib-gate-head{width:100%;min-height:52px;padding:0 16px;gap:12px;background:transparent;border:0;border-radius:12px;text-align:left;font:inherit;}
+#panel-library .lib-gate-head b{font-size:var(--fs-base);font-weight:600;letter-spacing:.04em;}
+#panel-library .lib-gate-body{padding:0 16px 8px;margin:0;border:0;}
+#panel-library .lib-gate-desc{margin:0 0 10px;font-size:13px;line-height:1.5;color:var(--text-soft);}
+#panel-library .lib-gate ul.check li.mrow{padding:12px 0;border-bottom:0;border-top:1px solid var(--line);}
+#panel-library hr.lib-divider{margin:4px 0 14px;border-top-color:var(--line);}
+#panel-library .page-back{display:none;}
+@media (max-width: 767px){
+  #panel-library .lib-lede{margin-bottom:14px;}
+  #panel-library .lib-group ul.check li.mrow{min-height:56px;}
+  #panel-library .mbtn{min-height:44px;}
+  #panel-library .lib-group-bonus .stepper button{width:44px;height:44px;}
+  /* With the pack on, LIBRARY is reached from MORE: "‹ More" replaces the eyebrow (4.6 board). */
+  #panel-library .page-back{display:inline-flex;align-items:center;gap:4px;min-height:44px;padding:0;margin:-6px 0 0;border:0;background:transparent;color:var(--muted);font:inherit;font-size:13px;}
+  #panel-library .page-back-ic{width:16px;height:16px;flex:0 0 16px;}
+  #panel-library .page-back + .page-head .page-eyebrow{display:none;}
+}

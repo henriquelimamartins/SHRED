@@ -1,4 +1,9 @@
 // LIBRARY view.
+// Slice 4.8a (D132 point 4, D137): LIBRARY as drawn on the 4.6 boards. Each section is a card row that opens in place
+// (a button with aria-expanded); inside, groups are cards side by side on desktop and stacked on the phone; Watched
+// marks are pills; documents show a file icon and their kind; the Listening Vault uses the app red (purple only for the
+// Expression Track); on the phone with the BHGS pack on, "‹ More" leads back to MORE (LIBRARY lives there).
+// Guide: "How This App Works" rewritten with the owner (D120, D137); texts, links, buttons and stored keys otherwise unchanged.
 // Slice 4.5b (D125, D126): the drawn page header (muted eyebrow + large title).
 // Slice 4.3 (D112, D122): the Shred Roadmap section (phases and Essential Skills) moved to the TECHNIQUE page.
 // Slice 4.2b (D113): with the BHGS pack off, the BHGS sections (Shred Roadmap, Theory Track, Creative, Bonus Content),
@@ -10,116 +15,152 @@ import { LISTENING_VAULT } from "../data/listening.js?v=1";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=1";
 import { BHGS_PACK } from "../pack.js?v=1";
-import { pageHeader } from "./shell.js?v=7";
-import { watchItem, docItem, renderBonusList } from "./components.js?v=23";
+import { pageHeader } from "./shell.js?v=8";
+import { watchItem, linked, renderBonusList } from "./components.js?v=24";
+
+// Line icons as drawn on the boards (same stroke style as the shell icons).
+var LIB_ICONS = {
+  chevron: 'M9 6l6 6-6 6',
+  back: 'M15 6l-6 6 6 6',
+  file: 'M7 3h7l4 4v14H7zM14 3v4h4'
+};
+function libIcon(name, cls){
+  return '<svg class="ico ' + cls + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + LIB_ICONS[name] + '"></path></svg>';
+}
+
+// A document row: file icon, link and its kind (PDF for the app's own PDFs, Doc for an online document).
+function docRow(label, url){
+  var kind = /\.pdf$/i.test(url) ? 'PDF' : 'Doc';
+  return '<li class="docli lib-doc">' + libIcon('file', 'lib-doc-ic') +
+    '<div class="itxt">' + linked(label, url) + '</div>' +
+    '<span class="lib-doc-kind">' + kind + '</span></li>';
+}
+
+// A section row that opens in place. `cls` adds a colour role (e.g. "lib-sec-improv").
+function section(acc, title, sub, body, cls){
+  var open = !!ui.lib[acc];
+  var html = '<div class="acc lib-sec' + (cls ? ' ' + cls : '') + (open ? ' open' : '') + '">' +
+    '<button type="button" class="acchead lib-head" data-action="toggleacc" data-acc="' + acc + '" aria-expanded="' + open + '">' +
+    '<b>' + title + '</b><span class="acc-right">' + (sub ? '<span class="acc-sub">' + sub + '</span>' : '') +
+    '<span class="chev' + (open ? ' open' : '') + '">' + libIcon('chevron', 'lib-chev') + '</span></span></button>';
+  if(open) html += '<div class="accbody lib-body">' + body() + '</div>';
+  return html + '</div>';
+}
+
+// A group card inside a section (title optional).
+function group(title, inner, cls){
+  return '<div class="lib-group' + (cls ? ' ' + cls : '') + '">' + (title ? '<h3>' + title + '</h3>' : '') + inner + '</div>';
+}
+
+function theoryBody(){
+  var first = THEORY_DOCS.map(function(d){ return docRow(d.t, d.url); }).join('') +
+    THEORY_ROOT_ITEMS.map(function(t){ return watchItem(t.t, t.key, t.url); }).join('');
+  var html = group('Start Here', '<ul class="check">' + first + '</ul>');
+  THEORY_GROUPS.forEach(function(g){
+    var rows = (g.docs || []).map(function(d){ return docRow(d.t, d.url); }).join('') +
+      g.items.map(function(t){ return watchItem(t.t, t.key, t.url); }).join('');
+    html += group(g.title, '<ul class="check">' + rows + '</ul>');
+  });
+  return '<div class="lib-groups">' + html + '</div>';
+}
+
+function expressionBody(){
+  var html = '';
+  IMPROV_GATES.forEach(function(g, i){
+    var acc = 'libGate' + i, gateOpen = !!ui.lib[acc];
+    html += '<div class="acc lib-gate' + (gateOpen ? ' open' : '') + '">' +
+      '<button type="button" class="acchead lib-gate-head" data-action="toggleacc" data-acc="' + acc + '" aria-expanded="' + gateOpen + '">' +
+      '<b class="improv">Gate ' + (i + 1) + ': ' + g.title + '</b><span class="acc-right"><span class="chev' + (gateOpen ? ' open' : '') + '">' +
+      libIcon('chevron', 'lib-chev') + '</span></span></button>';
+    if(gateOpen){
+      html += '<div class="accbody lib-gate-body">';
+      html += '<p class="lib-gate-desc">' + g.desc + '</p>';
+      html += '<ul class="check">';
+      g.exercises.forEach(function(ex, j){
+        var isChecked = !!state.improvChecks["g" + i + "e" + j];
+        var btn = '<button class="mbtn purple' + (isChecked ? " on" : "") + '" data-action="togimprov" data-g="' + i + '" data-e="' + j + '">' + (isChecked ? "&#10003; Mastered" : "Unmastered") + '</button>';
+        html += '<li class="mrow mrow-stack">' +
+          '<div class="ex-head">' +
+            '<b class="ex-title">' + ex.t + '</b>' +
+            '<div class="ex-btn">' + btn + '</div>' +
+          '</div>' +
+          '<div class="ex-desc">' +
+            ex.desc +
+            '<div class="note purple ex-listen">' + ex.listen + '</div>' +
+          '</div>' +
+          '</li>';
+      });
+      html += '</ul></div>';
+    }
+    html += '</div>';
+  });
+  return '<div class="lib-gates">' + html + '</div>';
+}
+
+function listeningBody(){
+  return '<div class="lib-groups lib-groups-wide">' + LISTENING_VAULT.map(function(g){
+    var items = g.items.map(function(item){
+      return '<li class="vault-item"><b class="vault-title">' + item.t + '</b><span class="vault-desc">' + item.desc + '</span></li>';
+    }).join('');
+    return group(g.category, '<ul class="plain-list">' + items + '</ul>', 'lib-group-vault');
+  }).join('') + '</div>';
+}
+
+function creativeBody(){
+  return '<div class="lib-groups">' +
+    group('Songwriting', '<ul class="check">' + CREATIVE.songwriting.map(function(t, j){ return watchItem(t.t, "creative.sw." + j, t.url); }).join("") + '</ul>') +
+    group('Production', '<ul class="check">' + CREATIVE.production.map(function(t, j){ return watchItem(t.t, "creative.pr." + j, t.url); }).join("") + '</ul>') +
+    '</div>';
+}
+
+function bonusBody(){
+  return '<div class="lib-groups">' + group('', renderBonusList(), 'lib-group-bonus') + '</div>';
+}
+
+// Guide texts (D120, D137, owner-approved 2026-11-15). Pages in capitals, pillars with an initial capital,
+// "Phase" / "Gate" capitalised only as names.
+function paras(list){ return list.map(function(p){ return '<p>' + p + '</p>'; }).join(''); }
+
+function guideBody(){
+  var html = '<div class="lib-groups lib-groups-guide">';
+  if(BHGS_PACK){
+    html += group('How This App Works', paras([
+      'The app rests on three pillars: Technique, Improvisation and Theory. DAILY tells you what to practise each day; HOME shows today\'s session, your streak and the calendar.',
+      'Technique follows the BHGS Roadmap in order. Phase 0 sets up your prerequisites, warm-up and a baseline test; then, whatever your level, you start at Phase 1 and work through every exercise, chop-builder and solo of a phase before moving on, up to Phase 4. Each of Phases 1 to 4 is complete when every checklist item is mastered, the chop-builder targets are reached and all 6 categories of the Phase Transition Test, including the Ultimate Technique Workout, are at the required level.',
+      'Improvisation has its own track: on the IMPROV page you work through 5 Gates, playing every exercise in the key of the day.',
+      'Theory is always open: it never locks anything in Technique or Improvisation.',
+      'The progress rails show where you stand: BHGS Roadmap for Technique, Musical Development for Improvisation and Theory. Each pillar is counted on its own, never mixed.'
+    ]), 'lib-group-text');
+    html += group('Weekly Rhythm', '<table class="info"><tr><th>Day</th><th>Focused</th><th>Casual / Improv</th></tr>' +
+      WEEKLY_RHYTHM.map(function(r){ return '<tr><td class="day">' + r.day + '</td><td>' + r.focused + '</td><td>' + r.casual + '</td></tr>'; }).join("") +
+      '</table>');
+    html += '</div>';
+    html += '<p class="lib-credit">Technique content (phases, exercises, chop-builders, the Phase Transition Test, and the Technique blocks and micro-doses in DAILY) follows <b>Bradley Hall\'s Guitar School</b> (BHGS) Official Roadmap; the Theory Track, Creative and Bonus Content videos here in LIBRARY are BHGS lessons too. Video links open on Patreon and need a BHGS membership. The daily routine and the Improvisation and Theory pillars are this app\'s own.</p>';
+    return html;
+  }
+  html += group('How This App Works', paras([
+    'The app rests on two pillars: Improvisation and Theory. DAILY tells you what to practise each day; HOME shows today\'s session, your streak and the calendar.',
+    'Improvisation has its own track: on the IMPROV page you work through 5 Gates, playing every exercise in the key of the day. Here in LIBRARY, the Expression Track lists the same exercises and the Listening Vault gathers listening references.',
+    'Theory is always open: it never locks anything in Improvisation.',
+    'The Musical Development rails show where you stand in each pillar, each counted on its own.'
+  ]), 'lib-group-text');
+  return html + '</div>';
+}
 
 export function renderLibrary(){
-  var html=pageHeader('Reference &amp; Review','Library');
-  html+='<p class="lede">Browse and check off any item, anytime - it all counts toward the same progress as Daily Practice.</p>';
-  
+  // Phone with the pack on: LIBRARY is reached from MORE, so the board shows "‹ More" instead of the eyebrow.
+  var html = BHGS_PACK ? '<button type="button" class="page-back" data-action="more">' + libIcon('back', 'page-back-ic') + 'More</button>' : '';
+  html += pageHeader('Reference &amp; Review', 'Library');
+  html += '<p class="lede lib-lede">Browse and check off any item, anytime - it all counts toward the same progress as Daily Practice.</p>';
+
+  if(BHGS_PACK) html += section('theory', 'Theory Track', 'Intervals, Modes &amp; Chords', theoryBody);
+  html += section('expression', 'Expression Track', 'The 5 Gates', expressionBody, 'lib-sec-improv');
+  html += section('listening', 'Listening Vault', 'Inspiration &amp; Refs', listeningBody);
   if(BHGS_PACK){
-  html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="theory"><b>Theory Track</b><span class="acc-right"><span class="acc-sub">Intervals, Modes &amp; Chords</span><span class="chev'+(ui.lib.theory?" open":"")+'">&#8250;</span></span></div>';
-  if(ui.lib.theory) {
-    html+='<div class="accbody">';
-    html+='<div class="card"><ul class="check">';
-    THEORY_DOCS.forEach(function(docItemObj){ html += docItem(docItemObj.t, docItemObj.url); });
-    THEORY_ROOT_ITEMS.forEach(function(t){ html += watchItem(t.t, t.key, t.url); });
-    html+='</ul></div>';
-
-    THEORY_GROUPS.forEach(function(g){
-      html+='<div class="list-card"><h3>'+g.title+'</h3><ul class="check">';
-      if(g.docs) g.docs.forEach(function(d){ html+=docItem(d.t, d.url); });
-      g.items.forEach(function(t){ html += watchItem(t.t, t.key, t.url); });
-      html+='</ul></div>';
-    });
-    html+='</div>';
+    html += section('creative', 'Creative', 'Songwriting &amp; Production', creativeBody);
+    html += section('bonuslib', 'Bonus Content', 'Extras &amp; Workouts', bonusBody);
   }
-  html+='</div>';
-
-  }
-
-  html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="expression"><b>Expression Track</b><span class="acc-right"><span class="acc-sub">The 5 Gates</span><span class="chev'+(ui.lib.expression?" open":"")+'">&#8250;</span></span></div>';
-  if(ui.lib.expression){
-    html+='<div class="accbody purple-tree">';
-    IMPROV_GATES.forEach(function(g, i){
-      var gateOpen = !!ui.lib["libGate"+i];
-      html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="libGate'+i+'"><b class="improv">Gate '+(i+1)+': '+g.title+'</b><span class="acc-right"><span class="chev'+(gateOpen?" open":"")+'">&#8250;</span></span></div>';
-      if(gateOpen){
-        html+='<div class="accbody">';
-        html+='<p class="u-fs-13 u-mb-12 u-justify">'+g.desc+'</p>';
-        html+='<ul class="check">';
-        g.exercises.forEach(function(ex, j){
-          var isChecked = !!state.improvChecks["g"+i+"e"+j];
-          var btn = '<button class="mbtn purple'+(isChecked?" on":"")+'" data-action="togimprov" data-g="'+i+'" data-e="'+j+'">'+(isChecked?"&#10003; Mastered":"Unmastered")+'</button>';
-          html+='<li class="mrow mrow-stack">'+
-                '<div class="ex-head">'+
-                  '<b class="ex-title">'+ex.t+'</b>'+
-                  '<div class="ex-btn">'+btn+'</div>'+
-                '</div>'+
-                '<div class="ex-desc">'+
-                  ex.desc+
-                  '<div class="note purple ex-listen">'+ex.listen+'</div>'+
-                '</div>'+
-                '</li>';
-        });
-        html+='</ul>';
-        html+='</div>';
-      }
-      html+='</div>';
-    });
-    html+='</div>';
-  }
-  html+='</div>';
-
-  html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="listening"><b>Listening Vault</b><span class="acc-right"><span class="acc-sub">Inspiration &amp; Refs</span><span class="chev'+(ui.lib.listening?" open":"")+'">&#8250;</span></span></div>';
-  if(ui.lib.listening){
-    html+='<div class="accbody">';
-    LISTENING_VAULT.forEach(function(g){
-      html+='<div class="card card-improv">'+
-            '<h3 class="h3-improv">'+g.category+'</h3>'+
-            '<ul class="plain-list">';
-      g.items.forEach(function(item){
-        html+='<li class="vault-item">'+
-              '<b class="vault-title">🎸 '+item.t+'</b>'+
-              '<span class="vault-desc">'+item.desc+'</span></li>';
-      });
-      html+='</ul></div>';
-    });
-    html+='</div>';
-  }
-  html+='</div>';
-
-  if(BHGS_PACK){
-  html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="creative"><b>Creative</b><span class="acc-right"><span class="acc-sub">Songwriting &amp; Production</span><span class="chev'+(ui.lib.creative?" open":"")+'">&#8250;</span></span></div>';
-  if(ui.lib.creative){
-    html+='<div class="accbody"><div class="list-card"><h3>Songwriting</h3><ul class="check">'+CREATIVE.songwriting.map(function(t,j){return watchItem(t.t,"creative.sw."+j,t.url);}).join("")+'</ul></div>'+
-      '<div class="list-card"><h3>Production</h3><ul class="check">'+CREATIVE.production.map(function(t,j){return watchItem(t.t,"creative.pr."+j,t.url);}).join("")+'</ul></div></div>';
-  }
-  html+='</div>';
-
-  html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="bonuslib"><b>Bonus Content</b><span class="acc-right"><span class="acc-sub">Extras &amp; Workouts</span><span class="chev'+(ui.lib.bonuslib?" open":"")+'">&#8250;</span></span></div>';
-  if(ui.lib.bonuslib) html+='<div class="accbody"><div class="list-card">'+renderBonusList()+'</div></div>';
-  html+='</div>';
-  
-  }
-
-  html+='<hr class="divider">';
-  html+='<div class="acc"><div class="acchead" data-action="toggleacc" data-acc="guide"><b>Guide &amp; Info</b><span class="acc-right"><span class="acc-sub">App Instructions</span><span class="chev'+(ui.lib.guide?" open":"")+'">&#8250;</span></span></div>';
-  if(ui.lib.guide) {
-    html+='<div class="accbody">';
-    if(BHGS_PACK){
-      html+='<div class="list-card"><h3>How This Plan Works</h3><p class="u-mb-8 u-justify">Technique is sequential and full-coverage: start at Beginner regardless of ability, and work every exercise, chop-builder and solo in every tier before advancing.</p>'+
-        '<p class="u-mb-8 u-justify">To unlock the next phase, you must master all checklist items, hit your chop-builder targets, and reach the required level in all 6 categories of the <b>Phase Transition Test</b> (which includes the Ultimate Technique Workout).</p>'+
-        '<p class="u-mb-8 u-justify">Theory and Creative run on their own independent tracks - always available in Library, never gating a phase.</p></div>';
-      html+='<div class="list-card"><h3>Weekly Rhythm</h3><table class="info"><tr><th>Day</th><th>Focused</th><th>Casual / Improv</th></tr>'+
-        WEEKLY_RHYTHM.map(function(r){return '<tr><td class="day">'+r.day+'</td><td>'+r.focused+'</td><td>'+r.casual+'</td></tr>';}).join("")+'</table></div>';
-      html+='<div class="note u-mt-6">This guide and app are based on <b>Bradley Hall\'s Guitar School</b> (BHGS) Official Roadmap. Improv module custom tailored for expression.</div>';
-    } else {
-      html+='<div class="list-card"><h3>How This App Works</h3><p class="u-mb-8 u-justify">IMPROV takes you through 5 Gates; the Expression Track above lists the same exercises, and the Listening Vault gathers listening references.</p>'+
-        '<p class="u-justify">THEORY is always open and never gates anything.</p></div>';
-    }
-    html+='</div>';
-  }
-  html+='</div>';
+  html += '<hr class="divider lib-divider">';
+  html += section('guide', 'Guide &amp; Info', 'App Instructions', guideBody);
   return html;
 }
