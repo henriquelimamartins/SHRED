@@ -1,79 +1,146 @@
-// SETUP view (Guitar Setup Companion).
+// SETUP view (Guitar Setup Companion), shown as TOOLS · Guitar Setup.
+// Slice 4.8b (D132 point 5, D138): as drawn on the 4.6 boards. Guitar and tuning as labelled fields; the Recommended
+// Measurements as tiles at the top (one row on desktop, two columns on the phone); the note names the chosen guitar,
+// tuning and scale (it always said "E standard ... 25\" scale" before); the steps numbered, one row each, so a figure
+// (I12) can later sit beside each step; "‹ More" on the phone. Values come from data/setup.js, unchanged.
 // Slice 4.5b (D125, D126): the drawn page header (muted eyebrow + large title).
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
 import { setupData } from "../data/setup.js?v=1";
-import { pageHeader } from "./shell.js?v=8";
+import { pageHeader, backToMore } from "./shell.js?v=9";
 import { state } from "../store.js?v=5";
 
+// Tunings offered, in menu order (owner, D138: all six kept until I01).
+export const TUNINGS = [
+  ["e_std", "E Standard"], ["drop_d", "Drop D"], ["d_std", "D Standard"],
+  ["drop_c", "Drop C"], ["c_std", "C Standard"], ["dadfae", "DADFAE"]
+];
+export function tuningLabel(key){
+  for (var i = 0; i < TUNINGS.length; i++) if (TUNINGS[i][0] === key) return TUNINGS[i][1];
+  return key;
+}
+
 export function formatGauge(g){
+  var inches = gaugeInches(g);
+  return inches === g ? g : inches + ' (' + g + ')';
+}
+// "10-46" -> '0.010" - 0.046"' (anything else is returned as it is).
+export function gaugeInches(g){
   var parts = g.split('-');
   if(parts.length === 2) {
     var p1 = parseInt(parts[0], 10);
     var p2 = parseInt(parts[1], 10);
     var s1 = (p1 >= 10 && p1 <= 19) ? "0.0" + p1 : "0." + p1;
     var s2 = (p2 >= 10 && p2 <= 99) ? "0.0" + p2 : "0." + p2;
-    return s1 + '" - ' + s2 + '" (' + g + ')';
+    return s1 + '" - ' + s2 + '"';
   }
   return g;
 }
 
+function esc(t){ return String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;"); }
+
+var VIDEO_ICON = '<svg class="ico btn-video-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16v12H4zM10 9.5l5 2.5-5 2.5z"></path></svg>';
+
+function field(label, action, options, value){
+  return '<label class="setup-field"><span class="setup-field-label">' + label + '</span><span class="setup-select-wrap">' +
+    '<select class="select setup-select" data-action="' + action + '">' +
+    options.map(function(o){ return '<option value="' + o[0] + '"' + (o[0] === value ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') +
+    '</select></label>';
+}
+
+function tile(label, value, sub){
+  return '<div class="setup-tile"><div class="setup-tile-label">' + label + '</div><div class="setup-tile-val">' + value + '</div><div class="setup-tile-sub">' + sub + '</div></div>';
+}
+
+// The measurement tiles (labels as drawn on the 4.6 boards).
+export function setupTiles(guitar, conf){
+  var t = [tile('String Gauge', conf.gauge, gaugeInches(conf.gauge))];
+  if(guitar === "prs") t.push(tile('Tremolo Float', '1.6 mm', '1/16" off body'));
+  t.push(tile('Neck Relief', conf.relief + ' mm', 'at 8th fret'));
+  t.push(tile('Action · Low E', conf.actBass + ' mm', 'at 12th fret'));
+  t.push(tile('Action · High E', conf.actTreb + ' mm', 'at 12th fret'));
+  t.push(tile('Pickup · Neck', '2.5 mm', 'to string'));
+  t.push(tile('Pickup · Bridge', '1.5 mm', 'to string'));
+  return t;
+}
+
+// The steps for the chosen guitar and tuning: { title, paras: [html] }.
+// Texts rewritten in 4.8b with the owner (D138) and checked by the content verifier (D134) against PRS's published
+// setup guides (support.prsguitars.com: step-by-step setup, SE specifications, PRS Tremolo, neck relief, pickup height)
+// and StewMac (Tune-o-matic); values still come from data/setup.js.
+export function setupSteps(guitar, conf){
+  var isPrs = guitar === "prs";
+  var g = setupData[guitar];
+  var steps = [];
+  steps.push({ title: 'Remove Strings and Clean', paras: [
+    'Take the old strings off and clean the fretboard and frets. About every six months, if an unfinished fretboard (rosewood, laurel, ebony) looks dry, wipe on a thin coat of fretboard conditioner, leave it for 10 minutes, then wipe off the excess. Never oil a lacquered maple fretboard. Clean the body and hardware with instrument-safe products.',
+    'While the strings are off, put a little nut lubricant (or graphite from a soft pencil) into each nut slot, so the strings slide freely instead of sticking and pinging.'
+  ]});
+  steps.push({ title: 'Restring and Stretch', paras: [
+    'Fit the new strings, seat each one in its saddle slot, and tune up to pitch from below. Stretch each string by gently pulling it away from the fretboard along its length, then retune; repeat until it stays in tune. Measuring before the strings settle gives false readings.'
+  ]});
+  if(isPrs) steps.push({ title: 'Set the Tremolo Float', paras: [
+    'The PRS tremolo sits parallel to the body, with a gap of about 1.6 mm (1/16") underneath it. To change it, remove the back cavity cover and turn the two claw screws about a quarter turn at a time: tighten to pull the bridge down, loosen to let it rise. Retune after every turn, because the strings and springs balance each other.',
+    'If you change the saddle heights later, check the float again.'
+  ]});
+  steps.push({ title: 'Adjust Neck Relief (Truss Rod)', paras: [
+    'Capo the 1st fret and hold the Low E down at the last fret. At the 8th fret, measure the gap between the bottom of the string and the top of the fret with a feeler gauge: aim for <b>' + conf.relief + ' mm</b>.',
+    'Too much gap: tighten the truss rod (clockwise, looking at the headstock) an eighth of a turn at a time. No gap: loosen it (anticlockwise). Retune and give the neck a few minutes to settle before measuring again.'
+  ]});
+  steps.push({ title: 'Set the String Action', paras: [
+    'Measure at the 12th fret, from the top of the fret to the bottom of the string. Set the Low E to <b>' + conf.actBass + ' mm</b> and the High E to <b>' + conf.actTreb + ' - ' + (conf.actTreb + 0.1).toFixed(1) + ' mm</b>.',
+    (isPrs
+      ? 'Raise or lower each saddle with the small Allen key on its height screws, and set the middle strings so the saddles follow the ' + g.radius + ' fretboard radius.'
+      : 'Turn the two thumbwheels of the Tune-o-matic bridge: the bass-side wheel sets the Low E, the treble-side wheel the High E. The saddles already follow the ' + g.radius + ' fretboard radius.') +
+    ' Then bend the High E a step and a half above the 15th fret: if the note chokes, raise that side slightly.'
+  ]});
+  steps.push({ title: 'Set Intonation', paras: [
+    'Do this once the action is set. Tune the open string, then compare the note fretted at the 12th fret with the 12th-fret harmonic. If the fretted note is <b>sharp</b>, move the saddle <b>away from the neck</b>; if it is <b>flat</b>, move it <b>towards the neck</b>. ' +
+    (isPrs ? 'On the PRS tremolo the intonation screws are at the back of the bridge.' : 'On the Tune-o-matic the intonation screws face the neck.') +
+    ' Retune the open string after every adjustment and repeat until both match.'
+  ]});
+  steps.push({ title: 'Adjust Pickup Height', paras: [
+    'Hold the Low E down at the last fret (' + (isPrs ? '24th' : '22nd') + ') and measure from the top of the pickup to the bottom of the string; repeat with the High E. With the height screws, set the bass side to <b>2.5 mm</b> and the treble side to <b>1.5 mm</b>.',
+    'Too close, and the magnets pull on the strings: sustain suffers and notes can go out of tune. Keeping the bass side a little lower keeps the low end tight under high gain.'
+  ]});
+  return steps;
+}
+
+export function setupLede(){
+  return 'Work through these steps in order: each one changes what the next one measures. The goal is a low action for fast playing without fret buzz.';
+}
+
+export function setupNote(guitar, tuning, conf){
+  var g = setupData[guitar];
+  return '<b>Note:</b> These targets suit ' + conf.gauge + ' strings in ' + tuningLabel(tuning) + ' on the ' + g.name + ' (' + g.scale + ' scale). Treat them as a starting point: if a note buzzes or chokes, raise that side a little.';
+}
+
 export function renderSetup(){
-  var isPrs = state.setupGuitar === "prs";
-  var conf = setupData[state.setupGuitar][state.setupTuning];
-  
-  var html=pageHeader('Tools \u00b7 Gear optimization','Guitar Setup');
-  html+='<p class="lede">Follow these mechanical adjustments in exactly this order to achieve optimal low string action suitable for shredding without excessive fret buzz.</p>';
+  var guitar = state.setupGuitar, tuning = state.setupTuning;
+  var isPrs = guitar === "prs";
+  var conf = setupData[guitar][tuning];
 
-  html+='<div class="select-row">';
-  html+='<select class="select select-inline" data-action="setGuitar">';
-  html+='<option value="prs" '+(isPrs?'selected':'')+'>PRS (25")</option>';
-  html+='<option value="epi" '+(isPrs?'':'selected')+'>Les Paul (24.75")</option>';
-  html+='</select>';
-  
-  html+='<select class="select select-inline" data-action="setTuning">';
-  html+='<option value="e_std" '+(state.setupTuning==='e_std'?'selected':'')+'>E Standard</option>';
-  html+='<option value="drop_d" '+(state.setupTuning==='drop_d'?'selected':'')+'>Drop D</option>';
-  html+='<option value="d_std" '+(state.setupTuning==='d_std'?'selected':'')+'>D Standard</option>';
-  html+='<option value="drop_c" '+(state.setupTuning==='drop_c'?'selected':'')+'>Drop C</option>';
-  html+='<option value="c_std" '+(state.setupTuning==='c_std'?'selected':'')+'>C Standard</option>';
-  html+='<option value="dadfae" '+(state.setupTuning==='dadfae'?'selected':'')+'>DADFAE</option>';
-  html+='</select>';
-  html+='</div>';
-  
-  html+='<div class="note"><b>Note:</b> These target measurements are specifically optimized to match the tension profile of '+conf.gauge+' string gauge with E standard tuning on a 25" scale guitar.</div>';
-  
-  html+='<div class="card"><h3>Recommended Measurements</h3><table class="info"><tr><th>Adjustment</th><th>Target</th></tr>';
-  html+='<tr><td class="day">String Gauge</td><td>'+formatGauge(conf.gauge)+'</td></tr>';
-  if(isPrs) html+='<tr><td class="day">Tremolo Float</td><td>1.6 mm (1/16") off body</td></tr>';
-  html+='<tr><td class="day">Neck Relief</td><td>'+conf.relief+' mm at 8th fret</td></tr>'+
-    '<tr><td class="day">String Action (Low E)</td><td>'+conf.actBass+' mm at 12th fret</td></tr>'+
-    '<tr><td class="day">String Action (High E)</td><td>'+conf.actTreb+' mm at 12th fret</td></tr>'+
-    '<tr><td class="day">Pickup Height (Neck)</td><td>2.5 mm to string</td></tr>'+
-    '<tr><td class="day">Pickup Height (Bridge)</td><td>1.5 mm to string</td></tr>'+
-    '</table></div>';
-    
-  html+='<div class="card"><h3>1. Strip and Clean</h3><p class="u-justify">Remove the old strings and deep clean the fretboard to lift away accumulated dirt. If needed (once every six months) condition the rosewood fretboard with a light coat of lemon oil. Leave it for 10 min for the neck to absorb the oils, and then wipe the excess away. Finally, clean the rest of the guitar body and hardware using appropriate instrument cleaning products.</p></div>';
-  
-  html+='<div class="card"><h3>2. Restring and Stretch</h3><p class="u-justify">Install your fresh strings. Before measuring anything, stretch the strings thoroughly by pulling firmly on each string all the way up and down the neck. Retune and repeat until the tuning stops dropping.</p></div>';
-  
-  if(isPrs) {
-    html+='<div class="card"><h3>3. Set the Tremolo Float</h3><p class="u-justify">The PRS patented tremolo is designed to float exactly 1.6 mm parallel to the guitar body. If it sits too high or low, remove the back cavity plate and adjust the two claw screws holding the springs (tightening pulls the bridge down; loosening lifts it). Retune after every turn.<br><br><b>The PRS F# Test:</b> To confirm the perfect float without a ruler, pull the whammy bar back as far as it will go. When perfectly balanced, your open Low E string will pitch up exactly to an F#.</p></div>';
-  }
-  
-  html+='<div class="card"><h3>4. Adjust Neck Relief (Truss Rod)</h3><p class="u-justify">Put a capo on the 1st fret and hold down the Low E string at the highest fret. Check the gap between the bottom of the string and the top of the 8th fret. You want a tiny '+conf.relief+' mm gap - just enough space to slide a piece of standard printer paper through with slight friction. If the gap is larger, tighten the truss rod (turn clockwise) a quarter-turn at a time.</p></div>';
-  
-  html+='<div class="card"><h3>5. Lower the String Action</h3><p class="u-justify">With the neck nearly flat, adjust the saddle heights. Set the Low E to '+conf.actBass+' mm at the 12th fret, and the High E to '+conf.actTreb+' - '+(conf.actTreb+0.1).toFixed(1)+' mm at the 12th fret.<br><br><b>Radius matching:</b> '+(isPrs ? 'Drop the individual saddles using a small Allen key on the two grub screws per saddle. Adjust the middle strings so they form a matching '+setupData[state.setupGuitar].radius+' curve to fit the fretboard.' : 'Adjust the thumbwheels on either side of the Tune-O-Matic bridge. The bridge saddle slots are pre-cut to automatically match the '+setupData[state.setupGuitar].radius+' fretboard radius.')+' Test by doing 1.5-step bends above the 15th fret on the High E string; if the note chokes out, raise that specific side.</p></div>';
-  
-  html+='<div class="card"><h3>6. Lubricate the Nut</h3><p class="u-justify">Apply graphite powder (from a mechanical pencil) or a dedicated lubricant into the nut slots before tuning up to pitch. This stops the strings from binding and pinging.</p></div>';
-  
-  html+='<div class="card"><h3>7. Set Intonation</h3><p class="u-justify">This must be done last. Check the tuning of the open string, then fret the note at the 12th fret. If the fretted note is <b>sharp</b>, use a screwdriver on the back of the bridge to move the saddle <b>backward</b> (away from the neck). If the fretted note is <b>flat</b>, move the saddle <b>forward</b>. Retune the open string after every saddle adjustment until both match perfectly.</p></div>';
+  var html = backToMore();
+  html += pageHeader('Tools · Gear optimization', 'Guitar Setup');
 
-  html+='<div class="card"><h3>8. Adjust Pickup Height</h3><p class="u-justify">Fret the highest note ('+(isPrs?'24th':'22nd')+' fret). Adjust the height screws on either side of the pickups. Set the bass side to <b>2.5 mm</b> below the strings, and the treble side to <b>1.5 mm</b>. In high-gain and shred contexts, keeping the bass side slightly lower prevents the low-end from becoming muddy (stratitis), while the higher treble side keeps your pick attack aggressive and cuts through the mix.</p></div>';
+  html += '<div class="setup-fields">' +
+    field('Guitar', 'setGuitar', [["prs", 'PRS (25")'], ["epi", 'Les Paul (24.75")']], guitar) +
+    field('Tuning', 'setTuning', TUNINGS, tuning) + '</div>';
 
+  html += '<section class="setup-measure" aria-labelledby="setup-measure-title"><h2 id="setup-measure-title" class="setup-measure-title">Recommended Measurements</h2>' +
+    '<div class="setup-tiles">' + setupTiles(guitar, conf).join('') + '</div></section>';
+
+  var steps = setupSteps(guitar, conf);
   var vidUrl = isPrs ? 'https://www.youtube.com/watch?v=wmoc9ksdZdE' : 'https://www.youtube.com/watch?v=3Dhn56ybQHg';
   var vidTitle = isPrs ? 'Official PRS Setup Guide' : 'Epiphone Les Paul Setup Guide';
 
-  html+='<button class="tbtn primary btn-video" data-action="openvideo" data-url="'+vidUrl+'"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33 2.78 2.78 0 0 0 1.94 2c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.33 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg> '+vidTitle+'</button>';
-
+  html += '<div class="setup-cols">';
+  html += '<p class="lede setup-lede">' + setupLede() + '</p>';
+  html += '<div class="note setup-note">' + setupNote(guitar, tuning, conf) + '</div>';
+  html += '<ol class="setup-steps" aria-label="Steps">' + steps.map(function(s, i){
+    return '<li class="setup-step"><span class="setup-num" aria-hidden="true">' + (i + 1) + '</span><div class="setup-step-body">' +
+      '<h3 class="setup-step-title">' + s.title + '</h3>' + s.paras.map(function(p){ return '<p>' + p + '</p>'; }).join('') + '</div></li>';
+  }).join('') + '</ol>';
+  html += '<button class="tbtn primary btn-video setup-video" data-action="openvideo" data-url="' + esc(vidUrl) + '">' + VIDEO_ICON + vidTitle + '</button>';
+  html += '</div>';
   return html;
 }

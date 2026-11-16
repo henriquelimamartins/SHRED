@@ -972,14 +972,61 @@ button.tech-phase{width:100%;text-align:left;color:var(--text);font:inherit;curs
 #panel-library .lib-gate-desc{margin:0 0 10px;font-size:13px;line-height:1.5;color:var(--text-soft);}
 #panel-library .lib-gate ul.check li.mrow{padding:12px 0;border-bottom:0;border-top:1px solid var(--line);}
 #panel-library hr.lib-divider{margin:4px 0 14px;border-top-color:var(--line);}
-#panel-library .page-back{display:none;}
 @media (max-width: 767px){
   #panel-library .lib-lede{margin-bottom:14px;}
   #panel-library .lib-group ul.check li.mrow{min-height:56px;}
   #panel-library .mbtn{min-height:44px;}
   #panel-library .lib-group-bonus .stepper button{width:44px;height:44px;}
-  /* With the pack on, LIBRARY is reached from MORE: "‹ More" replaces the eyebrow (4.6 board). */
-  #panel-library .page-back{display:inline-flex;align-items:center;gap:4px;min-height:44px;padding:0;margin:-6px 0 0;border:0;background:transparent;color:var(--muted);font:inherit;font-size:13px;}
-  #panel-library .page-back-ic{width:16px;height:16px;flex:0 0 16px;}
-  #panel-library .page-back + .page-head .page-eyebrow{display:none;}
+}
+
+/* ---------- "‹ More" back link on the phone (slices 4.8a / 4.8b, D137): pages reached from MORE ---------- */
+.page-back{display:none;}
+@media (max-width: 767px){
+  .page-back{display:inline-flex;align-items:center;gap:4px;min-height:44px;padding:0;margin:-6px 0 0;border:0;background:transparent;color:var(--muted);font:inherit;font-size:13px;}
+  .page-back-ic{width:16px;height:16px;flex:0 0 16px;}
+  .page-back + .page-head .page-eyebrow{display:none;} /* the 4.6 boards show the back link instead of the eyebrow */
+}
+
+/* ---------- TOOLS · Guitar Setup as drawn (slice 4.8b, D132 point 5, D138) ---------- */
+#panel-setup .setup-fields{display:flex;flex-wrap:wrap;gap:14px;max-width:520px;margin-bottom:22px;}
+#panel-setup .setup-field{flex:1 1 220px;min-width:0;display:flex;flex-direction:column;gap:6px;}
+#panel-setup .setup-field-label{font-family:var(--font-head);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);}
+#panel-setup .setup-select{margin:0;min-height:48px;border-color:var(--line-2);font-size:var(--fs-base);font-weight:400;}
+#panel-setup .setup-measure{background:var(--card);border:1px solid var(--border);border-radius:var(--r-card);padding:18px 20px 20px;margin-bottom:22px;}
+#panel-setup .setup-measure-title{margin:0 0 14px;font-family:var(--font-head);font-size:16px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text);}
+#panel-setup .setup-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:10px;}
+#panel-setup .setup-tile{background:var(--chrome);border:1px solid var(--line);border-radius:12px;padding:12px 14px;min-width:0;}
+#panel-setup .setup-tile-label{font-family:var(--font-head);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);}
+#panel-setup .setup-tile-val{margin-top:6px;font-family:var(--font-head);font-size:20px;font-weight:600;line-height:1.1;color:var(--text);}
+#panel-setup .setup-tile-sub{margin-top:2px;font-size:var(--fs-sm);color:var(--muted);}
+#panel-setup .setup-cols{display:grid;grid-template-columns:minmax(0,1fr);grid-template-areas:"note" "lede" "steps" "video";gap:14px;}
+#panel-setup .setup-lede{grid-area:lede;margin:0;font-size:var(--fs-base);line-height:1.55;color:var(--text-soft);text-align:left;}
+#panel-setup .setup-note{grid-area:note;margin:0;padding:12px 14px;border:1px solid var(--border);border-radius:12px;background:var(--sunk);font-size:13px;line-height:1.5;color:var(--text-soft);}
+#panel-setup .setup-note b{color:var(--text);}
+#panel-setup .setup-steps{grid-area:steps;list-style:none;margin:0;padding:4px 20px;background:var(--card);border:1px solid var(--border);border-radius:var(--r-card);}
+#panel-setup .setup-step{display:flex;gap:16px;padding:18px 0;border-top:1px solid var(--line);}
+#panel-setup .setup-step:first-child{border-top:0;}
+#panel-setup .setup-num{flex:0 0 32px;height:32px;border-radius:50%;border:1px solid var(--border-open);display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-size:15px;font-weight:600;color:var(--red-tint);}
+#panel-setup .setup-step-body{flex:1;min-width:0;}
+#panel-setup .setup-step-title{margin:4px 0 6px;font-family:var(--font-head);font-size:16px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text);}
+#panel-setup .setup-step-body p{margin:0 0 8px;font-size:var(--fs-base);line-height:1.5;color:var(--text-soft);}
+#panel-setup .setup-step-body p:last-child{margin-bottom:0;}
+#panel-setup .setup-step-body b{color:var(--text);}
+#panel-setup .setup-video{grid-area:video;margin:0;min-height:48px;padding:0 16px;font-family:var(--font-head);font-size:15px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;}
+#panel-setup .btn-video-ic{width:18px;height:18px;flex:0 0 18px;}
+/* Owner (D138): on desktop the introduction, note and video sit in one row between the measurements and the steps,
+   and the steps use the full width, like the measurements. */
+@media (min-width: 768px){
+  #panel-setup .setup-cols{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"lede note" "video video" "steps steps";gap:16px 20px;align-items:center;}
+  #panel-setup .setup-video{justify-self:start;}
+}
+@media (min-width: 1100px){
+  #panel-setup .setup-cols{grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;grid-template-areas:"lede note video" "steps steps steps";}
+  #panel-setup .setup-video{justify-self:stretch;}
+}
+@media (max-width: 767px){
+  #panel-setup .setup-fields, #panel-setup .setup-measure{margin-bottom:14px;}
+  #panel-setup .setup-tiles{grid-template-columns:repeat(2,minmax(0,1fr));}
+  #panel-setup .setup-tile-val{font-size:24px;}
+  #panel-setup .setup-steps{padding:4px 16px;}
 }

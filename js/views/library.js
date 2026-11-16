@@ -2,7 +2,7 @@
 // Slice 4.8a (D132 point 4, D137): LIBRARY as drawn on the 4.6 boards. Each section is a card row that opens in place
 // (a button with aria-expanded); inside, groups are cards side by side on desktop and stacked on the phone; Watched
 // marks are pills; documents show a file icon and their kind; the Listening Vault uses the app red (purple only for the
-// Expression Track); on the phone with the BHGS pack on, "‹ More" leads back to MORE (LIBRARY lives there).
+// Expression Track); on the phone with the BHGS pack on, "‹ More" leads back to MORE (LIBRARY lives there; helper in shell.js since 4.8b).
 // Guide: "How This App Works" rewritten with the owner (D120, D137); texts, links, buttons and stored keys otherwise unchanged.
 // Slice 4.5b (D125, D126): the drawn page header (muted eyebrow + large title).
 // Slice 4.3 (D112, D122): the Shred Roadmap section (phases and Essential Skills) moved to the TECHNIQUE page.
@@ -15,13 +15,12 @@ import { LISTENING_VAULT } from "../data/listening.js?v=1";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=1";
 import { BHGS_PACK } from "../pack.js?v=1";
-import { pageHeader } from "./shell.js?v=8";
-import { watchItem, linked, renderBonusList } from "./components.js?v=24";
+import { pageHeader, backToMore } from "./shell.js?v=9";
+import { watchItem, linked, renderBonusList } from "./components.js?v=25";
 
 // Line icons as drawn on the boards (same stroke style as the shell icons).
 var LIB_ICONS = {
   chevron: 'M9 6l6 6-6 6',
-  back: 'M15 6l-6 6 6 6',
   file: 'M7 3h7l4 4v14H7zM14 3v4h4'
 };
 function libIcon(name, cls){
@@ -149,7 +148,7 @@ function guideBody(){
 
 export function renderLibrary(){
   // Phone with the pack on: LIBRARY is reached from MORE, so the board shows "‹ More" instead of the eyebrow.
-  var html = BHGS_PACK ? '<button type="button" class="page-back" data-action="more">' + libIcon('back', 'page-back-ic') + 'More</button>' : '';
+  var html = BHGS_PACK ? backToMore() : '';
   html += pageHeader('Reference &amp; Review', 'Library');
   html += '<p class="lede lib-lede">Browse and check off any item, anytime - it all counts toward the same progress as Daily Practice.</p>';
 
