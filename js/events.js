@@ -21,13 +21,13 @@
 import { defaultState, defaultDojoState, saveState, state, replaceState, backupBeforeReplace, migrate, newerSchema, NEWER_SCHEMA_MSG } from "./store.js?v=5";
 import { hasFirebase, auth, db, googleProvider, currentUser, cloudReady, cloudReadFailed, CLOUD_READ_FAILED_MSG, requestCloudWrite, loadFromCloud, signInWithPopup, signOut } from "./firebase.js?v=5";
 import { ui, showToast } from "./ui.js?v=1";
-import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=30";
-import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=30";
-import { changeCalMonth, calCanGo } from "./views/calendar.js?v=30";
-import { currentMinigame, startArchitectGame, handleDojoAnswer, renderCodexList, renderCodexReader, focusSubTitle } from "./views/dojo.js?v=22";
-import { updateNav, render, updateAccountRow } from "./render.js?v=30";
-import { SUB_ITEMS } from "./views/shell.js?v=14";
-import { initDailySwipe } from "./views/daily-swipe.js?v=9";
+import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=31";
+import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=31";
+import { changeCalMonth, calCanGo } from "./views/calendar.js?v=31";
+import { currentMinigame, startArchitectGame, handleDojoAnswer, renderCodexList, renderCodexReader, focusSubTitle } from "./views/dojo.js?v=23";
+import { updateNav, render, updateAccountRow } from "./render.js?v=31";
+import { SUB_ITEMS } from "./views/shell.js?v=15";
+import { initDailySwipe } from "./views/daily-swipe.js?v=10";
 import { buildBackupFile, backupFileName, listDeviceBackups, parseBackupFile, isNewerCopy, restoredState, formatLocalTime, reasonLabel, MAX_BACKUP_FILE_BYTES, INVALID_BACKUP_MSG, NEWER_BACKUP_MSG } from "./logic/backup.js?v=2";
 
 // Slice 4.8e (D149): Restore and Reset open in place on the same page, so opening one closes the other.
@@ -250,6 +250,15 @@ document.addEventListener("click",function(e){
   }
 
   if(a==="go"){ openPage(t.dataset.view); return; }
+  // Slice 4.10a: DAILY's "Retake Phase Test" opens the TECHNIQUE page at its Phase test (the Phase test tab on the
+  // phone; on desktop the page scrolls to it). Page state only, nothing written.
+  if(a==="phasetest"){
+    ui.techTab="test";
+    openPage("technique");
+    var testEl=document.querySelector('#panel-technique .tech-sec-test');
+    if(testEl && window.innerWidth>=768) testEl.scrollIntoView({block:'start', behavior:'instant'});
+    return;
+  }
   
   if(a==="toggleacc"){ui.lib[t.dataset.acc]=!ui.lib[t.dataset.acc]; render();}
   else if(a==="techtab"){ ui.techTab=t.dataset.tab; render(); }
