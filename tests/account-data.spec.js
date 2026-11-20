@@ -15,19 +15,18 @@ test('HOME no longer holds Cloud Sync, the backup buttons or Reset Everything', 
   await expect(page.locator('#panel-home').getByText('Cloud Sync')).toHaveCount(0);
 });
 
-test('the page holds the Cloud Sync card with every button, as it was on HOME', async ({ page }) => {
+test('the page holds every button: Save, Load, Download, Restore, Reset (groups since slice 4.8e, D149)', async ({ page }) => {
   const monitor = await openApp(page, { localState: progressState({ phaseIndex: 1 }) });
   const account = await accountPanel(page);
   await expect(account.locator('.page-eyebrow')).toHaveText('Account');
   await expect(account.locator('.page-title')).toHaveText('Account & data');
-  const card = account.locator('.card', { has: page.locator('[data-action="cloudsave"]') });
-  await expect(card.locator('h3')).toHaveText('Cloud Sync');
-  await expect(card).toContainText('Your progress syncs automatically when logged in.');
-  await expect(card.locator('[data-action="cloudsave"]')).toHaveText(/Save/);
-  await expect(card.locator('[data-action="cloudload"]')).toHaveText(/Load/);
-  await expect(card.locator('[data-action="downloadbackup"]')).toHaveText(/Download backup/);
-  await expect(card.locator('[data-action="openrestore"]')).toHaveText(/Restore backup/);
-  await expect(card.locator('[data-action="reset"]')).toHaveText(/Reset Everything/);
+  const cloud = account.locator('[data-group="cloud"]');
+  await expect(cloud).toContainText('Your progress syncs automatically when logged in.');
+  await expect(cloud.locator('[data-action="cloudsave"]')).toHaveText('Save');
+  await expect(cloud.locator('[data-action="cloudload"]')).toHaveText('Load');
+  await expect(account.locator('[data-group="backups"] [data-action="downloadbackup"]')).toHaveText('Download');
+  await expect(account.locator('[data-group="backups"] [data-action="openrestore"]')).toHaveText('Restore…');
+  await expect(account.locator('[data-group="reset"] [data-action="reset"]')).toHaveText('Reset…');
   expect(monitor.pageErrors).toEqual([]);
   expect(unexpectedConsoleErrors(monitor)).toEqual([]);
 });

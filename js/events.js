@@ -21,16 +21,17 @@
 import { defaultState, defaultDojoState, saveState, state, replaceState, backupBeforeReplace, migrate, newerSchema, NEWER_SCHEMA_MSG } from "./store.js?v=5";
 import { hasFirebase, auth, db, googleProvider, currentUser, cloudReady, cloudReadFailed, CLOUD_READ_FAILED_MSG, requestCloudWrite, loadFromCloud, signInWithPopup, signOut } from "./firebase.js?v=5";
 import { ui, showToast } from "./ui.js?v=1";
-import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=29";
-import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=29";
-import { changeCalMonth, calCanGo } from "./views/calendar.js?v=29";
-import { currentMinigame, startArchitectGame, handleDojoAnswer, renderCodexList, renderCodexReader, focusSubTitle } from "./views/dojo.js?v=21";
-import { updateNav, render, updateAccountRow } from "./render.js?v=29";
-import { SUB_ITEMS } from "./views/shell.js?v=13";
-import { initDailySwipe } from "./views/daily-swipe.js?v=8";
+import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=30";
+import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=30";
+import { changeCalMonth, calCanGo } from "./views/calendar.js?v=30";
+import { currentMinigame, startArchitectGame, handleDojoAnswer, renderCodexList, renderCodexReader, focusSubTitle } from "./views/dojo.js?v=22";
+import { updateNav, render, updateAccountRow } from "./render.js?v=30";
+import { SUB_ITEMS } from "./views/shell.js?v=14";
+import { initDailySwipe } from "./views/daily-swipe.js?v=9";
 import { buildBackupFile, backupFileName, listDeviceBackups, parseBackupFile, isNewerCopy, restoredState, formatLocalTime, reasonLabel, MAX_BACKUP_FILE_BYTES, INVALID_BACKUP_MSG, NEWER_BACKUP_MSG } from "./logic/backup.js?v=2";
 
-export function handleReset(){ ui.resetConfirm=true; render(); }
+// Slice 4.8e (D149): Restore and Reset open in place on the same page, so opening one closes the other.
+export function handleReset(){ ui.restoreOpen=false; ui.restorePick=null; ui.resetConfirm=true; render(); }
 export function cancelReset(){ ui.resetConfirm=false; render(); }
 // Slice 3.5 (D106): the state after Reset Everything. Only progress is erased: Technique, every mark in
 // `checks` (Technique, BHGS theory videos, Creative), Improv and legacy DOJO data. Everything else is
@@ -100,6 +101,7 @@ export function cancelRestore(){ ui.restoreOpen=false; ui.restorePick=null; rend
 
 function pickCopy(copyState, at, label){
   if(isNewerCopy(copyState)){ showToast(NEWER_BACKUP_MSG); return; }
+  ui.resetConfirm = false; // slice 4.8e: never two confirmations at once (a file can be read after Reset… was pressed)
   ui.restorePick = { state: JSON.parse(JSON.stringify(copyState)), at: at, label: label };
   render();
 }
@@ -202,6 +204,13 @@ function openPage(view){
   render();
 }
 
+// Slice 4.8e: scroll an Account & data row (and its opened panel) into view; "instant" also stops the smooth
+// scroll to the top that openPage() has just started.
+function showAccountRow(id){ var r=document.querySelector('#panel-account [data-row="'+id+'"]'); if(r && r.scrollIntoView) r.scrollIntoView({block:"start", behavior:"instant"}); }
+// Slice 4.8e: after Restore / Reset open or close in place, keyboard focus goes to the panel's first control,
+// or back to the row's button.
+function focusAccount(sel){ var b=document.querySelector('#panel-account '+sel); if(b) b.focus({preventScroll:true}); }
+
 // Slice 4.7: after the page is drawn again, keep the keyboard focus on the KEY circle.
 function focusDaily(sel){ var b=document.querySelector('#panel-daily '+sel); if(b) b.focus({preventScroll:true}); }
 
@@ -225,8 +234,9 @@ document.addEventListener("click",function(e){
   var a=t.dataset.action;
   
   if(a==="more"){ openPage("more"); return; }
-  if(a==="morerestore"){ openPage("account"); openRestore(); return; }
-  if(a==="morereset"){ ui.restoreOpen=false; ui.restorePick=null; openPage("account"); handleReset(); return; }
+  // Slice 4.8e (D149 point 2): the MORE rows also bring the opened panel into view.
+  if(a==="morerestore"){ openPage("account"); openRestore(); showAccountRow("restore"); return; }
+  if(a==="morereset"){ openPage("account"); handleReset(); showAccountRow("reset"); return; }
 
   if(a==="subnav"){
     var sv=t.dataset.subview, si=parseInt(t.dataset.index,10), sub=(SUB_ITEMS[sv]||[])[si];
@@ -295,20 +305,27 @@ document.addEventListener("click",function(e){
     }).catch(() => showToast("Error loading from cloud."));
   }
   else if(a==="downloadbackup"){ downloadBackup(); }
-  else if(a==="openrestore"){ openRestore(); }
-  else if(a==="cancelrestore"){ cancelRestore(); }
-  else if(a==="pickrestore"){ pickDeviceBackup(parseInt(t.dataset.index,10)); }
+  // Slice 4.8e (D149 point 3): Restore… and Reset… open their panel in place; pressed again, they close it.
+  else if(a==="openrestore"){
+    if(ui.restoreOpen || ui.restorePick){ cancelRestore(); focusAccount('[data-action="openrestore"]'); }
+    else { openRestore(); focusAccount('#acct-panel-restore button'); }
+  }
+  else if(a==="cancelrestore"){ cancelRestore(); focusAccount('[data-action="openrestore"]'); }
+  else if(a==="pickrestore"){ pickDeviceBackup(parseInt(t.dataset.index,10)); focusAccount('#acct-panel-restore [data-action="cancelrestore"]'); }
   else if(a==="pickrestorefile"){ pickBackupFile(); }
   else if(a==="confirmrestore"){ confirmRestore(); }
-  else if(a==="reset"){ handleReset(); }
-  else if(a==="cancelreset"){ cancelReset(); }
+  else if(a==="reset"){
+    if(ui.resetConfirm){ cancelReset(); focusAccount('[data-action="reset"]'); }
+    else { handleReset(); focusAccount('#acct-panel-reset [data-action="cancelreset"]'); }
+  }
+  else if(a==="cancelreset"){ cancelReset(); focusAccount('[data-action="reset"]'); }
   else if(a==="confirmreset"){ confirmReset(); }
   else if(a==="canceljump"){ cancelPhaseJumpBack(); }
   else if(a==="confirmjump"){ confirmPhaseJumpBack(); }
   else if(a==="togglemute"){
     state.dojo.audioMuted = !state.dojo.audioMuted; saveState(); render();
-    // Slice 4.8d: keyboard focus stays on the switch after the page is drawn again.
-    var sw = document.querySelector('#panel-dojo .theory-switch'); if(sw) sw.focus();
+    // Slice 4.8d: keyboard focus stays on the switch after the page is drawn again (on Account & data since 4.8e).
+    var sw = document.querySelector('#panel-account .acct-switch'); if(sw) sw.focus();
   }
   else if(a==="dojoopen"){
     document.querySelectorAll('.codex-view').forEach(e=>e.classList.remove('active'));

@@ -96,13 +96,13 @@ async function restoreFromFile(page, name, content) {
 }
 
 test.describe('Account & data buttons', () => {
-  test('Download backup and Restore backup sit in the Cloud Sync card next to Save, Load and Reset', async ({ page }) => {
+  test('Download backup and Restore backup sit in the Backups group (slice 4.8e, D149)', async ({ page }) => {
     await openApp(page, { localState: currentState() });
-    const card = (await accountPanel(page)).locator('.card', { has: page.locator('[data-action="cloudsave"]') });
-    await expect(card.locator('[data-action="downloadbackup"]')).toHaveText(/Download backup/);
-    await expect(card.locator('[data-action="openrestore"]')).toHaveText(/Restore backup/);
-    await expect(card.locator('[data-action="cloudload"]')).toBeVisible();
-    await expect(card.locator('[data-action="reset"]')).toBeVisible();
+    const group = (await accountPanel(page)).locator('[data-group="backups"]');
+    await expect(group.locator('[data-row="download"] .acct-row-name')).toHaveText('Download backup');
+    await expect(group.locator('[data-action="downloadbackup"]')).toHaveText('Download');
+    await expect(group.locator('[data-row="restore"] .acct-row-name')).toHaveText('Restore backup');
+    await expect(group.locator('[data-action="openrestore"]')).toHaveText('Restore…');
   });
 });
 
@@ -164,7 +164,9 @@ test.describe('restore list', () => {
       '8 Nov 2026, 23:30 · Before cloud sync',
       '5 Nov 2026, 09:00 · Daily backup',
     ]);
-    await expect((await accountPanel(page)).locator('[data-action="downloadbackup"]')).toHaveCount(0);
+    // Slice 4.8e (D149 point 3): the list opens in place under the Restore row; the other rows stay.
+    await expect((await accountPanel(page)).locator('[data-row="restore"] + #acct-panel-restore [data-action="pickrestore"]')).toHaveCount(3);
+    await expect((await accountPanel(page)).locator('[data-action="openrestore"]')).toHaveAttribute('aria-expanded', 'true');
     await (await accountPanel(page)).locator('[data-action="cancelrestore"]').click();
     await expect(rows).toHaveCount(0);
     await expect((await accountPanel(page)).locator('[data-action="openrestore"]')).toBeVisible();
