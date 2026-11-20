@@ -5,16 +5,16 @@
 // Slice 4.5b (D125, D126): the drawn page header (muted eyebrow + large title).
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
 import { PHASES, TESTCATS, THEORY_DOCS, THEORY_GROUPS, THEORY_ITEMS, ESSENTIAL, ESSENTIAL_URL, PREREQ, WARMUP_URL } from "../data/bhgs.js?v=1";
-import { IMPROV_GATES } from "../data/improv.js?v=1";
+import { IMPROV_GATES } from "../data/improv.js?v=2";
 import { DAY_FULL } from "../data/days.js?v=1";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=1";
 import { todayISO, todayName, isWeekendDay, activeDay } from "../logic/dates.js?v=7";
-import { k } from "../logic/technique.js?v=25";
-import { sessionPlan, isBlockPracticed } from "../logic/daily.js?v=25";
-import { pageHeader } from "./shell.js?v=9";
-import { linked, checkItem, prereqItem, docItem, chopRow, dayPicker, blk, getDailyActiveSequence } from "./components.js?v=25";
-import { renderDailySide } from "./daily-side.js?v=5";
+import { k } from "../logic/technique.js?v=26";
+import { sessionPlan, isBlockPracticed } from "../logic/daily.js?v=26";
+import { pageHeader } from "./shell.js?v=10";
+import { linked, checkItem, prereqItem, docItem, chopRow, dayPicker, blk, getDailyActiveSequence } from "./components.js?v=26";
+import { renderDailySide } from "./daily-side.js?v=6";
 
 // Header detail (D133 point 3): "n of N practiced · M min" on the active day; another day (read-only) shows the minutes only.
 function sessionCount(day, editable){

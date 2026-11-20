@@ -162,7 +162,7 @@ test.describe('companion column (desktop)', () => {
     test.skip(isPhone(testInfo), 'desktop only');
     await openApp(page, { localState: state() });
     await openView(page, 'improv');
-    const improvKey = await page.locator('#panel-improv .transpose-card > b').first().textContent();
+    const improvKey = await page.locator('#panel-improv .improv-key').textContent(); // slice 4.8c
     expect(improvKey).toBe('C# minor');
     await openView(page, 'daily');
     const card = side(page).locator('.daily-key-card');

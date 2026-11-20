@@ -48,7 +48,7 @@ test('HOME shows the three rails with real values', async ({ page }, testInfo) =
 
 test('the Improv rail matches the IMPROV page (D116)', async ({ page }) => {
   await openApp(page, { localState: sample() });
-  const total = await page.evaluate(async () => (await import('/js/data/improv.js?v=1')).IMPROV_GATES[1].exercises.length);
+  const total = await page.evaluate(async () => (await import('/js/data/improv.js?v=2')).IMPROV_GATES[1].exercises.length);
   await expect(rail(page.locator('#panel-home'), 'improv').locator('.rail-status')).toHaveText(`2/${total}`);
   await expect(rail(page.locator('#panel-home'), 'improv')).toHaveAttribute('data-pct', String(Math.round(200 / total)));
   // Marking one more exercise on the IMPROV page moves the rail.

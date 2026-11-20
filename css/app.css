@@ -59,7 +59,7 @@
   /* DAILY (slice 4.7): edges and quiet surfaces of the 4.6 boards */
   --chip-text:#B4B4BD; --num-text:#8E8E98; --line-2:#2E2E35; --ctl-line:#2A2A31; --ctl-line-hover:#3A3A42;
   --sunk:#131316; --sunk-2:#141418; --red-edge:#6A2C30; --red-edge-soft:#5A2A2D; --red-bg-tile:rgba(229,72,77,0.12);
-  --purple-edge:#3A2D5C; --purple-edge-2:#4B3A78;
+  --purple-edge:#3A2D5C; --purple-edge-2:#4B3A78; --purple-edge-3:#2F2547; --purple-bg-mid:rgba(139,76,240,0.10);
   /* LIBRARY (slice 4.8a): an open section's edge and the soft text of the boards */
   --border-open:#34343C; --text-soft:#C4C4CC;
   --wood:#2a1b15;        /* DOJO fretboard (instrument colour, not UI) */
@@ -302,7 +302,6 @@ button:focus-visible, a:focus-visible, select:focus-visible { outline: 2px solid
 
 /* --- REUSABLE UI COMPONENTS --- */
 .eyebrow{color:var(--red-tint);font-size:10.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;}
-.eyebrow.improv{color:var(--purple-tint);}
 .eyebrow.theory{color:var(--blue-tint);}
 .h2{font-size:var(--fs-xl);}
 .h2.h2-lg{font-size:var(--fs-2xl);}
@@ -311,11 +310,6 @@ button:focus-visible, a:focus-visible, select:focus-visible { outline: 2px solid
 .card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-card);padding:16px;margin-bottom:16px;}
 .card h3{font-size:var(--fs-base);margin-bottom:10px;color:var(--white);display:flex;justify-content:space-between;align-items:baseline;gap:8px;}
 .card h3 .tag{text-align:right;}
-.card.card-improv{border-color:var(--purple);box-shadow:0 0 10px rgba(139,76,240,0.05);}
-.card.card-improv.glow{box-shadow:0 0 12px rgba(139,76,240,0.1);}
-.card h3.h3-improv{color:var(--purple-tint);}
-.card h3.h3-lg{font-size:var(--fs-xl);}
-.card.is-locked{opacity:.5;}
 .tag{color:var(--muted);font-size:var(--fs-xs);text-transform:none;letter-spacing:0;font-weight:500;}
 
 .bignum{font-family:var(--font-head);font-size:32px;font-weight:700;}
@@ -423,10 +417,6 @@ ul.check li.lib-dayrow, ul.check li.lib-dayrow:last-child{display:flex;align-ite
 
 .note{border-left:3px solid var(--amber);background:var(--amber-bg-soft);padding:12px 14px;border-radius:0 var(--r-lg) var(--r-lg) 0;font-size:var(--fs-md);color:var(--amber-soft);margin-bottom:14px;}
 .note.purple{border-left-color:var(--purple); background:var(--purple-bg-soft); color:var(--purple-soft);}
-.note.purple.transpose-card{text-align:center;margin-bottom:18px;padding:16px;}
-.transpose-label{font-size:11.5px;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;color:var(--purple-tint);}
-.transpose-style{font-size:var(--fs-md);opacity:0.8;}
-.transpose-help{font-size:12.5px;margin-top:10px;color:var(--text);font-weight:normal;line-height:1.5;}
 .tbtn{background:var(--card2);border:1px solid var(--border);color:var(--text);border-radius:var(--r-lg);padding:12px 18px;font-size:var(--fs-base);font-weight:600;transition:0.2s;}
 .tbtn:hover{background:var(--card); border-color:var(--muted);}
 .tbtn.primary{background:var(--red-fill);border-color:var(--red-fill);color:var(--white);}
@@ -455,14 +445,7 @@ ul.check li.lib-dayrow, ul.check li.lib-dayrow:last-child{display:flex;align-ite
 /* Improv / Expression Track exercise rows (IMPROV and LIBRARY) */
 .ex-head{display:flex;justify-content:space-between;align-items:center;gap:12px;}
 .ex-title{color:var(--text);font-size:13.5px;flex:1;min-width:0;}
-.ex-title.lg{font-size:var(--fs-base);}
 .ex-btn{flex:0 0 auto;}
-.ex-desc{font-size:12.5px;line-height:1.5;color:var(--muted);text-align:justify;}
-.ex-desc.lg{font-size:var(--fs-md);}
-.note.purple.ex-listen{margin-top:8px;margin-bottom:4px;padding:8px;font-size:11.5px;text-align:justify;}
-.note.purple.ex-listen.lg{margin-top:10px;padding:10px;font-size:var(--fs-sm);}
-.gate-desc{font-size:13.5px;margin-bottom:14px;text-align:justify;}
-.done-ex{font-size:var(--fs-md);margin-bottom:10px;color:var(--muted);}
 
 /* Listening Vault (LIBRARY) */
 .plain-list{padding:0;margin:0;list-style:none;}
@@ -1030,3 +1013,72 @@ button.tech-phase{width:100%;text-align:left;color:var(--text);font:inherit;curs
   #panel-setup .setup-tile-val{font-size:24px;}
   #panel-setup .setup-steps{padding:4px 16px;}
 }
+
+/* ---------- IMPROVISATION as drawn (slice 4.8c, D132 point 3, D139) ---------- */
+#panel-improv .improv-lede{max-width:760px;margin:0 0 22px;font-size:var(--fs-base);line-height:1.55;color:var(--text-soft);text-align:left;}
+#panel-improv .improv-cols{display:grid;grid-template-columns:minmax(0,1fr);grid-template-areas:"target" "gate" "list";gap:14px;}
+#panel-improv .improv-target{grid-area:target;display:flex;flex-direction:column;gap:6px;padding:16px 18px;background:var(--purple-bg-mid);border:1px solid var(--purple-edge);border-radius:var(--r-card);}
+#panel-improv .improv-target-label{font-family:var(--font-head);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--purple-tint);}
+#panel-improv .improv-target-key{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;}
+#panel-improv .improv-key{font-family:var(--font-head);font-size:30px;font-weight:700;letter-spacing:.02em;line-height:1.1;text-transform:uppercase;color:var(--text);}
+#panel-improv .improv-style{font-size:13px;color:var(--text-soft);}
+#panel-improv .improv-target-help{margin:2px 0 0;font-size:13px;line-height:1.5;color:var(--text-soft);}
+#panel-improv .improv-target-help b{color:var(--text);}
+#panel-improv .improv-gate, #panel-improv .improv-done{grid-area:gate;min-width:0;background:var(--card);border:1px solid var(--purple-edge);border-radius:var(--r-card);padding:18px 20px 4px;}
+#panel-improv .improv-gate-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:4px 12px;}
+#panel-improv .improv-gate-title{margin:0;font-family:var(--font-head);font-size:20px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--purple-tint);}
+#panel-improv .improv-gate-count{font-size:var(--fs-sm);color:var(--muted);white-space:nowrap;}
+#panel-improv .improv-gate-desc{margin:8px 0 14px;font-size:var(--fs-base);line-height:1.5;color:var(--text-soft);}
+#panel-improv .improv-exs{list-style:none;margin:0;padding:0;}
+#panel-improv .improv-ex{display:flex;flex-direction:column;gap:10px;padding:16px 0;border-top:1px solid var(--line);}
+#panel-improv .ex-title{margin:0;font-family:var(--font-body);font-size:15px;font-weight:600;letter-spacing:0;text-transform:none;color:var(--text);}
+#panel-improv .improv-ex.done .ex-title{color:var(--muted);}
+#panel-improv .mbtn{min-height:40px;padding-top:0;padding-bottom:0;} /* the app's usual Mastered button, as LIBRARY (D139 point 6) */
+#panel-improv .improv-unlock{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:48px;margin:4px 0 18px;}
+#panel-improv .improv-unlock-ic{width:18px;height:18px;flex:0 0 18px;}
+#panel-improv .improv-done{display:flex;gap:12px;align-items:flex-start;padding:18px 20px;color:var(--text);}
+#panel-improv .improv-done-ic{width:22px;height:22px;flex:0 0 22px;color:var(--purple-tint);}
+#panel-improv .improv-done b{font-family:var(--font-head);font-size:18px;font-weight:600;letter-spacing:.06em;color:var(--purple-tint);}
+#panel-improv .improv-done p{margin:6px 0 0;font-size:var(--fs-base);line-height:1.5;color:var(--text-soft);}
+#panel-improv .improv-list{grid-area:list;display:flex;flex-direction:column;gap:8px;min-width:0;}
+#panel-improv .improv-list-title{margin:0;font-family:var(--font-head);font-size:12px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);}
+#panel-improv .improv-row{display:flex;align-items:center;gap:14px;width:100%;min-height:52px;padding:0 16px;box-sizing:border-box;border-radius:12px;background:var(--card);border:1px solid var(--border);color:var(--num-text);font:inherit;font-size:var(--fs-base);text-align:left;}
+#panel-improv .improv-row-gate{flex:0 0 58px;font-family:var(--font-head);font-size:14px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;}
+#panel-improv .improv-row-name{flex:1;min-width:0;}
+#panel-improv .improv-row-state{display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);color:var(--muted);white-space:nowrap;}
+#panel-improv .improv-row.cur{background:var(--purple-bg-mid);border-color:var(--purple-edge-2);color:var(--text);}
+#panel-improv .improv-row.cur .improv-row-gate{color:var(--purple-tint);}
+#panel-improv .improv-row.passed{color:var(--text-2);cursor:pointer;}
+#panel-improv .improv-row.passed .improv-row-gate, #panel-improv .improv-row-check{color:var(--purple-tint);}
+#panel-improv .improv-row.passed:hover{background:var(--sunk-2);}
+#panel-improv .improv-row.passed:focus-visible{outline:2px solid var(--purple);outline-offset:2px;}
+#panel-improv .improv-row-check{width:14px;height:14px;flex:0 0 14px;}
+#panel-improv .improv-row-wrap.open .improv-row{border-bottom-left-radius:0;border-bottom-right-radius:0;}
+#panel-improv .improv-row-body{list-style:none;margin:0;padding:6px 16px 10px 88px;background:var(--card);border:1px solid var(--border);border-top:0;border-radius:0 0 12px 12px;}
+#panel-improv .done-ex{padding:6px 0;font-size:13px;color:var(--muted);}
+#panel-improv .improv-row .chev{display:flex;color:var(--muted);}
+#panel-improv .improv-chev, #panel-improv .improv-lock-ic{width:16px;height:16px;flex:0 0 16px;}
+#panel-improv .improv-row-lock{display:flex;}
+@media (min-width: 1180px){
+  #panel-improv .improv-cols{grid-template-columns:minmax(0,3fr) minmax(300px,2fr);grid-template-areas:"gate target" "gate list";grid-template-rows:auto 1fr;gap:20px;align-items:start;}
+}
+@media (max-width: 767px){
+  #panel-improv .improv-lede{display:none;} /* not on the phone board */
+  #panel-improv .mbtn{min-height:44px;}
+  #panel-improv .improv-row-body{padding-left:16px;}
+}
+
+/* Exercise lines and listening box: IMPROVISATION and LIBRARY's Expression Track (slice 4.8c, D139 point 5) */
+.ex-lines{display:flex;flex-direction:column;gap:4px;margin:0;}
+.ex-line{display:flex;gap:12px;font-size:13px;line-height:1.5;}
+.ex-line dt{flex:0 0 72px;padding-top:2px;font-family:var(--font-head);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.ex-line dd{flex:1;min-width:0;margin:0;color:var(--text-soft);}
+.ex-line-rule dd{color:var(--text);}
+.ex-listen{display:flex;gap:10px;padding:10px 12px;border-radius:10px;background:var(--purple-bg-mid);border:1px solid var(--purple-edge-3);color:var(--purple-tint);}
+.ex-listen-ic{width:16px;height:16px;flex:0 0 16px;margin-top:1px;}
+.ex-refs{flex:1;min-width:0;list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;}
+.ex-ref{display:flex;flex-direction:column;gap:2px;}
+.ex-ref + .ex-ref{padding-top:10px;border-top:1px solid var(--purple-edge-3);}
+.ex-listen-label{font-family:var(--font-head);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--purple-tint);}
+.ex-listen p{margin:0;font-size:13px;line-height:1.5;color:var(--text-soft);}
+.ex-listen b{color:var(--purple-soft);}

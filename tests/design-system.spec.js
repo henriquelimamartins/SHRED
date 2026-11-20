@@ -156,8 +156,9 @@ test('small coloured text uses the tints; filled buttons use the filled colours 
   await expect(page.locator('#panel-daily .tbtn.purple').first()).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
 
   await goTo(page, 'improv');
-  await expect(page.locator('#panel-improv .eyebrow.improv')).toHaveCSS('color', rgb(TOKENS['--purple-tint']));
-  await expect(page.locator('#panel-improv .card-improv h3')).toHaveCSS('color', rgb(TOKENS['--purple-tint']));
+  // Slice 4.8c (D139): the target label and the Gate title as drawn on the 4.6 boards.
+  await expect(page.locator('#panel-improv .improv-target-label')).toHaveCSS('color', rgb(TOKENS['--purple-tint']));
+  await expect(page.locator('#panel-improv .improv-gate-title')).toHaveCSS('color', rgb(TOKENS['--purple-tint']));
   await expect(activeNav).toHaveCSS('color', rgb(TOKENS['--purple-tint']));
 
   await goTo(page, 'dojo');

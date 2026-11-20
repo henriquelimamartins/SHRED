@@ -84,11 +84,11 @@ test('Today\'s Improv: the current Gate and the key of the day, as on the IMPROV
   await openApp(page, { localState: progressState() }); // improvIndex 1 → Gate 2
   const card = home(page).locator('.home-improv');
   await expect(card.locator('.home-link-label')).toHaveText("Today's Improv");
-  const gateOnImprov = (await page.locator('#panel-improv .h3-improv').textContent()).replace(': ', ' · ');
+  const gateOnImprov = await page.locator('#panel-improv .improv-gate-title').textContent(); // slice 4.8c: "Gate 2 · …"
   await expect(card.locator('.home-link-title')).toHaveText(gateOnImprov);
-  const key = await page.locator('#panel-improv .transpose-card b.u-fs-18').textContent();
-  const style = await page.locator('#panel-improv .transpose-style').textContent();
-  await expect(card.locator('.home-link-sub')).toHaveText(`Today's key: ${key} ${style}`);
+  const key = await page.locator('#panel-improv .improv-key').textContent();
+  const style = await page.locator('#panel-improv .improv-style').textContent();
+  await expect(card.locator('.home-link-sub')).toHaveText(`Today's key: ${key} (${style})`);
   await card.click();
   await expect(page.locator('#panel-improv')).toHaveClass(/active/);
 });

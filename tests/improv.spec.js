@@ -35,18 +35,22 @@ async function goTo(page, view) {
 
 const masteryBtn = (scope, g, e) => scope.locator(`[data-action="togimprov"][data-g="${g}"][data-e="${e}"]`);
 const allMastered = (g, n) => Object.fromEntries(Array.from({ length: n }, (_, e) => [`g${g}e${e}`, true]));
-const target = (page) => improv(page).locator('.note.purple', { hasText: 'Daily Transposition Target' });
+// Slice 4.8c (D139): the target card, the Gate card and the Gates list as drawn on the 4.6 boards.
+const target = (page) => improv(page).locator('.improv-target');
+const gateCard = (page, title) => improv(page).locator('.improv-gate', { hasText: title });
+const lockedRow = (page, n, title) => improv(page).locator('.improv-row.locked', { hasText: `Gate ${n}` }).filter({ hasText: title });
 
 test.describe('gates', () => {
   test('a new user sees Gate 1 open with 4 exercises and Gates 2–5 locked', async ({ page }, testInfo) => {
     const monitor = await openApp(page);
     await goTo(page, 'improv');
-    const open = improv(page).locator('.card', { hasText: 'Gate 1: The Horizontal Prison' });
+    const open = gateCard(page, 'Gate 1 · The Horizontal Prison');
     await expect(open).toBeVisible();
     await expect(open.locator('[data-action="togimprov"]')).toHaveCount(4);
     await expect(open.locator('[data-action="togimprov"]').first()).toHaveText('Unmastered');
     for (let i = 1; i < GATES.length; i++) {
-      await expect(improv(page).locator('.card h3', { hasText: `🔒 Gate ${i + 1}: ${GATES[i].title}` })).toBeVisible();
+      await expect(lockedRow(page, i + 1, GATES[i].title)).toBeVisible();
+      await expect(lockedRow(page, i + 1, GATES[i].title).locator('[aria-label="Locked"]')).toHaveCount(1);
     }
     await expect(improv(page).locator('[data-action="advanceimprov"]')).toHaveCount(0);
     await page.screenshot({ path: testInfo.outputPath('improv-gate1.png'), fullPage: true });
@@ -87,7 +91,7 @@ test.describe('gates', () => {
     await goTo(page, 'improv');
     await expect(improv(page).locator('[data-action="advanceimprov"]')).toHaveCount(0);
     await masteryBtn(improv(page), 0, 3).click();
-    await expect(improv(page).locator('[data-action="advanceimprov"]')).toHaveText('🔓 Unlock Gate 2');
+    await expect(improv(page).locator('[data-action="advanceimprov"]')).toHaveText('Unlock Gate 2');
   });
 
   test('Unlock moves to Gate 2; Gate 1 folds into a done row that still lists its exercises', async ({ page }) => {
@@ -97,11 +101,15 @@ test.describe('gates', () => {
     await expect(toast(page)).toHaveText('🔓 New Gate Unlocked!');
     expect((await localSaved(page)).improvIndex).toBe(1);
 
-    await expect(improv(page).locator('.card', { hasText: 'Gate 2: The Chord Tone Architect' }).locator('[data-action="togimprov"]')).toHaveCount(5);
+    await expect(gateCard(page, 'Gate 2 · The Chord Tone Architect').locator('[data-action="togimprov"]')).toHaveCount(5);
     const done = improv(page).locator('[data-acc="improvG0"]');
-    await expect(done).toContainText('✓ GATE 1: THE HORIZONTAL PRISON');
+    await expect(done).toContainText('Gate 1');
+    await expect(done).toContainText('The Horizontal Prison');
+    await expect(done).toContainText('Mastered');
+    await expect(done).toHaveAttribute('aria-expanded', 'false');
     await done.click();
-    await expect(improv(page).locator('.acc:has([data-acc="improvG0"]) .accbody p')).toHaveCount(4);
+    await expect(improv(page).locator('[data-acc="improvG0"]')).toHaveAttribute('aria-expanded', 'true');
+    await expect(improv(page).locator('.improv-row-wrap:has([data-acc="improvG0"]) .done-ex')).toHaveCount(4);
     // Gate 1's exercises can no longer be toggled from IMPROV.
     await expect(masteryBtn(improv(page), 0, 0)).toHaveCount(0);
   });
@@ -114,7 +122,8 @@ test.describe('gates', () => {
     await expect(target(page)).toHaveCount(0);
     await expect(improv(page).locator('[data-action="togimprov"]')).toHaveCount(0);
     for (let i = 0; i < GATES.length; i++) {
-      await expect(improv(page).locator(`[data-acc="improvG${i}"]`)).toContainText(`✓ GATE ${i + 1}`);
+      await expect(improv(page).locator(`[data-acc="improvG${i}"]`)).toContainText(`Gate ${i + 1}`);
+      await expect(improv(page).locator(`[data-acc="improvG${i}"]`)).toContainText('Mastered');
     }
   });
 
@@ -141,8 +150,8 @@ test.describe('daily transposition target', () => {
     test(`${c.now.slice(0, 10)} → ${c.key}`, async ({ page }) => {
       await openApp(page, { now: c.now, localState: baseState({ practicedDate: c.now.slice(0, 10) }) });
       await goTo(page, 'improv');
-      await expect(target(page).locator('b').first()).toHaveText(c.key);
-      await expect(target(page)).toContainText(`(${c.style})`);
+      await expect(target(page).locator('.improv-key')).toHaveText(c.key);
+      await expect(target(page).locator('.improv-style')).toHaveText(c.style);
     });
   }
 });
@@ -170,7 +179,7 @@ test.describe('Expression Track in Library (same marks)', () => {
     expect(saved.improvChecks).toEqual({ g4e0: true });
     expect(saved.improvIndex).toBe(0);
     await goTo(page, 'improv');
-    await expect(improv(page).locator('.card h3', { hasText: '🔒 Gate 5: Total Audiation' })).toBeVisible();
+    await expect(lockedRow(page, 5, 'Total Audiation')).toBeVisible();
   });
 
   test('current behaviour: un-marking an exercise of a passed gate does not lock that gate again', async ({ page }) => {
@@ -183,6 +192,6 @@ test.describe('Expression Track in Library (same marks)', () => {
     expect(saved.improvChecks.g0e0).toBe(false);
     expect(saved.improvIndex).toBe(1);
     await goTo(page, 'improv');
-    await expect(improv(page).locator('.card', { hasText: 'Gate 2: The Chord Tone Architect' })).toBeVisible();
+    await expect(gateCard(page, 'Gate 2 · The Chord Tone Architect')).toBeVisible();
   });
 });
