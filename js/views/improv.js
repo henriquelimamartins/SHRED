@@ -1,4 +1,5 @@
 // IMPROVISATION view (the 5 Gates).
+// Slice 4.8c3 (D146): the Review queue for DAILY (improvReviewPicks) and the new intro line (D145 point 5).
 // Slice 4.8c (D132 point 3, D139): as drawn on the 4.6 boards. Desktop: the current Gate card on the left; the Daily
 // Transposition Target and the list of the 5 Gates on the right (stacked when narrow). Phone: target, Gate card, list.
 // Each exercise shows its lines (CHANGES, SCALE, TUNING, METER, TRACK, RULE) and a listening box (D140: one or two
@@ -9,11 +10,11 @@
 // Slice 4.5b (D125, D126): the drawn page header (muted eyebrow + large title).
 // Slice 4.4: Improv rail on top (phone).
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
-import { IMPROV_GATES } from "../data/improv.js?v=3";
+import { IMPROV_GATES } from "../data/improv.js?v=4";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=1";
-import { pageHeader } from "./shell.js?v=11";
-import { renderRail, improvRail } from "./rails.js?v=13";
+import { pageHeader } from "./shell.js?v=12";
+import { renderRail, improvRail } from "./rails.js?v=14";
 
 // The Daily Transposition Target (one key per day of the year). Slice 4.5c (D129): moved out of renderImprov()
 // unchanged so HOME's "Today's Improv" card shows the same key as this page.
@@ -74,6 +75,63 @@ export function improvDayContext(){
     boxName: 'box ' + (box + 1) + ' of the ' + key.k + ' pentatonic'
   };
 }
+// Slice 4.8c3 (D146): the Review part of DAILY's Improv block. One or more already-Mastered exercises come back,
+// driven by practice, not by the calendar: the queue moves by the review slots of the days logged in `streakDates`
+// before today (Tue, Wed, Fri 1; Sun 3; Mon, Thu, Sat 0, the days without an Improv block), so missed days skip
+// nothing and today's pick never changes when today is ticked. The pool is walked in rounds: each round visits every
+// Mastered exercise once, in an order shuffled per round from a fixed seed, so no exercise is tied to a weekday.
+// Reads only; nothing is stored.
+export var REVIEW_SLOTS = { Tue: 1, Wed: 1, Fri: 1, Sun: 3 };
+var WEEKDAY_KEYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+// Every exercise marked Mastered, from every Gate, in data order.
+export function reviewPool(){
+  var pool = [], checks = state.improvChecks || {};
+  IMPROV_GATES.forEach(function(g, gi){
+    g.exercises.forEach(function(ex, ei){
+      if(checks["g" + gi + "e" + ei] === true) pool.push({ g: gi, e: ei, ex: ex });
+    });
+  });
+  return pool;
+}
+// Review slots used by the days practised before today (local days, YYYY-MM-DD).
+export function reviewQueuePosition(today){
+  var seen = {}, n = 0, dates = Array.isArray(state.streakDates) ? state.streakDates : [];
+  dates.forEach(function(d){
+    if(typeof d !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(d) || d >= today || seen[d]) return;
+    seen[d] = true;
+    var p = d.split('-');
+    n += REVIEW_SLOTS[WEEKDAY_KEYS[new Date(+p[0], +p[1] - 1, +p[2]).getDay()]] || 0;
+  });
+  return n;
+}
+// The order of round `round` over `size` exercises: a Fisher–Yates shuffle from a fixed seed (mulberry32).
+export function reviewRoundOrder(size, round){
+  var a = Math.imul(round + 1, 0x9E3779B1) | 0;
+  function rnd(){
+    a = (a + 0x6D2B79F5) | 0;
+    var t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  }
+  var order = [];
+  for(var i = 0; i < size; i++) order.push(i);
+  for(var j = size - 1; j > 0; j--){ var k = Math.floor(rnd() * (j + 1)), tmp = order[j]; order[j] = order[k]; order[k] = tmp; }
+  return order;
+}
+// The exercises the session of `day` reviews next: up to its slots, all different.
+export function improvReviewPicks(day, today){
+  var pool = reviewPool(), want = REVIEW_SLOTS[day] || 0;
+  if(!pool.length || !want) return [];
+  var size = pool.length, start = reviewQueuePosition(today), picks = [], taken = {};
+  for(var j = 0; picks.length < Math.min(want, size) && j < want + 3; j++){
+    var s = start + j, i = reviewRoundOrder(size, Math.floor(s / size))[s % size];
+    if(taken[i]) continue;
+    taken[i] = true;
+    picks.push(pool[i]);
+  }
+  return picks;
+}
+
 function fillRule(text){
   if(text.indexOf('{') < 0) return text;
   var c = improvDayContext();
@@ -181,7 +239,7 @@ export function renderImprov(){
   // Slice 4.4 (D117, D123): the Improv rail at the top of the page on the phone (the desktop sidebar shows it).
   var html=pageHeader('Pillar · Musical Development','Improvisation');
   html+='<div class="pillar-rail">'+renderRail(improvRail())+'</div>';
-  html+='<p class="improv-lede">Destroy your muscle memory. This is your progressive masterclass to unlock pure musical audiation. Do not advance until you master every exercise in a Gate.</p>';
+  html+='<p class="improv-lede">Use the boxes and positions you know without being tied to them. Five Gates of constraints train your ear to lead your hands, in a new key every day. Mark every exercise of a Gate Mastered to open the next; mastered exercises come back in DAILY as review.</p>';
 
   var actGate = Math.min(state.improvIndex, IMPROV_GATES.length - 1);
   var allDone = state.improvIndex >= IMPROV_GATES.length;

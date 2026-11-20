@@ -19,14 +19,14 @@ async function openAll(page) {
 const GUIDE_PACK = [
   "The app rests on three pillars: Technique, Improvisation and Theory. DAILY tells you what to practise each day; HOME shows today's session, your streak and the calendar.",
   'Technique follows the BHGS Roadmap in order. Phase 0 sets up your prerequisites, warm-up and a baseline test; then, whatever your level, you start at Phase 1 and work through every exercise, chop-builder and solo of a phase before moving on, up to Phase 4. Each of Phases 1 to 4 is complete when every checklist item is mastered, the chop-builder targets are reached and all 6 categories of the Phase Transition Test, including the Ultimate Technique Workout, are at the required level.',
-  'Improvisation has its own track: on the IMPROV page you work through 5 Gates, playing every exercise in the key of the day.',
+  'Improvisation has its own track: on the IMPROV page you work through 5 Gates, playing every exercise in the key of the day. Exercises you have marked Mastered come back as a short review in DAILY\'s Improvisation block.',
   'Theory is always open: it never locks anything in Technique or Improvisation.',
   'The progress rails show where you stand: BHGS Roadmap for Technique, Musical Development for Improvisation and Theory. Each pillar is counted on its own, never mixed.',
 ];
 const CREDIT = "Technique content (phases, exercises, chop-builders, the Phase Transition Test, and the Technique blocks and micro-doses in DAILY) follows Bradley Hall's Guitar School (BHGS) Official Roadmap; the Theory Track, Creative and Bonus Content videos here in LIBRARY are BHGS lessons too. Video links open on Patreon and need a BHGS membership. The daily routine and the Improvisation and Theory pillars are this app's own.";
 const GUIDE_NOPACK = [
   "The app rests on two pillars: Improvisation and Theory. DAILY tells you what to practise each day; HOME shows today's session, your streak and the calendar.",
-  'Improvisation has its own track: on the IMPROV page you work through 5 Gates, playing every exercise in the key of the day. Here in LIBRARY, the Expression Track lists the same exercises and the Listening Vault gathers listening references.',
+  'Improvisation has its own track: on the IMPROV page you work through 5 Gates, playing every exercise in the key of the day. Exercises you have marked Mastered come back as a short review in DAILY\'s Improvisation block. Here in LIBRARY, the Expression Track lists the same exercises and the Listening Vault gathers listening references.',
   'Theory is always open: it never locks anything in Improvisation.',
   'The Musical Development rails show where you stand in each pillar, each counted on its own.',
 ];

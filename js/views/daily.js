@@ -1,20 +1,22 @@
 // DAILY view.
+// Slice 4.8c3 (D146): the Improv & Expression block starts with a Review part (already-Mastered exercises).
 // Slice 4.7 (D133): DAILY as drawn on the 4.6 canvas: header with the session count, day buttons, numbered blocks,
 // the micro-dose as a dashed "+ 5 min" box and, on desktop, the companion column (views/daily-side.js).
 // Texts, links, buttons, which items show and every action are unchanged (D24, D30).
 // Slice 4.5b (D125, D126): the drawn page header (muted eyebrow + large title).
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
 import { PHASES, TESTCATS, THEORY_DOCS, THEORY_GROUPS, THEORY_ITEMS, ESSENTIAL, ESSENTIAL_URL, PREREQ, WARMUP_URL } from "../data/bhgs.js?v=1";
-import { IMPROV_GATES } from "../data/improv.js?v=3";
+import { IMPROV_GATES } from "../data/improv.js?v=4";
 import { DAY_FULL } from "../data/days.js?v=1";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=1";
 import { todayISO, todayName, isWeekendDay, activeDay } from "../logic/dates.js?v=7";
-import { k } from "../logic/technique.js?v=27";
-import { sessionPlan, isBlockPracticed } from "../logic/daily.js?v=27";
-import { pageHeader } from "./shell.js?v=11";
-import { linked, checkItem, prereqItem, docItem, chopRow, dayPicker, blk, getDailyActiveSequence } from "./components.js?v=27";
-import { renderDailySide } from "./daily-side.js?v=7";
+import { k } from "../logic/technique.js?v=28";
+import { sessionPlan, isBlockPracticed } from "../logic/daily.js?v=28";
+import { pageHeader } from "./shell.js?v=12";
+import { linked, checkItem, prereqItem, docItem, chopRow, dayPicker, blk, getDailyActiveSequence } from "./components.js?v=28";
+import { renderDailySide } from "./daily-side.js?v=8";
+import { improvKeyOfDay, improvReviewPicks, exerciseLines } from "./improv.js?v=20";
 
 // Header detail (D133 point 3): "n of N practiced · M min" on the active day; another day (read-only) shows the minutes only.
 function sessionCount(day, editable){
@@ -30,15 +32,41 @@ function microLine(essential, essUrl){
   return '<div class="daily-micro"><span class="daily-micro-tag">+ 5 min</span><span class="daily-micro-link">' + linked(essential + " micro-dose", essUrl) + '</span></div>';
 }
 
-// The Improv & Expression block body (weekday and Sunday), unchanged texts and button.
-function improvBody(){
+// Slice 4.8c3 (D146): the Review part, practised first. Already-Mastered exercises from the practice-driven queue of
+// views/improv.js (5 min on weekdays, 3 × 5 min on Sunday), each with a native "Show exercise" that opens its lines
+// with today's values. Nothing when nothing is Mastered; reads only, writes nothing.
+var REVIEW_NOTE = 'Notes and chords in the rule come from an example key, with their degrees in brackets: play the degrees.';
+var CHEVRON = '<svg class="ico daily-review-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg>';
+function reviewPart(day){
+  var picks = improvReviewPicks(day, todayISO());
+  if(!picks.length) return '';
+  var sun = day === 'Sun', many = picks.length > 1;
+  var key = improvKeyOfDay().k.replace(' ', '&nbsp;');
+  var help = 'First, from memory: play ' + (many ? 'them' : 'it') + ' in today\'s key (' + key + ')' + (sun && picks.length === 3 ? ', 5&nbsp;min each' : '') +
+    ', in your usual tuning, over any track or a drone on the root. Then open ' + (many ? 'each' : 'it') + ' to check.' +
+    (sun && !many ? ' Change box or position every 5&nbsp;minutes.' : '');
+  var items = picks.map(function(p){
+    var name = p.ex.t.replace(/^\d+\.\s*/, '');
+    return '<li class="daily-review-ex" data-g="' + p.g + '" data-e="' + p.e + '">' +
+      '<p class="daily-review-name"><b>' + name + '</b> &middot; Gate&nbsp;' + (p.g + 1) + '</p>' +
+      '<details class="daily-review-more"><summary>' + CHEVRON + '<span class="daily-review-show">Show exercise</span><span class="daily-review-hide">Hide exercise</span></summary>' +
+      '<div class="daily-review-body"><p class="daily-review-note">' + REVIEW_NOTE + '</p>' + exerciseLines(p.ex) + '</div></details></li>';
+  }).join('');
+  return '<div class="daily-review" role="group" aria-label="Review">' +
+    '<span class="daily-review-tag">Review &middot; ' + (sun ? 15 : 5) + '&nbsp;min</span>' +
+    '<p class="daily-review-help">' + help + '</p>' +
+    '<ul class="daily-review-list">' + items + '</ul></div>';
+}
+
+// The Improv & Expression block body (weekday and Sunday): the Review part first (4.8c3), then the unchanged texts and button.
+function improvBody(day){
   var actGate = Math.min(state.improvIndex, IMPROV_GATES.length - 1);
   var gateObj = IMPROV_GATES[actGate];
   var nextEx = null;
   for(var i=0; i<gateObj.exercises.length; i++){
     if(!state.improvChecks["g"+actGate+"e"+i]) { nextEx = gateObj.exercises[i]; break; }
   }
-  var body = '<p class="gate-line">Gate '+(actGate+1)+': '+gateObj.title+'</p>';
+  var body = reviewPart(day) + '<p class="gate-line">Gate '+(actGate+1)+': '+gateObj.title+'</p>';
   if(nextEx) body += '<p class="u-fs-13 u-mb-10"><b>Next up:</b> '+nextEx.t+'</p>';
   else body += '<p class="u-fs-13 u-mb-10">Ready to unlock the next gate!</p>';
   body += '<button class="tbtn purple u-w100 u-center" data-action="go" data-view="improv">Open Improv Masterclass</button>';
@@ -77,7 +105,7 @@ function renderSession(day, editable){
       var body='<p>Deep-dive: polish next solo toward full tempo.</p>' + (songHtml ? '<ul class="check">'+songHtml+'</ul>' : '<p>All this tier\'s solos learned. 🎸</p>');
       html+=block("casual","CASUAL","45 min",body);
     } else {
-      html+=block("casual","Improv & Expression","45 min",improvBody(),"improv");
+      html+=block("casual","Improv & Expression","45 min",improvBody(day),"improv");
     }
     return html;
   }
@@ -160,7 +188,7 @@ function renderSession(day, editable){
     html+=block("casual","Casual","15 min",casualBody);
   }
   else if(day==="Tue" || day==="Wed" || day==="Fri"){
-    html+=block("casual","Improv & Expression","15 min",improvBody(),"improv");
+    html+=block("casual","Improv & Expression","15 min",improvBody(day),"improv");
   }
 
   html+=block("cooldown","Cool-Down","5 min",'<p>Quick review - what clicked, what didn\'t.</p>');
