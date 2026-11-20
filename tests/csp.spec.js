@@ -35,6 +35,8 @@ test('the policy is in the page and allows no inline or eval code', async ({ pag
   const directives = Object.fromEntries(policy.split(';').map((d) => d.trim().split(/\s+/)).map(([k, ...v]) => [k, v]));
   expect(directives['default-src']).toEqual(["'self'"]);
   expect(directives['script-src']).toEqual(["'self'", 'https://www.gstatic.com/firebasejs/10.12.2/', 'https://apis.google.com']);
+  // Slice 4.9 (D98, D150): no 'unsafe-inline' for styles either.
+  expect(directives['style-src']).toEqual(["'self'", 'https://fonts.googleapis.com']);
   expect(directives['object-src']).toEqual(["'none'"]);
   expect(directives['base-uri']).toEqual(["'self'"]);
 });
@@ -86,6 +88,41 @@ test('injected inline code is refused and does not run', async ({ page }) => {
   const v = await violations(page);
   expect(v.some((x) => x.directive === 'script-src-elem' && x.blocked === 'inline')).toBe(true);
   expect(v.some((x) => x.directive === 'script-src-attr' && x.blocked === 'inline')).toBe(true);
+});
+
+test('injected inline styles are refused, while styles set from code still work', async ({ page }) => {
+  await watchViolations(page);
+  await openApp(page);
+  const result = await page.evaluate(async () => {
+    const out = {};
+    const probe = document.createElement('div');
+    probe.id = 'csp-probe';
+    document.body.appendChild(probe);
+    // A style attribute written as markup (and through setAttribute) must be refused.
+    probe.innerHTML = '<span id="csp-attr" style="display:none">x</span>';
+    probe.setAttribute('style', 'display:none');
+    // A <style> element with inline text must be refused.
+    const st = document.createElement('style');
+    st.textContent = '#csp-probe { outline: 5px solid red; }';
+    document.head.appendChild(st);
+    await new Promise((r) => setTimeout(r, 100));
+    out.attrDisplay = getComputedStyle(document.getElementById('csp-attr')).display;
+    out.probeDisplay = getComputedStyle(probe).display;
+    out.outline = getComputedStyle(probe).outlineStyle;
+    // Setting a property through the CSS object model is not blocked (the app's swipe and splash rely on it).
+    probe.style.transform = 'translateX(7px)';
+    out.cssom = probe.style.transform;
+    out.cssomComputed = getComputedStyle(probe).transform;
+    return out;
+  });
+  expect(result.attrDisplay).not.toBe('none');
+  expect(result.probeDisplay).not.toBe('none');
+  expect(result.outline).not.toBe('solid');
+  expect(result.cssom).toBe('translateX(7px)');
+  expect(result.cssomComputed).not.toBe('none');
+  const v = await violations(page);
+  expect(v.some((x) => x.directive === 'style-src-attr' && x.blocked === 'inline')).toBe(true);
+  expect(v.some((x) => x.directive === 'style-src-elem' && x.blocked === 'inline')).toBe(true);
 });
 
 test('scripts from other websites are refused', async ({ page }) => {
