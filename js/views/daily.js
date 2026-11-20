@@ -11,12 +11,13 @@ import { DAY_FULL } from "../data/days.js?v=1";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=1";
 import { todayISO, todayName, isWeekendDay, activeDay } from "../logic/dates.js?v=7";
-import { k } from "../logic/technique.js?v=30";
-import { sessionPlan, isBlockPracticed } from "../logic/daily.js?v=30";
-import { pageHeader } from "./shell.js?v=14";
-import { linked, checkItem, prereqItem, docItem, chopRow, dayPicker, blk, getDailyActiveSequence } from "./components.js?v=30";
-import { renderDailySide } from "./daily-side.js?v=10";
-import { improvKeyOfDay, improvReviewPicks, exerciseLines } from "./improv.js?v=22";
+import { k } from "../logic/technique.js?v=31";
+import { sessionPlan, isBlockPracticed } from "../logic/daily.js?v=31";
+import { BHGS_PACK } from "../pack.js?v=1";
+import { pageHeader } from "./shell.js?v=15";
+import { linked, checkItem, prereqItem, docItem, chopRow, dayPicker, blk, getDailyActiveSequence } from "./components.js?v=31";
+import { renderDailySide } from "./daily-side.js?v=11";
+import { improvKeyOfDay, improvReviewPicks, exerciseLines } from "./improv.js?v=23";
 
 // Header detail (D133 point 3): "n of N practiced · M min" on the active day; another day (read-only) shows the minutes only.
 function sessionCount(day, editable){
@@ -94,7 +95,8 @@ function renderSession(day, editable){
     }).join("")+'</ul>';
     html+=block("prereq","Prerequisites",null,preBody);
     html+=block("warmup","Warm-Up",null,'<p>'+linked("Ultimate 5-Minute Warm-Up",WARMUP_URL)+'</p>');
-    html+='<div class="note">Run the Phase Transition Test on Home for your baseline - it\'s informational here, not required to advance.</div>';
+    // Slice 4.10a: the test lives on the TECHNIQUE page since 4.3 (D122), not on HOME; without the BHGS pack there is no TECHNIQUE page.
+    if(BHGS_PACK) html+='<div class="note">Run the Phase Transition Test on the TECHNIQUE page for your baseline - it\'s informational here, not required to advance.</div>';
     return html;
   }
 
@@ -175,7 +177,7 @@ function renderSession(day, editable){
     focusBody+='<p>Revisit your hardest exercise or chop-builder from the week, then spend the micro-dose reinforcing whichever skill felt weakest.</p>';
     if(p.testReq){
       var met=TESTCATS.filter(function(c){return (state.testLevel[c.key]||0)>=p.testReq;}).length;
-      focusBody+='<div class="note u-mt-10">Phase Transition Test: '+met+'/'+TESTCATS.length+' at Level '+p.testReq+'+. <button class="tbtn u-mt-8 u-block" data-action="go" data-view="home">Retake Phase Test →</button></div>';
+      focusBody+='<div class="note u-mt-10">Phase Transition Test: '+met+'/'+TESTCATS.length+' at Level '+p.testReq+'+. '+(BHGS_PACK?'<button class="tbtn u-mt-8 u-block" data-action="phasetest">Retake Phase Test →</button>':'')+'</div>';
     }
   }
   if(day!=="Fri") focusBody+=microLine(essential,essUrl);

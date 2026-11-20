@@ -7,8 +7,8 @@
 // without repeats. THEORY itself writes nothing; the sound switch (dojo.audioMuted) is on Account & data since slice 4.8e (D149). The view ids (`dojo`, `dojo-*`) and the
 // data-action names are unchanged.
 import { CODEX_DATA, HARMONIC_QUESTIONS } from "../data/dojo.js?v=2";
-import { pageHeader } from "./shell.js?v=14";
-import { renderRail, theoryRail } from "./rails.js?v=16";
+import { pageHeader } from "./shell.js?v=15";
+import { renderRail, theoryRail } from "./rails.js?v=17";
 
 // Line icons (24 x 24, stroke), the shapes of the 4.6 THEORY boards.
 const TH_ICONS = {

@@ -21,18 +21,18 @@
 import { ui } from "./ui.js?v=1";
 import { BHGS_PACK } from "./pack.js?v=1";
 import { ensureDailyReset } from "./logic/dates.js?v=7";
-import { initCalCarousel } from "./views/calendar.js?v=30";
-import { renderHome } from "./views/home.js?v=30";
-import { renderTechnique } from "./views/technique.js?v=17";
-import { renderDaily } from "./views/daily.js?v=30";
-import { renderImprov } from "./views/improv.js?v=22";
-import { renderLibrary } from "./views/library.js?v=30";
-import { renderSetup } from "./views/setup.js?v=21";
-import { renderDojoView } from "./views/dojo.js?v=22";
-import { renderRails } from "./views/rails.js?v=16";
-import { renderAccount } from "./views/account.js?v=15";
-import { renderMore } from "./views/more.js?v=13";
-import { icon, sidebarMenu, todayBlock, accountRow, syncState } from "./views/shell.js?v=14";
+import { initCalCarousel } from "./views/calendar.js?v=31";
+import { renderHome } from "./views/home.js?v=31";
+import { renderTechnique } from "./views/technique.js?v=18";
+import { renderDaily } from "./views/daily.js?v=31";
+import { renderImprov } from "./views/improv.js?v=23";
+import { renderLibrary } from "./views/library.js?v=31";
+import { renderSetup } from "./views/setup.js?v=22";
+import { renderDojoView } from "./views/dojo.js?v=23";
+import { renderRails } from "./views/rails.js?v=17";
+import { renderAccount } from "./views/account.js?v=16";
+import { renderMore } from "./views/more.js?v=14";
+import { icon, sidebarMenu, todayBlock, accountRow, syncState } from "./views/shell.js?v=15";
 
 export function initAppLayout() {
   var root = document.getElementById("root");
@@ -108,11 +108,18 @@ export function updateAccountRow(){
   var html = accountRow();
   if(html !== lastAccountRow){ el.innerHTML = html; lastAccountRow = html; }
   // Slice 4.5b2 (D128): the same for the Cloud sync row of the phone MORE page.
+  var s = syncState();
   var sub = document.querySelector('#panel-more [data-row="sync"] .more-row-sub');
   if(sub){
-    var s = syncState();
     var line = '<i class="sync-dot ' + s.tone + '"></i><span class="sync-text">' + s.text + '</span>';
     if(sub.innerHTML !== line) sub.innerHTML = line;
+  }
+  // Slice 4.10a: the sync line of the Account card on the Account & data page follows too (it was drawn once and
+  // could stay on "Changes not synced yet" while the sidebar row already read "Synced"). Reads only, writes nothing.
+  var acct = document.querySelector('#panel-account .account-sync');
+  if(acct){
+    var acctLine = '<i class="sync-dot ' + s.tone + '"></i>' + s.text;
+    if(acct.innerHTML !== acctLine) acct.innerHTML = acctLine;
   }
 }
 
