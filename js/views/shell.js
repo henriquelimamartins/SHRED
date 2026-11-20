@@ -6,10 +6,10 @@ import { hasFirebase, currentUser, cloudReady, cloudReadFailed, SYNC_PENDING_KEY
 import { ui } from "../ui.js?v=1";
 import { BHGS_PACK } from "../pack.js?v=1";
 import { PHASES } from "../data/bhgs.js?v=1";
-import { IMPROV_GATES } from "../data/improv.js?v=2";
+import { IMPROV_GATES } from "../data/improv.js?v=3";
 import { DAY_FULL } from "../data/days.js?v=1";
 import { activeDay, totalStreak, currentStreak } from "../logic/dates.js?v=7";
-import { sessionPlan, isBlockPracticed } from "../logic/daily.js?v=26";
+import { sessionPlan, isBlockPracticed } from "../logic/daily.js?v=27";
 
 function esc(t){ return String(t).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]; }); }
 

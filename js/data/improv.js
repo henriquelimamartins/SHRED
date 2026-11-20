@@ -9,6 +9,8 @@
 // `kind` "verified" = Verified analysis (the musical point is documented), "stylistic" = Stylistic association
 // (a fair example of the style or feel, worded as a suggestion). A second, stylistic reference from the owner's world
 // is added when the documented one is from outside it or the exercise names a genre it does not represent.
+// Slice 4.8c2 (D142): rules may hold {oneString}, {boxFrets} and {boxName}, filled in for the day by views/improv.js
+// (string and pentatonic box rotate by day, like the key); chord names in rules carry their numeral; tracks name no fixed key.
 // Not imported by DAILY's logic beyond the Gate title and the exercise title `t`.
 
 export const IMPROV_GATES = [
@@ -18,14 +20,14 @@ export const IMPROV_GATES = [
     exercises: [
       { t: "1. One-String Doom",
         track: "Heavy Stoner/Doom drone",
-        rule: "You can ONLY use the G string for 3 full minutes. Focus on finding E, G, B, D (1, ♭3, 5, ♭7) horizontally. Force yourself to use slides to connect notes instead of crossing strings.",
+        rule: "You can ONLY use the {oneString} string for 3 full minutes (the string changes from day to day). Focus on finding the 1, ♭3, 5 and ♭7 (E, G, B, D in E minor) horizontally. Force yourself to use slides to connect notes instead of crossing strings.",
         refs: [
-          { kind: "verified", by: "Dick Dale", listen: "'Misirlou' (single, 1962) — the opening melody stays on one string, the low E: fast-picked notes, with slides and hammer-ons carrying it along the neck." },
+          { kind: "verified", by: "Adrian Smith (Iron Maiden)", listen: "'Wasted Years' (Somewhere in Time, 1986) — the intro riff runs along the high E string, from the 12th fret down to the 2nd, against the open string: one string carrying a whole melody." },
           { kind: "stylistic", by: "Black Sabbath", listen: "'Snowblind' (Vol. 4, 1972) — put this on for the slow, heavy doom feel the drone track aims at, and listen for how the lead lines move along the neck." }
         ] },
       { t: "2. The 4-Fret Box",
         track: "Slow minor blues vamp",
-        rule: "Stay strictly between frets 7 and 10. Use all 6 strings, but your hand cannot shift up or down the neck. Use intense bends to reach pitches that aren't physically under your fingers.",
+        rule: "Stay strictly between frets {boxFrets} today: {boxName} (the box changes from day to day). Use all 6 strings, but your hand cannot shift up or down the neck. Use intense bends to reach pitches that aren't physically under your fingers.",
         refs: [
           { kind: "verified", by: "David Gilmour (Pink Floyd)", listen: "'Comfortably Numb' (The Wall, 1979) — the outro solo: most of it stays in the first B-minor-pentatonic shape (frets 7–10), and wide bends, some a tone and a half, reach notes outside the box." }
         ] },
@@ -51,14 +53,14 @@ export const IMPROV_GATES = [
       { t: "1. The Target 3rd",
         changes: "i – VI – III – VII",
         track: "Prog ballad loop",
-        rule: "You must land on the 3rd of the chord EXACTLY on Beat 1. (Am -> C (♭3), F -> A (1), C -> E (5), G -> B (2)). Play freely in between, but nail that target.",
+        rule: "You must land on the 3rd of the chord EXACTLY on Beat 1. (i Am -> C (♭3), VI F -> A (1), III C -> E (5), VII G -> B (2)). Play freely in between, but nail that target.",
         refs: [
           { kind: "verified", by: "David Gilmour (Pink Floyd)", listen: "'Time' (The Dark Side of the Moon, 1973) — over F#m–A–E, listen for the bend up to C#, the 3rd of A, then the release to B as E arrives." }
         ] },
       { t: "2. Chromatic Enclosures",
         changes: "i – VI – iv – V7",
         track: "Backing track matching the progression",
-        rule: "Before landing on your target note on Beat 1, you must play the note one fret above it, and one fret below it, on the 'and' of Beat 4.",
+        rule: "Before landing on your target note on Beat 1, you must play the note one fret above it, and one fret below it, on Beat 4 and its 'and'.",
         refs: [
           { kind: "stylistic", by: "Charlie Parker", listen: "'Kim' (recorded 1952, on Now's the Time) — alto sax, not guitar: listen for short figures that circle a chord tone from above and below before landing on it." },
           { kind: "stylistic", by: "Guthrie Govan", listen: "'Erotic Cakes' (Erotic Cakes, 2006) — listen for passing notes that lead into the main melody notes." }
@@ -66,12 +68,13 @@ export const IMPROV_GATES = [
       { t: "3. Arpeggio Outlining",
         changes: "i – VI – V7 – i",
         track: "Heavy mid-tempo",
-        rule: "NO SWEEPING. You must alternate-pick arpeggiated lines that explicitly spell out the chord underneath. When the B7 hits, you must emphasize the D# (7).",
+        rule: "NO SWEEPING. You must alternate-pick arpeggiated lines that explicitly spell out the chord underneath. When the V7 (B7) hits, you must emphasize the D# (7).",
         refs: [
           { kind: "verified", by: "John Petrucci", listen: "'Glasgow Kiss' (Suspended Animation, 2005) — listen for fast arpeggios on the top three strings, played with alternate picking rather than sweep picking." }
         ] },
       { t: "4. The Vocal Orchestration",
         changes: "I – IV – V",
+        scale: "Major",
         track: "Epic rock ballad",
         rule: "Do not play 'licks'. Imagine you are a singer. Play a distinct verse melody, leave a gap for a breath, and then play a chorus melody. Keep it singable.",
         refs: [
@@ -80,7 +83,7 @@ export const IMPROV_GATES = [
       { t: "5. The Sludge to Dominant Turn",
         changes: "i5 – VII5 – VI5 – V7",
         track: "Classic Doom turnaround",
-        rule: "Play absolute filthy pentatonic sludge over the first 3 chords. When the G7 hits, switch instantly to C Harmonic Minor (target the B natural, 7).",
+        rule: "Play absolute filthy pentatonic sludge over the first 3 chords. When the V7 (G7) hits, switch instantly to the harmonic minor of the key (C harmonic minor here; target the B natural, 7).",
         refs: [
           { kind: "verified", by: "Carlos Santana", listen: "'Smooth' (Supernatural, 1999) — over Am–F–E7, listen for A natural minor on Am and F, then A harmonic minor, with its G#, only when E7 arrives." },
           { kind: "stylistic", by: "Matt Pike (High on Fire)", listen: "'Snakes for the Divine' (Snakes for the Divine, 2010) — listen for dirty, sludgy riffing and how the leads break out of it." }
@@ -137,13 +140,13 @@ export const IMPROV_GATES = [
         changes: "i – V",
         scale: "Harmonic minor",
         track: "Vamp matching the progression",
-        rule: "Over the Am, play normal minor. The millisecond the E hits, play an E dominant or G# diminished arpeggio. Focus on the sinister drop from A (1) to G# (7).",
+        rule: "Over the i (Am), play normal minor. The millisecond the V (E) hits, play a V dominant (E7) or vii° (G# diminished) arpeggio. Focus on the sinister drop from A (1) to G# (7).",
         refs: [
           { kind: "verified", by: "Randy Rhoads (Ozzy Osbourne)", listen: "'Mr. Crowley' (Blizzard of Ozz, 1980) — in D minor, the solos mix D natural and D harmonic minor: listen for the C#, the raised 7th, pulling the line back to D." },
           { kind: "stylistic", by: "Chuck Schuldiner (Death)", listen: "'Voice of the Soul' (The Sound of Perseverance, 1998) — put on this short instrumental for the dark, minor-key melodic mood of its guitar lines." }
         ] },
       { t: "3. Oppressive Phrygian/Locrian",
-        track: "Heavy A pedal chug",
+        track: "Heavy pedal chug on the root",
         rule: "Abuse the minor 2nd (Bb, ♭2) and the flat 5th (Eb, ♭5). Create the most dissonant, terrifying atmosphere possible without sounding 'wrong'.",
         refs: [
           { kind: "verified", by: "Black Sabbath", listen: "'Black Sabbath' (Black Sabbath, 1970) — G, its octave, then C#, a tritone above G: the ♭5 sound." },
@@ -158,15 +161,15 @@ export const IMPROV_GATES = [
           { kind: "verified", by: "Eric Clapton (Cream)", listen: "'Crossroads' (Wheels of Fire, 1968, live) — in A: listen for the quick C-to-C# hammer-on, ♭3 to 3, that Clapton keeps returning to across the five solo choruses." }
         ] },
       { t: "5. The Opeth Diminished Run",
-        track: "Dark prog metal in E",
+        track: "Dark prog metal in the key of the day",
         rule: "Use fully diminished arpeggios (minor 3rd intervals stacked) to transition between two heavy riffs. Build speed gradually.",
         refs: [
           { kind: "verified", by: "Fredrik Åkesson (Opeth)", listen: "'Heir Apparent' (Watershed, 2008) — his solo mixes harmonic minor with diminished ideas and closes with a string-skipping diminished arpeggio lick." }
         ] },
       { t: "6. Space Rock Lydian",
         scale: "Lydian",
-        track: "Ambient C major drone",
-        rule: "Target the #4 (F#) exclusively. Let notes ring out with heavy delay and reverb. Create a sci-fi, floating sensation.",
+        track: "Ambient major drone on the root",
+        rule: "Target the #4 (F#) above all. Let notes ring out with heavy delay and reverb. Create a sci-fi, floating sensation.",
         refs: [
           { kind: "verified", by: "Joe Satriani", listen: "'Flying in a Blue Dream' (Flying in a Blue Dream, 1989) — built on C Lydian over a C tonic: listen for the F#, the ♯4 that makes the major key float." },
           { kind: "stylistic", by: "Blood Incantation", listen: "'Inner Paths (to Outer Space)' (Hidden History of the Human Race, 2019) — put on this ambient track for the floating, spacious mood the drone aims at." }
