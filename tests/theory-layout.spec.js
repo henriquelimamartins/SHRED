@@ -9,23 +9,20 @@ const dojo = (page) => page.locator('#panel-dojo');
 const box = async (loc) => { const b = await loc.boundingBox(); return { x: Math.round(b.x), y: Math.round(b.y), w: Math.round(b.width), h: Math.round(b.height) }; };
 const EMOJI = /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B50}\u{2705}\u{274C}]/u;
 
-test('desktop: Audio and READ on the left, PLAY on the right; phone: stacked in that order', async ({ page, isMobile }) => {
+test('desktop: READ on the left, PLAY on the right; phone: stacked in that order (Audio moved to Settings, D149)', async ({ page, isMobile }) => {
   await openApp(page);
   await openView(page, 'dojo');
-  const audio = await box(dojo(page).locator('.theory-audio'));
+  await expect(dojo(page).locator('.theory-audio, .theory-switch')).toHaveCount(0);
   const read = await box(dojo(page).locator('.theory-read'));
   const play = await box(dojo(page).locator('.theory-play'));
-  expect(audio.y).toBeLessThan(read.y);
   if (isMobile) {
     expect(read.y).toBeLessThan(play.y);
     expect(Math.abs(play.x - read.x)).toBeLessThanOrEqual(2);
   } else {
     expect(play.x).toBeGreaterThan(read.x + read.w);
-    expect(Math.abs(play.y - audio.y)).toBeLessThanOrEqual(30);
+    expect(Math.abs(play.y - read.y)).toBeLessThanOrEqual(30);
   }
   await expect(dojo(page).locator('.theory-group-title')).toHaveText(['Read', 'Play']);
-  await expect(dojo(page).locator('.theory-audio-text')).toHaveText('AudioGames that need sound show only when it is on');
-  await expect(dojo(page).locator('.theory-switch')).toHaveAttribute('aria-describedby', 'theory-audio-sub');
 });
 
 test('keyboard focus follows the screens; the result is announced (screen readers)', async ({ page }) => {
@@ -45,9 +42,6 @@ test('keyboard focus follows the screens; the result is announced (screen reader
   expect(await focused()).toBe('theory-next|Next scenario');
   await expect(dojo(page).locator('#dojo-announce')).toHaveAttribute('aria-live', 'polite');
   await expect(dojo(page).locator('#dojo-announce')).toHaveText(/^(Correct\. |Incorrect\. The answer is .+\. ).+/);
-  await openView(page, 'home'); await openView(page, 'dojo');
-  await dojo(page).locator('[data-action="togglemute"]').click();
-  expect(await focused()).toMatch(/^theory-switch/);
 });
 
 test('line icons in the Theory blue, no emoji anywhere on THEORY (dashboard, Codex, module, game)', async ({ page }) => {
@@ -141,11 +135,10 @@ test('game screen as drawn: title with Back, question box, options, analysis wit
   expect(fb.y).toBeGreaterThan(lastOpt.y);
 });
 
-test('touch targets are at least 44 px (switch, rows, Back, options, Next scenario)', async ({ page }) => {
+test('touch targets are at least 44 px (rows, Back, options, Next scenario)', async ({ page }) => {
   await openApp(page);
   await openView(page, 'dojo');
   const h = async (loc) => Math.round((await loc.boundingBox()).height);
-  expect(await h(dojo(page).locator('.theory-switch'))).toBeGreaterThanOrEqual(44);
   for (const r of await dojo(page).locator('button.theory-row').all()) expect(await h(r)).toBeGreaterThanOrEqual(44);
   await dojo(page).locator('[data-target="codex-list"]').click();
   expect(await h(dojo(page).locator('#dojo-codex-list .theory-back'))).toBeGreaterThanOrEqual(44);

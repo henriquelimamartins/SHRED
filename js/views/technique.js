@@ -15,10 +15,10 @@ import { DAY_FULL } from "../data/days.js?v=1";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=1";
 import { BHGS_PACK } from "../pack.js?v=1";
-import { k, phasePercent, itemKeysForPhase } from "../logic/technique.js?v=29";
-import { linked, checkItem, watchItem, prereqItem, chopRow, testRow } from "./components.js?v=29";
-import { pageHeader } from "./shell.js?v=13";
-import { renderRail, techniqueRail } from "./rails.js?v=15";
+import { k, phasePercent, itemKeysForPhase } from "../logic/technique.js?v=30";
+import { linked, checkItem, watchItem, prereqItem, chopRow, testRow } from "./components.js?v=30";
+import { pageHeader } from "./shell.js?v=14";
+import { renderRail, techniqueRail } from "./rails.js?v=16";
 
 export const TECH_TABS = [
   { id: "checklist", label: "Checklist" },

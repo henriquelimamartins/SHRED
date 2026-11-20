@@ -1,10 +1,10 @@
 // THEORY destination (legacy DOJO content, D114) after slice 4.8d (D132 point 6, D148): behaviour.
 // Reading and playing write nothing (no XP, levels, unlocked or read modules; ends the D40 conflict);
-// only the Audio switch writes. The stored DOJO data (state.dojo) is kept, unused (D82, D107 point 5).
+// only the Audio switch writes (on Account & data › Settings since slice 4.8e, D149). The stored DOJO data (state.dojo) is kept, unused (D82, D107 point 5).
 // Phase 1.5 tests for XP, levels and Codex locks were replaced here on purpose (D107 point 4/5); the layout is
 // covered by theory-layout.spec.js.
 const { test, expect } = require('@playwright/test');
-const { openApp, openView, localSaved, cloudWrites, unexpectedConsoleErrors } = require('./support/app');
+const { openApp, openView, accountPanel, localSaved, cloudWrites, unexpectedConsoleErrors } = require('./support/app');
 const { baseState, TEST_USER, USER_DOC } = require('./support/fixtures');
 
 const dojo = (page) => page.locator('#panel-dojo');
@@ -33,13 +33,13 @@ async function startGame(page) {
 }
 
 test.describe('dashboard', () => {
-  test('no level or XP; audio on; Codex, the Harmonic Architect and two games not built yet', async ({ page }) => {
+  test('no level or XP; no Audio card (moved to Settings, D149); Codex, the Harmonic Architect and two games not built yet', async ({ page }) => {
     const monitor = await openApp(page, { localState: baseState({ dojo: LEGACY }) });
     await openView(page, 'dojo');
     await expect(dojo(page)).not.toContainText(/\bXP\b/);
     await expect(dojo(page)).not.toContainText('Prog Architect');
     await expect(dojo(page).locator('.xp-bar-container, .xp-bar-fill')).toHaveCount(0);
-    await expect(dojo(page).locator('[data-action="togglemute"]')).toHaveAttribute('aria-checked', 'true');
+    await expect(dojo(page).locator('[data-action="togglemute"], .theory-audio')).toHaveCount(0);
     expect(await dojo(page).locator('.theory-row-title').allTextContents()).toEqual([
       "The Architect's Codex", 'The Harmonic Architect', 'The Fretboard Sniper', 'The Rhythm Decryptor',
     ]);
@@ -47,16 +47,11 @@ test.describe('dashboard', () => {
     expect(monitor.pageErrors).toEqual([]);
   });
 
-  test('audio switch hides the Rhythm Decryptor, is stored and kept after reload', async ({ page }) => {
-    await openApp(page);
+  test('sound off (D149 point 5): the Rhythm Decryptor stays, marked "Needs sound"', async ({ page }) => {
+    await openApp(page, { localState: baseState({ dojo: dojoState({ audioMuted: true }) }) });
     await openView(page, 'dojo');
-    await dojo(page).locator('[data-action="togglemute"]').click();
-    await expect(dojo(page).locator('[data-action="togglemute"]')).toHaveAttribute('aria-checked', 'false');
-    await expect(dojo(page).locator('[data-game="rhythm"]')).toHaveCount(0);
-    expect((await localSaved(page)).dojo.audioMuted).toBe(true);
-    await page.reload();
-    await openView(page, 'dojo');
-    await expect(dojo(page).locator('[data-action="togglemute"]')).toHaveAttribute('aria-checked', 'false');
+    await expect(dojo(page).locator('[data-game="rhythm"]')).toHaveCount(1);
+    await expect(dojo(page).locator('[data-game="rhythm"] .theory-tag', { hasText: 'Needs sound' })).toHaveCount(1);
     await expect(dojo(page).locator('[data-game="fretboard"]')).toHaveCount(1);
   });
 
@@ -70,7 +65,7 @@ test.describe('dashboard', () => {
       await expect(row).not.toHaveAttribute('data-action', /.*/);
       await expect(row.locator('.theory-tag', { hasText: 'Not built yet' })).toHaveCount(1);
     }
-    await expect(dojo(page).locator('[data-game="rhythm"] .theory-tag', { hasText: 'Needs audio' })).toHaveCount(1);
+    await expect(dojo(page).locator('[data-game="rhythm"] .theory-tag', { hasText: 'Needs sound' })).toHaveCount(1);
     const before = await localSaved(page);
     await dojo(page).locator('[data-game="fretboard"]').click();
     await expect(toast(page)).not.toHaveText('Mini-game coming in next update!');
@@ -200,7 +195,7 @@ test.describe('The Harmonic Architect', () => {
   });
 });
 
-test('stored DOJO data is kept as it was (D82): reading, playing and the audio switch leave it untouched', async ({ page }) => {
+test('stored DOJO data is kept as it was (D82): reading, playing and the Sound switch leave it untouched', async ({ page }) => {
   const before = baseState({ dojo: LEGACY, checks: { 'p0.pre.0': '2026-11-01' }, streakDates: ['2026-11-09'], improvChecks: { g0e0: true } });
   await openApp(page, { localState: before });
   const qs = await questions(page);
@@ -211,7 +206,7 @@ test('stored DOJO data is kept as it was (D82): reading, playing and the audio s
   const i = await currentQuestion(page, qs);
   await dojo(page).locator(`[data-action="dojoans"][data-ans="${qs[i].ans}"]`).click();
   await dojo(page).locator('#dojo-game-view [data-action="dojoback"]').click();
-  await dojo(page).locator('[data-action="togglemute"]').click();
+  await (await accountPanel(page)).locator('[data-action="togglemute"]').click();
   const saved = await localSaved(page);
   // schemaVersion: 1 is added by the migration (slice 3.1, D101); only the audio setting changes.
   expect(saved).toEqual({ ...before, schemaVersion: 1, dojo: { ...LEGACY, audioMuted: true } });

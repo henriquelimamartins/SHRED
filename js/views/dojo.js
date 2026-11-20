@@ -4,12 +4,11 @@
 // Slice 4.8d (D132 point 6, D148): as drawn on the 4.6 boards, in the Theory blue with line icons; the level and
 // XP leave the screen; reading and playing write nothing (no XP, levels, unlocked or read modules; ends the
 // conflict with D40); every Codex module is open; the game walks through all 15 questions in a shuffled order
-// without repeats. Only the Audio switch still writes (dojo.audioMuted). The view ids (`dojo`, `dojo-*`) and the
+// without repeats. THEORY itself writes nothing; the sound switch (dojo.audioMuted) is on Account & data since slice 4.8e (D149). The view ids (`dojo`, `dojo-*`) and the
 // data-action names are unchanged.
 import { CODEX_DATA, HARMONIC_QUESTIONS } from "../data/dojo.js?v=2";
-import { state } from "../store.js?v=5";
-import { pageHeader } from "./shell.js?v=13";
-import { renderRail, theoryRail } from "./rails.js?v=15";
+import { pageHeader } from "./shell.js?v=14";
+import { renderRail, theoryRail } from "./rails.js?v=16";
 
 // Line icons (24 x 24, stroke), the shapes of the 4.6 THEORY boards.
 const TH_ICONS = {
@@ -17,7 +16,6 @@ const TH_ICONS = {
   architect: 'M4 9l8-5 8 5M6 9v9M10 9v9M14 9v9M18 9v9M4 20h16',
   target: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z',
   rhythm: 'M3 12h3l2-6 4 12 3-9 2 3h4',
-  audio: 'M4 10v4h3l5 4V6l-5 4zM16 9.5a3.5 3.5 0 0 1 0 5M18.5 7a7 7 0 0 1 0 10',
   chevron: 'M9 6l6 6-6 6',
   back: 'M15 6l-6 6 6 6',
   tick: 'M5 12l5 5 9-10',
@@ -127,15 +125,12 @@ export function handleDojoAnswer(idx) {
   if(next) next.focus();
 }
 
-// --- Dashboard: Audio, READ, PLAY ---
+// --- Dashboard: READ, PLAY (the Audio card moved to Account & data in slice 4.8e) ---
 
 export function renderDojoDashboard() {
-  let isMuted = state.dojo.audioMuted;
-
-  let left = '<section class="theory-audio">' + thIcon('audio', 'theory-audio-ic') +
-    '<span class="theory-audio-text">Audio<span class="theory-audio-sub" id="theory-audio-sub">Games that need sound show only when it is on</span></span>' +
-    '<button type="button" class="theory-switch' + (isMuted ? '' : ' on') + '" role="switch" aria-checked="' + (isMuted ? 'false' : 'true') + '" aria-label="Audio" aria-describedby="theory-audio-sub" data-action="togglemute"><span class="theory-switch-track"><span class="theory-switch-knob"></span></span></button>' +
-    '</section>';
+  // Slice 4.8e (D149 point 5): the Audio switch moved to Account & data › Settings (Sound). Anything that needs
+  // sound is always shown, marked "Needs sound", whether sound is on or off.
+  let left = '';
   left += '<section class="theory-group theory-read"><h2 class="theory-group-title">Read</h2>' +
     row({ icon: 'book', title: 'The Architect&apos;s Codex', sub: 'Read the theory and context before playing.', attrs: 'data-action="dojoopen" data-target="codex-list"' }) +
     '</section>';
@@ -143,9 +138,7 @@ export function renderDojoDashboard() {
   let right = '<section class="theory-group theory-play"><h2 class="theory-group-title">Play</h2><div class="theory-rows">';
   right += row({ icon: 'architect', title: 'The Harmonic Architect', sub: 'Songwriting decisions and modal tension.', attrs: 'data-action="dojoplay" data-game="architect"' });
   right += row({ icon: 'target', title: 'The Fretboard Sniper', sub: 'Rapid visual mapping on the neck.', soon: true, game: 'fretboard', tags: ['Not built yet'] });
-  if(!isMuted) {
-    right += row({ icon: 'rhythm', title: 'The Rhythm Decryptor', sub: 'Ear training for odd time signatures.', soon: true, game: 'rhythm', tags: ['Needs audio', 'Not built yet'] });
-  }
+  right += row({ icon: 'rhythm', title: 'The Rhythm Decryptor', sub: 'Ear training for odd time signatures.', soon: true, game: 'rhythm', tags: ['Needs sound', 'Not built yet'] });
   right += '</div></section>';
 
   return '<div class="theory-cols"><div class="theory-col theory-col-left">' + left + '</div><div class="theory-col theory-col-right">' + right + '</div></div>';

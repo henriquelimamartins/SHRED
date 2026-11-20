@@ -60,7 +60,7 @@ test.describe('confirmation', () => {
   test('says what is erased and what is kept; Cancel changes nothing', async ({ page }) => {
     await openApp(page, { localState: fullState() });
     await (await accountPanel(page)).locator('[data-action="reset"]').click();
-    const card = (await accountPanel(page)).locator('.card', { has: page.locator('[data-action="confirmreset"]') });
+    const card = (await accountPanel(page)).locator('[data-group="reset"]');
     await expect(card).toContainText('Reset all progress? This erases Technique, Improv, Theory and Creative progress. Your streak, calendar and SETUP are kept. A backup is saved on this device first.');
     await expect((await accountPanel(page)).locator('[data-action="confirmreset"]')).toHaveText('Yes, reset progress');
     await (await accountPanel(page)).locator('[data-action="cancelreset"]').click();
