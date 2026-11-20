@@ -3,6 +3,7 @@
 // (a button with aria-expanded); inside, groups are cards side by side on desktop and stacked on the phone; Watched
 // marks are pills; documents show a file icon and their kind; the Listening Vault uses the app red (purple only for the
 // Expression Track); on the phone with the BHGS pack on, "‹ More" leads back to MORE (LIBRARY lives there; helper in shell.js since 4.8b).
+// Slice 4.8c (D139 point 5): Expression Track exercises use IMPROVISATION's lines, button and listening box.
 // Guide: "How This App Works" rewritten with the owner (D120, D137); texts, links, buttons and stored keys otherwise unchanged.
 // Slice 4.5b (D125, D126): the drawn page header (muted eyebrow + large title).
 // Slice 4.3 (D112, D122): the Shred Roadmap section (phases and Essential Skills) moved to the TECHNIQUE page.
@@ -10,13 +11,14 @@
 // the Weekly Rhythm and the BHGS guide text are hidden; Expression Track, Listening Vault and the guide stay.
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
 import { CREATIVE, THEORY_DOCS, THEORY_ROOT_ITEMS, THEORY_GROUPS, WEEKLY_RHYTHM } from "../data/bhgs.js?v=1";
-import { IMPROV_GATES } from "../data/improv.js?v=1";
+import { IMPROV_GATES } from "../data/improv.js?v=2";
+import { exerciseLines, listenBox, masteryButton } from "./improv.js?v=18";
 import { LISTENING_VAULT } from "../data/listening.js?v=1";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=1";
 import { BHGS_PACK } from "../pack.js?v=1";
-import { pageHeader, backToMore } from "./shell.js?v=9";
-import { watchItem, linked, renderBonusList } from "./components.js?v=25";
+import { pageHeader, backToMore } from "./shell.js?v=10";
+import { watchItem, linked, renderBonusList } from "./components.js?v=26";
 
 // Line icons as drawn on the boards (same stroke style as the shell icons).
 var LIB_ICONS = {
@@ -76,17 +78,13 @@ function expressionBody(){
       html += '<p class="lib-gate-desc">' + g.desc + '</p>';
       html += '<ul class="check">';
       g.exercises.forEach(function(ex, j){
-        var isChecked = !!state.improvChecks["g" + i + "e" + j];
-        var btn = '<button class="mbtn purple' + (isChecked ? " on" : "") + '" data-action="togimprov" data-g="' + i + '" data-e="' + j + '">' + (isChecked ? "&#10003; Mastered" : "Unmastered") + '</button>';
+        // Slice 4.8c (D139 point 5): the same lines, button and listening box as IMPROVISATION (shared helpers).
         html += '<li class="mrow mrow-stack">' +
           '<div class="ex-head">' +
             '<b class="ex-title">' + ex.t + '</b>' +
-            '<div class="ex-btn">' + btn + '</div>' +
+            '<div class="ex-btn">' + masteryButton(i, j) + '</div>' +
           '</div>' +
-          '<div class="ex-desc">' +
-            ex.desc +
-            '<div class="note purple ex-listen">' + ex.listen + '</div>' +
-          '</div>' +
+          exerciseLines(ex) + listenBox(ex) +
           '</li>';
       });
       html += '</ul></div>';

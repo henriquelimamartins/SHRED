@@ -8,10 +8,10 @@
 // - THEORY = Level 1, "Not started" until Theory v1 (Phase 6); the legacy DOJO levels are not used (owner, D123).
 // Drawn with SVG attributes and CSS classes only (no inline style), so the CSP can drop 'unsafe-inline' later (4.8).
 import { PHASES } from "../data/bhgs.js?v=1";
-import { IMPROV_GATES } from "../data/improv.js?v=1";
+import { IMPROV_GATES } from "../data/improv.js?v=2";
 import { state } from "../store.js?v=5";
 import { BHGS_PACK } from "../pack.js?v=1";
-import { phasePercent } from "../logic/technique.js?v=25";
+import { phasePercent } from "../logic/technique.js?v=26";
 
 function clamp01(x){ return Math.max(0, Math.min(1, x)); }
 
