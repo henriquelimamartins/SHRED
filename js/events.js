@@ -18,17 +18,16 @@
 // page with that panel open (same confirmations as there). The phone top bar (Search, Login) is gone.
 // Slice 2.5: the SETUP video button ("openvideo") and the search box are handled here only (no inline onclick).
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
-import { CODEX_DATA } from "./data/dojo.js?v=1";
 import { defaultState, defaultDojoState, saveState, state, replaceState, backupBeforeReplace, migrate, newerSchema, NEWER_SCHEMA_MSG } from "./store.js?v=5";
 import { hasFirebase, auth, db, googleProvider, currentUser, cloudReady, cloudReadFailed, CLOUD_READ_FAILED_MSG, requestCloudWrite, loadFromCloud, signInWithPopup, signOut } from "./firebase.js?v=5";
 import { ui, showToast } from "./ui.js?v=1";
-import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=28";
-import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=28";
-import { changeCalMonth, calCanGo } from "./views/calendar.js?v=28";
-import { currentMinigame, addXP, startArchitectGame, handleDojoAnswer, renderCodexList } from "./views/dojo.js?v=20";
-import { updateNav, render, updateAccountRow } from "./render.js?v=28";
-import { SUB_ITEMS } from "./views/shell.js?v=12";
-import { initDailySwipe } from "./views/daily-swipe.js?v=7";
+import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=29";
+import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=29";
+import { changeCalMonth, calCanGo } from "./views/calendar.js?v=29";
+import { currentMinigame, startArchitectGame, handleDojoAnswer, renderCodexList, renderCodexReader, focusSubTitle } from "./views/dojo.js?v=21";
+import { updateNav, render, updateAccountRow } from "./render.js?v=29";
+import { SUB_ITEMS } from "./views/shell.js?v=13";
+import { initDailySwipe } from "./views/daily-swipe.js?v=8";
 import { buildBackupFile, backupFileName, listDeviceBackups, parseBackupFile, isNewerCopy, restoredState, formatLocalTime, reasonLabel, MAX_BACKUP_FILE_BYTES, INVALID_BACKUP_MSG, NEWER_BACKUP_MSG } from "./logic/backup.js?v=2";
 
 export function handleReset(){ ui.resetConfirm=true; render(); }
@@ -306,34 +305,37 @@ document.addEventListener("click",function(e){
   else if(a==="confirmreset"){ confirmReset(); }
   else if(a==="canceljump"){ cancelPhaseJumpBack(); }
   else if(a==="confirmjump"){ confirmPhaseJumpBack(); }
-  else if(a==="togglemute"){ state.dojo.audioMuted = !state.dojo.audioMuted; saveState(); render(); }
+  else if(a==="togglemute"){
+    state.dojo.audioMuted = !state.dojo.audioMuted; saveState(); render();
+    // Slice 4.8d: keyboard focus stays on the switch after the page is drawn again.
+    var sw = document.querySelector('#panel-dojo .theory-switch'); if(sw) sw.focus();
+  }
   else if(a==="dojoopen"){
     document.querySelectorAll('.codex-view').forEach(e=>e.classList.remove('active'));
     let targetId = t.dataset.target;
     let targetElem = document.getElementById('dojo-' + targetId);
     if(targetId === 'codex-list') targetElem.innerHTML = renderCodexList();
     targetElem.classList.add('active');
+    focusSubTitle('dojo-' + targetId);
   }
   else if(a==="dojoback"){
     document.querySelectorAll('.codex-view').forEach(e=>e.classList.remove('active'));
     document.getElementById('dojo-dash-view').classList.add('active');
     render();
+    var first = document.querySelector('#panel-dojo .theory-row'); if(first) first.focus();
   }
   else if(a==="readcodex"){
+    // Slice 4.8d (D148 point 3): reading writes nothing (no XP, no "read" mark, D40).
     let id = parseInt(t.dataset.id,10);
-    if(!state.dojo.readCodexes.includes(id)) {
-      state.dojo.readCodexes.push(id);
-      addXP(100);
-    }
     document.querySelectorAll('.codex-view').forEach(e=>e.classList.remove('active'));
     let reader = document.getElementById('dojo-codex-reader');
-    reader.innerHTML = '<div class="game-header u-mb-8"><button class="tbtn" data-action="dojoopen" data-target="codex-list">&lsaquo; Back to Library</button></div>' + 
-      '<h2>' + CODEX_DATA[id].title + '</h2>' + CODEX_DATA[id].content;
+    reader.innerHTML = renderCodexReader(id);
     reader.classList.add('active');
+    focusSubTitle('dojo-codex-reader');
   }
   else if(a==="dojoplay"){
+    // Slice 4.8d (D148 point 7): only The Harmonic Architect is built; the other two are not buttons.
     if(t.dataset.game === 'architect') startArchitectGame();
-    else showToast("Mini-game coming in next update!");
   }
   else if(a==="dojoans"){
     handleDojoAnswer(parseInt(t.dataset.ans, 10));

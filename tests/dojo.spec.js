@@ -1,193 +1,218 @@
-// Phase 1.5: the legacy THEORY DOJO as it behaves on main TODAY. DOJO is replaced by THEORY in
-// Phase 6 (D12); until then its stored data (state.dojo) must be kept intact (D82, D83).
-// Tests named "current behaviour:" document known problems on purpose.
+// THEORY destination (legacy DOJO content, D114) after slice 4.8d (D132 point 6, D148): behaviour.
+// Reading and playing write nothing (no XP, levels, unlocked or read modules; ends the D40 conflict);
+// only the Audio switch writes. The stored DOJO data (state.dojo) is kept, unused (D82, D107 point 5).
+// Phase 1.5 tests for XP, levels and Codex locks were replaced here on purpose (D107 point 4/5); the layout is
+// covered by theory-layout.spec.js.
 const { test, expect } = require('@playwright/test');
-const { openApp, localSaved, cloudWrites, unexpectedConsoleErrors } = require('./support/app');
+const { openApp, openView, localSaved, cloudWrites, unexpectedConsoleErrors } = require('./support/app');
 const { baseState, TEST_USER, USER_DOC } = require('./support/fixtures');
 
 const dojo = (page) => page.locator('#panel-dojo');
 const toast = (page) => page.locator('#toast');
 
-async function goTo(page, view) {
-  const nav = page.locator('#botnav:visible, #sidebar-nav-inner:visible').first();
-  const btn = nav.locator(`[data-action="go"][data-view="${view}"]`);
-  // Slice 4.2a (D119): on the phone, Library and Tools (SETUP) are opened from the More sheet.
-  if (await btn.count()) await btn.click();
-  else {
-    await nav.locator('[data-action="more"]').click();
-    await page.locator(`#panel-more [data-action="go"][data-view="${view}"]`).first().click();
-  }
-  await expect(page.locator(`#panel-${view}`)).toHaveClass(/active/);
-}
-
 const dojoState = (overrides = {}) => ({ xp: 0, level: 1, unlockedCodexes: [1], readCodexes: [], audioMuted: false, ...overrides });
+const LEGACY = dojoState({ xp: 5250, level: 21, unlockedCodexes: [1, 2, 3], readCodexes: [1], legacyExtra: 'kept' });
 
-/** Makes the Harmonic Architect pick a predictable question: Math.random() always returns `value`. */
-async function fixRandom(page, value) {
-  await page.addInitScript((v) => { Math.random = () => v; }, value);
+/** The 15 questions as the app serves them (black box: read from the app's own data file). */
+async function questions(page) {
+  return page.evaluate(async () => {
+    const m = await import('/js/data/dojo.js?v=2');
+    return m.HARMONIC_QUESTIONS;
+  });
 }
-
-const dashTitle = (page) => dojo(page).locator('#dojo-dash-view .h2');
-const xpText = (page) => dojo(page).locator('#dojo-dash-view .xp-text');
-const xpFill = (page) => dojo(page).locator('#dojo-dash-view .xp-bar-fill');
+async function currentQuestion(page, qs) {
+  const text = (await dojo(page).locator('.question-box').innerText()).trim();
+  const i = qs.findIndex((q) => q.q === text);
+  expect(i, 'question text found in the data').toBeGreaterThanOrEqual(0);
+  return i;
+}
+async function startGame(page) {
+  await openView(page, 'dojo');
+  await dojo(page).locator('[data-action="dojoplay"][data-game="architect"]').click();
+  await expect(dojo(page).locator('#dojo-game-view')).toHaveClass(/active/);
+}
 
 test.describe('dashboard', () => {
-  test('a new user: Level 1, 0 / 100 XP, audio on, Codex + 3 games', async ({ page }, testInfo) => {
-    const monitor = await openApp(page);
-    await goTo(page, 'dojo');
-    await expect(dashTitle(page)).toHaveText('Level 1 - Fretboard Novice');
-    await expect(xpText(page)).toHaveText('0 / 100 XP');
-    expect(await xpFill(page).evaluate((e) => e.style.width)).toBe('0%');
-    await expect(dojo(page)).toContainText('Audio: ON');
-    expect(await dojo(page).locator('.dojo-dash .dojo-btn b').allTextContents()).toEqual([
+  test('no level or XP; audio on; Codex, the Harmonic Architect and two games not built yet', async ({ page }) => {
+    const monitor = await openApp(page, { localState: baseState({ dojo: LEGACY }) });
+    await openView(page, 'dojo');
+    await expect(dojo(page)).not.toContainText(/\bXP\b/);
+    await expect(dojo(page)).not.toContainText('Prog Architect');
+    await expect(dojo(page).locator('.xp-bar-container, .xp-bar-fill')).toHaveCount(0);
+    await expect(dojo(page).locator('[data-action="togglemute"]')).toHaveAttribute('aria-checked', 'true');
+    expect(await dojo(page).locator('.theory-row-title').allTextContents()).toEqual([
       "The Architect's Codex", 'The Harmonic Architect', 'The Fretboard Sniper', 'The Rhythm Decryptor',
     ]);
-    await page.screenshot({ path: testInfo.outputPath('dojo-dashboard.png'), fullPage: true });
     expect(unexpectedConsoleErrors(monitor)).toEqual([]);
     expect(monitor.pageErrors).toEqual([]);
   });
 
-  const levels = [
-    { xp: 200, title: 'Level 2 - Rhythm Apprentice', text: '200 / 1200 XP', width: '9%' },
-    { xp: 1200, title: 'Level 11 - Harmonic Journeyman', text: '1200 / 3500 XP', width: '0%' },
-    { xp: 5250, title: 'Level 21 - The Prog Architect', text: '5250 / 7000 XP', width: '50%' },
-    { xp: 12000, title: 'Level 41 - Audiation Grandmaster', text: '12000 / MAX XP', width: '100%' },
-  ];
-  for (const l of levels) {
-    test(`${l.xp} XP → ${l.title}, bar ${l.width}`, async ({ page }) => {
-      await openApp(page, { localState: baseState({ dojo: dojoState({ xp: l.xp }) }) });
-      await goTo(page, 'dojo');
-      await expect(dashTitle(page)).toHaveText(l.title);
-      await expect(xpText(page)).toHaveText(l.text);
-      expect(await xpFill(page).evaluate((e) => e.style.width)).toBe(l.width);
-    });
-  }
-
-  test('audio toggle hides the Rhythm game, is stored and kept after reload', async ({ page }) => {
+  test('audio switch hides the Rhythm Decryptor, is stored and kept after reload', async ({ page }) => {
     await openApp(page);
-    await goTo(page, 'dojo');
+    await openView(page, 'dojo');
     await dojo(page).locator('[data-action="togglemute"]').click();
-    await expect(dojo(page)).toContainText('Audio: OFF');
+    await expect(dojo(page).locator('[data-action="togglemute"]')).toHaveAttribute('aria-checked', 'false');
     await expect(dojo(page).locator('[data-game="rhythm"]')).toHaveCount(0);
     expect((await localSaved(page)).dojo.audioMuted).toBe(true);
     await page.reload();
-    await goTo(page, 'dojo');
-    await expect(dojo(page)).toContainText('Audio: OFF');
+    await openView(page, 'dojo');
+    await expect(dojo(page).locator('[data-action="togglemute"]')).toHaveAttribute('aria-checked', 'false');
+    await expect(dojo(page).locator('[data-game="fretboard"]')).toHaveCount(1);
   });
 
-  test('Fretboard Sniper and Rhythm Decryptor are placeholders (toast only)', async ({ page }) => {
+  test('The Fretboard Sniper and The Rhythm Decryptor are not buttons and say "Not built yet" (D148 point 7)', async ({ page }) => {
     await openApp(page);
-    await goTo(page, 'dojo');
+    await openView(page, 'dojo');
+    for (const g of ['fretboard', 'rhythm']) {
+      const row = dojo(page).locator(`[data-game="${g}"]`);
+      await expect(row).toHaveCount(1);
+      expect(await row.evaluate((e) => e.tagName)).toBe('DIV');
+      await expect(row).not.toHaveAttribute('data-action', /.*/);
+      await expect(row.locator('.theory-tag', { hasText: 'Not built yet' })).toHaveCount(1);
+    }
+    await expect(dojo(page).locator('[data-game="rhythm"] .theory-tag', { hasText: 'Needs audio' })).toHaveCount(1);
     const before = await localSaved(page);
     await dojo(page).locator('[data-game="fretboard"]').click();
-    await expect(toast(page)).toHaveText('Mini-game coming in next update!');
-    await dojo(page).locator('[data-game="rhythm"]').click();
-    await expect(toast(page)).toHaveText('Mini-game coming in next update!');
+    await expect(toast(page)).not.toHaveText('Mini-game coming in next update!');
     expect(await localSaved(page)).toEqual(before);
   });
 });
 
 test.describe('Codex', () => {
-  test('a new user: Module 1 open, Modules 2 and 3 locked', async ({ page }) => {
+  test('a new user: all three modules open, none locked', async ({ page }) => {
     await openApp(page);
-    await goTo(page, 'dojo');
+    await openView(page, 'dojo');
     await dojo(page).locator('[data-target="codex-list"]').click();
-    await expect(dojo(page).locator('[data-action="readcodex"]')).toHaveCount(1);
-    await expect(dojo(page).locator('[data-action="readcodex"][data-id="1"]')).toContainText('Module 1');
-    await expect(dojo(page).locator('.codex-item-btn.locked')).toHaveCount(2);
+    await expect(dojo(page).locator('[data-action="readcodex"]')).toHaveCount(3);
+    await expect(dojo(page).locator('.locked')).toHaveCount(0);
+    for (const id of [1, 2, 3]) {
+      await dojo(page).locator(`#dojo-codex-list [data-action="readcodex"][data-id="${id}"]`).click();
+      await expect(dojo(page).locator('#dojo-codex-reader .theory-sub-title')).toContainText(`Module ${id}`);
+      await dojo(page).locator('#dojo-codex-reader [data-action="dojoopen"][data-target="codex-list"]').click();
+      await expect(dojo(page).locator('#dojo-codex-list')).toHaveClass(/active/);
+    }
   });
 
-  test('current behaviour: reading a module gives 100 XP once (conflicts with D40)', async ({ page }) => {
+  test('reading a module writes nothing: no XP, no "read" mark (D40, D148 point 3)', async ({ page }) => {
     await openApp(page);
-    await goTo(page, 'dojo');
+    await openView(page, 'dojo');
+    const before = await localSaved(page);
     await dojo(page).locator('[data-target="codex-list"]').click();
+    const listBefore = await dojo(page).locator('#dojo-codex-list').innerHTML();
     await dojo(page).locator('[data-action="readcodex"][data-id="1"]').click();
-    await expect(dojo(page).locator('#dojo-codex-reader h2')).toHaveText('Module 1: Fretboard Foundations & Syncopation');
-    await expect(toast(page)).toHaveText('⭐ Level Up! You are now a Rhythm Apprentice');
-    let saved = await localSaved(page);
-    expect(saved.dojo).toMatchObject({ xp: 100, level: 2, readCodexes: [1] });
-
-    // Reading it again gives nothing.
+    await expect(dojo(page).locator('#dojo-codex-reader .theory-sub-title')).toHaveText('Module 1: Fretboard Foundations & Syncopation');
+    await page.waitForTimeout(300);
+    await expect(toast(page)).not.toContainText('XP');
+    await expect(toast(page)).not.toContainText('Level Up');
+    expect(await localSaved(page)).toEqual(before);
+    // The list is drawn exactly as before reading (no "read" tick).
     await dojo(page).locator('#dojo-codex-reader [data-target="codex-list"]').click();
-    await dojo(page).locator('[data-action="readcodex"][data-id="1"]').click();
-    saved = await localSaved(page);
-    expect(saved.dojo).toMatchObject({ xp: 100, level: 2, readCodexes: [1] });
+    expect(await dojo(page).locator('#dojo-codex-list').innerHTML()).toBe(listBefore);
   });
 });
 
 test.describe('The Harmonic Architect', () => {
-  test('correct answer: +50 XP, explanation and Next; stored in state.dojo', async ({ page }, testInfo) => {
-    await fixRandom(page, 0); // first level-1 question: the tritone over E, answer "Bb"
+  test('right answer: explanation and Next scenario; nothing written', async ({ page }) => {
     await openApp(page);
-    await goTo(page, 'dojo');
-    await dojo(page).locator('[data-game="architect"]').click();
-    await expect(dojo(page).locator('.question-box')).toContainText('the darkest, most dissonant sound');
-    await dojo(page).locator('[data-action="dojoans"][data-ans="2"]').click();
-    await expect(dojo(page).locator('.opt-btn').nth(2)).toHaveClass(/correct/);
-    await expect(dojo(page).locator('#dojo-feedback')).toContainText('(Correct!)');
-    await expect(dojo(page).locator('[data-action="dojonext"]')).toBeVisible();
-    expect((await localSaved(page)).dojo.xp).toBe(50);
-    await page.screenshot({ path: testInfo.outputPath('dojo-architect-correct.png'), fullPage: true });
-
+    const qs = await questions(page);
+    await startGame(page);
+    const before = await localSaved(page);
+    const i = await currentQuestion(page, qs);
+    await dojo(page).locator(`[data-action="dojoans"][data-ans="${qs[i].ans}"]`).click();
+    await expect(dojo(page).locator('.opt-btn').nth(qs[i].ans)).toHaveClass(/correct/);
+    await expect(dojo(page).locator('#dojo-feedback .feedback-title')).toHaveText("Architect's analysis · Correct");
+    await expect(dojo(page).locator('#dojo-feedback p')).toHaveText(qs[i].exp);
+    await expect(dojo(page).locator('#dojo-feedback [data-action="dojonext"]')).toHaveText('Next scenario');
+    await page.waitForTimeout(300);
+    await expect(toast(page)).not.toContainText('XP');
+    expect(await localSaved(page)).toEqual(before);
     await dojo(page).locator('[data-action="dojonext"]').click();
     await expect(dojo(page).locator('.opt-btn.correct')).toHaveCount(0);
-    await expect(dojo(page).locator('.question-box')).toBeVisible();
+    expect(await currentQuestion(page, qs)).not.toBe(i);
   });
 
-  test('wrong answer: no XP, the right option is shown, Back returns to the dashboard', async ({ page }) => {
-    await fixRandom(page, 0);
+  test('wrong answer: the right option is shown, Next scenario is offered, Back returns to THEORY; nothing written', async ({ page }) => {
     await openApp(page);
-    await goTo(page, 'dojo');
-    await dojo(page).locator('[data-game="architect"]').click();
-    await dojo(page).locator('[data-action="dojoans"][data-ans="0"]').click();
-    await expect(dojo(page).locator('.opt-btn').nth(0)).toHaveClass(/wrong/);
-    await expect(dojo(page).locator('.opt-btn').nth(2)).toHaveClass(/correct/);
-    await expect(dojo(page).locator('#dojo-feedback')).toContainText('(Incorrect)');
-    expect((await localSaved(page)).dojo.xp).toBe(0);
-    await dojo(page).locator('#dojo-feedback [data-action="dojoback"]').click();
+    const qs = await questions(page);
+    await startGame(page);
+    const before = await localSaved(page);
+    const i = await currentQuestion(page, qs);
+    const wrong = qs[i].ans === 0 ? 1 : 0;
+    await dojo(page).locator(`[data-action="dojoans"][data-ans="${wrong}"]`).click();
+    await expect(dojo(page).locator('.opt-btn').nth(wrong)).toHaveClass(/wrong/);
+    await expect(dojo(page).locator('.opt-btn').nth(qs[i].ans)).toHaveClass(/correct/);
+    await expect(dojo(page).locator('#dojo-feedback .feedback-title')).toHaveText("Architect's analysis · Incorrect");
+    await expect(dojo(page).locator('#dojo-feedback [data-action="dojonext"]')).toBeVisible();
+    expect(await localSaved(page)).toEqual(before);
+    await dojo(page).locator('#dojo-game-view [data-action="dojoback"]').click();
     await expect(dojo(page).locator('#dojo-dash-view')).toHaveClass(/active/);
   });
 
-  test('questions are limited to the player\'s level', async ({ page }) => {
-    await fixRandom(page, 0.999); // last available question
+  test('answered options are disabled buttons; a second tap changes nothing', async ({ page }) => {
     await openApp(page);
-    await goTo(page, 'dojo');
-    await dojo(page).locator('[data-game="architect"]').click();
-    // Level 1: last of the 5 level-1 questions (D minor passing chord).
-    await expect(dojo(page).locator('.question-box')).toContainText('D minor');
+    const qs = await questions(page);
+    await startGame(page);
+    const i = await currentQuestion(page, qs);
+    await dojo(page).locator(`[data-action="dojoans"][data-ans="${qs[i].ans}"]`).click();
+    const opts = dojo(page).locator('.opt-btn');
+    for (let k = 0; k < await opts.count(); k++) await expect(opts.nth(k)).toBeDisabled();
+    await expect(dojo(page).locator('.opt-btn.wrong')).toHaveCount(0);
   });
 
-  test('reaching 1200 XP moves to Level 11 and unlocks Codex Module 2', async ({ page }) => {
-    await fixRandom(page, 0);
-    await openApp(page, { localState: baseState({ dojo: dojoState({ xp: 1150, level: 2 }) }) });
-    await goTo(page, 'dojo');
-    await dojo(page).locator('[data-game="architect"]').click();
-    await dojo(page).locator('[data-action="dojoans"][data-ans="2"]').click();
-    await expect(toast(page)).toHaveText('📜 📜 New Codex Unlocked!');
-    expect((await localSaved(page)).dojo).toMatchObject({ xp: 1200, level: 11, unlockedCodexes: [1, 2] });
+  test('every question once, in a shuffled order, before any repeats; a new round never repeats the last one (D148 point 5)', async ({ page }) => {
+    // Math.random fixed at 0: the shuffle moves every question (order 1, 2, … 14, 0), so data order would fail.
+    await page.addInitScript(() => { Math.random = () => 0; });
+    await openApp(page);
+    const qs = await questions(page);
+    expect(qs.length).toBe(15);
+    await startGame(page);
+    const seen = [];
+    const next = async () => {
+      seen.push(await currentQuestion(page, qs));
+      await dojo(page).locator('[data-action="dojoans"][data-ans="0"]').click();
+      await dojo(page).locator('[data-action="dojonext"]').click();
+    };
+    for (let n = 0; n < 14; n++) await next();
+    seen.push(await currentQuestion(page, qs));
+    expect(seen).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 0]);
+    // The second round is drawn with Math.random near 1: no swaps, so it would start with 0 (the question just
+    // shown); the guard swaps the first two.
+    await page.evaluate(() => { Math.random = () => 0.999; });
+    await dojo(page).locator('[data-action="dojoans"][data-ans="0"]').click();
+    await dojo(page).locator('[data-action="dojonext"]').click();
+    for (let n = 0; n < 3; n++) await next();
+    expect(seen.slice(15)).toEqual([1, 0, 2]);
   });
 
-  test('signed in: XP is written to users/{uid} only', async ({ page }) => {
-    await fixRandom(page, 0);
+  test('signed in: reading and playing send nothing to the cloud', async ({ page }) => {
     await openApp(page, { user: TEST_USER, docs: { [USER_DOC]: baseState() } });
-    await goTo(page, 'dojo');
-    await dojo(page).locator('[data-game="architect"]').click();
-    await dojo(page).locator('[data-action="dojoans"][data-ans="2"]').click();
-    const writes = await cloudWrites(page);
-    expect(writes.length).toBeGreaterThanOrEqual(1);
-    expect(writes.every((w) => w.path === USER_DOC)).toBe(true);
-    expect(writes[writes.length - 1].data.dojo.xp).toBe(50);
+    const qs = await questions(page);
+    const start = (await cloudWrites(page)).length;
+    await openView(page, 'dojo');
+    await dojo(page).locator('[data-target="codex-list"]').click();
+    await dojo(page).locator('[data-action="readcodex"][data-id="2"]').click();
+    await openView(page, 'home');
+    await startGame(page);
+    const i = await currentQuestion(page, qs);
+    await dojo(page).locator(`[data-action="dojoans"][data-ans="${qs[i].ans}"]`).click();
+    await page.waitForTimeout(300);
+    expect((await cloudWrites(page)).length).toBe(start);
   });
 });
 
-test('DOJO answers do not touch Technique, Improv, the streak or Setup', async ({ page }) => {
-  await fixRandom(page, 0);
-  const before = baseState({ checks: { 'p0.pre.0': '2026-11-01' }, streakDates: ['2026-11-09'], improvChecks: { g0e0: true } });
+test('stored DOJO data is kept as it was (D82): reading, playing and the audio switch leave it untouched', async ({ page }) => {
+  const before = baseState({ dojo: LEGACY, checks: { 'p0.pre.0': '2026-11-01' }, streakDates: ['2026-11-09'], improvChecks: { g0e0: true } });
   await openApp(page, { localState: before });
-  await goTo(page, 'dojo');
-  await dojo(page).locator('[data-game="architect"]').click();
-  await dojo(page).locator('[data-action="dojoans"][data-ans="2"]').click();
+  const qs = await questions(page);
+  await openView(page, 'dojo');
+  await dojo(page).locator('[data-target="codex-list"]').click();
+  await dojo(page).locator('[data-action="readcodex"][data-id="3"]').click();
+  await startGame(page);
+  const i = await currentQuestion(page, qs);
+  await dojo(page).locator(`[data-action="dojoans"][data-ans="${qs[i].ans}"]`).click();
+  await dojo(page).locator('#dojo-game-view [data-action="dojoback"]').click();
+  await dojo(page).locator('[data-action="togglemute"]').click();
   const saved = await localSaved(page);
-  // schemaVersion: 1 is added by the migration (slice 3.1, D101); nothing else changes.
-  expect({ ...saved, dojo: before.dojo }).toEqual({ ...before, schemaVersion: 1 });
+  // schemaVersion: 1 is added by the migration (slice 3.1, D101); only the audio setting changes.
+  expect(saved).toEqual({ ...before, schemaVersion: 1, dojo: { ...LEGACY, audioMuted: true } });
 });

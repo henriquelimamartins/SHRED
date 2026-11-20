@@ -1,150 +1,184 @@
-// Legacy THEORY DOJO (level/XP, Codex, Harmonic Architect). Replaced by THEORY in Phase 6 (DECISIONS D12);
-// Slice 4.5b (D125, D126): the drawn page header (muted eyebrow + large title).
-// its stored data must still be kept.
-// Slice 4.4: Theory rail on top (phone); DOJO content and behaviour unchanged (D114).
-// Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
-import { DOJO_LEVELS, CODEX_DATA, HARMONIC_QUESTIONS } from "../data/dojo.js?v=1";
-import { saveState, state } from "../store.js?v=5";
-import { showToast } from "../ui.js?v=1";
-import { pageHeader } from "./shell.js?v=12";
-import { renderRail, theoryRail } from "./rails.js?v=14";
+// THEORY destination (DECISIONS D114): the legacy DOJO content (Codex, The Harmonic Architect) until Theory v1
+// replaces it in Phase 6 (D12). Its stored data (state.dojo) is kept, unused (D82).
+// Slice 4.4: Theory rail on top (phone). Slice 4.5b (D125, D126): the drawn page header.
+// Slice 4.8d (D132 point 6, D148): as drawn on the 4.6 boards, in the Theory blue with line icons; the level and
+// XP leave the screen; reading and playing write nothing (no XP, levels, unlocked or read modules; ends the
+// conflict with D40); every Codex module is open; the game walks through all 15 questions in a shuffled order
+// without repeats. Only the Audio switch still writes (dojo.audioMuted). The view ids (`dojo`, `dojo-*`) and the
+// data-action names are unchanged.
+import { CODEX_DATA, HARMONIC_QUESTIONS } from "../data/dojo.js?v=2";
+import { state } from "../store.js?v=5";
+import { pageHeader } from "./shell.js?v=13";
+import { renderRail, theoryRail } from "./rails.js?v=15";
 
-// --- THEORY DOJO LOGIC ---
+// Line icons (24 x 24, stroke), the shapes of the 4.6 THEORY boards.
+const TH_ICONS = {
+  book: 'M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2zM4 19V5',
+  architect: 'M4 9l8-5 8 5M6 9v9M10 9v9M14 9v9M18 9v9M4 20h16',
+  target: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z',
+  rhythm: 'M3 12h3l2-6 4 12 3-9 2 3h4',
+  audio: 'M4 10v4h3l5 4V6l-5 4zM16 9.5a3.5 3.5 0 0 1 0 5M18.5 7a7 7 0 0 1 0 10',
+  chevron: 'M9 6l6 6-6 6',
+  back: 'M15 6l-6 6 6 6',
+  tick: 'M5 12l5 5 9-10',
+  cross: 'M6 6l12 12M18 6L6 18'
+};
+function thIcon(name, cls){
+  return '<svg class="ico ' + cls + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + TH_ICONS[name] + '"></path></svg>';
+}
+
+// A title with a "‹ Back" button (Codex list, a module, the game), as drawn.
+function subHead(title, action, target){
+  return '<div class="theory-sub-head"><h2 class="theory-sub-title" tabindex="-1">' + title + '</h2>' +
+    '<button type="button" class="theory-back" data-action="' + action + '"' + (target ? ' data-target="' + target + '"' : '') + '>' +
+    thIcon('back', 'theory-back-ic') + 'Back</button></div>';
+}
+
+// A card row: icon tile, title and line, then tags and ›. A row that is not built yet is not a button (D148 point 7).
+function row(o){
+  var inner = '<span class="theory-row-icon">' + thIcon(o.icon, 'theory-row-ic') + '</span>' +
+    '<span class="theory-row-text"><span class="theory-row-title">' + o.title + '</span>' +
+    (o.sub ? '<span class="theory-row-sub">' + o.sub + '</span>' : '') + '</span>' +
+    (o.tags ? '<span class="theory-row-tags">' + o.tags.map(function(t){ return '<span class="theory-tag">' + t + '</span>'; }).join('') + '</span>' : '');
+  if(o.soon) return '<div class="theory-row is-soon" data-game="' + o.game + '">' + inner + '</div>';
+  return '<button type="button" class="theory-row" ' + o.attrs + '>' + inner + thIcon('chevron', 'theory-row-chev') + '</button>';
+}
+
+// --- The Harmonic Architect: every question, shuffled, no repeats until all have appeared (page state only) ---
 
 export let currentMinigame = null;
 export let currentQuestion = null;
+let architectDeck = [];
+let lastQuestionIndex = -1;
 
-export function getDojoLevelInfo(xp) {
-  let cur = DOJO_LEVELS[0];
-  let next = DOJO_LEVELS[1];
-  for(let i=0; i<DOJO_LEVELS.length; i++) {
-    if(xp >= DOJO_LEVELS[i].req) {
-      cur = DOJO_LEVELS[i];
-      next = DOJO_LEVELS[i+1] || {req: 999999};
-    }
+function shuffledIndexes(n){
+  var a = [];
+  for(var i = 0; i < n; i++) a.push(i);
+  for(var j = n - 1; j > 0; j--){
+    var k = Math.floor(Math.random() * (j + 1));
+    var tmp = a[j]; a[j] = a[k]; a[k] = tmp;
   }
-  let pct = next.req === 999999 ? 100 : Math.floor(((xp - cur.req) / (next.req - cur.req)) * 100);
-  return { level: cur.l, title: cur.title, pct: pct, nextReq: next.req, codex: cur.codex };
-}
-
-export function addXP(amount) {
-  state.dojo.xp += amount;
-  let info = getDojoLevelInfo(state.dojo.xp);
-  if(info.level > state.dojo.level) {
-    state.dojo.level = info.level;
-    showToast("⭐ Level Up! You are now a " + info.title);
-    if(info.codex > 1 && !state.dojo.unlockedCodexes.includes(info.codex)) {
-      state.dojo.unlockedCodexes.push(info.codex);
-      showToast("📜 📜 New Codex Unlocked!");
-    }
-  } else {
-    showToast("+" + amount + " XP!");
-  }
-  saveState();
+  return a;
 }
 
 export function generateHarmonicQuestion() {
-  let available = HARMONIC_QUESTIONS.filter(q => q.lvl <= state.dojo.level);
-  if(available.length === 0) available = HARMONIC_QUESTIONS;
-  let r = Math.floor(Math.random() * available.length);
-  return available[r];
+  if(!architectDeck.length){
+    architectDeck = shuffledIndexes(HARMONIC_QUESTIONS.length);
+    // A new round never starts with the question that ended the last one.
+    if(architectDeck.length > 1 && architectDeck[0] === lastQuestionIndex){
+      var first = architectDeck[0]; architectDeck[0] = architectDeck[1]; architectDeck[1] = first;
+    }
+  }
+  lastQuestionIndex = architectDeck.shift();
+  return HARMONIC_QUESTIONS[lastQuestionIndex];
 }
 
 export function startArchitectGame() {
   currentMinigame = "architect";
   currentQuestion = generateHarmonicQuestion();
-  
-  let html = '<div class="game-header"><span class="game-title">🏛️ The Harmonic Architect</span><button class="tbtn" data-action="dojoback">Back</button></div>';
-  html += '<div class="question-box"><h4>' + currentQuestion.q + '</h4></div>';
-  
+
+  let html = subHead('The Harmonic Architect', 'dojoback');
+  html += '<div class="question-box"><p>' + currentQuestion.q + '</p></div>';
+  html += '<div class="theory-opts">';
   currentQuestion.opts.forEach((opt, idx) => {
-    html += '<button class="opt-btn" data-action="dojoans" data-ans="'+idx+'">' + opt + '</button>';
+    html += '<button type="button" class="opt-btn" data-action="dojoans" data-ans="' + idx + '"><span class="opt-text">' + opt + '</span></button>';
   });
-  
+  html += '</div>';
   html += '<div id="dojo-feedback" class="feedback-box"></div>';
+  // Always displayed, so screen readers announce the result (the feedback box itself starts hidden).
+  html += '<p id="dojo-announce" class="theory-sr" aria-live="polite"></p>';
   document.getElementById('dojo-game-container').innerHTML = html;
-  
-  document.getElementById('dojo-dash-view').classList.remove('active');
+
+  document.querySelectorAll('#panel-dojo .codex-view').forEach(e => e.classList.remove('active'));
   document.getElementById('dojo-game-view').classList.add('active');
+  focusSubTitle('dojo-game-view');
 }
 
-export function handleDojoAnswer(idx) {
-  var btns = document.querySelectorAll('.opt-btn');
-  btns.forEach(b => b.style.pointerEvents = 'none');
-  
-  var fbox = document.getElementById('dojo-feedback');
-  if(idx === currentQuestion.ans) {
-    btns[idx].classList.add('correct');
-    addXP(50);
-    fbox.innerHTML = '<b>✔️ Architect&apos;s Analysis (Correct!)</b><p>' + currentQuestion.exp + '</p><button class="tbtn primary u-mt-12" data-action="dojonext">Next Scenario &rsaquo;</button>';
-  } else {
-    btns[idx].classList.add('wrong');
-    btns[currentQuestion.ans].classList.add('correct');
-    fbox.innerHTML = '<b>❌ Architect&apos;s Analysis (Incorrect)</b><p>' + currentQuestion.exp + '</p><button class="tbtn u-mt-12" data-action="dojoback">Back to Dojo</button>';
-  }
-  fbox.classList.add('show');
+// Keyboard and screen-reader users land on the new screen's title (it can take focus, tabindex -1).
+export function focusSubTitle(viewId){
+  var h = document.querySelector('#' + viewId + ' .theory-sub-title');
+  if(h) h.focus();
 }
+
+// Answering writes nothing (D148 point 3). The options become disabled buttons (no style set from code).
+export function handleDojoAnswer(idx) {
+  if(!currentQuestion) return;
+  var btns = document.querySelectorAll('#dojo-game-container .opt-btn');
+  if(!btns.length || btns[0].disabled || !(idx >= 0 && idx < btns.length)) return;
+  btns.forEach(b => { b.disabled = true; });
+  var right = idx === currentQuestion.ans;
+  btns[currentQuestion.ans].classList.add('correct');
+  btns[currentQuestion.ans].insertAdjacentHTML('beforeend', thIcon('tick', 'opt-ic'));
+  if(!right){
+    btns[idx].classList.add('wrong');
+    btns[idx].insertAdjacentHTML('beforeend', thIcon('cross', 'opt-ic'));
+  }
+  var fbox = document.getElementById('dojo-feedback');
+  fbox.classList.toggle('is-right', right);
+  fbox.classList.toggle('is-wrong', !right);
+  fbox.innerHTML = '<div class="feedback-title">' + thIcon(right ? 'tick' : 'cross', 'feedback-ic') +
+    'Architect&apos;s analysis · ' + (right ? 'Correct' : 'Incorrect') + '</div>' +
+    '<p>' + currentQuestion.exp + '</p>' +
+    '<button type="button" class="theory-next" data-action="dojonext">Next scenario</button>';
+  fbox.classList.add('show');
+  var plain = function(html){ var d = document.createElement('div'); d.innerHTML = html; return d.textContent; };
+  document.getElementById('dojo-announce').textContent = (right ? 'Correct. ' : 'Incorrect. The answer is ' + plain(currentQuestion.opts[currentQuestion.ans]) + '. ') + plain(currentQuestion.exp);
+  var next = fbox.querySelector('.theory-next');
+  if(next) next.focus();
+}
+
+// --- Dashboard: Audio, READ, PLAY ---
 
 export function renderDojoDashboard() {
-  let info = getDojoLevelInfo(state.dojo.xp);
   let isMuted = state.dojo.audioMuted;
-  
-  let html = '<div class="eyebrow theory">THEORY DOJO</div>';
-  html += '<div class="h2 h2-xl u-mb-4">Level ' + info.level + ' - ' + info.title + '</div>';
-  
-  html += '<div class="xp-bar-container u-mb-18">';
-  html += '<div class="xp-bar-fill" style="width:'+info.pct+'%;"></div>';
-  html += '<div class="xp-text">' + state.dojo.xp + ' / ' + (info.nextReq === 999999 ? 'MAX' : info.nextReq) + ' XP</div>';
-  html += '</div>';
-  
-  html += '<div class="audio-row">';
-  html += '<span class="audio-label">Audio: '+(isMuted?'OFF':'ON')+'</span>';
-  html += '<div class="custom-toggle '+(isMuted?'':'on')+'" data-action="togglemute"><div class="knob"></div></div>';
-  html += '</div>';
-  
-  html += '<div class="dojo-dash">';
-  
-  // Codex Library
-  html += '<button class="dojo-btn theory" data-action="dojoopen" data-target="codex-list"><div class="ic">📜</div><div class="info"><b>The Architect&apos;s Codex</b><span>Read the theory and context before playing. New modules unlock as you level up.</span></div></button>';
-  
-  // Games
-  html += '<button class="dojo-btn" data-action="dojoplay" data-game="architect"><div class="ic">🏛️</div><div class="info"><b>The Harmonic Architect</b><span>Songwriting decisions and modal tension.</span></div></button>';
-  html += '<button class="dojo-btn" data-action="dojoplay" data-game="fretboard"><div class="ic">🎯</div><div class="info"><b>The Fretboard Sniper</b><span>Rapid visual mapping on the neck.</span></div></button>';
-  
+
+  let left = '<section class="theory-audio">' + thIcon('audio', 'theory-audio-ic') +
+    '<span class="theory-audio-text">Audio<span class="theory-audio-sub" id="theory-audio-sub">Games that need sound show only when it is on</span></span>' +
+    '<button type="button" class="theory-switch' + (isMuted ? '' : ' on') + '" role="switch" aria-checked="' + (isMuted ? 'false' : 'true') + '" aria-label="Audio" aria-describedby="theory-audio-sub" data-action="togglemute"><span class="theory-switch-track"><span class="theory-switch-knob"></span></span></button>' +
+    '</section>';
+  left += '<section class="theory-group theory-read"><h2 class="theory-group-title">Read</h2>' +
+    row({ icon: 'book', title: 'The Architect&apos;s Codex', sub: 'Read the theory and context before playing.', attrs: 'data-action="dojoopen" data-target="codex-list"' }) +
+    '</section>';
+
+  let right = '<section class="theory-group theory-play"><h2 class="theory-group-title">Play</h2><div class="theory-rows">';
+  right += row({ icon: 'architect', title: 'The Harmonic Architect', sub: 'Songwriting decisions and modal tension.', attrs: 'data-action="dojoplay" data-game="architect"' });
+  right += row({ icon: 'target', title: 'The Fretboard Sniper', sub: 'Rapid visual mapping on the neck.', soon: true, game: 'fretboard', tags: ['Not built yet'] });
   if(!isMuted) {
-    html += '<button class="dojo-btn" data-action="dojoplay" data-game="rhythm"><div class="ic">🥁</div><div class="info"><b>The Rhythm Decryptor</b><span>Ear training for odd time signatures.</span></div></button>';
+    right += row({ icon: 'rhythm', title: 'The Rhythm Decryptor', sub: 'Ear training for odd time signatures.', soon: true, game: 'rhythm', tags: ['Needs audio', 'Not built yet'] });
   }
-  
+  right += '</div></section>';
+
+  return '<div class="theory-cols"><div class="theory-col theory-col-left">' + left + '</div><div class="theory-col theory-col-right">' + right + '</div></div>';
+}
+
+// --- Codex: every module open, no lock and no "read" mark (reading creates no status, D40) ---
+
+export function renderCodexList() {
+  let html = subHead('Library of the Architect', 'dojoback');
+  html += '<p class="theory-lede">Read these contextualized theory scrolls before playing the mini-games.</p>';
+  html += '<div class="theory-rows">';
+  Object.keys(CODEX_DATA).forEach(k => {
+    let id = parseInt(k,10);
+    html += '<button type="button" class="theory-row theory-codex-row" data-action="readcodex" data-id="' + id + '">' +
+      thIcon('book', 'theory-codex-ic') + '<span class="theory-row-text"><span class="theory-codex-title">' + CODEX_DATA[id].title + '</span></span>' +
+      thIcon('chevron', 'theory-row-chev') + '</button>';
+  });
   html += '</div>';
   return html;
 }
 
-export function renderCodexList() {
-  let html = '<div class="game-header"><span class="game-title">📜 Library of the Architect</span><button class="tbtn" data-action="dojoback">Back</button></div>';
-  html += '<p class="lede">Read these contextualized theory scrolls to unlock your true power in the mini-games.</p>';
-  
-  Object.keys(CODEX_DATA).forEach(k => {
-    let id = parseInt(k,10);
-    let unlocked = state.dojo.unlockedCodexes.includes(id);
-    let read = state.dojo.readCodexes.includes(id);
-    
-    if(unlocked) {
-      html += '<button class="navbtn dojo-btn codex-item-btn" data-action="readcodex" data-id="'+id+'"><div class="ic">'+(read?'✔️':'📖')+'</div><div class="info"><b>' + CODEX_DATA[id].title + '</b></div></button>';
-    } else {
-      html += '<div class="navbtn dojo-btn codex-item-btn locked"><div class="ic">🔒</div><div class="info"><b>' + CODEX_DATA[id].title + '</b><span>Unlocks at higher levels.</span></div></div>';
-    }
-  });
-  
-  return html;
+export function renderCodexReader(id) {
+  if(!CODEX_DATA[id]) return '';
+  return subHead(CODEX_DATA[id].title, 'dojoopen', 'codex-list') + '<div class="codex-content">' + CODEX_DATA[id].content + '</div>';
 }
 
 export function renderDojoView() {
   // Slice 4.4 (D117, D123): the Theory rail (Level 1, not started) at the top of the page on the phone.
-  let html = pageHeader('Pillar \u00b7 Musical Development', 'Theory') +
+  let html = pageHeader('Pillar · Musical Development', 'Theory') +
     '<div class="pillar-rail">' + renderRail(theoryRail()) + '</div>' +
     '<div id="dojo-dash-view" class="codex-view active">' + renderDojoDashboard() + '</div>' +
     '<div id="dojo-codex-list" class="codex-view"></div>' +
-    '<div id="dojo-codex-reader" class="codex-view codex-content"></div>' +
+    '<div id="dojo-codex-reader" class="codex-view"></div>' +
     '<div id="dojo-game-view" class="codex-view game-area"><div id="dojo-game-container"></div></div>';
   return html;
 }

@@ -42,8 +42,7 @@ async function click(page, selector) {
 async function unexpectedInlineStyles(page) {
   return page.evaluate(() => {
     const allowed = [
-      { sel: '.xp-bar-fill', props: ['width'] },   // DOJO XP bar fill
-      { sel: '.opt-btn', props: ['pointer-events'] }, // DOJO answers locked after a choice (CSSOM)
+      // Slice 4.8d (D148): the THEORY XP bar and the answer lock set from code are gone.
     ];
     const bad = [];
     document.querySelectorAll('#root [style]').forEach((el) => {
@@ -162,7 +161,8 @@ test('small coloured text uses the tints; filled buttons use the filled colours 
   await expect(activeNav).toHaveCSS('color', rgb(TOKENS['--purple-tint']));
 
   await goTo(page, 'dojo');
-  await expect(page.locator('#panel-dojo .eyebrow.theory')).toHaveCSS('color', rgb(TOKENS['--blue-tint']));
+  // Slice 4.8d (D148): the THEORY row icons in the Theory blue, as drawn on the 4.6 boards.
+  await expect(page.locator('#panel-dojo .theory-row-icon').first()).toHaveCSS('color', rgb(TOKENS['--blue-tint']));
 });
 
 test('main text colour pairs meet WCAG AA contrast (4.5:1)', () => {
