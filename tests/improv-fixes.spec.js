@@ -23,7 +23,7 @@ const BOXES = {
 test('the 4-fret box spans match the verifier for all 12 keys and 5 boxes', async ({ page }) => {
   await openApp(page);
   const got = await page.evaluate(async (keys) => {
-    const v = (await import(new URL('views/improv.js', location.origin + '/js/').href + '?v=19'));
+    const v = (await import(new URL('views/improv.js', location.origin + '/js/').href + '?v=20'));
     const out = {};
     for (const k of keys) out[k] = [0, 1, 2, 3, 4].map((b) => v.boxFrets(k, b).join('–'));
     return out;

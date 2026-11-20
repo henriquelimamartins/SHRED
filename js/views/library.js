@@ -11,14 +11,14 @@
 // the Weekly Rhythm and the BHGS guide text are hidden; Expression Track, Listening Vault and the guide stay.
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
 import { CREATIVE, THEORY_DOCS, THEORY_ROOT_ITEMS, THEORY_GROUPS, WEEKLY_RHYTHM } from "../data/bhgs.js?v=1";
-import { IMPROV_GATES } from "../data/improv.js?v=3";
-import { exerciseLines, listenBox, masteryButton } from "./improv.js?v=19";
+import { IMPROV_GATES } from "../data/improv.js?v=4";
+import { exerciseLines, listenBox, masteryButton } from "./improv.js?v=20";
 import { LISTENING_VAULT } from "../data/listening.js?v=1";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=1";
 import { BHGS_PACK } from "../pack.js?v=1";
-import { pageHeader, backToMore } from "./shell.js?v=11";
-import { watchItem, linked, renderBonusList } from "./components.js?v=27";
+import { pageHeader, backToMore } from "./shell.js?v=12";
+import { watchItem, linked, renderBonusList } from "./components.js?v=28";
 
 // Line icons as drawn on the boards (same stroke style as the shell icons).
 var LIB_ICONS = {
@@ -124,7 +124,7 @@ function guideBody(){
     html += group('How This App Works', paras([
       'The app rests on three pillars: Technique, Improvisation and Theory. DAILY tells you what to practise each day; HOME shows today\'s session, your streak and the calendar.',
       'Technique follows the BHGS Roadmap in order. Phase 0 sets up your prerequisites, warm-up and a baseline test; then, whatever your level, you start at Phase 1 and work through every exercise, chop-builder and solo of a phase before moving on, up to Phase 4. Each of Phases 1 to 4 is complete when every checklist item is mastered, the chop-builder targets are reached and all 6 categories of the Phase Transition Test, including the Ultimate Technique Workout, are at the required level.',
-      'Improvisation has its own track: on the IMPROV page you work through 5 Gates, playing every exercise in the key of the day.',
+      'Improvisation has its own track: on the IMPROV page you work through 5 Gates, playing every exercise in the key of the day. Exercises you have marked Mastered come back as a short review in DAILY\'s Improvisation block.',
       'Theory is always open: it never locks anything in Technique or Improvisation.',
       'The progress rails show where you stand: BHGS Roadmap for Technique, Musical Development for Improvisation and Theory. Each pillar is counted on its own, never mixed.'
     ]), 'lib-group-text');
@@ -137,7 +137,7 @@ function guideBody(){
   }
   html += group('How This App Works', paras([
     'The app rests on two pillars: Improvisation and Theory. DAILY tells you what to practise each day; HOME shows today\'s session, your streak and the calendar.',
-    'Improvisation has its own track: on the IMPROV page you work through 5 Gates, playing every exercise in the key of the day. Here in LIBRARY, the Expression Track lists the same exercises and the Listening Vault gathers listening references.',
+    'Improvisation has its own track: on the IMPROV page you work through 5 Gates, playing every exercise in the key of the day. Exercises you have marked Mastered come back as a short review in DAILY\'s Improvisation block. Here in LIBRARY, the Expression Track lists the same exercises and the Listening Vault gathers listening references.',
     'Theory is always open: it never locks anything in Improvisation.',
     'The Musical Development rails show where you stand in each pillar, each counted on its own.'
   ]), 'lib-group-text');

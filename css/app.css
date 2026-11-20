@@ -804,6 +804,30 @@ button.tech-phase{width:100%;text-align:left;color:var(--text);font:inherit;curs
 #panel-daily .tbtn.purple:hover{background:var(--purple-bg-soft);}
 #panel-daily .note:not(.daily-ro){margin:0;}
 
+/* Slice 4.8c3 (D146): the Review part at the top of the Improv & Expression block (dashed purple box, practised first). */
+#panel-daily .daily-review{display:flex;flex-direction:column;gap:8px;padding:12px 14px;border:1px dashed var(--purple-edge-2);border-radius:var(--r-lg);background:var(--purple-bg-soft);}
+#panel-daily .daily-review-tag{font-family:var(--font-head);font-size:var(--fs-md);letter-spacing:.1em;text-transform:uppercase;color:var(--purple-tint);white-space:nowrap;}
+#panel-daily .blk p.daily-review-help{font-size:var(--fs-md);color:var(--text-3);text-wrap:pretty;}
+#panel-daily .daily-review-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;}
+#panel-daily .daily-review-ex{display:flex;flex-direction:column;padding:6px 0 0;border-top:1px solid var(--line);}
+#panel-daily .daily-review-ex:first-child{border-top:0;padding-top:0;}
+#panel-daily .blk p.daily-review-name{font-size:var(--fs-base);color:var(--text-soft);}
+#panel-daily .daily-review-more summary{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 4px 0 0;list-style:none;cursor:pointer;color:var(--purple-tint);font-size:var(--fs-md);font-weight:500;}
+#panel-daily .daily-review-more summary::-webkit-details-marker{display:none;}
+#panel-daily .daily-review-more summary:hover .daily-review-show, #panel-daily .daily-review-more summary:hover .daily-review-hide{text-decoration:underline;text-underline-offset:3px;}
+#panel-daily .daily-review-chev{width:16px;height:16px;transition:transform .15s;}
+#panel-daily .daily-review-more[open] .daily-review-chev{transform:rotate(90deg);}
+#panel-daily .daily-review-hide, #panel-daily .daily-review-more[open] .daily-review-show{display:none;}
+#panel-daily .daily-review-more[open] .daily-review-hide{display:inline;}
+#panel-daily .daily-review-body{display:flex;flex-direction:column;gap:8px;padding:2px 0 8px;}
+#panel-daily .blk p.daily-review-note{font-size:var(--fs-sm);color:var(--muted);text-wrap:pretty;}
+@media (max-width: 767px){
+  #panel-daily .daily-review-more summary{min-height:44px;}
+}
+@media (prefers-reduced-motion: reduce){
+  #panel-daily .daily-review-chev{transition:none;}
+}
+
 @media (max-width: 767px){
   #panel-daily ul.check li.mrow{min-height:56px;}
   #panel-daily .mbtn{min-height:44px;}

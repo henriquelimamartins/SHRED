@@ -11,12 +11,14 @@
 // is added when the documented one is from outside it or the exercise names a genre it does not represent.
 // Slice 4.8c2 (D142): rules may hold {oneString}, {boxFrets} and {boxName}, filled in for the day by views/improv.js
 // (string and pentatonic box rotate by day, like the key); chord names in rules carry their numeral; tracks name no fixed key.
+// Slice 4.8c3 (D146): Gate 1 and Gate 5 descriptions rewritten (muscle memory is needed; the target is dependence on
+// fixed boxes, D145 point 5).
 // Not imported by DAILY's logic beyond the Gate title and the exercise title `t`.
 
 export const IMPROV_GATES = [
   {
     title: "The Horizontal Prison",
-    desc: "Destroy the vertical pentatonic boxes and force expressiveness. Stop 'going up and down' and start playing melodies.",
+    desc: "Break the habit of running up and down the pentatonic boxes. Play melodies along the neck and make every note expressive.",
     exercises: [
       { t: "1. One-String Doom",
         track: "Heavy Stoner/Doom drone",
@@ -178,7 +180,7 @@ export const IMPROV_GATES = [
   },
   {
     title: "Total Audiation",
-    desc: "The Master Level. The brain commands, the fingers obey. No more muscle memory dictating your solos.",
+    desc: "The Master Level. Your ear leads and your hands follow: solos come from what you hear, not from shapes under your fingers.",
     exercises: [
       { t: "1. The Slash Sing-Along",
         track: "Any melodic backing track",
