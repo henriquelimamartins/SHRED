@@ -6,7 +6,7 @@
 // Slice 4.5b (D125, D126): the drawn page header (muted eyebrow + large title).
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
 import { setupData } from "../data/setup.js?v=1";
-import { pageHeader, backToMore } from "./shell.js?v=10";
+import { pageHeader, backToMore } from "./shell.js?v=11";
 import { state } from "../store.js?v=5";
 
 // Tunings offered, in menu order (owner, D138: all six kept until I01).

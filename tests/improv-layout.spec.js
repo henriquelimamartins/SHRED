@@ -34,7 +34,7 @@ test('the key of the day on top, the Gate card, then the 5 Gates (phone order; d
   await expect(target.locator('.improv-key')).toHaveText('C# minor');
   await expect(target.locator('.improv-style')).toHaveText('Sabbath / Doom Core');
   await expect(target.locator('.improv-target-help')).toHaveText(
-    'Play every exercise below in C# minor today. Notes in the rules come from an example key, with their degrees in brackets: play the degrees. This breaks vertical habits and builds true neck mastery.');
+    "Play every exercise below on today's root, C#: in C# minor, or in the scale its SCALE line names. Notes and chords in the rules come from an example key, with their degrees in brackets: play the degrees. This breaks vertical habits and builds true neck mastery."); // 4.8c2 (D142)
   await expect(imp(page).locator('.improv-gate-title')).toHaveText('Gate 1 · The Horizontal Prison');
   await expect(imp(page).locator('.improv-gate-count')).toHaveText('2 of 4 mastered');
   await expect(imp(page).locator('.improv-list-title')).toHaveText('The 5 Gates of Freedom');
@@ -69,7 +69,7 @@ test('exercises: no KEY line; CHANGES in Roman numerals, then TRACK and RULE; de
   await expect(imp(page)).not.toContainText('Key:');
   expect(await lines(exercise(page, '1. One-String Doom'))).toEqual([
     ['Track', 'Heavy Stoner/Doom drone'],
-    ['Rule', 'You can ONLY use the G string for 3 full minutes. Focus on finding E, G, B, D (1, ♭3, 5, ♭7) horizontally. Force yourself to use slides to connect notes instead of crossing strings.'],
+    ['Rule', 'You can ONLY use the B string for 3 full minutes (the string changes from day to day). Focus on finding the 1, ♭3, 5 and ♭7 (E, G, B, D in E minor) horizontally. Force yourself to use slides to connect notes instead of crossing strings.'], // 4.8c2: string of the day
   ]);
   expect((await lines(exercise(page, '3. The Singing Acoustic Slide'))).map((l) => l[0])).toEqual(['Changes', 'Track', 'Rule']);
   await expect(exercise(page, '3. The Singing Acoustic Slide').locator('.ex-line-changes dd')).toHaveText('i – VI – VII');
@@ -83,9 +83,9 @@ test('every Gate: the approved CHANGES, and SCALE / TUNING / METER where the old
   await openApp(page, { localState: baseState({ improvIndex: 1, improvChecks: allMastered(0, 4) }) });
   await openView(page, 'improv');
   for (const [t, c] of Object.entries(CHANGES['Gate 2'])) await expect(exercise(page, t).locator('.ex-line-changes dd')).toHaveText(c);
-  await expect(exercise(page, '1. The Target 3rd').locator('.ex-line-rule dd')).toContainText('(Am -> C (♭3), F -> A (1), C -> E (5), G -> B (2))');
-  await expect(exercise(page, '3. Arpeggio Outlining').locator('.ex-line-rule dd')).toContainText('emphasize the D# (7).');
-  await expect(exercise(page, '5. The Sludge to Dominant Turn').locator('.ex-line-rule dd')).toContainText('(target the B natural, 7)');
+  await expect(exercise(page, '1. The Target 3rd').locator('.ex-line-rule dd')).toContainText('(i Am -> C (♭3), VI F -> A (1), III C -> E (5), VII G -> B (2))');
+  await expect(exercise(page, '3. Arpeggio Outlining').locator('.ex-line-rule dd')).toContainText('When the V7 (B7) hits, you must emphasize the D# (7).');
+  await expect(exercise(page, '5. The Sludge to Dominant Turn').locator('.ex-line-rule dd')).toContainText('(C harmonic minor here; target the B natural, 7)');
   // Gate 3 (index 2)
   await page.evaluate((s) => localStorage.setItem('shredRoadmapState_v10', JSON.stringify(s)), baseState({ improvIndex: 2, improvChecks: checks }));
   await page.reload();
@@ -122,8 +122,8 @@ test('listening references in one box, each labelled with its classification (D1
   await expect(one.locator('svg[aria-hidden="true"]')).toHaveCount(1);
   await expect(one.locator('.ex-ref')).toHaveCount(2);
   expect(await one.locator('.ex-listen-label').allTextContents()).toEqual(['Verified analysis', 'Stylistic association']);
-  await expect(one.locator('.ex-ref').nth(0).locator('b')).toHaveText('Dick Dale');
-  await expect(one.locator('.ex-ref').nth(0).locator('p')).toHaveText("Dick Dale · 'Misirlou' (single, 1962) — the opening melody stays on one string, the low E: fast-picked notes, with slides and hammer-ons carrying it along the neck.");
+  await expect(one.locator('.ex-ref').nth(0).locator('b')).toHaveText('Adrian Smith (Iron Maiden)'); // 4.8c2 (D142)
+  await expect(one.locator('.ex-ref').nth(0).locator('p')).toHaveText("Adrian Smith (Iron Maiden) · 'Wasted Years' (Somewhere in Time, 1986) — the intro riff runs along the high E string, from the 12th fret down to the 2nd, against the open string: one string carrying a whole melody.");
   await expect(one.locator('.ex-ref').nth(1).locator('b')).toHaveText('Black Sabbath');
   // A single reference when the documented one already comes from the owner's world.
   const four = exercise(page, '2. The 4-Fret Box').locator('.ex-ref');

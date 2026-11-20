@@ -9,11 +9,11 @@
 // Slice 4.5b (D125, D126): the drawn page header (muted eyebrow + large title).
 // Slice 4.4: Improv rail on top (phone).
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
-import { IMPROV_GATES } from "../data/improv.js?v=2";
+import { IMPROV_GATES } from "../data/improv.js?v=3";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=1";
-import { pageHeader } from "./shell.js?v=10";
-import { renderRail, improvRail } from "./rails.js?v=12";
+import { pageHeader } from "./shell.js?v=11";
+import { renderRail, improvRail } from "./rails.js?v=13";
 
 // The Daily Transposition Target (one key per day of the year). Slice 4.5c (D129): moved out of renderImprov()
 // unchanged so HOME's "Today's Improv" card shows the same key as this page.
@@ -32,10 +32,52 @@ export function improvKeyOfDay(){
     {k:"G# minor", t:"Modern Metal"},
     {k:"F minor", t:"Moody / Symphonic"}
   ];
-  var d = new Date();
-  var dayOfYear = Math.floor((Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) - Date.UTC(d.getFullYear(), 0, 0)) / 24 / 60 / 60 / 1000);
-  var dayIndex = dayOfYear % IMPROV_KEYS.length;
+  var dayIndex = improvDayOfYear() % IMPROV_KEYS.length;
   return IMPROV_KEYS[dayIndex];
+}
+
+// Day of the year (local day), the clock of every daily rotation on this page. Same formula as before (4.8c2 moved it).
+function improvDayOfYear(){
+  var d = new Date();
+  return Math.floor((Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) - Date.UTC(d.getFullYear(), 0, 0)) / 24 / 60 / 60 / 1000);
+}
+
+// Slice 4.8c2 (D142): the string of "One-String Doom" and the pentatonic box of "The 4-Fret Box" rotate by day, like
+// the key. 12 keys and 5 boxes share no divisor, so all 60 key/box pairs come round in 60 days; the string moves on
+// every 12 days, so each key meets each of the 4 strings. Nothing is stored.
+var ONE_STRINGS = ['G', 'D', 'B', 'A'];
+// Root fret on the low E string (0–11) for each key of the day.
+var ROOT_FRET = { 'E': 0, 'F': 1, 'F#': 2, 'G': 3, 'G#': 4, 'A': 5, 'Bb': 6, 'B': 7, 'C': 8, 'C#': 9, 'D': 10, 'Eb': 11 };
+// Fret span of each minor-pentatonic box relative to that root (box 1 = root on the low E string; box 3 has a one-fret
+// stretch). Checked by the music-theory verifier (D134), whose 12-key table is in tests/improv-fixes.spec.js.
+var BOX_SPANS = [[0, 3], [2, 5], [4, 8], [7, 10], [9, 12]];
+// The box between frets 1 and 17, no open strings; the lower placement when two fit.
+export function boxFrets(root, box){
+  var r = ROOT_FRET[root], span = BOX_SPANS[box];
+  for(var shift = -12; shift <= 12; shift += 12){
+    var lo = r + span[0] + shift, hi = r + span[1] + shift;
+    if(lo >= 1 && hi <= 17) return [lo, hi];
+  }
+  return null;
+}
+export function improvDayContext(){
+  var day = improvDayOfYear();
+  var key = improvKeyOfDay();
+  var root = key.k.split(' ')[0];
+  var box = day % 5;
+  var frets = boxFrets(root, box), lo = frets[0], hi = frets[1];
+  return {
+    root: root,
+    oneString: ONE_STRINGS[Math.floor(day / 12) % ONE_STRINGS.length],
+    box: box + 1, boxFrom: lo, boxTo: hi,
+    boxFrets: lo + ' and ' + hi,
+    boxName: 'box ' + (box + 1) + ' of the ' + key.k + ' pentatonic'
+  };
+}
+function fillRule(text){
+  if(text.indexOf('{') < 0) return text;
+  var c = improvDayContext();
+  return text.replace(/\{(oneString|boxFrets|boxName)\}/g, function(m, k){ return '<b class="ex-today">' + c[k] + '</b>'; });
 }
 
 // Line icons as drawn on the boards (same stroke style as the shell icons).
@@ -55,7 +97,7 @@ var EX_LINES = [['changes', 'Changes'], ['scale', 'Scale'], ['tuning', 'Tuning']
 export function exerciseLines(ex){
   var html = '<dl class="ex-lines">';
   EX_LINES.forEach(function(l){
-    if(ex[l[0]]) html += '<div class="ex-line ex-line-' + l[0] + '"><dt>' + l[1] + '</dt><dd>' + ex[l[0]] + '</dd></div>';
+    if(ex[l[0]]) html += '<div class="ex-line ex-line-' + l[0] + '"><dt>' + l[1] + '</dt><dd>' + (l[0] === 'rule' ? fillRule(ex.rule) : ex[l[0]]) + '</dd></div>';
   });
   return html + '</dl>';
 }
@@ -82,8 +124,8 @@ function targetCard(tKey){
   return '<section class="improv-target" aria-label="Daily Transposition Target">' +
     '<div class="improv-target-label">Daily Transposition Target</div>' +
     '<div class="improv-target-key"><b class="improv-key">' + tKey.k + '</b><span class="improv-style">' + tKey.t + '</span></div>' +
-    '<p class="improv-target-help">Play every exercise below in <b>' + tKey.k + '</b> today. Notes in the rules come from an example key, ' +
-    'with their degrees in brackets: play the degrees. This breaks vertical habits and builds true neck mastery.</p>' +
+    '<p class="improv-target-help">Play every exercise below on today\'s root, <b>' + tKey.k.split(' ')[0] + '</b>: in <b>' + tKey.k + '</b>, or in the scale its SCALE line names. ' +
+    'Notes and chords in the rules come from an example key, with their degrees in brackets: play the degrees. This breaks vertical habits and builds true neck mastery.</p>' +
     '</section>';
 }
 

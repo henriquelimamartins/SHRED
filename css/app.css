@@ -1082,3 +1082,4 @@ button.tech-phase{width:100%;text-align:left;color:var(--text);font:inherit;curs
 .ex-listen-label{font-family:var(--font-head);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--purple-tint);}
 .ex-listen p{margin:0;font-size:13px;line-height:1.5;color:var(--text-soft);}
 .ex-listen b{color:var(--purple-soft);}
+.ex-today{color:var(--text);font-weight:600;}
