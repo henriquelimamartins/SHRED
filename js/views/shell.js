@@ -9,7 +9,7 @@ import { PHASES } from "../data/bhgs.js?v=1";
 import { IMPROV_GATES } from "../data/improv.js?v=4";
 import { DAY_FULL } from "../data/days.js?v=1";
 import { activeDay, totalStreak, currentStreak } from "../logic/dates.js?v=7";
-import { sessionPlan, isBlockPracticed } from "../logic/daily.js?v=32";
+import { sessionPlan, isBlockPracticed } from "../logic/daily.js?v=33";
 
 function esc(t){ return String(t).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]; }); }
 

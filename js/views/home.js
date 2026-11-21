@@ -24,10 +24,10 @@ import { renderRails } from "./rails.js?v=18";
 import { pageHeader, icon } from "./shell.js?v=16";
 import { DAY_FULL } from "../data/days.js?v=1";
 import { todayName, activeDay } from "../logic/dates.js?v=7";
-import { renderStreakCalendar } from "./calendar.js?v=32";
+import { renderStreakCalendar } from "./calendar.js?v=33";
 
 import { IMPROV_GATES } from "../data/improv.js?v=4";
-import { sessionPlan, isBlockPracticed } from "../logic/daily.js?v=32";
+import { sessionPlan, isBlockPracticed } from "../logic/daily.js?v=33";
 import { improvKeyOfDay } from "./improv.js?v=24";
 
 function esc(t){ return String(t).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]; }); }

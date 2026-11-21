@@ -40,7 +40,7 @@ test.describe('phone', () => {
     expect(await shown(page)).toBe('Tue');
     await swipe(page, { dx: -220 });
     expect(await shown(page)).toBe('Wed');
-    await expect(daily(page).locator('.page-eyebrow')).toHaveText('Wednesday · Beginner');
+    await expect(daily(page).locator('.daypick [aria-pressed="true"]')).toHaveText('Wed');
     await swipe(page, { dx: 220 });
     await swipe(page, { dx: 220 });
     expect(await shown(page)).toBe('Mon');

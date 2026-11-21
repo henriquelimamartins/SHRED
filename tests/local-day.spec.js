@@ -55,7 +55,7 @@ test.describe('Lisbon summer time, between 00:00 and 01:00', () => {
     // 22:50 UTC = 23:50 Tuesday in Lisbon: practise, then the clock passes local midnight.
     await openApp(page, { now: '2026-07-14T22:50:00Z', localState: baseState({ phaseIndex: 1, practicedDate: '2026-07-14' }) });
     await goTo(page, 'daily');
-    await expect(daily(page).locator('.eyebrow')).toHaveText('Tuesday · Beginner');
+    await expect(daily(page).locator('.daypick [aria-pressed="true"]')).toHaveText('Tue');
     await practiceBox(page, 'warmup').click();
     expect((await localSaved(page)).streakDates).toEqual(['2026-07-14']);
 
@@ -98,7 +98,7 @@ test.describe('Lisbon summer time, between 00:00 and 01:00', () => {
     await page.reload();
     await expect(page.locator('#splash')).toHaveCount(0, { timeout: 5000 });
     await goTo(page, 'daily');
-    await expect(daily(page).locator('.eyebrow')).toHaveText('Wednesday · Beginner');
+    await expect(daily(page).locator('.daypick [aria-pressed="true"]')).toHaveText('Wed');
     await expect(practiceBox(page, 'focused')).toHaveCount(1);
     await expect(dayChip(page, 'Sat')).not.toHaveClass(/isactive/);
   });
@@ -152,7 +152,7 @@ test.describe('time zones far from UTC', () => {
     test('Tuesday 21:00 local: practice is logged on Tuesday 10 November', async ({ page }) => {
       await openApp(page, { now: '2026-11-11T05:00:00Z', localState: baseState({ phaseIndex: 1, practicedDate: '2026-11-10' }) });
       await goTo(page, 'daily');
-      await expect(daily(page).locator('.eyebrow')).toHaveText('Tuesday · Beginner');
+      await expect(daily(page).locator('.daypick [aria-pressed="true"]')).toHaveText('Tue');
       await practiceBox(page, 'warmup').click();
       const saved = await localSaved(page);
       expect(saved.practiced).toEqual({ 'warmup.Tue': true });
@@ -172,7 +172,7 @@ test.describe('time zones far from UTC', () => {
         localState: baseState({ phaseIndex: 1, practicedDate: '2026-11-10', practiced: { 'warmup.Tue': true }, streakDates: ['2026-11-10'] }),
       });
       await goTo(page, 'daily');
-      await expect(daily(page).locator('.eyebrow')).toHaveText('Wednesday · Beginner');
+      await expect(daily(page).locator('.daypick [aria-pressed="true"]')).toHaveText('Wed');
       expect((await localSaved(page)).practiced).toEqual({});
       await practiceBox(page, 'warmup').click();
       const saved = await localSaved(page);

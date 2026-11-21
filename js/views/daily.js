@@ -1,4 +1,8 @@
 // DAILY view.
+// Slice 4.10c (D152 points 14, 16, 17, 21, 22, 23): title on the left and today's date on the right (no eyebrow); the
+// count as a thin bar under the day buttons; session and companion column share the full width (3 : 2);
+// "Phase n · Label" inside the Focused block; the Friday Phase test as a line with one dot per category;
+// Mastered / Watched buttons as in LIBRARY; buttons without final punctuation. Behaviour unchanged.
 // Slice 4.8c3 (D146): the Improv & Expression block starts with a Review part (already-Mastered exercises).
 // Slice 4.7 (D133): DAILY as drawn on the 4.6 canvas: header with the session count, day buttons, numbered blocks,
 // the micro-dose as a dashed "+ 5 min" box and, on desktop, the companion column (views/daily-side.js).
@@ -11,21 +15,57 @@ import { DAY_FULL } from "../data/days.js?v=1";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=2";
 import { todayISO, todayName, isWeekendDay, activeDay } from "../logic/dates.js?v=7";
-import { k } from "../logic/technique.js?v=32";
-import { sessionPlan, isBlockPracticed } from "../logic/daily.js?v=32";
+import { k } from "../logic/technique.js?v=33";
+import { sessionPlan, isBlockPracticed } from "../logic/daily.js?v=33";
 import { BHGS_PACK } from "../pack.js?v=1";
-import { pageHeader } from "./shell.js?v=16";
-import { linked, checkItem, prereqItem, docItem, chopRow, dayPicker, blk, getDailyActiveSequence } from "./components.js?v=32";
+import { linked, checkItem, prereqItem, docItem, chopRow, dayPicker, blk, getDailyActiveSequence } from "./components.js?v=33";
 import { renderDailySide } from "./daily-side.js?v=12";
 import { improvKeyOfDay, improvReviewPicks, exerciseLines } from "./improv.js?v=24";
 
-// Header detail (D133 point 3): "n of N practiced · M min" on the active day; another day (read-only) shows the minutes only.
-function sessionCount(day, editable){
+// Slice 4.10c (D152 point 16): today's date on the right of the title, long on desktop, short on the phone
+// ("Tuesday · November 10th, 2026" / "Tue · Nov 10th, 2026"), from the device's local day like every other date.
+var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+function ordinal(n){ var v = n % 100, s = ['th','st','nd','rd']; return n + (s[(v - 20) % 10] || s[v] || s[0]); }
+function dailyHeader(){
+  var d = new Date(), dn = todayName(), m = MONTHS[d.getMonth()], tail = ordinal(d.getDate()) + ', ' + d.getFullYear();
+  return '<header class="page-head daily-head"><div class="page-head-main"><h1 class="page-title">Daily</h1></div>' +
+    '<div class="page-head-right"><time class="eyebrow daily-date" datetime="' + todayISO() + '">' +
+    '<span class="daily-date-long">' + DAY_FULL[dn] + ' &middot; ' + m + ' ' + tail + '</span>' +
+    '<span class="daily-date-short">' + dn + ' &middot; ' + m.slice(0, 3) + ' ' + tail + '</span></time></div></header>';
+}
+
+// Slice 4.10c (D152 point 16; D133 point 3): the count as a thin bar under the day buttons, "n of N practiced" and the
+// minutes; another day (read-only) shows the minutes only. The fill width comes from a class (twelfths), never a style.
+function sessionProgress(day, editable){
   var plan = sessionPlan(day, state.phaseIndex), min = 0, done = 0;
   plan.forEach(function(b){ min += b.min || 0; if(isBlockPracticed(b.name, day)) done++; });
-  var minText = min ? min + ' min' : '';
-  if(!editable) return minText ? '<span class="daily-count">' + minText + '</span>' : '';
-  return '<span class="daily-count">' + done + ' of ' + plan.length + '<span class="daily-count-word"> practiced</span>' + (minText ? ' &middot; ' + minText : '') + '</span>';
+  var minHtml = min ? '<span class="daily-progress-min">' + min + ' min</span>' : '';
+  if(!editable) return minHtml ? '<div class="daily-progress ro"><div class="daily-progress-text">' + minHtml + '</div></div>' : '';
+  var n = plan.length, fill = n ? Math.round(done * 12 / n) : 0;
+  return '<div class="daily-progress"><div class="daily-progress-text"><span class="daily-progress-count">' + done + ' of ' + n + ' practiced</span>' + minHtml + '</div>' +
+    '<div class="daily-progress-bar" role="progressbar" aria-label="Blocks practiced" aria-valuemin="0" aria-valuemax="' + n + '" aria-valuenow="' + done + '" aria-valuetext="' + done + ' of ' + n + ' practiced">' +
+    '<span class="daily-progress-fill f' + fill + '"></span></div></div>';
+}
+
+// Slice 4.10c (D152 point 16): the phase and its label inside the block that carries the phase content.
+function phaseTag(idx, p){ return '<div class="daily-phase"><span>Phase ' + idx + ' &middot; ' + p.label + '</span></div>'; }
+
+// Slice 4.10c (D152 point 22): the Friday Phase Transition Test as a line inside the Focused block: label, the count,
+// one dot per category (filled when its level reaches the phase's requirement) and "Open Phase test" (TECHNIQUE page,
+// slice 4.10a; only with the BHGS pack). On the phone the parts stack (CSS). Reads only.
+var CHEV_RIGHT = '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg>';
+function phaseTestLine(p){
+  var met = [], dots = TESTCATS.map(function(c){
+    var on = (state.testLevel[c.key] || 0) >= p.testReq;
+    if(on) met.push(c.label);
+    return '<span class="daily-ptest-dot' + (on ? ' on' : '') + '" data-cat="' + c.key + '" title="' + c.label + '"></span>';
+  }).join('');
+  var n = TESTCATS.length, req = p.testReq;
+  var aria = met.length + ' of ' + n + ' categories at Level ' + req + ' or higher' + (met.length ? ': ' + met.join(', ') : '');
+  return '<div class="daily-ptest"><div class="daily-ptest-text"><span class="daily-ptest-label">Phase Transition Test</span>' +
+    '<span class="daily-ptest-count">' + met.length + ' of ' + n + '<span class="daily-ptest-word"> categories</span> at Level ' + req + '+</span></div>' +
+    '<span class="daily-ptest-dots" role="img" aria-label="' + aria + '">' + dots + '</span>' +
+    (BHGS_PACK ? '<button type="button" class="daily-ptest-link" data-action="phasetest">Open Phase test' + CHEV_RIGHT + '</button>' : '') + '</div>';
 }
 
 // The "+ 5 min" micro-dose line of the Focused block, as the dashed box of the board.
@@ -84,7 +124,7 @@ function renderSession(day, editable){
 
   if(!editable){
     var notePrefix = state.activeDayOverride ? "Currently selected practice session is" : "Suggested practice session is";
-    html+='<div class="note daily-ro">'+notePrefix+' <b>'+DAY_FULL[activeDay()]+'</b>. <button class="tbtn u-mt-10 u-block" data-action="activateday" data-day="'+day+'">Switch to '+DAY_FULL[day]+' instead →</button></div>';
+    html+='<div class="note daily-ro">'+notePrefix+' <b>'+DAY_FULL[activeDay()]+'</b>. <button class="tbtn u-mt-10 u-block" data-action="activateday" data-day="'+day+'">Switch to '+DAY_FULL[day]+' instead</button></div>';
   }
 
   if(p.kind==="setup"){
@@ -93,7 +133,7 @@ function renderSession(day, editable){
       if(state.checks[kk] && state.checks[kk] !== todayISO()) return "";
       return prereqItem(pr.t,kk,pr.url,editable);
     }).join("")+'</ul>';
-    html+=block("prereq","Prerequisites",null,preBody);
+    html+=block("prereq","Prerequisites",null,phaseTag(idx,p)+preBody);
     html+=block("warmup","Warm-Up",null,'<p>'+linked("Ultimate 5-Minute Warm-Up",WARMUP_URL)+'</p>');
     // Slice 4.10a: the test lives on the TECHNIQUE page since 4.3 (D122), not on HOME; without the BHGS pack there is no TECHNIQUE page.
     if(BHGS_PACK) html+='<div class="note">Run the Phase Transition Test on the TECHNIQUE page for your baseline - it\'s informational here, not required to advance.</div>';
@@ -117,7 +157,7 @@ function renderSession(day, editable){
 
   html+=block("warmup","Warm-Up","5 min",'<p>'+linked("Ultimate 5-Minute Warm-Up",WARMUP_URL)+'</p>');
 
-  var focusBody='';
+  var focusBody=phaseTag(idx,p);
   if(day==="Mon"){
     if(p.concept && p.concept.length){
       var conceptHtml = getDailyActiveSequence(p.concept, p.id+".c", editable, true);
@@ -175,10 +215,7 @@ function renderSession(day, editable){
     focusBody+='<p class="u-mb-8">Chop-builders (legato/economy/tapping):</p>'+chopRow(p.target,["legato","econ","tap"]);
   } else if(day==="Fri"){
     focusBody+='<p>Revisit your hardest exercise or chop-builder from the week, then spend the micro-dose reinforcing whichever skill felt weakest.</p>';
-    if(p.testReq){
-      var met=TESTCATS.filter(function(c){return (state.testLevel[c.key]||0)>=p.testReq;}).length;
-      focusBody+='<div class="note u-mt-10">Phase Transition Test: '+met+'/'+TESTCATS.length+' at Level '+p.testReq+'+. '+(BHGS_PACK?'<button class="tbtn u-mt-8 u-block" data-action="phasetest">Retake Phase Test →</button>':'')+'</div>';
-    }
+    if(p.testReq) focusBody+=phaseTestLine(p);
   }
   if(day!=="Fri") focusBody+=microLine(essential,essUrl);
   html+=block("focused","Focused","30 + 5 min",focusBody);
@@ -198,12 +235,13 @@ function renderSession(day, editable){
 }
 
 export function renderDaily(){
-  var p=PHASES[state.phaseIndex];
   var day=ui.dayOverride||todayName();
   var editable=(day===activeDay());
-  var html=pageHeader(DAY_FULL[day]+' &middot; '+p.label,'Daily',sessionCount(day,editable));
+  // Slice 4.10c (D152 points 14, 16, 17): header, day buttons and the count bar use the full width; then the session
+  // and the companion column share it 3 : 2 (the companion goes under the session on narrower windows, CSS).
+  var html=dailyHeader();
+  html+='<div class="daily-top">'+dayPicker(day)+sessionProgress(day,editable)+'</div>';
   html+='<div class="daily-cols"><div class="daily-main">';
-  html+=dayPicker(day);
   // Slice 4.7b (D135): the session area is what follows the finger when swiping between days on the phone.
   html+='<div class="daily-swipe">'+renderSession(day,editable)+'</div>';
   html+='</div>'+renderDailySide(day)+'</div>';

@@ -51,7 +51,7 @@ test.describe('DAILY layout', () => {
     const monitor = await openApp(page, { localState: baseState({ phaseIndex: 1 }) });
     await goTo(page, 'daily');
 
-    await expect(daily(page).locator('.eyebrow')).toHaveText('Tuesday · Beginner');
+    await expect(daily(page).locator('.daypick [aria-pressed="true"]')).toHaveText('Tue');
     const chips = daily(page).locator('.daypick .dchip2');
     await expect(chips).toHaveText(['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']);
     await expect(dayChip(page, 'Tue')).toHaveClass(/\bon\b/);
@@ -82,7 +82,7 @@ test.describe('DAILY layout', () => {
       Mon: { titles: ['Warm-Up', 'Focused', 'Casual', 'Cool-Down'], text: ['Exercises in rotation', 'Ear Training micro-dose'] },
       Wed: { titles: ['Warm-Up', 'Focused', 'Improv & Expression', 'Cool-Down'], text: ['Theory in rotation', 'Time Signatures micro-dose'] },
       Thu: { titles: ['Warm-Up', 'Focused', 'Casual', 'Cool-Down'], text: ['legato/economy/tapping', 'Sight-Reading micro-dose'] },
-      Fri: { titles: ['Warm-Up', 'Focused', 'Improv & Expression', 'Cool-Down'], text: ['Revisit your hardest exercise', 'Phase Transition Test: 0/6 at Level 2+'] },
+      Fri: { titles: ['Warm-Up', 'Focused', 'Improv & Expression', 'Cool-Down'], text: ['Revisit your hardest exercise', 'Phase Transition Test', '0 of 6 categories at Level 2+'] },
     };
     for (const [day, { titles, text }] of Object.entries(expected)) {
       await dayChip(page, day).click();
@@ -98,7 +98,7 @@ test.describe('DAILY layout', () => {
     await goTo(page, 'daily');
 
     await dayChip(page, 'Sat').click();
-    await expect(daily(page).locator('.eyebrow')).toHaveText('Saturday · Beginner');
+    await expect(daily(page).locator('.daypick [aria-pressed="true"]')).toHaveText('Sat');
     expect(await blockTitles(page)).toEqual(['Warm-Up', 'CASUAL']);
     await expect(daily(page).locator('.blk > .top .min')).toHaveText(['15 min', '45 min']);
     await expect(daily(page).locator('.blk').nth(1)).toContainText('polish next solo');
@@ -113,7 +113,8 @@ test.describe('DAILY layout', () => {
   test('Setup phase: Prerequisites + Warm-Up only', async ({ page }) => {
     await openApp(page, { localState: baseState({ phaseIndex: 0 }) });
     await goTo(page, 'daily');
-    await expect(daily(page).locator('.eyebrow')).toHaveText('Tuesday · Setup');
+    await expect(daily(page).locator('.daypick [aria-pressed="true"]')).toHaveText('Tue');
+    await expect(daily(page).locator('.daily-phase')).toHaveText('Phase 0 · Setup');
     expect(await blockTitles(page)).toEqual(['Prerequisites', 'Warm-Up']);
     await expect(practiceBox(page, 'prereq')).toHaveCount(1);
     await expect(practiceBox(page, 'warmup')).toHaveCount(1);
@@ -131,7 +132,7 @@ test.describe('active day', () => {
     await expect(daily(page).locator('[data-action="blockprac"]')).toHaveCount(0);
     await expect(daily(page).locator('.blkcheck.ro')).toHaveCount(2);
     await expect(daily(page).locator('[data-action="togm"]')).toHaveCount(0); // items are read-only too
-    await expect(daily(page).locator('[data-action="activateday"][data-day="Sat"]')).toHaveText('Switch to Saturday instead →');
+    await expect(daily(page).locator('[data-action="activateday"][data-day="Sat"]')).toHaveText('Switch to Saturday instead');
   });
 
   test('Switch makes that day today\'s session; it is stored with today\'s date', async ({ page }) => {
@@ -165,7 +166,7 @@ test.describe('active day', () => {
   test('after a reload, DAILY opens on today (read-only) while the switched day stays active', async ({ page }) => {
     await openApp(page, { localState: baseState({ phaseIndex: 1, activeDayOverride: 'Sat', activeDayDate: '2026-11-10' }) });
     await goTo(page, 'daily');
-    await expect(daily(page).locator('.eyebrow')).toHaveText('Tuesday · Beginner');
+    await expect(daily(page).locator('.daypick [aria-pressed="true"]')).toHaveText('Tue');
     await expect(daily(page).locator('.note').first()).toContainText('Currently selected practice session is Saturday');
     await expect(daily(page).locator('[data-action="blockprac"]')).toHaveCount(0);
   });
@@ -231,7 +232,7 @@ test.describe('Practiced boxes and the streak', () => {
   test('weekend full session = Warm-Up + one 45-minute block', async ({ page }, testInfo) => {
     await openApp(page, { now: SATURDAY, localState: baseState({ phaseIndex: 1, practicedDate: '2026-11-14' }) });
     await goTo(page, 'daily');
-    await expect(daily(page).locator('.eyebrow')).toHaveText('Saturday · Beginner');
+    await expect(daily(page).locator('.daypick [aria-pressed="true"]')).toHaveText('Sat');
 
     await practiceBox(page, 'warmup').click();
     await practiceBox(page, 'casual').click();
@@ -406,7 +407,7 @@ test.describe('item sequences in DAILY', () => {
   test('Monday shows the next concept video; watched today it stays; next Monday shows the following one', async ({ page }) => {
     await openApp(page, { now: MONDAY, localState: baseState({ phaseIndex: 1, practicedDate: '2026-11-09', checks: checksFor(['p1.c.0']) }) });
     await goTo(page, 'daily');
-    await expect(daily(page).locator('.eyebrow')).toHaveText('Monday · Beginner');
+    await expect(daily(page).locator('.daypick [aria-pressed="true"]')).toHaveText('Mon');
 
     const video = (key) => focusedItems(page).and(page.locator(`[data-key="${key}"]`));
     await expect(focusedItems(page).and(page.locator('[data-key^="p1.c."]'))).toHaveCount(1);
@@ -420,7 +421,7 @@ test.describe('item sequences in DAILY', () => {
     await page.reload();
     await expect(page.locator('#splash')).toHaveCount(0);
     await goTo(page, 'daily');
-    await expect(daily(page).locator('.eyebrow')).toHaveText('Monday · Beginner');
+    await expect(daily(page).locator('.daypick [aria-pressed="true"]')).toHaveText('Mon');
     await expect(focusedItems(page).and(page.locator('[data-key^="p1.c."]'))).toHaveCount(1);
     await expect(video('p1.c.2')).toHaveText('Unwatched');
   });
@@ -450,7 +451,7 @@ test.describe('time zone', () => {
     // weekday is local but the date is UTC" (found in 1.4). 23:30 UTC = 00:30 Wednesday in Lisbon.
     await openApp(page, { now: '2026-07-14T23:30:00Z', localState: baseState({ phaseIndex: 1, practicedDate: '2026-07-14' }) });
     await goTo(page, 'daily');
-    await expect(daily(page).locator('.eyebrow')).toHaveText('Wednesday · Beginner');
+    await expect(daily(page).locator('.daypick [aria-pressed="true"]')).toHaveText('Wed');
 
     await practiceBox(page, 'warmup').click();
     const saved = await localSaved(page);

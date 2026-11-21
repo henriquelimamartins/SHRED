@@ -21,12 +21,12 @@
 import { ui } from "./ui.js?v=2";
 import { BHGS_PACK } from "./pack.js?v=1";
 import { ensureDailyReset } from "./logic/dates.js?v=7";
-import { initCalCarousel } from "./views/calendar.js?v=32";
-import { renderHome } from "./views/home.js?v=32";
+import { initCalCarousel } from "./views/calendar.js?v=33";
+import { renderHome } from "./views/home.js?v=33";
 import { renderTechnique } from "./views/technique.js?v=19";
-import { renderDaily } from "./views/daily.js?v=32";
+import { renderDaily } from "./views/daily.js?v=33";
 import { renderImprov } from "./views/improv.js?v=24";
-import { renderLibrary } from "./views/library.js?v=32";
+import { renderLibrary } from "./views/library.js?v=33";
 import { renderSetup } from "./views/setup.js?v=23";
 import { renderDojoView } from "./views/dojo.js?v=24";
 import { renderRails } from "./views/rails.js?v=18";

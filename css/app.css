@@ -60,6 +60,7 @@
   --toast-bg:#1A1A1F;    /* notification card (slice 4.10b) */
   --toast-line:#2A2A31;
   --amber-line:rgba(242,181,58,0.40);
+  --amber-line-soft:rgba(242,181,58,0.28); --amber-bg-faint:rgba(242,181,58,0.07); --amber-tint:#F2C66A; --dot-off:#5A5A64;
   /* DAILY (slice 4.7): edges and quiet surfaces of the 4.6 boards */
   --chip-text:#B4B4BD; --num-text:#8E8E98; --line-2:#2E2E35; --ctl-line:#2A2A31; --ctl-line-hover:#3A3A42;
   --sunk:#131316; --sunk-2:#141418; --red-edge:#6A2C30; --red-edge-soft:#5A2A2D; --red-bg-tile:rgba(229,72,77,0.12);
@@ -535,6 +536,9 @@ table.info td.day{font-weight:700;white-space:nowrap;color:var(--red-tint);}
 .tech-header{margin-bottom:16px;}
 .tech-header .page-head{margin-bottom:12px;align-items:baseline;}
 .tech-sub{font-size:var(--fs-sm);color:var(--muted);}
+/* Slice 4.10c (D152 point 21): Mastered / Watched / Completed buttons as tall as in LIBRARY, DAILY and IMPROVISATION. */
+#panel-technique .mbtn{min-height:40px;padding-top:0;padding-bottom:0;}
+@media (max-width: 767px){ #panel-technique .mbtn{min-height:44px;} }
 .tech-progress{display:flex;align-items:center;gap:18px;}
 .tech-progress .bignum{font-size:40px;line-height:1;}
 .tech-progress-txt{font-size:var(--fs-md);line-height:1.5;color:var(--text-3);}
@@ -759,18 +763,62 @@ button.tech-phase{width:100%;text-align:left;color:var(--text);font:inherit;curs
   #panel-technique .page-head, #panel-improv .page-head, #panel-dojo .page-head{align-items:baseline;margin-bottom:12px;}
 }
 
-/* ---------- DAILY as drawn (slice 4.7, D132 point 1, D133) ---------- */
-/* Session column (max 720 px) + companion column (max 400 px); the companion wraps under the session when the
-   window is too narrow for both (about 1120-1180 px with the sidebar) and is hidden on the phone (D133 points 1-2). */
-.daily-cols{display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start;}
-.daily-main{flex:3 1 460px;min-width:0;max-width:720px;display:flex;flex-direction:column;gap:16px;}
-.daily-side{flex:2 1 320px;min-width:0;max-width:400px;display:flex;flex-direction:column;gap:16px;}
-#panel-daily .page-head-right{font-size:var(--fs-md);color:var(--muted);}
+/* ---------- DAILY as drawn (slice 4.7, D132 point 1, D133; slice 4.10c, D152 points 14, 16, 17) ---------- */
+/* Title on the left, today's date on the right (no eyebrow); day buttons and the count bar at full width; then the
+   session and the companion column share the full width 3 : 2. When the window is too narrow for both (below
+   1180 px with the sidebar) the companion column goes under the session, full width; hidden on the phone (D133). */
+#panel-daily .daily-head{align-items:baseline;}
+#panel-daily .daily-head .page-title{margin:0;}
+#panel-daily .daily-date{font-family:var(--font-head);font-size:var(--fs-sm);font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);white-space:nowrap;}
+.daily-date-short{display:none;}
+.daily-top{display:flex;flex-direction:column;gap:14px;margin-bottom:20px;}
+.daily-progress-text{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-size:var(--fs-md);color:var(--text-2);}
+.daily-progress-min{color:var(--muted);margin-left:auto;}
+.daily-progress-bar{height:4px;margin-top:6px;border-radius:2px;background:var(--border);overflow:hidden;}
+.daily-progress-fill{display:block;height:100%;width:0;border-radius:2px;background:var(--red);transition:width .2s;}
+.daily-progress-fill.f1{width:8.333%}.daily-progress-fill.f2{width:16.667%}.daily-progress-fill.f3{width:25%}
+.daily-progress-fill.f4{width:33.333%}.daily-progress-fill.f5{width:41.667%}.daily-progress-fill.f6{width:50%}
+.daily-progress-fill.f7{width:58.333%}.daily-progress-fill.f8{width:66.667%}.daily-progress-fill.f9{width:75%}
+.daily-progress-fill.f10{width:83.333%}.daily-progress-fill.f11{width:91.667%}.daily-progress-fill.f12{width:100%}
+.daily-cols{display:grid;grid-template-columns:minmax(0,1fr);gap:20px;align-items:start;}
+.daily-main{min-width:0;display:flex;flex-direction:column;gap:16px;}
+.daily-side{min-width:0;display:flex;flex-direction:column;gap:16px;}
+@media (min-width: 1180px){ .daily-cols{grid-template-columns:minmax(0,3fr) minmax(0,2fr);} }
 @media (max-width: 767px){
   .daily-side{display:none;}
-  .daily-main{flex-basis:100%;max-width:none;gap:14px;}
-  .daily-count-word{display:none;} /* phone: "1 of 4 · 60 min" */
-  #panel-daily .page-head-right{font-size:var(--fs-sm);}
+  .daily-main{gap:14px;}
+  .daily-top{gap:12px;margin-bottom:14px;}
+  .daily-date-long{display:none;}
+  .daily-date-short{display:inline;}
+  #panel-daily .daily-date{font-size:var(--fs-xs);}
+  .daily-progress-text{font-size:var(--fs-sm);}
+}
+@media (prefers-reduced-motion: reduce){ .daily-progress-fill{transition:none;} }
+
+/* Phase tag inside the Focused block (Phase 0: Prerequisites), slice 4.10c (D152 point 16). */
+#panel-daily .daily-phase{display:flex;}
+#panel-daily .daily-phase span{display:inline-flex;align-items:center;padding:4px 10px;border:1px solid var(--ctl-line);border-radius:var(--r-pill);font-size:var(--fs-sm);color:var(--text-2);}
+
+/* Friday Phase test line, slice 4.10c (D152 point 22): one row on desktop, stacked on the phone. */
+#panel-daily .daily-ptest{display:flex;align-items:center;gap:14px;margin-top:4px;padding:12px 14px;border:1px solid var(--amber-line-soft);border-radius:var(--r-xl);background:var(--amber-bg-faint);}
+#panel-daily .daily-ptest-text{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;}
+#panel-daily .daily-ptest-label{font-size:var(--fs-xs);font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--amber-tint);}
+#panel-daily .daily-ptest-count{font-size:var(--fs-base);color:var(--text);}
+#panel-daily .daily-ptest-dots{display:flex;gap:6px;flex:0 0 auto;}
+#panel-daily .daily-ptest-dot{width:10px;height:10px;border-radius:50%;border:1.5px solid var(--dot-off);}
+#panel-daily .daily-ptest-dot.on{background:var(--amber);border-color:var(--amber);}
+#panel-daily .daily-ptest-link{display:inline-flex;align-items:center;gap:4px;min-height:40px;padding:0 2px 0 6px;border:0;background:transparent;color:var(--amber-tint);font-size:var(--fs-md);font-weight:500;white-space:nowrap;cursor:pointer;}
+#panel-daily .daily-ptest-link .ico{width:14px;height:14px;}
+#panel-daily .daily-ptest-link:hover{text-decoration:underline;text-underline-offset:3px;}
+#panel-daily .daily-ptest-link:focus-visible{outline:2px solid var(--amber-tint);outline-offset:2px;border-radius:var(--r-sm);}
+@media (max-width: 767px){
+  #panel-daily .daily-ptest{display:grid;grid-template-columns:1fr auto;grid-template-areas:"label label" "count dots" "link link";align-items:center;gap:6px 12px;padding-bottom:2px;}
+  #panel-daily .daily-ptest-text{display:contents;}
+  #panel-daily .daily-ptest-label{grid-area:label;}
+  #panel-daily .daily-ptest-count{grid-area:count;}
+  #panel-daily .daily-ptest-dots{grid-area:dots;}
+  #panel-daily .daily-ptest-word{display:none;} /* phone: "2 of 6 at Level 2+" */
+  #panel-daily .daily-ptest-link{grid-area:link;justify-content:flex-start;min-height:44px;margin-top:4px;padding:0;border-top:1px solid var(--amber-line-soft);border-radius:0;}
 }
 
 /* Day buttons: names centred, no dot; selected day red; today (or the switched day) outlined (D133 point 3). */
@@ -813,9 +861,7 @@ button.tech-phase{width:100%;text-align:left;color:var(--text);font:inherit;curs
 #panel-daily ul.check li.mrow{min-height:52px;padding:6px 0;border-bottom:0;border-top:1px solid var(--line);}
 #panel-daily .itxt{font-size:var(--fs-base);}
 #panel-daily .itxt.done, #panel-daily .itxt.done a{color:var(--muted);text-decoration:underline;text-decoration-color:var(--box-line);}
-#panel-daily .mbtn{min-height:40px;padding:0 14px;border-radius:var(--r-pill);border:1px solid var(--line-2);background:transparent;color:var(--chip-text);font-size:var(--fs-sm);font-weight:500;letter-spacing:0;}
-#panel-daily .mbtn.on{border-color:var(--red-edge);background:var(--red-bg);color:var(--red-tint);}
-#panel-daily .mbtn.blue.on{border-color:var(--blue-line);background:var(--blue-bg);color:var(--blue-tint);}
+#panel-daily .mbtn{min-height:40px;padding-top:0;padding-bottom:0;} /* slice 4.10c (D152 point 21): the app's usual Mastered / Watched buttons, as LIBRARY */
 #panel-daily .docli{border-top:1px solid var(--line);}
 
 /* Chop-builders: link + target, then − level + as drawn. */
