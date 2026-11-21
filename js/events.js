@@ -20,14 +20,14 @@
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
 import { defaultState, defaultDojoState, saveState, state, replaceState, backupBeforeReplace, migrate, newerSchema, NEWER_SCHEMA_MSG } from "./store.js?v=5";
 import { hasFirebase, auth, db, googleProvider, currentUser, cloudReady, cloudReadFailed, CLOUD_READ_FAILED_MSG, requestCloudWrite, loadFromCloud, signInWithPopup, signOut } from "./firebase.js?v=5";
-import { ui, showToast } from "./ui.js?v=1";
-import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=31";
-import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=31";
-import { changeCalMonth, calCanGo } from "./views/calendar.js?v=31";
-import { currentMinigame, startArchitectGame, handleDojoAnswer, renderCodexList, renderCodexReader, focusSubTitle } from "./views/dojo.js?v=23";
-import { updateNav, render, updateAccountRow } from "./render.js?v=31";
-import { SUB_ITEMS } from "./views/shell.js?v=15";
-import { initDailySwipe } from "./views/daily-swipe.js?v=10";
+import { ui, showToast } from "./ui.js?v=2";
+import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=32";
+import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=32";
+import { changeCalMonth, calCanGo } from "./views/calendar.js?v=32";
+import { currentMinigame, startArchitectGame, handleDojoAnswer, renderCodexList, renderCodexReader, focusSubTitle } from "./views/dojo.js?v=24";
+import { updateNav, render, updateAccountRow } from "./render.js?v=32";
+import { SUB_ITEMS } from "./views/shell.js?v=16";
+import { initDailySwipe } from "./views/daily-swipe.js?v=11";
 import { buildBackupFile, backupFileName, listDeviceBackups, parseBackupFile, isNewerCopy, restoredState, formatLocalTime, reasonLabel, MAX_BACKUP_FILE_BYTES, INVALID_BACKUP_MSG, NEWER_BACKUP_MSG } from "./logic/backup.js?v=2";
 
 // Slice 4.8e (D149): Restore and Reset open in place on the same page, so opening one closes the other.
@@ -286,7 +286,7 @@ document.addEventListener("click",function(e){
   }
   else if(a==="advanceimprov"){ 
     state.improvIndex++; 
-    showToast("\ud83d\udd13 New Gate Unlocked!"); 
+    showToast("New Gate Unlocked!", "unlock"); 
     saveState(); render();
   }
   else if(a==="activateday"){ setActiveDay(t.dataset.day); }

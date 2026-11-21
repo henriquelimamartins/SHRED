@@ -17,25 +17,12 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./css/app.css?v=22">
-<script src="./js/splash.js?v=1"></script>
+<link rel="stylesheet" href="./css/app.css?v=23">
 </head>
 <body>
-<div id="splash">
-  <div class="splashinner">
-    <svg width="150" height="106" viewBox="0 0 200 140">
-      <circle cx="100" cy="62" r="40" fill="#E5484D"/>
-      <polygon points="0,140 50,58 88,96 128,42 200,140" fill="#000"/>
-    </svg>
-    <div class="splashtitle">
-      <div>THE <span>SHRED</span></div>
-      <div class="splash-sub">ROADMAP</div>
-    </div>
-  </div>
-</div>
 <div id="root"></div>
-<div id="toast" class="toast"></div>
+<div id="toasts" class="toasts" aria-live="polite"><div id="toast" class="toast-empty" hidden></div></div>
 
-<script type="module" src="./js/main.js?v=31"></script>
+<script type="module" src="./js/main.js?v=32"></script>
 </body>
 </html>

@@ -2,9 +2,9 @@
 // Slice 4.5c (D129): header as drawn (month title with ‹ ›; Today only when another month is shown).
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
 import { state } from "../store.js?v=5";
-import { ui } from "../ui.js?v=1";
+import { ui } from "../ui.js?v=2";
 import { todayISO } from "../logic/dates.js?v=7";
-import { render } from "../render.js?v=31";
+import { render } from "../render.js?v=32";
 
 export function getEarliestYearMonth() {
   if(!state.streakDates || state.streakDates.length === 0) return { y: new Date().getFullYear(), m: new Date().getMonth() };

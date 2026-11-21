@@ -5,10 +5,10 @@
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
 import { PHASES, CHOP, TESTCATS, PREREQ } from "../data/bhgs.js?v=1";
 import { saveState, state, backupBeforeReplace, newerSchema, NEWER_SCHEMA_MSG } from "../store.js?v=5";
-import { ui, showToast } from "../ui.js?v=1";
+import { ui, showToast } from "../ui.js?v=2";
 import { todayISO, ensureDailyReset, updateStreakStatus } from "./dates.js?v=7";
-import { isFullyDoneToday } from "./daily.js?v=31";
-import { render } from "../render.js?v=31";
+import { isFullyDoneToday } from "./daily.js?v=32";
+import { render } from "../render.js?v=32";
 
 export function k(){return Array.prototype.slice.call(arguments).join(".");}
 
@@ -53,11 +53,11 @@ export function applyStateChange(skipAuto){
   updateStreakStatus();
   if(!skipAuto){
     var idx=state.phaseIndex;
-    if(idx<PHASES.length-1 && phasePercent(idx)===100){ state.phaseIndex=idx+1; showToast("\ud83d\udd25 Phase unlocked: "+PHASES[idx+1].label+"!"); }
+    if(idx<PHASES.length-1 && phasePercent(idx)===100){ state.phaseIndex=idx+1; showToast("Phase unlocked: "+PHASES[idx+1].label+"!", "milestone"); }
   }
   if(isFullyDoneToday() && state.congratsDate!==todayISO()){
     state.congratsDate=todayISO();
-    showToast("\ud83e\udd18 Nice work - today's full session is complete!");
+    showToast("Nice work - today's full session is complete!", "milestone");
   }
   saveState(); render();
 }

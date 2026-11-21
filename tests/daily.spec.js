@@ -216,7 +216,7 @@ test.describe('Practiced boxes and the streak', () => {
     for (const block of ['warmup', 'focused', 'casual']) await practiceBox(page, block).click();
     expect((await localSaved(page)).congratsDate).toBeNull();
     await practiceBox(page, 'cooldown').click();
-    await expect(toast(page)).toHaveText("🤘 Nice work - today's full session is complete!");
+    await expect(toast(page)).toHaveText("Nice work - today's full session is complete!");
     await expect(toast(page)).toHaveClass(/show/);
     expect((await localSaved(page)).congratsDate).toBe('2026-11-10');
 
@@ -235,7 +235,7 @@ test.describe('Practiced boxes and the streak', () => {
 
     await practiceBox(page, 'warmup').click();
     await practiceBox(page, 'casual').click();
-    await expect(toast(page)).toHaveText("🤘 Nice work - today's full session is complete!");
+    await expect(toast(page)).toHaveText("Nice work - today's full session is complete!");
     const saved = await localSaved(page);
     expect(saved.practiced).toEqual({ 'warmup.Sat': true, 'casual.Sat': true });
     expect(saved.streakDates).toEqual(['2026-11-14']);
@@ -248,7 +248,7 @@ test.describe('Practiced boxes and the streak', () => {
     await goTo(page, 'daily');
     await practiceBox(page, 'prereq').click();
     await practiceBox(page, 'warmup').click();
-    await expect(toast(page)).toHaveText("🤘 Nice work - today's full session is complete!");
+    await expect(toast(page)).toHaveText("Nice work - today's full session is complete!");
     expect((await localSaved(page)).congratsDate).toBe('2026-11-10');
   });
 

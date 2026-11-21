@@ -4,9 +4,9 @@
 // A swipe does exactly what tapping a day button does (ui.dayOverride + render): it only changes the day being
 // viewed, never the active session, and writes nothing. Vertical scrolling stays native (CSS touch-action: pan-y).
 import { DAY_ORDER } from "../data/days.js?v=1";
-import { ui } from "../ui.js?v=1";
+import { ui } from "../ui.js?v=2";
 import { todayName } from "../logic/dates.js?v=7";
-import { render } from "../render.js?v=31";
+import { render } from "../render.js?v=32";
 
 const PHONE = '(max-width: 767px)';
 const DECIDE_PX = 10;        // movement before the gesture is read as sideways or vertical

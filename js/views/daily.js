@@ -9,15 +9,15 @@ import { PHASES, TESTCATS, THEORY_DOCS, THEORY_GROUPS, THEORY_ITEMS, ESSENTIAL, 
 import { IMPROV_GATES } from "../data/improv.js?v=4";
 import { DAY_FULL } from "../data/days.js?v=1";
 import { state } from "../store.js?v=5";
-import { ui } from "../ui.js?v=1";
+import { ui } from "../ui.js?v=2";
 import { todayISO, todayName, isWeekendDay, activeDay } from "../logic/dates.js?v=7";
-import { k } from "../logic/technique.js?v=31";
-import { sessionPlan, isBlockPracticed } from "../logic/daily.js?v=31";
+import { k } from "../logic/technique.js?v=32";
+import { sessionPlan, isBlockPracticed } from "../logic/daily.js?v=32";
 import { BHGS_PACK } from "../pack.js?v=1";
-import { pageHeader } from "./shell.js?v=15";
-import { linked, checkItem, prereqItem, docItem, chopRow, dayPicker, blk, getDailyActiveSequence } from "./components.js?v=31";
-import { renderDailySide } from "./daily-side.js?v=11";
-import { improvKeyOfDay, improvReviewPicks, exerciseLines } from "./improv.js?v=23";
+import { pageHeader } from "./shell.js?v=16";
+import { linked, checkItem, prereqItem, docItem, chopRow, dayPicker, blk, getDailyActiveSequence } from "./components.js?v=32";
+import { renderDailySide } from "./daily-side.js?v=12";
+import { improvKeyOfDay, improvReviewPicks, exerciseLines } from "./improv.js?v=24";
 
 // Header detail (D133 point 3): "n of N practiced · M min" on the active day; another day (read-only) shows the minutes only.
 function sessionCount(day, editable){

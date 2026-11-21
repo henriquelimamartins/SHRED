@@ -80,7 +80,7 @@ test.describe('Lisbon summer time, between 00:00 and 01:00', () => {
     await openApp(page, { now: LISBON_SUMMER_AFTER_MIDNIGHT, localState: baseState({ phaseIndex: 1, practicedDate: '2026-07-15' }) });
     await goTo(page, 'daily');
     for (const block of ['warmup', 'focused', 'casual', 'cooldown']) await practiceBox(page, block).click();
-    await expect(toast(page)).toHaveText("🤘 Nice work - today's full session is complete!");
+    await expect(toast(page)).toHaveText("Nice work - today's full session is complete!");
     const saved = await localSaved(page);
     expect(saved.congratsDate).toBe('2026-07-15');
     expect(saved.practiced).toEqual({ 'warmup.Wed': true, 'focused.Wed': true, 'casual.Wed': true, 'cooldown.Wed': true });

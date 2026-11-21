@@ -12,9 +12,9 @@
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
 import { IMPROV_GATES } from "../data/improv.js?v=4";
 import { state } from "../store.js?v=5";
-import { ui } from "../ui.js?v=1";
-import { pageHeader } from "./shell.js?v=15";
-import { renderRail, improvRail } from "./rails.js?v=17";
+import { ui } from "../ui.js?v=2";
+import { pageHeader } from "./shell.js?v=16";
+import { renderRail, improvRail } from "./rails.js?v=18";
 
 // The Daily Transposition Target (one key per day of the year). Slice 4.5c (D129): moved out of renderImprov()
 // unchanged so HOME's "Today's Improv" card shows the same key as this page.
