@@ -12,9 +12,9 @@
 // Without Firebase the Cloud sync group is left out; signed out it stays (its buttons explain that login is needed).
 import { hasFirebase, currentUser } from "../firebase.js?v=5";
 import { state } from "../store.js?v=5";
-import { ui } from "../ui.js?v=1";
+import { ui } from "../ui.js?v=2";
 import { listDeviceBackups, formatLocalTime, reasonLabel } from "../logic/backup.js?v=2";
-import { pageHeader, avatar, accountName, syncState, backToMore } from "./shell.js?v=15";
+import { pageHeader, avatar, accountName, syncState, backToMore } from "./shell.js?v=16";
 
 function esc(t){ return String(t).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]; }); }
 

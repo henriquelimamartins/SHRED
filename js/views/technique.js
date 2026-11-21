@@ -13,12 +13,12 @@
 import { PHASES, CHOP, TESTCATS, ESSENTIAL, ESSENTIAL_URL, PREREQ, WARMUP_URL } from "../data/bhgs.js?v=1";
 import { DAY_FULL } from "../data/days.js?v=1";
 import { state } from "../store.js?v=5";
-import { ui } from "../ui.js?v=1";
+import { ui } from "../ui.js?v=2";
 import { BHGS_PACK } from "../pack.js?v=1";
-import { k, phasePercent, itemKeysForPhase } from "../logic/technique.js?v=31";
-import { linked, checkItem, watchItem, prereqItem, chopRow, testRow } from "./components.js?v=31";
-import { pageHeader } from "./shell.js?v=15";
-import { renderRail, techniqueRail } from "./rails.js?v=17";
+import { k, phasePercent, itemKeysForPhase } from "../logic/technique.js?v=32";
+import { linked, checkItem, watchItem, prereqItem, chopRow, testRow } from "./components.js?v=32";
+import { pageHeader } from "./shell.js?v=16";
+import { renderRail, techniqueRail } from "./rails.js?v=18";
 
 export const TECH_TABS = [
   { id: "checklist", label: "Checklist" },

@@ -18,21 +18,21 @@
 // Slice 4.5b2 (D126 point 1, D128): phone shell as drawn. The shared phone top bar (brand, Search, Login) is gone:
 // each page shows its own header (HOME: brand, date, streak). The bottom bar uses the line icons. MORE is a page
 // (view id `more`, phone only) instead of a sheet. Login / Logout live only on the Account & data page (D125 point 4).
-import { ui } from "./ui.js?v=1";
+import { ui } from "./ui.js?v=2";
 import { BHGS_PACK } from "./pack.js?v=1";
 import { ensureDailyReset } from "./logic/dates.js?v=7";
-import { initCalCarousel } from "./views/calendar.js?v=31";
-import { renderHome } from "./views/home.js?v=31";
-import { renderTechnique } from "./views/technique.js?v=18";
-import { renderDaily } from "./views/daily.js?v=31";
-import { renderImprov } from "./views/improv.js?v=23";
-import { renderLibrary } from "./views/library.js?v=31";
-import { renderSetup } from "./views/setup.js?v=22";
-import { renderDojoView } from "./views/dojo.js?v=23";
-import { renderRails } from "./views/rails.js?v=17";
-import { renderAccount } from "./views/account.js?v=16";
-import { renderMore } from "./views/more.js?v=14";
-import { icon, sidebarMenu, todayBlock, accountRow, syncState } from "./views/shell.js?v=15";
+import { initCalCarousel } from "./views/calendar.js?v=32";
+import { renderHome } from "./views/home.js?v=32";
+import { renderTechnique } from "./views/technique.js?v=19";
+import { renderDaily } from "./views/daily.js?v=32";
+import { renderImprov } from "./views/improv.js?v=24";
+import { renderLibrary } from "./views/library.js?v=32";
+import { renderSetup } from "./views/setup.js?v=23";
+import { renderDojoView } from "./views/dojo.js?v=24";
+import { renderRails } from "./views/rails.js?v=18";
+import { renderAccount } from "./views/account.js?v=17";
+import { renderMore } from "./views/more.js?v=15";
+import { icon, sidebarMenu, todayBlock, accountRow, syncState } from "./views/shell.js?v=16";
 
 export function initAppLayout() {
   var root = document.getElementById("root");

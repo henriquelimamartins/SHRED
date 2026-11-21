@@ -3,13 +3,13 @@
 // the account row with the Google account photo and the real sync state. Showing any of these writes nothing.
 import { state, newerSchema } from "../store.js?v=5";
 import { hasFirebase, currentUser, cloudReady, cloudReadFailed, SYNC_PENDING_KEY } from "../firebase.js?v=5";
-import { ui } from "../ui.js?v=1";
+import { ui } from "../ui.js?v=2";
 import { BHGS_PACK } from "../pack.js?v=1";
 import { PHASES } from "../data/bhgs.js?v=1";
 import { IMPROV_GATES } from "../data/improv.js?v=4";
 import { DAY_FULL } from "../data/days.js?v=1";
 import { activeDay, totalStreak, currentStreak } from "../logic/dates.js?v=7";
-import { sessionPlan, isBlockPracticed } from "../logic/daily.js?v=31";
+import { sessionPlan, isBlockPracticed } from "../logic/daily.js?v=32";
 
 function esc(t){ return String(t).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]; }); }
 

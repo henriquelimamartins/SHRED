@@ -55,7 +55,10 @@
   --green-bg:rgba(70,167,88,0.14);
   --green-bg-soft:rgba(70,167,88,0.08);
   --green-line:rgba(70,167,88,0.75);
+  --amber-bg:rgba(242,181,58,0.14);
   --amber-bg-soft:rgba(242,181,58,0.08);
+  --toast-bg:#1A1A1F;    /* notification card (slice 4.10b) */
+  --toast-line:#2A2A31;
   --amber-line:rgba(242,181,58,0.40);
   /* DAILY (slice 4.7): edges and quiet surfaces of the 4.6 boards */
   --chip-text:#B4B4BD; --num-text:#8E8E98; --line-2:#2E2E35; --ctl-line:#2A2A31; --ctl-line-hover:#3A3A42;
@@ -111,11 +114,6 @@ button{font-family:inherit;cursor:pointer;}
 a{color:inherit;}
 button:focus-visible, a:focus-visible, select:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
 
-#splash{position:fixed;inset:0;background:#000;display:flex;align-items:center;justify-content:center;z-index:9999;}
-.splashinner{display:flex;flex-direction:column;align-items:center;}
-.splashtitle{font-family:var(--font-head);font-weight:700;font-size:26px;letter-spacing:2px;text-align:center;line-height:1.15;color:var(--white);margin-top:16px;}
-.splashtitle span{color:var(--red);}
-.splashtitle .splash-sub{font-size:30.5px;color:var(--white);}
 
 /* --- RESPONSIVE SHELL LAYOUT --- */
 #root{
@@ -415,9 +413,29 @@ ul.check li.lib-dayrow, ul.check li.lib-dayrow:last-child{display:flex;align-ite
 .tbtn.purple:hover{background:var(--purple);}
 .tbtn.btn-video{width:100%;margin-bottom:24px;display:flex;justify-content:center;align-items:center;gap:10px;}
 
-.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--red-fill);color:var(--white);padding:12px 20px;border-radius:30px;font-size:13.5px;font-weight:600;z-index:9999;box-shadow:0 6px 20px rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .25s, transform .25s;max-width:88%;text-align:center;}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(-6px);}
-@media (min-width: 768px) { .toast { bottom: 40px; } }
+/* Notifications (slice 4.10b, D152 point 6): phone = above the bottom bar, newest nearest the bar; desktop = top right,
+   newest on top. Each card: colour bar + icon by kind, text, close button. */
+.toasts{position:fixed;left:8px;right:8px;bottom:calc(86px + env(safe-area-inset-bottom));z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none;}
+.toast-card{position:relative;display:flex;align-items:flex-start;gap:12px;padding:12px 10px 12px 14px;background:var(--toast-bg);border:1px solid var(--toast-line);border-radius:var(--r-xl);box-shadow:0 12px 32px rgba(0,0,0,.45);color:var(--text);font-size:var(--fs-base);line-height:1.4;overflow:hidden;pointer-events:auto;animation:toast-in .2s ease-out;}
+.toast-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--toast-c);}
+.toast-card.toast-out{opacity:0;transform:translateY(6px);transition:opacity .18s, transform .18s;}
+.toast-icon{flex:none;width:28px;height:28px;border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;color:var(--toast-c);background:var(--toast-soft);}
+.toast-text{flex:1;min-width:0;padding-top:4px;}
+.toast-close{flex:none;width:32px;height:32px;margin:-2px -2px 0 0;border:0;border-radius:var(--r-sm);background:transparent;color:var(--muted);display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.toast-close:hover,.toast-close:focus-visible{color:var(--text);background:var(--card2);}
+.toast-success{--toast-c:var(--green);--toast-soft:var(--green-bg);}
+.toast-info{--toast-c:var(--blue);--toast-soft:var(--blue-bg);}
+.toast-warn{--toast-c:var(--amber);--toast-soft:var(--amber-bg);}
+.toast-error{--toast-c:var(--red);--toast-soft:var(--red-bg);}
+.toast-unlock{--toast-c:var(--purple);--toast-soft:var(--purple-bg);}
+.toast-milestone{--toast-c:var(--red);--toast-soft:var(--red-bg);}
+@keyframes toast-in{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+@media (min-width: 768px) {
+  .toasts{left:auto;right:20px;top:20px;bottom:auto;width:360px;flex-direction:column-reverse;justify-content:flex-end;}
+  .toast-card.toast-out{transform:translateX(12px);}
+  @keyframes toast-in{from{opacity:0;transform:translateX(12px);}to{opacity:1;transform:none;}}
+}
+@media (prefers-reduced-motion: reduce){ .toast-card{animation:none;} .toast-card.toast-out{transition:none;} }
 
 .acc{margin-bottom:12px;}
 .acchead{display:flex;justify-content:space-between;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:var(--r-xl);padding:14px 16px;gap:12px;cursor:pointer;transition:border-color 0.2s;}

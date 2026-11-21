@@ -98,7 +98,7 @@ test.describe('gates', () => {
     await openApp(page, { localState: baseState({ improvChecks: allMastered(0, 4) }) });
     await goTo(page, 'improv');
     await improv(page).locator('[data-action="advanceimprov"]').click();
-    await expect(toast(page)).toHaveText('🔓 New Gate Unlocked!');
+    await expect(toast(page)).toHaveText('New Gate Unlocked!');
     expect((await localSaved(page)).improvIndex).toBe(1);
 
     await expect(gateCard(page, 'Gate 2 · The Chord Tone Architect').locator('[data-action="togimprov"]')).toHaveCount(5);

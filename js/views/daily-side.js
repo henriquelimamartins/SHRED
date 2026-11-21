@@ -4,10 +4,10 @@
 import { PHASES, ESSENTIAL, ESSENTIAL_URL } from "../data/bhgs.js?v=1";
 import { DAY_FULL } from "../data/days.js?v=1";
 import { state } from "../store.js?v=5";
-import { ui } from "../ui.js?v=1";
+import { ui } from "../ui.js?v=2";
 import { BHGS_PACK } from "../pack.js?v=1";
 import { todayName, isWeekendDay, localISO } from "../logic/dates.js?v=7";
-import { improvKeyOfDay } from "./improv.js?v=23";
+import { improvKeyOfDay } from "./improv.js?v=24";
 
 function svg(path, cls){
   return '<svg class="ico' + (cls ? ' ' + cls : '') + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + path + '"></path></svg>';

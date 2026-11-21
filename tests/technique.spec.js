@@ -194,7 +194,7 @@ test.describe('advancing', () => {
     await openTechnique(page, 'checklist');
     await technique(page).locator('[data-action="togm"][data-key="p0.pre.1"]').click();
 
-    await expect(page.locator('#toast')).toHaveText('🔥 Phase unlocked: Beginner!');
+    await expect(page.locator('#toast')).toHaveText('Phase unlocked: Beginner!');
     expect((await localSaved(page)).phaseIndex).toBe(1);
     await goTo(page, 'home');
     expect(await currentPhaseLabel(page)).toBe('Phase 1');
@@ -215,7 +215,7 @@ test.describe('advancing', () => {
 
     await openTechnique(page, 'test');
     await stepper(technique(page), 'test', 'ult', 1).click();
-    await expect(page.locator('#toast')).toHaveText('🔥 Phase unlocked: Intermediate!');
+    await expect(page.locator('#toast')).toHaveText('Phase unlocked: Intermediate!');
     expect((await localSaved(page)).phaseIndex).toBe(2);
     expect(await homePhaseStat(page)).toEqual({ pct: '0%', label: 'Intermediate' });
   });
