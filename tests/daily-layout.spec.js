@@ -18,21 +18,27 @@ const state = (over = {}) => baseState({ phaseIndex: 1, practiced: { 'warmup.Tue
 const rawLocal = (page) => page.evaluate(() => localStorage.getItem('shredRoadmapState_v10'));
 
 test.describe('session column (desktop and phone)', () => {
-  test('header shows the session count; another day shows the minutes only', async ({ page }, testInfo) => {
+  // Slice 4.10c (D152 point 16): the count moved from the header to a thin bar under the day buttons.
+  test('the count bar shows the session count; another day shows the minutes only', async ({ page }) => {
     const monitor = await openApp(page, { localState: state() });
     await openView(page, 'daily');
-    const count = daily(page).locator('.page-head-right');
-    await expect(count).toHaveText(isPhone(testInfo) ? '1 of 4 · 60 min' : '1 of 4 practiced · 60 min', { useInnerText: true });
+    const prog = daily(page).locator('.daily-progress');
+    await expect(prog.locator('.daily-progress-count')).toHaveText('1 of 4 practiced');
+    await expect(prog.locator('.daily-progress-min')).toHaveText('60 min');
+    await expect(prog.locator('[role="progressbar"]')).toHaveAttribute('aria-valuenow', '1');
     await dayChip(page, 'Sat').click();
-    await expect(count).toHaveText('60 min');
+    await expect(prog.locator('.daily-progress-count')).toHaveCount(0);
+    await expect(prog.locator('[role="progressbar"]')).toHaveCount(0);
+    await expect(prog).toHaveText('60 min');
     expect(monitor.pageErrors).toEqual([]);
     expect(unexpectedConsoleErrors(monitor)).toEqual([]);
   });
 
-  test('Setup phase: count of its two blocks, no minutes', async ({ page }, testInfo) => {
+  test('Setup phase: count of its two blocks, no minutes', async ({ page }) => {
     await openApp(page, { localState: baseState({ phaseIndex: 0 }) });
     await openView(page, 'daily');
-    await expect(daily(page).locator('.page-head-right')).toHaveText(isPhone(testInfo) ? '0 of 2' : '0 of 2 practiced', { useInnerText: true });
+    await expect(daily(page).locator('.daily-progress-count')).toHaveText('0 of 2 practiced');
+    await expect(daily(page).locator('.daily-progress-min')).toHaveCount(0);
     await expect(daily(page).locator('.blk-num')).toHaveText(['01', '02']);
   });
 
@@ -66,7 +72,7 @@ test.describe('session column (desktop and phone)', () => {
     await expect(focused).toHaveAttribute('aria-pressed', 'false');
     await focused.click();
     await expect(daily(page).locator('button.blkcheck[data-block="focused"]')).toHaveAttribute('aria-pressed', 'true');
-    await expect(daily(page).locator('.page-head-right')).toContainText('2 of 4');
+    await expect(daily(page).locator('.daily-progress-count')).toHaveText('2 of 4 practiced');
     await dayChip(page, 'Thu').click();
     await expect(daily(page).locator('button.blkcheck.ro')).toHaveCount(4);
     for (const b of await daily(page).locator('button.blkcheck.ro').all()) await expect(b).toBeDisabled();
@@ -94,19 +100,23 @@ test.describe('companion column (desktop)', () => {
     await expect(side(page)).toBeHidden();
   });
 
-  test('beside the session on a wide window, under it on a narrow one', async ({ page }, testInfo) => {
+  // Slice 4.10c (D152 point 14, supersedes the 720 / 400 px limits of D133 point 1): both columns grow, 3 : 2.
+  test('beside the session on a wide window (3 : 2, full width), under it on a narrow one', async ({ page }, testInfo) => {
     test.skip(isPhone(testInfo), 'desktop only');
     await openApp(page, { localState: state() });
     await openView(page, 'daily');
     let main = await daily(page).locator('.daily-main').boundingBox();
     let aside = await side(page).boundingBox();
+    const days = await daily(page).locator('.daypick').boundingBox();
     expect(aside.x).toBeGreaterThan(main.x + main.width);
-    expect(main.width).toBeLessThanOrEqual(721);
-    expect(aside.width).toBeLessThanOrEqual(401);
+    expect(Math.abs(main.width / aside.width - 1.5)).toBeLessThan(0.05);
+    expect(Math.abs(main.x - days.x)).toBeLessThan(2);
+    expect(Math.abs((aside.x + aside.width) - (days.x + days.width))).toBeLessThan(2);
     await page.setViewportSize({ width: 1024, height: 900 });
     main = await daily(page).locator('.daily-main').boundingBox();
     aside = await side(page).boundingBox();
     expect(aside.y).toBeGreaterThanOrEqual(main.y + main.height);
+    expect(Math.abs(aside.width - main.width)).toBeLessThan(2);
   });
 
   test('MICRO-DOSES: today in front with its video; week tiles with ticks from the calendar', async ({ page }, testInfo) => {

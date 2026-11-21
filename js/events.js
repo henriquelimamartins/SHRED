@@ -21,11 +21,11 @@
 import { defaultState, defaultDojoState, saveState, state, replaceState, backupBeforeReplace, migrate, newerSchema, NEWER_SCHEMA_MSG } from "./store.js?v=5";
 import { hasFirebase, auth, db, googleProvider, currentUser, cloudReady, cloudReadFailed, CLOUD_READ_FAILED_MSG, requestCloudWrite, loadFromCloud, signInWithPopup, signOut } from "./firebase.js?v=5";
 import { ui, showToast } from "./ui.js?v=2";
-import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=32";
-import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=32";
-import { changeCalMonth, calCanGo } from "./views/calendar.js?v=32";
+import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=33";
+import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=33";
+import { changeCalMonth, calCanGo } from "./views/calendar.js?v=33";
 import { currentMinigame, startArchitectGame, handleDojoAnswer, renderCodexList, renderCodexReader, focusSubTitle } from "./views/dojo.js?v=24";
-import { updateNav, render, updateAccountRow } from "./render.js?v=32";
+import { updateNav, render, updateAccountRow } from "./render.js?v=33";
 import { SUB_ITEMS } from "./views/shell.js?v=16";
 import { initDailySwipe } from "./views/daily-swipe.js?v=11";
 import { buildBackupFile, backupFileName, listDeviceBackups, parseBackupFile, isNewerCopy, restoredState, formatLocalTime, reasonLabel, MAX_BACKUP_FILE_BYTES, INVALID_BACKUP_MSG, NEWER_BACKUP_MSG } from "./logic/backup.js?v=2";

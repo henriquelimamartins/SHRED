@@ -15,8 +15,8 @@ import { DAY_FULL } from "../data/days.js?v=1";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=2";
 import { BHGS_PACK } from "../pack.js?v=1";
-import { k, phasePercent, itemKeysForPhase } from "../logic/technique.js?v=32";
-import { linked, checkItem, watchItem, prereqItem, chopRow, testRow } from "./components.js?v=32";
+import { k, phasePercent, itemKeysForPhase } from "../logic/technique.js?v=33";
+import { linked, checkItem, watchItem, prereqItem, chopRow, testRow } from "./components.js?v=33";
 import { pageHeader } from "./shell.js?v=16";
 import { renderRail, techniqueRail } from "./rails.js?v=18";
 

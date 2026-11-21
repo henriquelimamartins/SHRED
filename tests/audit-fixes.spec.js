@@ -38,12 +38,12 @@ test('the Account card sync line and the sidebar / MORE line always agree', asyn
   await context.setOffline(false);
 });
 
-test('DAILY "Retake Phase Test" opens the Phase test on the TECHNIQUE page and writes nothing', async ({ page, isMobile }) => {
+test('DAILY "Open Phase test" opens the Phase test on the TECHNIQUE page and writes nothing', async ({ page, isMobile }) => {
   const monitor = await openApp(page, { localState: progressState({ phaseIndex: 1 }) });
   await openView(page, 'daily');
   await page.locator('#panel-daily [data-action="setday"][data-day="Fri"]').click();
   const btn = page.locator('#panel-daily [data-action="phasetest"]');
-  await expect(btn).toHaveText('Retake Phase Test →');
+  await expect(btn).toHaveText('Open Phase test'); // slice 4.10c (D152 points 22, 23): new line, no final arrow
   const before = await localSaved(page);
   await btn.click();
   await expect(page.locator('#panel-technique')).toHaveClass(/active/);
