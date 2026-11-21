@@ -1,15 +1,17 @@
 // App shell pieces drawn on the 4.0 canvas (slice 4.5b, DECISIONS D125, D126; phone bar icon "more" in 4.5b2, D128):
-// line icons, the page header, the desktop sidebar menu (headings, values, sub-items), the Today block and
-// the account row with the Google account photo and the real sync state. Showing any of these writes nothing.
+// line icons, the page header, the desktop sidebar menu (headings, values) and the account row with the Google
+// account photo and the real sync state. Showing any of these writes nothing.
+// Slice 4.10d (D152 points 1, 3, 4, 8; D154 point 1): the sidebar logo (ridge mark + wordmark), thin lines between
+// the menu groups, no sub-items (the menu never changes height), no Today block, a ring round the photo in the
+// colour of the sync state.
 import { state, newerSchema } from "../store.js?v=5";
 import { hasFirebase, currentUser, cloudReady, cloudReadFailed, SYNC_PENDING_KEY } from "../firebase.js?v=5";
 import { ui } from "../ui.js?v=2";
 import { BHGS_PACK } from "../pack.js?v=1";
 import { PHASES } from "../data/bhgs.js?v=1";
 import { IMPROV_GATES } from "../data/improv.js?v=4";
-import { DAY_FULL } from "../data/days.js?v=1";
-import { activeDay, totalStreak, currentStreak } from "../logic/dates.js?v=7";
-import { sessionPlan, isBlockPracticed } from "../logic/daily.js?v=33";
+import { activeDay } from "../logic/dates.js?v=7";
+import { sessionPlan } from "../logic/daily.js?v=34";
 
 function esc(t){ return String(t).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]; }); }
 
@@ -30,6 +32,19 @@ const ICONS = {
 };
 export function icon(name, cls){
   return '<svg class="ico' + (cls ? ' ' + cls : '') + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + ICONS[name] + '"></path></svg>';
+}
+
+// Sidebar logo (D152 point 1, D154 point 1): the ridge mark (sun and one open ridge line, no tile, no outline) on the
+// left of the wordmark. "ROADMAP" uses the font, weight and letter-spacing of "THE SHRED", only larger, so both lines
+// are the same width. Sizes from the 4.10 canvas: the top of the sun sits on the cap top of THE SHRED and the bottom
+// of the ridge line on the baseline of ROADMAP. The mark is decoration; the words name the app.
+export function sidebarLogo(){
+  return '<div class="side-logo"><svg class="side-logo-mark" viewBox="0 0 205 204.83" aria-hidden="true" focusable="false">' +
+    '<circle class="logo-sun" cx="110.5" cy="68.2" r="58"></circle>' +
+    '<path class="logo-ground" d="M3.5 200.4 L56 118.4 L86 150.4 L118 94.4 L156 146.4 L176 130.4 L201.5 200.4 Z"></path>' +
+    '<path class="logo-ridge" d="M3.5 200.4 L56 118.4 L86 150.4 L118 94.4 L156 146.4 L176 130.4 L201.5 200.4"></path></svg>' +
+    '<div class="side-logo-words"><span class="side-logo-top">THE <span class="side-logo-red">SHRED</span></span>' +
+    '<span class="side-logo-bottom">ROADMAP</span></div></div>';
 }
 
 // Phone only (CSS): "‹ More" back to MORE, for pages reached from MORE (LIBRARY with the BHGS pack, TOOLS).
@@ -63,51 +78,19 @@ export function navValue(view){
   return "";
 }
 
-// Sub-items of a page: parts that exist on it (D126 point 2). `target` is a CSS selector inside the page.
-export const SUB_ITEMS = {
-  technique: [ { label: "Roadmap", target: "#panel-technique .page-head" }, { label: "Chop-builders", target: "#panel-technique .tech-sec-chops" }, { label: "Phase test", target: "#panel-technique .tech-sec-test" } ],
-  improv: [ { label: "Gates", target: "#panel-improv .gates-title" } ],
-  setup: [ { label: "Setup", target: "#panel-setup .page-head" } ]
-};
-
-// The menu: Home and Daily, then PILLARS (Technique with the pack, Improvisation, Theory), then RESOURCES (Library, Tools).
+// The menu: Home and Daily, a thin line, PILLARS (Technique with the pack, Improvisation, Theory), a thin line,
+// RESOURCES (Library, Tools). No sub-items (D152 point 4): the menu has the same height on every page.
 export function sidebarMenu(items){
   var firstPillar = BHGS_PACK ? "technique" : "improv";
   return items.map(function(n){
     var on = ui.view === n.view;
     var head = n.view === firstPillar ? "Pillars" : (n.view === "library" ? "Resources" : "");
-    var html = head ? '<div class="side-group">' + head + '</div>' : '';
+    var html = head ? '<div class="side-sep" aria-hidden="true"></div><div class="side-group">' + head + '</div>' : '';
     var val = navValue(n.view);
-    html += '<button data-action="go" data-view="' + n.view + '" class="side-item' + (on ? ' active' + (n.cls ? ' ' + n.cls : '') : '') + '">' +
+    html += '<button data-action="go" data-view="' + n.view + '" class="side-item' + (on ? ' active' + (n.cls ? ' ' + n.cls : '') : '') + '"' + (on ? ' aria-current="page"' : '') + '>' +
       icon(n.view) + '<span class="side-label">' + n.label + '</span>' + (val ? '<span class="side-val">' + val + '</span>' : '') + '</button>';
-    var subs = SUB_ITEMS[n.view];
-    if(on && subs){
-      var cur = (ui.sub && ui.sub[n.view]) || 0;
-      html += '<div class="side-subs">' + subs.map(function(s, i){
-        return '<button data-action="subnav" data-subview="' + n.view + '" data-index="' + i + '" class="side-sub' + (i === cur ? ' on' : '') + '">' + s.label + '</button>';
-      }).join("") + '</div>';
-    }
     return html;
   }).join("");
-}
-
-// ---------- Today block (read-only; DAILY stays the only place to tick, D124, D126) ----------
-
-export function todayBlock(){
-  var day = activeDay();
-  var plan = sessionPlan(day, state.phaseIndex);
-  var done = plan.filter(function(b){ return isBlockPracticed(b.name, day); }).length;
-  var html = '<button class="side-today" data-action="go" data-view="daily" aria-label="Today\'s session, open DAILY">';
-  html += '<span class="side-today-head"><span class="side-today-title">Today · ' + esc(DAY_FULL[day].slice(0, 3)) + '</span><span class="side-today-count">' + done + ' of ' + plan.length + '</span></span>';
-  plan.forEach(function(b){
-    var on = isBlockPracticed(b.name, day);
-    html += '<span class="side-today-row' + (on ? ' done' : '') + '" data-block="' + b.name + '"><span class="side-box' + (on ? ' on' : '') + '">' + (on ? icon("tick") : '') + '</span>' +
-      '<span class="side-today-label">' + esc(b.title) + '</span>' + (b.min ? '<span class="side-today-min">' + b.min + '′</span>' : '') + '</span>';
-  });
-  var streak = currentStreak();
-  html += '<span class="side-today-streak">' + icon("flame") + streak + '-day streak · ' + totalStreak() + ' days logged</span>';
-  html += '</button>';
-  return html;
 }
 
 // ---------- account: photo, name, sync state (D126 points 3 and 5) ----------
@@ -149,10 +132,12 @@ export function syncState(){
   return { text: "Synced", tone: "ok" };
 }
 
+// The photo inside a ring in the colour of the sync state (D152 point 3): green synced, amber waiting, grey
+// otherwise. The same tone as the dot; the words beside it say the state, so colour is never the only signal.
 export function accountRow(){
   var s = syncState();
   return '<button class="side-acct' + (ui.view === "account" ? ' active' : '') + '" data-action="go" data-view="account" aria-label="Account and data">' +
-    avatar("sm") +
+    '<span class="avatar-ring ' + s.tone + '" data-tone="' + s.tone + '">' + avatar("xs") + '</span>' +
     '<span class="side-acct-text"><span class="side-acct-name">' + esc(accountName(false)) + '</span>' +
     '<span class="side-acct-status"><i class="sync-dot ' + s.tone + '"></i><span class="sync-text">' + s.text + '</span></span></span>' +
     '<span class="side-acct-arrow" aria-hidden="true">›</span></button>';

@@ -29,8 +29,9 @@ test.describe('desktop', () => {
       .toEqual(['home', 'daily', 'technique', 'improv', 'dojo', 'library', 'setup']);
     await expect(page.locator('#sidebar').getByText('Dojo', { exact: true })).toHaveCount(0);
 
-    // Order inside the sidebar (D117, D126): brand, Search, rails, menu, Today, account row.
-    const tops = await page.evaluate(() => ['.sidebar-header', '#sidebar-search', '#sidebar-rails', '#sidebar-nav-inner', '#sidebar-today', '#sidebar-account']
+    // Order inside the sidebar (D152 point 8, slice 4.10d): logo, Search, menu, rails, account row; no Today block.
+    await expect(page.locator('#sidebar-today')).toHaveCount(0);
+    const tops = await page.evaluate(() => ['.sidebar-header', '#sidebar-search', '#sidebar-nav-inner', '#sidebar-rails', '#sidebar-account']
       .map((s) => document.querySelector(s).getBoundingClientRect().top));
     expect([...tops].sort((a, b) => a - b)).toEqual(tops);
     await expect(page.locator('#sidebar-account .side-acct-name')).toHaveText('Not signed in');

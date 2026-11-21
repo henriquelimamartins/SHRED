@@ -128,8 +128,19 @@ button:focus-visible, a:focus-visible, select:focus-visible { outline: 2px solid
   display:none; width:260px; background:var(--chrome); border-right:1px solid var(--border);
   flex-direction:column; z-index:100; overflow-y:auto;
 }
-.sidebar-header { padding:24px 20px; border-bottom:1px solid var(--border); }
-.sidebar-search { padding:16px 14px 0; }
+/* Slice 4.10d (D152 point 1, D154 point 1): the logo, ridge mark on the left, centred over Search and the menu.
+   Sizes from the 4.10 canvas: the mark is as tall as the two lines (cap top of THE SHRED to the baseline of ROADMAP). */
+.sidebar-header { padding:22px 14px 4px; display:flex; justify-content:center; }
+.side-logo { display:flex; align-items:flex-start; gap:11px; }
+.side-logo-mark { width:53.3px; height:53.3px; flex:none; display:block; }
+.logo-sun { fill:var(--red); }
+.logo-ground { fill:var(--chrome); }
+.logo-ridge { fill:none; stroke:var(--text-2); stroke-width:7; stroke-linejoin:round; stroke-linecap:round; }
+.side-logo-words { display:flex; flex-direction:column; gap:3.12px; font-family:var(--font-head); font-weight:700; line-height:.92; white-space:nowrap; color:var(--text); }
+.side-logo-top { display:block; font-size:26px; letter-spacing:.02em; }
+.side-logo-red { color:var(--red); }
+.side-logo-bottom { display:block; font-size:28.5px; letter-spacing:.02em; }
+.sidebar-search { padding:12px 14px 0; }
 .side-search {
   display:flex; align-items:center; gap:10px; min-height:40px; box-sizing:border-box; background:var(--card2); border:1px solid var(--border);
   border-radius:var(--r-lg); padding:0 12px; color:var(--muted); font-size:var(--fs-md); cursor:pointer; transition:0.2s;
@@ -140,7 +151,10 @@ button:focus-visible, a:focus-visible, select:focus-visible { outline: 2px solid
 /* Slice 4.5b (D125, D126): the sidebar as drawn on the 4.0 canvas. */
 .ico { width:18px; height:18px; flex:none; display:block; }
 .sidebar-nav { padding:14px 14px 6px; display:flex; flex-direction:column; gap:2px; }
-.side-group { font-family:var(--font-head); font-size:var(--fs-xs); letter-spacing:.16em; text-transform:uppercase; color:var(--muted); padding:12px 12px 4px; }
+.side-group { font-family:var(--font-head); font-size:var(--fs-xs); letter-spacing:.16em; text-transform:uppercase; color:var(--muted); padding:4px 12px; }
+/* Slice 4.10d (D152 point 8): thin lines between DAILY and PILLARS, THEORY and RESOURCES, the menu and the rails. */
+.side-sep { height:1px; background:var(--border); margin:8px 10px; flex:none; }
+.side-sep-rails { margin:6px 24px 8px; }
 .sidebar-nav .side-item {
   display:flex; align-items:center; gap:12px; min-height:40px; padding:0 12px; width:100%; border-radius:var(--r-lg);
   background:transparent; border:none; color:#B4B4BD; font-family:var(--font-head); font-size:15px; font-weight:500;
@@ -156,36 +170,16 @@ button:focus-visible, a:focus-visible, select:focus-visible { outline: 2px solid
 .sidebar-nav .side-item.active.improv-nav .ico { color:var(--purple); }
 .sidebar-nav .side-item.active.theory-nav { color:var(--blue-tint); }
 .sidebar-nav .side-item.active.theory-nav .ico { color:var(--blue); }
-.side-subs { display:flex; flex-direction:column; margin:2px 0 6px 29px; border-left:1px solid #2A2A31; }
-.side-sub { background:none; border:none; text-align:left; padding:7px 14px; font-size:var(--fs-md); color:var(--muted); cursor:pointer; }
-.side-sub:hover { color:var(--text); }
-.side-sub.on { color:var(--text); box-shadow:inset 2px 0 0 var(--red); }
-
-.sidebar-today { padding:10px 14px 0; }
-.side-today {
-  display:block; width:100%; box-sizing:border-box; text-align:left; background:var(--card2); border:1px solid var(--border);
-  border-radius:var(--r-lg); padding:12px; color:var(--text); cursor:pointer;
-}
-.side-today:hover { border-color:var(--muted); }
-.side-today-head { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px; }
-.side-today-title { font-family:var(--font-head); font-size:var(--fs-md); letter-spacing:.1em; font-weight:600; text-transform:uppercase; }
-.side-today-count { font-size:var(--fs-sm); color:var(--muted); }
-.side-today-row { display:flex; align-items:center; gap:10px; padding:5px 0; font-size:var(--fs-md); color:#E4E4E8; }
-.side-today-row.done { color:var(--muted); }
-.side-today-row.done .side-today-label { text-decoration:line-through; }
-.side-today-label { flex:1; min-width:0; }
-.side-today-min { font-size:var(--fs-xs); color:var(--muted); }
-.side-box { width:14px; height:14px; box-sizing:border-box; border-radius:4px; border:1.5px solid #4A4A52; display:flex; align-items:center; justify-content:center; flex:none; }
-.side-box.on { border:0; background:var(--red); color:var(--white); }
-.side-box .ico { width:10px; height:10px; stroke-width:4; }
-.side-today-streak { display:flex; align-items:center; gap:6px; margin-top:10px; padding-top:10px; border-top:1px solid var(--border); font-size:var(--fs-sm); color:var(--text-2); }
-.side-today-streak .ico { width:14px; height:14px; color:var(--red); }
-
-.sidebar-account { margin-top:auto; padding:14px 14px calc(14px + env(safe-area-inset-bottom,0px)); }
+.sidebar-account { margin-top:auto; padding:14px 14px calc(16px + env(safe-area-inset-bottom,0px)); }
 .side-acct {
-  display:flex; align-items:center; gap:10px; width:100%; padding:12px 8px 0; border:none; border-top:1px solid #24242A;
-  background:transparent; color:var(--text); text-align:left; cursor:pointer;
+  display:flex; align-items:center; gap:10px; width:100%; box-sizing:border-box; padding:10px; border:1px solid var(--border); border-radius:var(--r-xl);
+  background:var(--card); color:var(--text); text-align:left; cursor:pointer; transition:border-color 0.2s;
 }
+.side-acct:hover { border-color:var(--muted); }
+/* Slice 4.10d (D152 point 3): the photo's ring takes the sync state's colour (green synced, amber waiting, grey otherwise). */
+.avatar-ring { width:32px; height:32px; box-sizing:border-box; border-radius:50%; border:2px solid var(--dot-off); padding:2px; display:inline-flex; flex:none; }
+.avatar-ring.ok { border-color:var(--green); }
+.avatar-ring.wait { border-color:var(--amber); }
 .side-acct-text { flex:1; min-width:0; display:flex; flex-direction:column; }
 .side-acct-name { font-size:var(--fs-md); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .side-acct.active .side-acct-name { color:var(--red-tint); }
@@ -196,6 +190,8 @@ button:focus-visible, a:focus-visible, select:focus-visible { outline: 2px solid
 .sync-dot.ok { background:var(--green); }
 .sync-dot.wait { background:var(--amber); }
 .avatar { display:flex; align-items:center; justify-content:center; flex:none; border-radius:50%; overflow:hidden; background:#2A2A31; color:var(--text); font-weight:600; }
+.avatar-xs { width:24px; height:24px; font-size:var(--fs-xs); }
+.avatar-xs.avatar-none .ico { width:15px; height:15px; }
 .avatar-sm { width:32px; height:32px; font-size:var(--fs-md); }
 .avatar-lg { width:56px; height:56px; font-size:var(--fs-2xl); }
 .avatar-img { width:100%; height:100%; object-fit:cover; display:block; }
@@ -224,8 +220,6 @@ button:focus-visible, a:focus-visible, select:focus-visible { outline: 2px solid
 
 .brand { font-family:var(--font-head); font-weight:700; font-size:15px; letter-spacing:1px; flex:1; margin-bottom:0; }
 .brand span { color:var(--red); }
-.brand.brand-side { font-size:var(--fs-2xl); margin-bottom:0; }
-.brand .brand-sub { font-size:var(--fs-lg); color:var(--white); letter-spacing:2px; }
 
 .views-container {
   flex:1; position:relative; overflow:hidden; background:var(--bg);
@@ -519,8 +513,10 @@ table.info td.day{font-weight:700;white-space:nowrap;color:var(--red-tint);}
   .rails-home.rails-nopack{grid-template-columns:minmax(0,1fr);}
   .rails-home.rails-nopack .rails-md{padding-left:0;}
 }
-.sidebar-rails{margin:12px 12px 0;padding:12px 12px 10px;background:var(--card2);border:1px solid var(--border);border-radius:var(--r-lg);}
-.sidebar-rails .rail{--rail-surface:var(--card2);}
+/* Slice 4.10d (D152 point 8): the rails sit under the menu, after a thin line, on the sidebar itself (no card). */
+.sidebar-rails{margin:0 14px;padding:4px 10px 0;}
+.sidebar-rails .rail{--rail-surface:var(--chrome);}
+.sidebar-rails .rails-tech{padding-bottom:0;border-bottom:0;}
 .sidebar-rails .rail-name{white-space:nowrap;letter-spacing:.04em;}
 .sidebar-rails .rail-head{gap:6px;}
 .sidebar-rails .rail-status{white-space:nowrap;}

@@ -12,8 +12,8 @@
 // Slice 4.2a (D119): the sidebar Search and Login/Logout behave like the top-bar ones; the phone More sheet opens and closes.
 // Slice 4.3 (D122): TECHNIQUE page phone tabs ("techtab") and the Phase settings panel ("phasesettings").
 // Slice 4.5b (D126): Login / Logout on the Account & data page (`.account-auth`, same code as the top-bar button);
-// sidebar sub-items ("subnav") open their page and scroll to that part; an account photo that fails to load is
-// replaced by the initial; the account row's sync state is re-read every few seconds and on online/offline.
+// sidebar sub-items ("subnav") opened their page at that part (removed in slice 4.10d, D152 point 4); an account
+// photo that fails to load is replaced by the initial; the account row's sync state is re-read every few seconds and on online/offline.
 // Slice 4.5b2 (D128): the phone MORE button opens the MORE page; its Restore and Reset rows open the Account & data
 // page with that panel open (same confirmations as there). The phone top bar (Search, Login) is gone.
 // Slice 2.5: the SETUP video button ("openvideo") and the search box are handled here only (no inline onclick).
@@ -21,13 +21,12 @@
 import { defaultState, defaultDojoState, saveState, state, replaceState, backupBeforeReplace, migrate, newerSchema, NEWER_SCHEMA_MSG } from "./store.js?v=5";
 import { hasFirebase, auth, db, googleProvider, currentUser, cloudReady, cloudReadFailed, CLOUD_READ_FAILED_MSG, requestCloudWrite, loadFromCloud, signInWithPopup, signOut } from "./firebase.js?v=5";
 import { ui, showToast } from "./ui.js?v=2";
-import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=33";
-import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=33";
-import { changeCalMonth, calCanGo } from "./views/calendar.js?v=33";
-import { currentMinigame, startArchitectGame, handleDojoAnswer, renderCodexList, renderCodexReader, focusSubTitle } from "./views/dojo.js?v=24";
-import { updateNav, render, updateAccountRow } from "./render.js?v=33";
-import { SUB_ITEMS } from "./views/shell.js?v=16";
-import { initDailySwipe } from "./views/daily-swipe.js?v=11";
+import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=34";
+import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=34";
+import { changeCalMonth, calCanGo } from "./views/calendar.js?v=34";
+import { currentMinigame, startArchitectGame, handleDojoAnswer, renderCodexList, renderCodexReader, focusSubTitle } from "./views/dojo.js?v=25";
+import { updateNav, render, updateAccountRow } from "./render.js?v=34";
+import { initDailySwipe } from "./views/daily-swipe.js?v=12";
 import { buildBackupFile, backupFileName, listDeviceBackups, parseBackupFile, isNewerCopy, restoredState, formatLocalTime, reasonLabel, MAX_BACKUP_FILE_BYTES, INVALID_BACKUP_MSG, NEWER_BACKUP_MSG } from "./logic/backup.js?v=2";
 
 // Slice 4.8e (D149): Restore and Reset open in place on the same page, so opening one closes the other.
@@ -197,7 +196,6 @@ document.addEventListener("scroll", function(e) {
 function openPage(view){
   if(view==="technique") ui.techSub=null; // slice 4.5d: the bar always opens the main TECHNIQUE page
   ui.view=view;
-  if(ui.sub) ui.sub[ui.view]=0; // slice 4.5b: the first sub-item marks the page top
   var panel = document.getElementById('panel-' + ui.view);
   if(panel) panel.scrollTo({top: 0, behavior: 'smooth'});
   updateNav();
@@ -237,17 +235,6 @@ document.addEventListener("click",function(e){
   // Slice 4.8e (D149 point 2): the MORE rows also bring the opened panel into view.
   if(a==="morerestore"){ openPage("account"); openRestore(); showAccountRow("restore"); return; }
   if(a==="morereset"){ openPage("account"); handleReset(); showAccountRow("reset"); return; }
-
-  if(a==="subnav"){
-    var sv=t.dataset.subview, si=parseInt(t.dataset.index,10), sub=(SUB_ITEMS[sv]||[])[si];
-    ui.sub = ui.sub || {};
-    ui.sub[sv]=si;
-    if(ui.view!==sv){ ui.view=sv; updateNav(); render(); }
-    else updateNav();
-    var el = sub ? document.querySelector(sub.target) : null;
-    if(el) el.scrollIntoView({block:'start', behavior:'smooth'});
-    return;
-  }
 
   if(a==="go"){ openPage(t.dataset.view); return; }
   // Slice 4.10a: DAILY's "Retake Phase Test" opens the TECHNIQUE page at its Phase test (the Phase test tab on the

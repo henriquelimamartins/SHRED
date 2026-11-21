@@ -1,6 +1,6 @@
 // Slice 4.5b (DECISIONS D125, D126, D127): the app shell as drawn on the 4.0 canvas, desktop and common parts.
-// Page headers, full width, the sidebar menu (line icons, PILLARS / RESOURCES, real values, sub-items), the read-only
-// Today block, the account row (Google photo or initial, name, real sync state) and Login on Account & data.
+// Page headers, full width, the sidebar menu (line icons, PILLARS / RESOURCES, real values; sub-items and the Today
+// block removed in slice 4.10d), the account row (Google photo or initial, name, real sync state) and Login on Account & data.
 // Firebase is stubbed; a Google photo is served by the test helper; nothing leaves the machine.
 const { test, expect } = require('@playwright/test');
 const { openApp, openView, settle, cloudWrites, localSaved, unexpectedConsoleErrors } = require('./support/app');
@@ -42,7 +42,7 @@ test('the Content Security Policy allows Google account photos for images only (
   for (const other of ['script-src', 'connect-src', 'frame-src', 'default-src']) expect(dir(other)).not.toContain('googleusercontent');
 });
 
-test('opening pages, sub-items and the account page writes nothing', async ({ page }) => {
+test('opening pages and the account page writes nothing', async ({ page }) => {
   await openApp(page, { user: PHOTO_USER, docs: { [USER_DOC]: progressState({ phaseIndex: 1 }) }, avatar: true });
   await settle(page);
   const before = await localSaved(page);
@@ -82,55 +82,16 @@ test.describe('desktop', () => {
     expect(order).toEqual(['home', 'daily', '#Pillars', 'improv', 'dojo', '#Resources', 'library', 'setup']);
   });
 
-  test('sub-items of the active page: shown only there, they scroll to that part', async ({ page }) => {
-    await openApp(page, { localState: progressState({ phaseIndex: 1 }) });
-    await expect(page.locator('#sidebar-nav-inner .side-sub')).toHaveCount(0); // HOME has none
-    await openView(page, 'technique');
-    const subs = page.locator('#sidebar-nav-inner .side-sub');
-    await expect(subs).toHaveText(['Roadmap', 'Chop-builders', 'Phase test']);
-    await expect(subs.nth(0)).toHaveClass(/on/);
-    await subs.nth(2).click();
-    await expect(subs.nth(2)).toHaveClass(/on/);
-    await expect(page.locator('#panel-technique')).toHaveClass(/active/);
-    await expect.poll(() => page.locator('#panel-technique').evaluate((p) => p.scrollTop)).toBeGreaterThan(0);
-    await openView(page, 'improv');
-    await expect(page.locator('#sidebar-nav-inner .side-sub')).toHaveText(['Gates']);
-  });
-
-  test('Today block: today\'s blocks as DAILY shows them, read-only; ticking in DAILY updates it; it opens DAILY', async ({ page }) => {
-    await openApp(page, { localState: progressState({ phaseIndex: 1, streakDates: ['2026-11-08', '2026-11-09'] }) });
-    const today = page.locator('#sidebar-today');
-    await expect(today.locator('.side-today-title')).toHaveText('Today · Tue');
-    await expect(today.locator('.side-today-count')).toHaveText('0 of 4');
-    await expect(today.locator('[data-action="blockprac"]')).toHaveCount(0);
-    await openView(page, 'daily');
-    const dailyTitles = (await page.locator('#panel-daily .blk > .top .nm').allTextContents()).map((t) => t.toLowerCase());
-    const todayTitles = (await today.locator('.side-today-label').allTextContents()).map((t) => t.toLowerCase());
-    expect(todayTitles).toEqual(dailyTitles);
-    await page.locator('#panel-daily [data-action="blockprac"][data-block="warmup"]').click();
-    await settle(page);
-    await expect(today.locator('.side-today-count')).toHaveText('1 of 4');
-    await expect(today.locator('.side-today-row[data-block="warmup"]')).toHaveClass(/done/);
-    await expect(today.locator('.side-today-streak')).toContainText('3-day streak');
-    await openView(page, 'home');
-    await today.locator('.side-today').click();
-    await expect(page.locator('#panel-daily')).toHaveClass(/active/);
-  });
-
+  // Slice 4.10d (D152 point 4, point 8): the sub-items and the Today block left the sidebar; the DAILY value stays.
   for (const c of [
-    { name: 'Saturday', now: '2026-11-14T12:00:00Z', phase: 1, label: 'Today · Sat', mins: '60m' },
-    { name: 'Monday', now: '2026-11-09T12:00:00Z', phase: 1, label: 'Today · Mon', mins: '60m' },
-    { name: 'the Setup phase', now: '2026-11-10T12:00:00Z', phase: 0, label: 'Today · Tue', mins: null },
+    { name: 'Saturday', now: '2026-11-14T12:00:00Z', phase: 1, mins: '60m' },
+    { name: 'Monday', now: '2026-11-09T12:00:00Z', phase: 1, mins: '60m' },
+    { name: 'the Setup phase', now: '2026-11-10T12:00:00Z', phase: 0, mins: null },
   ]) {
-    test(`Today block matches DAILY on ${c.name}`, async ({ page }) => {
+    test(`DAILY menu value on ${c.name}`, async ({ page }) => {
       await openApp(page, { now: c.now, localState: progressState({ phaseIndex: c.phase }) });
-      await expect(page.locator('#sidebar-today .side-today-title')).toHaveText(c.label);
       if (c.mins) await expect(sideItem(page, 'daily').locator('.side-val')).toHaveText(c.mins);
       else await expect(sideItem(page, 'daily').locator('.side-val')).toHaveCount(0);
-      await openView(page, 'daily');
-      const dailyTitles = (await page.locator('#panel-daily .blk > .top .nm').allTextContents()).map((t) => t.toLowerCase());
-      const todayTitles = (await page.locator('#sidebar-today .side-today-label').allTextContents()).map((t) => t.toLowerCase());
-      expect(todayTitles).toEqual(dailyTitles);
     });
   }
 
