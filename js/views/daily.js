@@ -15,12 +15,12 @@ import { DAY_FULL } from "../data/days.js?v=1";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=2";
 import { todayISO, todayName, isWeekendDay, activeDay } from "../logic/dates.js?v=7";
-import { k } from "../logic/technique.js?v=33";
-import { sessionPlan, isBlockPracticed } from "../logic/daily.js?v=33";
+import { k } from "../logic/technique.js?v=34";
+import { sessionPlan, isBlockPracticed } from "../logic/daily.js?v=34";
 import { BHGS_PACK } from "../pack.js?v=1";
-import { linked, checkItem, prereqItem, docItem, chopRow, dayPicker, blk, getDailyActiveSequence } from "./components.js?v=33";
-import { renderDailySide } from "./daily-side.js?v=12";
-import { improvKeyOfDay, improvReviewPicks, exerciseLines } from "./improv.js?v=24";
+import { linked, checkItem, prereqItem, docItem, chopRow, dayPicker, blk, getDailyActiveSequence } from "./components.js?v=34";
+import { renderDailySide } from "./daily-side.js?v=13";
+import { improvKeyOfDay, improvReviewPicks, exerciseLines } from "./improv.js?v=25";
 
 // Slice 4.10c (D152 point 16): today's date on the right of the title, long on desktop, short on the phone
 // ("Tuesday · November 10th, 2026" / "Tue · Nov 10th, 2026"), from the device's local day like every other date.

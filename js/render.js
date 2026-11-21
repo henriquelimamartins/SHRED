@@ -18,33 +18,33 @@
 // Slice 4.5b2 (D126 point 1, D128): phone shell as drawn. The shared phone top bar (brand, Search, Login) is gone:
 // each page shows its own header (HOME: brand, date, streak). The bottom bar uses the line icons. MORE is a page
 // (view id `more`, phone only) instead of a sheet. Login / Logout live only on the Account & data page (D125 point 4).
+// Slice 4.10d (D152 points 1, 4, 8; D154 point 1): sidebar order logo, Search, the menu (HOME, DAILY, a thin line,
+// PILLARS, a thin line, RESOURCES), a thin line, the rails, the account row. The Today block and the sub-items leave.
 import { ui } from "./ui.js?v=2";
 import { BHGS_PACK } from "./pack.js?v=1";
 import { ensureDailyReset } from "./logic/dates.js?v=7";
-import { initCalCarousel } from "./views/calendar.js?v=33";
-import { renderHome } from "./views/home.js?v=33";
-import { renderTechnique } from "./views/technique.js?v=19";
-import { renderDaily } from "./views/daily.js?v=33";
-import { renderImprov } from "./views/improv.js?v=24";
-import { renderLibrary } from "./views/library.js?v=33";
-import { renderSetup } from "./views/setup.js?v=23";
-import { renderDojoView } from "./views/dojo.js?v=24";
-import { renderRails } from "./views/rails.js?v=18";
-import { renderAccount } from "./views/account.js?v=17";
-import { renderMore } from "./views/more.js?v=15";
-import { icon, sidebarMenu, todayBlock, accountRow, syncState } from "./views/shell.js?v=16";
+import { initCalCarousel } from "./views/calendar.js?v=34";
+import { renderHome } from "./views/home.js?v=34";
+import { renderTechnique } from "./views/technique.js?v=20";
+import { renderDaily } from "./views/daily.js?v=34";
+import { renderImprov } from "./views/improv.js?v=25";
+import { renderLibrary } from "./views/library.js?v=34";
+import { renderSetup } from "./views/setup.js?v=24";
+import { renderDojoView } from "./views/dojo.js?v=25";
+import { renderRails } from "./views/rails.js?v=19";
+import { renderAccount } from "./views/account.js?v=18";
+import { renderMore } from "./views/more.js?v=16";
+import { icon, sidebarLogo, sidebarMenu, accountRow, syncState } from "./views/shell.js?v=17";
 
 export function initAppLayout() {
   var root = document.getElementById("root");
   root.innerHTML = `
     <nav id="sidebar" class="sidebar">
-      <div class="sidebar-header">
-        <div class="brand brand-side">THE <span>SHRED</span><br><span class="brand-sub">ROADMAP</span></div>
-      </div>
+      <div class="sidebar-header">${sidebarLogo()}</div>
       <div id="sidebar-search" class="sidebar-search"></div>
-      <div id="sidebar-rails" class="sidebar-rails"></div>
       <div id="sidebar-nav-inner" class="sidebar-nav"></div>
-      <div id="sidebar-today" class="sidebar-today"></div>
+      <div class="side-sep side-sep-rails" aria-hidden="true"></div>
+      <div id="sidebar-rails" class="sidebar-rails" aria-label="Progress" role="region"></div>
       <div id="sidebar-account" class="sidebar-account"></div>
     </nav>
     <main class="main-area">
@@ -132,7 +132,6 @@ export function render(){
     document.querySelectorAll('.view-panel').forEach(function(p){ tops[p.id] = p.scrollTop; });
 
     document.getElementById('sidebar-search').innerHTML = '<div class="side-search">' + icon("search") + '<span>Search\u2026</span></div>';
-    document.getElementById('sidebar-today').innerHTML = todayBlock();
     lastAccountRow = accountRow();
     document.getElementById('sidebar-account').innerHTML = lastAccountRow;
     var sideRails = document.getElementById('sidebar-rails');

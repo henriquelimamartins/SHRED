@@ -20,8 +20,8 @@ test('app opens on Home without errors (signed out)', async ({ page }, testInfo)
   await expect(page.locator('#panel-home')).toHaveClass(/active/);
   await expect(page.locator('#panel-home .panel-content')).not.toBeEmpty();
   // Slice 4.5b2 (D128): no shared top bar; the brand is in the sidebar (desktop) or the HOME header (phone),
-  // and Login is on the Account & data page.
-  await expect(page.locator('.brand:visible').first()).toContainText('SHRED');
+  // and Login is on the Account & data page. Slice 4.10d (D157): the sidebar logo is `.side-logo`.
+  await expect(page.locator('.side-logo:visible, .brand:visible').first()).toContainText('SHRED');
   await expect(page.locator('#panel-account .account-auth')).toHaveText('Login');
   await expect(navFor(page, testInfo.project.name)).toBeVisible();
   await expect(page.getByText('Render Error:')).toHaveCount(0);
