@@ -337,7 +337,8 @@ test.describe('calendar (Consistency Grid)', () => {
     await expect(nov.first()).toHaveText('26MON');
     await expect(nov.first()).toHaveClass(/other-month/);
     await expect(nov.last()).toHaveText('6SUN');
-    await expect(nov.locator('.s-month-badge')).toHaveText(['OCT', 'NOV', 'NOV', 'DEC']); // 31 Oct, 1 Nov, 30 Nov, 1 Dec
+    // Slice 4.10f (D152 point 5): no month tag inside a cell; the shade says the day belongs to another month.
+    await expect(nov.locator('.s-month-badge')).toHaveCount(0);
 
     await expect(cell(page, 2026, 10, 10)).toHaveClass('s-day today');
     await expect(cell(page, 2026, 10, 9)).toHaveClass('s-day past hit');

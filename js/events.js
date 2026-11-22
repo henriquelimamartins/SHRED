@@ -21,12 +21,12 @@
 import { defaultState, defaultDojoState, saveState, state, replaceState, backupBeforeReplace, migrate, newerSchema, NEWER_SCHEMA_MSG } from "./store.js?v=5";
 import { hasFirebase, auth, db, googleProvider, currentUser, cloudReady, cloudReadFailed, CLOUD_READ_FAILED_MSG, requestCloudWrite, loadFromCloud, signInWithPopup, signOut } from "./firebase.js?v=5";
 import { ui, showToast } from "./ui.js?v=2";
-import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=35";
-import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=35";
-import { changeCalMonth, calCanGo } from "./views/calendar.js?v=35";
-import { currentMinigame, startArchitectGame, handleDojoAnswer, renderCodexList, renderCodexReader, focusSubTitle } from "./views/dojo.js?v=26";
-import { updateNav, render, updateAccountRow } from "./render.js?v=35";
-import { initDailySwipe } from "./views/daily-swipe.js?v=13";
+import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=36";
+import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=36";
+import { changeCalMonth, calCanGo } from "./views/calendar.js?v=36";
+import { currentMinigame, startArchitectGame, handleDojoAnswer, renderCodexList, renderCodexReader, focusSubTitle } from "./views/dojo.js?v=27";
+import { updateNav, render, updateAccountRow } from "./render.js?v=36";
+import { initDailySwipe } from "./views/daily-swipe.js?v=14";
 import { buildBackupFile, backupFileName, listDeviceBackups, parseBackupFile, isNewerCopy, restoredState, formatLocalTime, reasonLabel, MAX_BACKUP_FILE_BYTES, INVALID_BACKUP_MSG, NEWER_BACKUP_MSG } from "./logic/backup.js?v=2";
 
 // Slice 4.8e (D149): Restore and Reset open in place on the same page, so opening one closes the other.
@@ -212,7 +212,26 @@ function focusAccount(sel){ var b=document.querySelector('#panel-account '+sel);
 // Slice 4.7: after the page is drawn again, keep the keyboard focus on the KEY circle.
 function focusDaily(sel){ var b=document.querySelector('#panel-daily '+sel); if(b) b.focus({preventScroll:true}); }
 
+// Slice 4.10f (D154 point 2): HOME calendar month picker (page state only, nothing written).
+function closeCalPicker(focusTitle){
+  ui.calPicker = false;
+  render();
+  if(focusTitle){ var b=document.querySelector('#panel-home .cal-pick'); if(b) b.focus({preventScroll:true}); }
+}
+function focusCalPicker(){
+  var b=document.querySelector('#panel-home .cal-picker-month.is-shown:not(:disabled)')
+    || document.querySelector('#panel-home .cal-picker-month[aria-current="date"]')
+    || document.querySelector('#panel-home .cal-picker-month:not(:disabled)');
+  if(b) b.focus({preventScroll:true});
+}
+document.addEventListener("keydown", function(e){
+  if(e.key === "Escape" && ui.calPicker){ e.preventDefault(); closeCalPicker(true); }
+});
+
 document.addEventListener("click",function(e){
+
+  // Slice 4.10f: a click outside the open month picker closes it (the click still does what it does).
+  if(ui.calPicker && !e.target.closest(".cal-picker, .cal-pick")) { ui.calPicker = false; render(); }
 
   if(e.target.closest("a")) return;
   var t=e.target.closest("[data-action],[data-toggle],.account-auth,.side-search");
@@ -359,6 +378,21 @@ document.addEventListener("click",function(e){
   else if(a==="calprev"){ changeCalMonth(-1); }
   else if(a==="calnext"){ changeCalMonth(1); }
   else if(a==="caltoday"){ ui.calMonth = new Date().getMonth(); ui.calYear = new Date().getFullYear(); render(); }
+  else if(a==="calpicker"){
+    if(ui.calPicker){ closeCalPicker(true); }
+    else { ui.calPicker = true; ui.calPickYear = ui.calYear; render(); focusCalPicker(); }
+  }
+  else if(a==="calpickyear"){
+    ui.calPickYear = (ui.calPickYear === undefined ? ui.calYear : ui.calPickYear) + parseInt(t.dataset.dir, 10);
+    render();
+    var yb=document.querySelector('#panel-home .cal-picker-step[data-dir="'+t.dataset.dir+'"]');
+    if(yb && !yb.disabled) yb.focus({preventScroll:true}); else focusCalPicker();
+  }
+  else if(a==="calpickmonth"){
+    ui.calYear = parseInt(t.dataset.y, 10); ui.calMonth = parseInt(t.dataset.m, 10);
+    closeCalPicker(true);
+  }
+
   else if(a==="openvideo"){ window.open(t.dataset.url, '_blank'); }
 
 });
