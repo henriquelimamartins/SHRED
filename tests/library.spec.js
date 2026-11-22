@@ -95,7 +95,7 @@ test('Theory and Creative marks do not change Technique %, the phase or the stre
   expect(saved.streakDates).toEqual([]);
   expect(saved.practiced).toEqual({});
   await goTo(page, 'home');
-  await expect(page.locator('#panel-technique .tech-progress .bignum')).toHaveText('0%'); // slice 4.5c: the % left HOME
+  await expect(page.locator('#panel-technique .pillar-card [data-rail="technique"]')).toHaveAttribute('data-pct', '0'); // slice 4.5c: the % left HOME; 4.10e: read from the card's rail
 });
 
 test('Creative: 4 Songwriting and 4 Production videos, stored as creative.sw.N / creative.pr.N', async ({ page }) => {

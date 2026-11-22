@@ -11,7 +11,7 @@ import { PHASES } from "../data/bhgs.js?v=1";
 import { IMPROV_GATES } from "../data/improv.js?v=4";
 import { state } from "../store.js?v=5";
 import { BHGS_PACK } from "../pack.js?v=1";
-import { phasePercent } from "../logic/technique.js?v=34";
+import { phasePercent } from "../logic/technique.js?v=35";
 
 function clamp01(x){ return Math.max(0, Math.min(1, x)); }
 
@@ -60,7 +60,7 @@ export function renderRail(rail){
   }
   var filled = Math.min(rail.cur, 4);
   return '<div class="rail rail-' + rail.id + '" data-rail="' + rail.id + '" data-cur="' + rail.cur + '" data-pct="' + rail.pct + '" role="img" aria-label="' +
-    rail.label + ': ' + rail.stage + ', ' + rail.status + '">' +
+    rail.label + ': ' + rail.stage + (rail.status ? ', ' + rail.status : '') + '">' +
     '<div class="rail-head"><span class="rail-name">' + rail.label + ' · <span class="rail-stage">' + rail.stage + '</span></span><span class="rail-status">' + rail.status + '</span></div>' +
     '<div class="rail-track"><span class="rail-line"></span><span class="rail-line-fill fill-' + filled + '"></span><span class="rail-nodes">' + nodes + '</span></div>' +
     '<div class="rail-labels" aria-hidden="true">' + labels + '</div></div>';
@@ -74,3 +74,48 @@ export function renderRails(where){
   html += '<div class="rails-col rails-md"><div class="rails-group">Musical Development</div><div class="rails-md-row">' + renderRail(improvRail()) + renderRail(theoryRail()) + '</div></div>';
   return html + '</div>';
 }
+
+// ---------- progress card and phone subtitles (slice 4.10e, D152 points 2, 10 and 11) ----------
+
+// Desktop progress card on TECHNIQUE, IMPROVISATION and THEORY: the rail on the left takes the room the text leaves;
+// the text on the right, right-aligned, title over one line; no percentage and no "Remaining" line. Real values only (D71).
+// Hidden on the phone, where the pillar header carries the rail (D131).
+export function progressCard(rail, title, line){
+  return '<section class="pillar-card card" data-card="' + rail.id + '"><div class="pillar-card-rail">' + renderRail(rail) + '</div>' +
+    '<p class="pillar-card-text"><b class="pillar-card-title">' + title + '</b><span class="pillar-card-line">' + line + '</span></p></section>';
+}
+
+// Improvisation: the current Gate and its exercises mastered (the same count as the rail and the IMPROV page, D116).
+function improvCount(){
+  var n = IMPROV_GATES.length;
+  if(state.improvIndex >= n){
+    var all = 0, done = 0;
+    IMPROV_GATES.forEach(function(g, gi){ g.exercises.forEach(function(_, j){ all++; if(state.improvChecks["g" + gi + "e" + j]) done++; }); });
+    return { complete: true, gate: n, done: done, total: all };
+  }
+  var g = Math.max(0, state.improvIndex), ex = IMPROV_GATES[g].exercises;
+  return { complete: false, gate: g + 1, title: IMPROV_GATES[g].title, done: ex.filter(function(_, j){ return !!state.improvChecks["g" + g + "e" + j]; }).length, total: ex.length };
+}
+
+export function improvCard(){
+  var c = improvCount(), rail = improvRail();
+  if(c.complete) return progressCard(rail, 'All ' + c.gate + ' Gates complete', c.done + ' of ' + c.total + ' exercises mastered');
+  rail.status = c.done + ' of ' + c.total; // as drawn
+  return progressCard(rail, 'Gate ' + c.gate + ' \u00b7 ' + c.title, c.done + ' of ' + c.total + ' exercises mastered');
+}
+
+export function theoryCard(){
+  return progressCard(theoryRail(), 'Level 1 \u00b7 Not started', 'Progress starts with Theory v1 (Phase 6)');
+}
+
+// Phone pillar headers: the subtitle on the right of the small "Pillar · …" line, as TECHNIQUE has.
+export function improvSub(){
+  var c = improvCount();
+  return 'G' + c.gate + ' \u00b7 ' + (c.complete ? 'Complete' : c.done + ' of ' + c.total);
+}
+export function theorySub(){ return 'L1 \u00b7 Not started'; } // "L1 · n of N" once Theory v1 exists (Phase 6)
+
+// The rail under the phone pillar header (as drawn): the % on the right, since the subtitle already gives the count
+// (IMPROVISATION) or the state (THEORY, which therefore shows nothing there).
+export function improvPageRail(){ var r = improvRail(); r.status = r.pct + '%'; return renderRail(r); }
+export function theoryPageRail(){ var r = theoryRail(); r.status = ''; return renderRail(r); }

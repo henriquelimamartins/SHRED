@@ -15,10 +15,10 @@ import { DAY_FULL } from "../data/days.js?v=1";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=2";
 import { BHGS_PACK } from "../pack.js?v=1";
-import { k, phasePercent, itemKeysForPhase } from "../logic/technique.js?v=34";
-import { linked, checkItem, watchItem, prereqItem, chopRow, testRow } from "./components.js?v=34";
-import { pageHeader } from "./shell.js?v=17";
-import { renderRail, techniqueRail } from "./rails.js?v=19";
+import { k, phasePercent, itemKeysForPhase } from "../logic/technique.js?v=35";
+import { linked, checkItem, watchItem, prereqItem, chopRow, testRow } from "./components.js?v=35";
+import { pageHeader } from "./shell.js?v=18";
+import { renderRail, techniqueRail, progressCard } from "./rails.js?v=20";
 
 export const TECH_TABS = [
   { id: "checklist", label: "Checklist" },
@@ -177,18 +177,17 @@ function part(id, body){
 
 export function renderTechnique(){
   if(!BHGS_PACK) return '';
-  var i = state.phaseIndex, cur = PHASES[i], pct = phasePercent(i), sum = phaseSummary(i);
+  var i = state.phaseIndex, cur = PHASES[i], sum = phaseSummary(i);
   var tab = ui.techTab || "checklist";
   var sub = ui.techSub || "";
   var cardRail = techniqueRail();
-  cardRail.status = cur.label; // as drawn: the % sits next to the rail in the card
+  cardRail.status = cur.label; // as drawn: the phase name beside the rail in the card
   var html = '<div class="tech-page' + (sub ? ' tech-in-sub sub-' + sub : '') + '">';
   html += '<div class="tech-header">' + pageHeader('Pillar · BHGS Roadmap', 'Technique', '<span class="tech-sub">' + cur.label + ' · ' + sum.done + ' of ' + sum.total + '</span>') + renderRail(techniqueRail()) + '</div>';
 
   html += '<div class="tech-main">';
-  html += '<div class="tech-progress card"><div class="tech-progress-rail">' + renderRail(cardRail) + '</div>' +
-    '<div class="tech-progress-num"><div class="bignum">' + pct + '%</div><div class="tech-progress-txt"><b>Phase ' + i + ' · ' + cur.label + '</b><br>' +
-    sum.done + ' of ' + sum.total + ' done in this phase.' + (sum.left.length ? '<br>Left: ' + sum.left.join(" · ") + '.' : '') + '</div></div></div>';
+  // Slice 4.10e (D152 points 2, 10): the shared progress card (desktop), no percentage and no "Left" line.
+  html += progressCard(cardRail, 'Phase ' + i + ' · ' + cur.label, sum.done + ' of ' + sum.total + ' done in this phase');
 
   html += '<div class="tech-tabs" role="tablist">' + TECH_TABS.map(function(t){
     var on = t.id === tab;

@@ -50,9 +50,9 @@ test('TECHNIQUE opens with the current phase, its real counts and what is left',
   await openView(page, 'technique');
   await expect(technique(page).locator('.tech-header')).toContainText('Technique');
   await expect(technique(page).locator('.tech-sub')).toHaveText('Beginner · 13 of 24');
-  await expect(technique(page).locator('.tech-progress .bignum')).toHaveText('54%');
-  await expect(technique(page).locator('.tech-progress-txt')).toContainText('13 of 24 done in this phase.');
-  await expect(technique(page).locator('.tech-progress-txt')).toContainText('Left: 1 exercise · 3 solos · 2 chop-builders · 5 test categories.');
+  // Slice 4.10e (D152 points 2, 10): the progress card has no % and no "Left" line; the % stays on the rail.
+  await expect(technique(page).locator('.pillar-card [data-rail="technique"]')).toHaveAttribute('data-pct', '54');
+  await expect(technique(page).locator('.pillar-card-line')).toHaveText('13 of 24 done in this phase');
   // Section counts.
   const counts = await technique(page).locator('.tech-cols .tech-head').evaluateAll((hs) => hs.map((h) => h.textContent.replace(/\s+/g, ' ').trim()));
   expect(counts).toEqual(['Concept Videos4 of 4', 'Exercises3 of 4', 'Solos2 of 5', 'Chop-Builders3 of 5 at target', 'Phase Transition Test1 of 6 at Level 2']);
@@ -67,7 +67,8 @@ test('Setup phase: prerequisites, warm-up, lifetime chop levels and the baseline
   await openApp(page, { localState: baseState({ checks: checksFor(['p0.pre.0']) }) });
   await openView(page, 'technique');
   await expect(technique(page).locator('.tech-sub')).toHaveText('Setup · 1 of 2');
-  await expect(technique(page).locator('.tech-progress-txt')).toContainText('Left: 1 prerequisite.');
+  await expect(technique(page).locator('.pillar-card-title')).toHaveText('Phase 0 · Setup');
+  await expect(technique(page).locator('.pillar-card-line')).toHaveText('1 of 2 done in this phase');
   await expect(technique(page).locator('.tech-sec-checklist [data-key="p0.pre.0"]')).toHaveText('✓ Completed');
   await expect(technique(page).locator('.tech-sec-checklist')).toContainText('Ultimate 5-Minute Warm-Up');
   await expect(technique(page).locator('.tech-sec-chops')).toContainText('lifetime level');

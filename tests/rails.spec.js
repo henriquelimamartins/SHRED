@@ -55,7 +55,10 @@ test('the Improv rail matches the IMPROV page (D116)', async ({ page }) => {
   await openView(page, 'improv');
   await page.locator('#panel-improv [data-action="togimprov"][data-g="1"][data-e="1"]').click();
   await settle(page);
-  await expect(rail(page.locator('#panel-improv'), 'improv').locator('.rail-status')).toHaveText(`3/${total}`);
+  // Slice 4.10e (D152 point 11): the IMPROV page rail shows the % (the header subtitle gives the count).
+  await expect(rail(page.locator('#panel-improv .pillar-rail'), 'improv')).toHaveAttribute('data-pct', String(Math.round(300 / total)));
+  await expect(rail(page.locator('#panel-improv .pillar-rail'), 'improv').locator('.rail-status')).toHaveText(`${Math.round(300 / total)}%`);
+  await expect(rail(page.locator('#panel-home'), 'improv').locator('.rail-status')).toHaveText(`3/${total}`);
 });
 
 test('all Gates done: the Improv rail is complete', async ({ page }) => {

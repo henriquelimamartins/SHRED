@@ -11,7 +11,7 @@ import { BHGS_PACK } from "../pack.js?v=1";
 import { PHASES } from "../data/bhgs.js?v=1";
 import { IMPROV_GATES } from "../data/improv.js?v=4";
 import { activeDay } from "../logic/dates.js?v=7";
-import { sessionPlan } from "../logic/daily.js?v=34";
+import { sessionPlan } from "../logic/daily.js?v=35";
 
 function esc(t){ return String(t).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]; }); }
 
