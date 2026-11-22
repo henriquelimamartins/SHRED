@@ -7,8 +7,8 @@
 // without repeats. THEORY itself writes nothing; the sound switch (dojo.audioMuted) is on Account & data since slice 4.8e (D149). The view ids (`dojo`, `dojo-*`) and the
 // data-action names are unchanged.
 import { CODEX_DATA, HARMONIC_QUESTIONS } from "../data/dojo.js?v=2";
-import { pageHeader } from "./shell.js?v=17";
-import { renderRail, theoryRail } from "./rails.js?v=19";
+import { pageHeader } from "./shell.js?v=18";
+import { theoryPageRail, theoryCard, theorySub } from "./rails.js?v=20";
 
 // Line icons (24 x 24, stroke), the shapes of the 4.6 THEORY boards.
 const TH_ICONS = {
@@ -167,8 +167,9 @@ export function renderCodexReader(id) {
 
 export function renderDojoView() {
   // Slice 4.4 (D117, D123): the Theory rail (Level 1, not started) at the top of the page on the phone.
-  let html = pageHeader('Pillar · Musical Development', 'Theory') +
-    '<div class="pillar-rail">' + renderRail(theoryRail()) + '</div>' +
+  // Slice 4.10e (D152 points 10, 11): phone subtitle "L1 · Not started"; desktop progress card.
+  let html = pageHeader('Pillar · Musical Development', 'Theory', '<span class="pillar-sub">' + theorySub() + '</span>') +
+    '<div class="pillar-rail">' + theoryPageRail() + '</div>' + theoryCard() +
     '<div id="dojo-dash-view" class="codex-view active">' + renderDojoDashboard() + '</div>' +
     '<div id="dojo-codex-list" class="codex-view"></div>' +
     '<div id="dojo-codex-reader" class="codex-view"></div>' +

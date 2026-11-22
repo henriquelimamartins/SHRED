@@ -5,7 +5,7 @@ import { CHOP, TESTCATS, BONUS } from "../data/bhgs.js?v=1";
 import { DAY_ORDER } from "../data/days.js?v=1";
 import { state } from "../store.js?v=5";
 import { todayISO, todayName, activeDay } from "../logic/dates.js?v=7";
-import { isBlockPracticed } from "../logic/daily.js?v=34";
+import { isBlockPracticed } from "../logic/daily.js?v=35";
 
 /* ---------- render helpers ---------- */
 export function linked(label,url){ return url? '<a href="'+url+'" target="_blank" rel="noopener">'+label+'</a>' : label; }

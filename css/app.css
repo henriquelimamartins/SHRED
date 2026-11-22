@@ -303,7 +303,6 @@ button:focus-visible, a:focus-visible, select:focus-visible { outline: 2px solid
 .card h3 .tag{text-align:right;}
 .tag{color:var(--muted);font-size:var(--fs-xs);text-transform:none;letter-spacing:0;font-weight:500;}
 
-.bignum{font-family:var(--font-head);font-size:32px;font-weight:700;}
 
 
 ul.check{list-style:none;padding:0;margin:0;}
@@ -528,6 +527,18 @@ table.info td.day{font-weight:700;white-space:nowrap;color:var(--red-tint);}
   .pillar-rail .rail{--rail-surface:var(--bg);}
 }
 
+/* Slice 4.10e (D152 points 2, 10, 11): the progress card on TECHNIQUE, IMPROVISATION and THEORY (desktop) and the
+   subtitle of the phone pillar header. The rail takes the room the text leaves; the text sits right, right-aligned. */
+.pillar-card{display:grid;grid-template-columns:minmax(240px,1fr) auto;align-items:center;gap:36px;padding:22px 26px;margin-bottom:22px;}
+.pillar-card-rail{min-width:0;}
+.pillar-card-rail .rail{--rail-surface:var(--card);}
+.pillar-card-text{margin:0;text-align:right;font-size:var(--fs-base);line-height:1.6;color:var(--text-2);}
+.pillar-card-title{display:block;color:var(--text);font-weight:600;}
+.pillar-card-line{display:block;}
+.pillar-sub{font-size:var(--fs-sm);color:var(--muted);white-space:nowrap;}
+@media (min-width: 768px){ .pillar-sub{display:none;} }
+@media (max-width: 767px){ .pillar-card{display:none;} }
+
 /* --- TECHNIQUE page (slice 4.3, D117 point 6, D122) --- */
 .tech-header{margin-bottom:16px;}
 .tech-header .page-head{margin-bottom:12px;align-items:baseline;}
@@ -535,10 +546,6 @@ table.info td.day{font-weight:700;white-space:nowrap;color:var(--red-tint);}
 /* Slice 4.10c (D152 point 21): Mastered / Watched / Completed buttons as tall as in LIBRARY, DAILY and IMPROVISATION. */
 #panel-technique .mbtn{min-height:40px;padding-top:0;padding-bottom:0;}
 @media (max-width: 767px){ #panel-technique .mbtn{min-height:44px;} }
-.tech-progress{display:flex;align-items:center;gap:18px;}
-.tech-progress .bignum{font-size:40px;line-height:1;}
-.tech-progress-txt{font-size:var(--fs-md);line-height:1.5;color:var(--text-3);}
-.tech-progress-txt b{color:var(--text);font-weight:600;}
 .tech-tabs{display:none;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-bottom:14px;}
 .tech-tab{min-height:44px;white-space:nowrap;padding:0 4px;border-radius:var(--r-lg);border:1px solid var(--border);background:transparent;color:var(--text-3);font-family:var(--font-head);font-size:var(--fs-md);letter-spacing:.08em;text-transform:uppercase;}
 .tech-tab.on{background:var(--red-bg);border-color:var(--red);color:var(--red-tint);}
@@ -581,11 +588,6 @@ table.info td.day{font-weight:700;white-space:nowrap;color:var(--red-tint);}
    on the page. Phone: no progress card, link rows to sub-pages. The phone header is the pillar header of slice 4.6b (D131). */
 button.tech-phase{width:100%;text-align:left;color:var(--text);font:inherit;cursor:pointer;}
 .tech-phase .chev{color:var(--muted);font-size:18px;}
-.tech-progress{flex-wrap:wrap;gap:18px 24px;padding:20px;}
-.tech-progress-rail{flex:1 1 360px;min-width:0;}
-.tech-progress-rail .rail{--rail-surface:var(--card);}
-.tech-progress-num{flex:1 1 300px;min-width:0;display:flex;align-items:center;gap:18px;}
-.tech-progress .bignum{font-size:44px;}
 .tech-links, .tech-back{display:none;}
 .tech-part-phases .tech-section-title{margin-top:22px;}
 @media (min-width: 768px){
@@ -595,7 +597,6 @@ button.tech-phase{width:100%;text-align:left;color:var(--text);font:inherit;curs
 @media (max-width: 767px){
   .tech-header{margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--border);}
   .tech-header .rail{--rail-surface:var(--bg);}
-  .tech-progress{display:none;}
   .tech-links{display:flex;flex-direction:column;gap:10px;margin-top:6px;}
   .tech-link{display:flex;align-items:center;gap:12px;min-height:52px;padding:0 16px;border:1px solid var(--border);border-radius:14px;background:transparent;color:var(--text);font:inherit;font-size:var(--fs-base);text-align:left;cursor:pointer;}
   .tech-link-dashed{border-style:dashed;border-color:#2E2E35;color:var(--text-2);}

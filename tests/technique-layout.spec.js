@@ -23,15 +23,15 @@ test.describe('desktop', () => {
   test('the rail sits in the progress card with the phase name; the header has no count and no rail', async ({ page }) => {
     const monitor = await openApp(page, { localState: beginner() });
     await openView(page, 'technique');
-    const card = tech(page).locator('.tech-progress');
+    const card = tech(page).locator('.pillar-card');
     await expect(card).toBeVisible();
     const rail = card.locator('[data-rail="technique"]');
     await expect(rail).toBeVisible();
     await expect(rail.locator('.rail-status')).toHaveText('Beginner');
     await expect(rail).toHaveAttribute('data-pct', '54');
-    await expect(card.locator('.bignum')).toHaveText('54%');
-    // Rail on the left, the % on the right, on one row.
-    const r = await rail.boundingBox(), n = await card.locator('.bignum').boundingBox();
+    // Slice 4.10e (D152 point 2): rail on the left, the text on the right, on one row; no % in the card.
+    await expect(card.locator('.pillar-card-text')).toHaveText(/Phase 1 · Beginner\s*13 of 24 done in this phase/);
+    const r = await rail.boundingBox(), n = await card.locator('.pillar-card-text').boundingBox();
     expect(n.x).toBeGreaterThan(r.x + r.width - 1);
     await expect(tech(page).locator('.tech-header .tech-sub')).toBeHidden();
     await expect(tech(page).locator('.tech-header [data-rail]')).toBeHidden();
@@ -57,7 +57,7 @@ test.describe('desktop', () => {
     const cur = tech(page).locator('.tech-phases button.tech-phase.cur');
     await expect(cur).toHaveText(/Phase 1\s*Beginner · Levels 1 - 2\s*Current · 54%/);
     await cur.click();
-    await expect(tech(page).locator('.tech-progress')).toBeVisible();
+    await expect(tech(page).locator('.pillar-card')).toBeVisible();
   });
 });
 
@@ -79,7 +79,7 @@ test.describe('phone', () => {
     // Hard limit 120 px (D112); GitHub's real web fonts measure a few px more than Claude's workspace.
     const h = await head.evaluate((el) => el.getBoundingClientRect().height);
     expect(h).toBeLessThanOrEqual(120);
-    await expect(tech(page).locator('.tech-progress')).toBeHidden();
+    await expect(tech(page).locator('.pillar-card')).toBeHidden();
     expect(monitor.pageErrors).toEqual([]);
   });
 

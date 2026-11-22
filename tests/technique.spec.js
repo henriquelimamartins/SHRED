@@ -18,7 +18,7 @@ const technique = (page) => page.locator('#panel-technique');
 async function homePhaseStat(page) {
   const t = page.locator('#panel-technique');
   return {
-    pct: await t.locator('.tech-progress .bignum').textContent(),
+    pct: (await t.locator('.pillar-card [data-rail="technique"]').getAttribute('data-pct')) + '%', // slice 4.10e: the % is the rail's
     label: (await t.locator('.tech-sub').textContent()).split(' · ')[0],
   };
 }

@@ -14,7 +14,7 @@ import { hasFirebase, currentUser } from "../firebase.js?v=5";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=2";
 import { listDeviceBackups, formatLocalTime, reasonLabel } from "../logic/backup.js?v=2";
-import { pageHeader, avatar, accountName, syncState, backToMore } from "./shell.js?v=17";
+import { pageHeader, avatar, accountName, syncState, backToMore } from "./shell.js?v=18";
 
 function esc(t){ return String(t).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]; }); }
 

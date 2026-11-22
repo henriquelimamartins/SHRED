@@ -13,8 +13,8 @@
 import { IMPROV_GATES } from "../data/improv.js?v=4";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=2";
-import { pageHeader } from "./shell.js?v=17";
-import { renderRail, improvRail } from "./rails.js?v=19";
+import { pageHeader } from "./shell.js?v=18";
+import { improvPageRail, improvCard, improvSub } from "./rails.js?v=20";
 
 // The Daily Transposition Target (one key per day of the year). Slice 4.5c (D129): moved out of renderImprov()
 // unchanged so HOME's "Today's Improv" card shows the same key as this page.
@@ -237,8 +237,10 @@ function gatesList(actGate, allDone){
 
 export function renderImprov(){
   // Slice 4.4 (D117, D123): the Improv rail at the top of the page on the phone (the desktop sidebar shows it).
-  var html=pageHeader('Pillar · Musical Development','Improvisation');
-  html+='<div class="pillar-rail">'+renderRail(improvRail())+'</div>';
+  // Slice 4.10e (D152 points 10, 11): phone subtitle "G1 · n of N" beside the small line; desktop progress card.
+  var html=pageHeader('Pillar · Musical Development','Improvisation','<span class="pillar-sub">'+improvSub()+'</span>');
+  html+='<div class="pillar-rail">'+improvPageRail()+'</div>';
+  html+=improvCard();
   html+='<p class="improv-lede">Use the boxes and positions you know without being tied to them. Five Gates of constraints train your ear to lead your hands, in a new key every day. Mark every exercise of a Gate Mastered to open the next; mastered exercises come back in DAILY as review.</p>';
 
   var actGate = Math.min(state.improvIndex, IMPROV_GATES.length - 1);
