@@ -13,9 +13,21 @@
   --card:#16161A;        /* cards */
   --card2:#1E1E23;       /* raised controls inside cards (buttons, inputs, chips) */
   --day:#1A1A1F;         /* calendar day */
-  --day-past:#141418;
-  --day-weekend:#221A1C;
-  --day-past-weekend:#1A1517;
+  /* Slice 4.10f (D152 point 5, D154 point 2): calendar shades as the 4.10 canvas board Calendar */
+  --day-weekend:#1B1619;       /* weekend, not practised */
+  --day-weekend-line:#241D21;
+  --day-other:#121215;         /* day of another month, not practised */
+  --day-other-line:#1A1A1F;
+  --day-other-num:#55555E;
+  --day-future-num:#8E8E98;
+  --day-hit:#1D4A2A;           /* practised weekday */
+  --day-hit-line:#3E8A50;
+  --day-hit-num:#A6E2B2;
+  --day-hit-weekend:#13301C;   /* practised weekend: darker */
+  --day-hit-weekend-line:#2B6638;
+  --day-hit-other:#102017;     /* practised day of another month: darkest, number dimmed */
+  --day-hit-other-line:#1E3C27;
+  --day-hit-other-num:#5E9A6B;
   /* Lines */
   --border:#26262C;      /* card and control borders */
   --line:#202026;        /* dividers between list rows */
@@ -374,26 +386,52 @@ ul.check li.lib-dayrow, ul.check li.lib-dayrow:last-child{display:flex;align-ite
 .calendar-header-nav button:disabled { opacity:0.25; pointer-events:none; }
 .calendar-header-nav button.cal-today { background:var(--red-fill); color:var(--white); border-color:var(--red-fill); }
 .calendar-header-nav button[hidden] { display:none; }
+/* Slice 4.10f (D152 point 5, D154 point 2): month white, year red; tapping the title opens the month picker. */
+.home-calendar { position:relative; }
+.cal-month { color:var(--text); }
+.cal-year { color:var(--red); }
+.calendar-header-nav button.cal-pick { min-width:0; height:44px; padding:0; gap:8px; border:0; border-radius:var(--r-xs); background:none; color:inherit; font:inherit; letter-spacing:inherit; text-transform:inherit; }
+.cal-pick-chev { width:14px; height:14px; flex:none; color:var(--muted); transition:transform .2s; }
+.cal-pick[aria-expanded="true"] .cal-pick-chev { transform:rotate(180deg); }
+.cal-picker { position:absolute; z-index:20; top:62px; left:16px; width:300px; max-width:calc(100% - 32px); background:var(--day); border:1px solid #2A2A31; border-radius:var(--r-card); padding:16px; box-shadow:0 20px 50px rgba(0,0,0,0.5); }
+.cal-picker-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+.cal-picker-year { font-family:var(--font-head); font-size:18px; font-weight:600; color:var(--red); }
+.cal-picker-step { min-height:34px; min-width:34px; padding:0 10px; display:inline-flex; align-items:center; justify-content:center; border-radius:10px; border:1px solid var(--border); background:var(--card2); color:var(--text); font:600 14px var(--font-body); cursor:pointer; }
+.cal-picker-step:disabled { opacity:.4; cursor:default; }
+.cal-picker-months { display:grid; grid-template-columns:repeat(3, 1fr); gap:6px; }
+.cal-picker-month { min-height:44px; border-radius:10px; border:1px solid var(--border); background:var(--card2); color:var(--text); font-family:var(--font-head); font-size:14px; letter-spacing:.08em; cursor:pointer; }
+.cal-picker-month:disabled { background:transparent; color:var(--day-other-num); cursor:default; }
+.cal-picker-month.is-shown { border-color:var(--muted); }
+.cal-picker-month[aria-current="date"] { border-color:var(--red); background:var(--red-bg); color:var(--red-tint); }
+.cal-picker-step:focus-visible, .cal-picker-month:focus-visible, .cal-pick:focus-visible { outline:2px solid var(--red-tint); outline-offset:2px; }
+@media (max-width: 767px){ .cal-picker-step { min-height:44px; min-width:44px; } }
 
 .streak-wrapper { overflow:hidden; position:relative; touch-action:pan-y; }
 .cal-carousel { display:flex; width:100%; overflow-x:auto; scroll-snap-type:x mandatory; scroll-behavior:smooth; }
 .cal-panel { flex:0 0 100%; width:100%; scroll-snap-align:start; }
 .streak-grid { display:grid; grid-template-columns:repeat(7, 1fr); gap:5px; }
 
-.s-day { background:var(--day); border-radius:7px; height:46px; text-align:center; display:flex; flex-direction:column; justify-content:center; align-items:center; border:1px solid var(--border); position:relative; }
-.s-month-badge { position:absolute; top:2px; left:0; right:0; text-align:center; font-size:8px; font-weight:700; color:var(--muted); opacity:0.8; letter-spacing:0.5px; }
-.s-day .s-date { font-family:var(--font-head); font-size:15px; font-weight:700; color:var(--text); line-height:1; margin-top:2px; transition:color 0.2s;}
-.s-day .s-wkd { font-size:9px; text-transform:uppercase; color:var(--muted); margin-top:2px; font-weight:600; letter-spacing:.3px; transition:color 0.2s;}
-
-.s-day.past { background:var(--day-past); opacity:0.85; }
-.s-day.other-month { opacity:0.35 !important; }
-.s-day.weekend { background:var(--day-weekend); border-color:transparent; }
-.s-day.past.weekend { background:var(--day-past-weekend); }
-.s-day.hit { background:var(--green-bg) !important; border-color:var(--green-line) !important; opacity:1 !important; }
-.s-day.hit .s-date, .s-day.hit .s-wkd { color:var(--green-tint) !important; opacity:1; }
-.s-day.today { border-color:var(--red) !important; background:var(--red-bg) !important; opacity:1 !important; }
-.s-day.today .s-date { color:var(--red-tint) !important; opacity:1; }
-.s-day.today.hit .s-wkd { color:var(--muted) !important; }
+/* Slice 4.10f (D152 point 5, D154 point 2): shades as the 4.10 canvas board Calendar; the weekday name inside
+   each cell; no month tag (the shade says the day belongs to another month). */
+.s-day { background:var(--day); border-radius:7px; height:44px; text-align:center; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:2px; border:1px solid var(--border); }
+.s-day .s-date { font-family:var(--font-head); font-size:15px; font-weight:700; color:var(--day-future-num); line-height:1; }
+.s-day .s-wkd { font-size:9px; text-transform:uppercase; color:var(--muted); font-weight:600; letter-spacing:.3px; line-height:1; }
+.s-day.past .s-date { color:var(--text); }
+.s-day.weekend { background:var(--day-weekend); border-color:var(--day-weekend-line); }
+.s-day.past.weekend .s-date { color:var(--text-3); }
+.s-day.other-month { background:var(--day-other); border-color:var(--day-other-line); }
+.s-day.other-month .s-date { color:var(--day-other-num); }
+.s-day.hit { background:var(--day-hit); border-color:var(--day-hit-line); }
+.s-day.hit .s-date { color:var(--day-hit-num); }
+.s-day.hit .s-wkd { color:var(--green-tint); }
+.s-day.hit.weekend { background:var(--day-hit-weekend); border-color:var(--day-hit-weekend-line); }
+.s-day.hit.weekend .s-date { color:var(--green-tint); }
+.s-day.hit.other-month { background:var(--day-hit-other); border-color:var(--day-hit-other-line); }
+.s-day.hit.other-month .s-date, .s-day.hit.other-month .s-wkd { color:var(--day-hit-other-num); }
+.s-day.today { background:var(--red-bg); border-color:var(--red); }
+.s-day.today .s-date { color:var(--red-tint); }
+.s-day.today .s-wkd { color:var(--muted); }
+@media (min-width: 768px){ .s-day { height:50px; } }
 
 .note{border-left:3px solid var(--amber);background:var(--amber-bg-soft);padding:12px 14px;border-radius:0 var(--r-lg) var(--r-lg) 0;font-size:var(--fs-md);color:var(--amber-soft);margin-bottom:14px;}
 .note.purple{border-left-color:var(--purple); background:var(--purple-bg-soft); color:var(--purple-soft);}

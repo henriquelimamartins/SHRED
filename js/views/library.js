@@ -12,13 +12,13 @@
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
 import { CREATIVE, THEORY_DOCS, THEORY_ROOT_ITEMS, THEORY_GROUPS, WEEKLY_RHYTHM } from "../data/bhgs.js?v=1";
 import { IMPROV_GATES } from "../data/improv.js?v=4";
-import { exerciseLines, listenBox, masteryButton } from "./improv.js?v=26";
+import { exerciseLines, listenBox, masteryButton } from "./improv.js?v=27";
 import { LISTENING_VAULT } from "../data/listening.js?v=1";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=2";
 import { BHGS_PACK } from "../pack.js?v=1";
-import { pageHeader, backToMore } from "./shell.js?v=18";
-import { watchItem, linked, renderBonusList } from "./components.js?v=35";
+import { pageHeader, backToMore } from "./shell.js?v=19";
+import { watchItem, linked, renderBonusList } from "./components.js?v=36";
 
 // Line icons as drawn on the boards (same stroke style as the shell icons).
 var LIB_ICONS = {
