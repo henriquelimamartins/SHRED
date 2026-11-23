@@ -13,17 +13,17 @@
 import { state } from "../store.js?v=5";
 import { hasFirebase, currentUser } from "../firebase.js?v=5";
 import { BHGS_PACK } from "../pack.js?v=1";
-import { renderRails } from "./rails.js?v=24";
-import { streakLine, streakPill } from "./streak.js?v=3";
-import { icon, sidebarLogo, avatar, syncState } from "./shell.js?v=22";
+import { renderRails } from "./rails.js?v=25";
+import { streakLine, streakPill } from "./streak.js?v=4";
+import { icon, sidebarLogo, avatar, syncState } from "./shell.js?v=23";
 import { DAY_FULL } from "../data/days.js?v=1";
 import { ESSENTIAL } from "../data/bhgs.js?v=1";
 import { todayName, todayISO, activeDay, isWeekendDay } from "../logic/dates.js?v=7";
-import { renderStreakCalendar } from "./calendar.js?v=39";
+import { renderStreakCalendar } from "./calendar.js?v=40";
 import { IMPROV_GATES } from "../data/improv.js?v=4";
-import { sessionPlan, isBlockPracticed } from "../logic/daily.js?v=39";
-import { improvKeyOfDay, improvDayContext } from "./improv.js?v=30";
-import { todayKey, staticCircle, chordRow } from "./daily-side.js?v=18";
+import { sessionPlan, isBlockPracticed } from "../logic/daily.js?v=40";
+import { improvKeyOfDay, improvDayContext } from "./improv.js?v=31";
+import { todayKey, staticCircle, chordRow } from "./daily-side.js?v=19";
 
 function esc(t){ return String(t).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]; }); }
 function svg(path, cls){

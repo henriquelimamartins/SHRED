@@ -1,4 +1,5 @@
 // IMPROVISATION view (the 5 Gates).
+// Slice 4.10l (D154 point 3): the optional extra review (improvExtraPlan), read by DAILY on Mon, Thu and Sat.
 // Slice 4.8c3 (D146): the Review queue for DAILY (improvReviewPicks) and the new intro line (D145 point 5).
 // Slice 4.8c (D132 point 3, D139): as drawn on the 4.6 boards. Desktop: the current Gate card on the left; the Daily
 // Transposition Target and the list of the 5 Gates on the right (stacked when narrow). Phone: target, Gate card, list.
@@ -13,8 +14,8 @@
 import { IMPROV_GATES } from "../data/improv.js?v=4";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=2";
-import { pageHeader } from "./shell.js?v=22";
-import { improvPageRail, improvCard, improvSub } from "./rails.js?v=24";
+import { pageHeader } from "./shell.js?v=23";
+import { improvPageRail, improvCard, improvSub } from "./rails.js?v=25";
 
 // The Daily Transposition Target (one key per day of the year). Slice 4.5c (D129): moved out of renderImprov()
 // unchanged so HOME's "Today's Improv" card shows the same key as this page.
@@ -130,6 +131,39 @@ export function improvReviewPicks(day, today){
     picks.push(pool[i]);
   }
   return picks;
+}
+
+// Slice 4.10l (D154 point 3, AUDIT-4.10 point 19): the optional extra review on Mon, Thu and Sat, outside the session
+// and its minutes. It reads the same Mastered pool but never moves the review queue. It takes the two exercises served
+// longest ago (walking back from the queue position) and leaves out the next three queue positions (Mon: the Tue,
+// Wed and Fri picks; Thu: the Fri pick and two of Sunday's; Sat: Sunday's three). When fewer than two are left, the
+// excluded ones fill in, longest-served first, marked as coming up in the next Review. Fixed for the day; nothing is stored.
+export var EXTRA_DAYS = { Mon: true, Thu: true, Sat: true };
+function exerciseAt(q, n){
+  var order = reviewRoundOrder(n, Math.floor(q / n));
+  return order[((q % n) + n) % n];
+}
+export function improvExtraPlan(day, today){
+  if(!EXTRA_DAYS[day]) return { picks: [], jam: 0, empty: false };
+  var pool = reviewPool(), n = pool.length;
+  if(!n) return { picks: [], jam: 10, empty: true };
+  var start = reviewQueuePosition(today), last = {}, excluded = {}, q, i;
+  for(q = start; q <= start + 2; q++) excluded[exerciseAt(q, n)] = true;
+  // Walking back from the queue position, the first time an exercise is met is its most recent serving.
+  for(q = start - 1; q >= 0 && q >= start - 2 * n; q--){
+    i = exerciseAt(q, n);
+    if(!(i in last)) last[i] = q;
+  }
+  // Longest ago first: never served (-1) before any served position; ties keep the data order.
+  var order = pool.map(function(_, j){ return j; }).sort(function(a, b){
+    var ra = (a in last) ? last[a] : -1, rb = (b in last) ? last[b] : -1;
+    return (ra - rb) || (a - b);
+  });
+  var want = n === 1 ? 1 : 2;
+  var pick = function(j, again){ return { g: pool[j].g, e: pool[j].e, ex: pool[j].ex, again: again }; };
+  var chosen = order.filter(function(j){ return !excluded[j]; }).slice(0, want).map(function(j){ return pick(j, false); });
+  order.filter(function(j){ return excluded[j]; }).slice(0, want - chosen.length).forEach(function(j){ chosen.push(pick(j, true)); });
+  return { picks: chosen, jam: n === 1 ? 5 : 0, empty: false };
 }
 
 function fillRule(text){

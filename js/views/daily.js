@@ -7,6 +7,7 @@
 // count as a thin bar under the day buttons; session and companion column share the full width (3 : 2);
 // "Phase n · Label" inside the Focused block; the Friday Phase test as a line with one dot per category;
 // Mastered / Watched buttons as in LIBRARY; buttons without final punctuation. Behaviour unchanged.
+// Slice 4.10l (D154 point 3): the optional extra review on Mon, Thu and Sat (extraPart), after the last block.
 // Slice 4.8c3 (D146): the Improv & Expression block starts with a Review part (already-Mastered exercises).
 // Slice 4.7 (D133): DAILY as drawn on the 4.6 canvas: header with the session count, day buttons, numbered blocks,
 // the micro-dose as a dashed "+ 5 min" box and, on desktop, the companion column (views/daily-side.js).
@@ -19,12 +20,12 @@ import { DAY_FULL } from "../data/days.js?v=1";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=2";
 import { todayISO, todayName, isWeekendDay, activeDay } from "../logic/dates.js?v=7";
-import { k } from "../logic/technique.js?v=39";
+import { k } from "../logic/technique.js?v=40";
 import { BHGS_PACK } from "../pack.js?v=1";
-import { linked, checkItem, prereqItem, docItem, chopRow, dayPicker, blk, getDailyActiveSequence } from "./components.js?v=39";
-import { renderDailySide } from "./daily-side.js?v=18";
-import { streakLine, streakPill } from "./streak.js?v=3";
-import { improvKeyOfDay, improvReviewPicks, exerciseLines } from "./improv.js?v=30";
+import { linked, checkItem, prereqItem, docItem, chopRow, dayPicker, blk, getDailyActiveSequence } from "./components.js?v=40";
+import { renderDailySide } from "./daily-side.js?v=19";
+import { streakLine, streakPill } from "./streak.js?v=4";
+import { improvKeyOfDay, improvReviewPicks, improvExtraPlan, improvDayContext, exerciseLines, EXTRA_DAYS } from "./improv.js?v=31";
 
 // Slice 4.10h (D162 point 4; AUDIT-4.10 point 33): today's date (the device's local day) as the page eyebrow, long
 // ("Tuesday · November 10th, 2026") or short ("Tue · Nov 10th, 2026"); the title "Daily Practice" or "Daily"; on the
@@ -127,6 +128,34 @@ function reviewPart(day){
     '<ul class="daily-review-list">' + items + '</ul></div>';
 }
 
+// Slice 4.10l (D154 point 3, AUDIT-4.10 point 19): the optional extra review after the last block of Mon, Thu and
+// Sat. Collapsed by default and outside the blocks: no Practiced tick, not in the session minutes or the count, and
+// nothing is written. Mon and Thu end with a stretch reminder; the review queue is not touched (improv.js).
+function extraPart(day){
+  if(!EXTRA_DAYS[day]) return '';
+  var plan = improvExtraPlan(day, todayISO()), ctx = improvDayContext();
+  var key = improvKeyOfDay().k.replace(' ', '&nbsp;'), where = key + ', box ' + ctx.box, mon = day !== 'Sat';
+  var many = plan.picks.length > 1, combine = mon && plan.picks.length === 2;
+  var body = '<p class="daily-extra-lede">Only if you have spare time. Not part of today\'s session; it does not count for the streak or the full session.</p>';
+  if(plan.empty) body += '<p class="daily-extra-jam">Nothing to review yet: free jam in ' + where + ', 10&nbsp;min.</p>';
+  else {
+    body += '<p class="daily-extra-help">' + (many ? '5&nbsp;min each' : '5&nbsp;min') + ', from memory, in today\'s key (' + key + '). Then open ' + (many ? 'each' : 'it') + ' to check.</p>';
+    body += '<ul class="daily-review-list">' + plan.picks.map(function(p){
+      var name = p.ex.t.replace(/^\d+\.\s*/, '');
+      return '<li class="daily-review-ex" data-g="' + p.g + '" data-e="' + p.e + '">' +
+        '<p class="daily-review-name"><b>' + name + '</b> &middot; Gate&nbsp;' + (p.g + 1) + '</p>' +
+        (p.again ? '<p class="daily-review-note">Also coming up in your next Review.</p>' : '') +
+        '<details class="daily-review-more"><summary>' + CHEVRON + '<span class="daily-review-show">Show exercise</span><span class="daily-review-hide">Hide exercise</span></summary>' +
+        '<div class="daily-review-body"><p class="daily-review-note">' + REVIEW_NOTE + '</p>' + exerciseLines(p.ex) + '</div></details></li>';
+    }).join('') + '</ul>';
+    if(combine) body += '<p class="daily-extra-tip">Optional, 3&ndash;5&nbsp;min: play both together, each rule at the same time.</p>';
+    if(plan.jam) body += '<p class="daily-extra-jam">Then 5&nbsp;min free jam in ' + where + '.</p>';
+  }
+  if(mon) body += '<p class="daily-extra-tip">After the extra time, stretch your hands and forearms for a minute.</p>';
+  return '<details class="daily-extra"><summary>' + CHEVRON + '<span class="daily-extra-title">Extra time &middot; Improv review</span>' +
+    '<span class="daily-extra-side"><span class="daily-extra-min">' + (combine ? '10&ndash;15' : '10') + '&nbsp;min</span><span class="daily-extra-tag">Optional</span></span></summary><div class="daily-extra-body">' + body + '</div></details>';
+}
+
 // The Improv & Expression block body (weekday and Sunday): the Review part first (4.8c3), then the unchanged texts and button.
 function improvBody(day){
   var actGate = Math.min(state.improvIndex, IMPROV_GATES.length - 1);
@@ -174,6 +203,7 @@ function renderSession(day, editable){
       var songHtml = getDailyActiveSequence(p.songs||[], p.id+".s", editable, false);
       var body='<p>Deep-dive: polish next solo toward full tempo.</p>' + (songHtml ? '<ul class="check">'+songHtml+'</ul>' : '<p>All this tier\'s solos learned. 🎸</p>');
       html+=block("casual","CASUAL","45 min",body);
+      html+=extraPart(day);
     } else {
       html+=block("casual","Improv & Expression","45 min",improvBody(day),"improv");
     }
@@ -259,6 +289,7 @@ function renderSession(day, editable){
   }
 
   html+=block("cooldown","Cool-Down","5 min",'<p>Quick review - what clicked, what didn\'t.</p>');
+  html+=extraPart(day);
   return html;
 }
 
