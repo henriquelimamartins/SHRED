@@ -11,7 +11,7 @@ import { BHGS_PACK } from "../pack.js?v=1";
 import { PHASES } from "../data/bhgs.js?v=1";
 import { IMPROV_GATES } from "../data/improv.js?v=4";
 import { activeDay } from "../logic/dates.js?v=7";
-import { sessionPlan } from "../logic/daily.js?v=38";
+import { sessionPlan } from "../logic/daily.js?v=39";
 
 function esc(t){ return String(t).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]; }); }
 
@@ -38,8 +38,9 @@ export function icon(name, cls){
 // left of the wordmark. "ROADMAP" uses the font, weight and letter-spacing of "THE SHRED", only larger, so both lines
 // are the same width. Sizes from the 4.10 canvas: the top of the sun sits on the cap top of THE SHRED and the bottom
 // of the ridge line on the baseline of ROADMAP. The mark is decoration; the words name the app.
-export function sidebarLogo(){
-  return '<div class="side-logo"><svg class="side-logo-mark" viewBox="0 0 205 204.83" aria-hidden="true" focusable="false">' +
+// Slice 4.10j (D164 point 2): the phone HOME header uses the same logo, smaller (`cls` = "home-logo").
+export function sidebarLogo(cls){
+  return '<div class="side-logo' + (cls ? ' ' + cls : '') + '"><svg class="side-logo-mark" viewBox="0 0 205 204.83" aria-hidden="true" focusable="false">' +
     '<circle class="logo-sun" cx="110.5" cy="68.2" r="58"></circle>' +
     '<path class="logo-ground" d="M3.5 200.4 L56 118.4 L86 150.4 L118 94.4 L156 146.4 L176 130.4 L201.5 200.4 Z"></path>' +
     '<path class="logo-ridge" d="M3.5 200.4 L56 118.4 L86 150.4 L118 94.4 L156 146.4 L176 130.4 L201.5 200.4"></path></svg>' +

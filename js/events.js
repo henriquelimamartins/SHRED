@@ -21,12 +21,12 @@
 import { defaultState, defaultDojoState, saveState, state, replaceState, backupBeforeReplace, migrate, newerSchema, NEWER_SCHEMA_MSG } from "./store.js?v=5";
 import { hasFirebase, auth, db, googleProvider, currentUser, cloudReady, cloudReadFailed, CLOUD_READ_FAILED_MSG, requestCloudWrite, loadFromCloud, signInWithPopup, signOut } from "./firebase.js?v=5";
 import { ui, showToast } from "./ui.js?v=2";
-import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=38";
-import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=38";
-import { changeCalMonth, calCanGo } from "./views/calendar.js?v=38";
-import { currentMinigame, startArchitectGame, handleDojoAnswer, renderCodexList, renderCodexReader, focusSubTitle } from "./views/dojo.js?v=29";
-import { updateNav, render, updateAccountRow } from "./render.js?v=38";
-import { initDailySwipe } from "./views/daily-swipe.js?v=16";
+import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=39";
+import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=39";
+import { changeCalMonth, calCanGo } from "./views/calendar.js?v=39";
+import { currentMinigame, startArchitectGame, handleDojoAnswer, renderCodexList, renderCodexReader, focusSubTitle } from "./views/dojo.js?v=30";
+import { updateNav, render, updateAccountRow } from "./render.js?v=39";
+import { initDailySwipe } from "./views/daily-swipe.js?v=17";
 import { buildBackupFile, backupFileName, listDeviceBackups, parseBackupFile, isNewerCopy, restoredState, formatLocalTime, reasonLabel, MAX_BACKUP_FILE_BYTES, INVALID_BACKUP_MSG, NEWER_BACKUP_MSG } from "./logic/backup.js?v=2";
 
 // Slice 4.8e (D149): Restore and Reset open in place on the same page, so opening one closes the other.
@@ -250,7 +250,8 @@ function openProfile(){
 function closeProfile(){
   ui.profileOpen = false;
   render();
-  var card = document.querySelector('#panel-account .profile-card'); if(card) card.focus({preventScroll:true});
+  // Slice 4.10j (D164 point 3): back to what opened it, the PROFILE card or the HOME account button.
+  var card = document.querySelector(ui.view === 'home' ? '#panel-home .home-acct' : '#panel-account .profile-card'); if(card) card.focus({preventScroll:true});
 }
 
 document.addEventListener("click",function(e){

@@ -23,19 +23,19 @@
 import { ui } from "./ui.js?v=2";
 import { BHGS_PACK } from "./pack.js?v=1";
 import { ensureDailyReset } from "./logic/dates.js?v=7";
-import { initCalCarousel } from "./views/calendar.js?v=38";
-import { renderHome } from "./views/home.js?v=38";
-import { renderTechnique } from "./views/technique.js?v=24";
-import { renderDaily, watchDailyHeader } from "./views/daily.js?v=38";
-import { renderImprov } from "./views/improv.js?v=29";
-import { renderLibrary } from "./views/library.js?v=38";
-import { renderSetup } from "./views/setup.js?v=28";
-import { renderDojoView } from "./views/dojo.js?v=29";
-import { renderRails } from "./views/rails.js?v=23";
-import { renderAccount, renderProfilePanel } from "./views/account.js?v=22";
+import { initCalCarousel } from "./views/calendar.js?v=39";
+import { renderHome, watchHomeHeader } from "./views/home.js?v=39";
+import { renderTechnique } from "./views/technique.js?v=25";
+import { renderDaily, watchDailyHeader } from "./views/daily.js?v=39";
+import { renderImprov } from "./views/improv.js?v=30";
+import { renderLibrary } from "./views/library.js?v=39";
+import { renderSetup } from "./views/setup.js?v=29";
+import { renderDojoView } from "./views/dojo.js?v=30";
+import { renderRails } from "./views/rails.js?v=24";
+import { renderAccount, renderProfilePanel } from "./views/account.js?v=23";
 import { currentUser } from "./firebase.js?v=5";
-import { renderMore } from "./views/more.js?v=20";
-import { icon, sidebarLogo, sidebarMenu, accountRow, syncState } from "./views/shell.js?v=21";
+import { renderMore } from "./views/more.js?v=21";
+import { icon, sidebarLogo, sidebarMenu, accountRow, syncState } from "./views/shell.js?v=22";
 
 export function initAppLayout() {
   var root = document.getElementById("root");
@@ -123,18 +123,22 @@ export function updateAccountRow(){
     if(el.innerHTML !== acctLine) el.innerHTML = acctLine;
   });
   // Slice 4.10i (D163): the rings round the photo on the PROFILE card and in the profile panel follow the state too.
-  document.querySelectorAll('#panel-account .avatar-ring, #profile-layer .avatar-ring').forEach(function(el){
+  document.querySelectorAll('#panel-account .avatar-ring, #profile-layer .avatar-ring, #panel-home .avatar-ring').forEach(function(el){
     if(el.dataset.tone !== s.tone){ el.classList.remove('ok', 'wait', 'none'); el.classList.add(s.tone); el.dataset.tone = s.tone; }
   });
+  // Slice 4.10j (D164 point 2): the phone HOME account button names the state too.
+  var homeAcct = document.querySelector('#panel-home .home-acct[data-action="profile"]');
+  if(homeAcct){ var lbl = 'Account \u00b7 ' + s.text; if(homeAcct.getAttribute('aria-label') !== lbl) homeAcct.setAttribute('aria-label', lbl); }
 }
 
 // Slice 4.10i (D163 point 4): the profile panel lives in its own layer over the whole app (sidebar and bottom bar
 // included). While it is open the rest of the app is inert, so keyboard focus stays in the panel. It shows only on
-// Account & data with a signed-in account; otherwise it closes. Page state only, nothing written.
+// Account & data or HOME (slice 4.10j) with a signed-in account; otherwise it closes. Page state only, nothing written.
 function renderProfileLayer(){
   var layer = document.getElementById('profile-layer');
   if(!layer) return;
-  if(ui.profileOpen && !(currentUser && ui.view === 'account')) ui.profileOpen = false;
+  // Slice 4.10j (D164 point 3): the panel also opens over HOME, from the phone account button.
+  if(ui.profileOpen && !(currentUser && (ui.view === 'account' || ui.view === 'home'))) ui.profileOpen = false;
   var open = !!ui.profileOpen;
   var focusKey = null, ae = document.activeElement;
   if(open && ae && layer.contains(ae)) focusKey = ae.classList.contains('profile-logout') ? '.profile-logout' : '.profile-close';
@@ -184,6 +188,8 @@ export function render(){
     renderProfileLayer();
     // Slice 4.10h (D162 point 4): DAILY shows its long title and date only where they fit on one line (measured).
     watchDailyHeader();
+    // Slice 4.10j (D164 point 1): HOME's long title and date, the same rule.
+    watchHomeHeader();
     
     initCalCarousel();
 

@@ -59,19 +59,21 @@ test.describe('phone', () => {
     await expect(page.getByRole('button', { name: /^(Login|Logout)$/ })).toHaveCount(1);
   });
 
-  test('HOME has its own header: brand, date and the streak; the generic page header is hidden', async ({ page }) => {
+  // Slice 4.10j (D164 points 1 and 2): the brand row (logo + account button) above the page header (date, title, pill).
+  test('HOME has its own header: logo, date, title and the streak pill', async ({ page }) => {
     const monitor = await openApp(page, { localState: progressState() });
-    const head = page.locator('#panel-home .home-phone-head');
-    await expect(head).toBeVisible();
-    await expect(head.locator('.home-brand')).toHaveText(/THE\s+SHRED\s+ROADMAP/);
-    await expect(head.locator('.home-date')).toHaveText('Tuesday · 10 Nov');
+    const brand = page.locator('#panel-home .home-brand-row');
+    const head = page.locator('#panel-home .home-head');
+    await expect(brand).toBeVisible();
+    await expect(brand.locator('.side-logo-words')).toHaveText(/THE\s+SHRED\s*ROADMAP/);
+    await expect(head.locator('.home-date-long')).toHaveText('Tuesday · November 10th, 2026');
     await expect(head.locator('.home-date')).toHaveCSS('text-transform', 'uppercase');
     // The pill shows the same streak as the HOME header line (desktop) and the consistency of the streak dates.
     const streak = await page.locator('#panel-home .home-streak .streak-run').textContent();
     expect(streak).toBe('3');
     await expect(head.locator('.streak-pill strong')).toHaveText(streak);
     await expect(head.locator('.streak-pill')).toHaveAttribute('aria-label', `${streak}-day streak`);
-    await expect(page.locator('#panel-home .page-head')).toBeHidden();
+    await expect(head).toBeVisible();
     expect(monitor.pageErrors).toEqual([]);
   });
 
