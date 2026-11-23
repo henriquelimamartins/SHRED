@@ -124,8 +124,11 @@ test.describe('signed in', () => {
   // Slice 4.5b2 (D125 point 4, D128): the account name and Logout live on the Account & data page only.
   test('the Account & data page shows the account name and a Logout button', async ({ page }, testInfo) => {
     await openApp(page, { user: TEST_USER, docs: { [USER_DOC]: progressState() } });
-    await expect(page.locator('#panel-account .account-auth')).toHaveText('Logout');
     await expect(page.locator('#panel-account .account-name')).toHaveText('tester');
+    // Slice 4.10i (D163 point 3): Logout lives in the profile panel, opened from the PROFILE card.
+    await accountPanel(page);
+    await page.locator('#panel-account .profile-card').click();
+    await expect(page.locator('#profile-dialog .account-auth')).toHaveText('Logout');
     await page.screenshot({ path: testInfo.outputPath('signed-in-home.png') });
   });
 

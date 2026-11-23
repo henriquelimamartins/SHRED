@@ -182,6 +182,8 @@ test.describe('phone', () => {
     await openApp(page, { user: PHOTO_USER, docs: { [USER_DOC]: progressState() }, avatar: true });
     await openView(page, 'account');
     await expect.poll(() => page.locator('#panel-account img.avatar-img').evaluate((i) => i.complete && i.naturalWidth)).toBeGreaterThan(0);
-    await expect(page.locator('#panel-account .account-auth')).toHaveText('Logout');
+    // Slice 4.10i (D163 point 3): Logout lives in the profile panel, opened from the PROFILE card.
+    await page.locator('#panel-account .profile-card').click();
+    await expect(page.locator('#profile-dialog .account-auth')).toHaveText('Logout');
   });
 });

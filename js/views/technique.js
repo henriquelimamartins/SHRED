@@ -15,10 +15,10 @@ import { DAY_FULL } from "../data/days.js?v=1";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=2";
 import { BHGS_PACK } from "../pack.js?v=1";
-import { k, phasePercent, itemKeysForPhase } from "../logic/technique.js?v=37";
-import { linked, checkItem, watchItem, prereqItem, chopRow, testRow } from "./components.js?v=37";
-import { pageHeader } from "./shell.js?v=20";
-import { renderRail, techniqueRail, progressCard } from "./rails.js?v=22";
+import { k, phasePercent, itemKeysForPhase } from "../logic/technique.js?v=38";
+import { linked, checkItem, watchItem, prereqItem, chopRow, testRow } from "./components.js?v=38";
+import { pageHeader } from "./shell.js?v=21";
+import { renderRail, techniqueRail, progressCard } from "./rails.js?v=23";
 
 export const TECH_TABS = [
   { id: "checklist", label: "Checklist" },
@@ -158,7 +158,7 @@ function phaseSettings(){
     html += '</select><button class="tbtn u-w100 u-mt-12" data-action="phasesettings">Close</button>';
   } else {
     html += '<div class="tech-settings-row"><div class="u-flex1"><h3>Phase settings</h3><p class="tech-note">Set the current phase by hand. Moving back clears the checklist of the later phases; a backup is saved on this device first.</p></div>' +
-      '<button class="tbtn" data-action="phasesettings">Change phase…</button></div>';
+      '<button class="tbtn" data-action="phasesettings">Change phase</button></div>';
   }
   return html + '</div>';
 }

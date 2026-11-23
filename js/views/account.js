@@ -10,11 +10,21 @@
 // place under their row. The data-actions, messages, confirmations and warning texts are the same as before.
 // Settings holds only what exists: Sound (the same `dojo.audioMuted` switch that was on THEORY until 4.8d).
 // Without Firebase the Cloud sync group is left out; signed out it stays (its buttons explain that login is needed).
+// Slice 4.10i (D163; D152 points 15, 18, 23): eyebrow SETTINGS and first group PROFILE; signed in, the PROFILE card is
+// one button that opens the profile panel (desktop dialog, phone sheet from the bottom), where Logout now lives;
+// signed out the card keeps Login. The panel shows the photo in the sync-state ring, name, email, "Signed in with
+// Google", the sync state, four boxes from `streakDates` and the three rails without a percentage. Page state only
+// (`ui.profileOpen`); nothing is written. Buttons end without punctuation ("Restore", "Reset", "From file").
 import { hasFirebase, currentUser } from "../firebase.js?v=5";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=2";
 import { listDeviceBackups, formatLocalTime, reasonLabel } from "../logic/backup.js?v=2";
-import { pageHeader, avatar, accountName, syncState, backToMore } from "./shell.js?v=20";
+import { pageHeader, avatar, accountName, syncState, backToMore } from "./shell.js?v=21";
+import { totalStreak, currentStreak, localISO } from "../logic/dates.js?v=7";
+import { renderRail, techniqueRail, improvRail, theoryRail } from "./rails.js?v=23";
+import { phaseSummary } from "./technique.js?v=24";
+import { PHASES } from "../data/bhgs.js?v=1";
+import { BHGS_PACK } from "../pack.js?v=1";
 
 function esc(t){ return String(t).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]; }); }
 
@@ -26,7 +36,11 @@ var ACCT_ICONS = {
   restore: 'M4 12a8 8 0 1 0 2.5-5.8M4 5v4h4M12 8v4.5l3 2',
   sound: 'M4 10v4h3l5 4V6l-5 4zM16 9.5a3.5 3.5 0 0 1 0 5M18.5 7a7 7 0 0 1 0 10',
   warn: 'M12 4l9 16H3zM12 10v4.5M12 17.5v.5',
-  file: 'M7 3h7l4 4v14H7zM14 3v4h4'
+  file: 'M7 3h7l4 4v14H7zM14 3v4h4',
+  chevron: 'M9 6l6 6-6 6',
+  close: 'M6 6l12 12M18 6L6 18',
+  logout: 'M15 4h4v16h-4M10 8l-4 4 4 4M6 12h10',
+  google: 'M20 12.2c0-.6-.1-1.2-.2-1.7H12v3.3h4.5a3.9 3.9 0 0 1-1.7 2.5v2.1h2.7c1.6-1.5 2.5-3.6 2.5-6.2zM12 20c2.3 0 4.2-.8 5.5-2.1l-2.7-2.1c-.7.5-1.7.8-2.8.8a4.9 4.9 0 0 1-4.6-3.4H4.6v2.1A8 8 0 0 0 12 20z'
 };
 function acctIcon(name, cls){
   return '<svg class="ico ' + (cls || 'acct-row-ic') + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + ACCT_ICONS[name] + '"></path></svg>';
@@ -71,25 +85,94 @@ function renderRestore(){
     });
     html+='</div>';
   }
-  html+='<div class="acct-actions"><button type="button" class="acct-btn" data-action="cancelrestore">Cancel</button><button type="button" class="acct-btn" data-action="pickrestorefile">'+acctIcon('file','acct-btn-ic')+'From file…</button></div>';
+  html+='<div class="acct-actions"><button type="button" class="acct-btn" data-action="cancelrestore">Cancel</button><button type="button" class="acct-btn" data-action="pickrestorefile">'+acctIcon('file','acct-btn-ic')+'From file</button></div>';
   return html;
 }
 
-// Who is signed in, in plain words, with Login / Logout (D125 point 4).
+// Slice 4.10i (D163 points 2 and 3): who is signed in. Signed in, the whole card is one button that opens the profile
+// panel (Logout lives there); signed out the card keeps Login (no panel without an account); without Firebase,
+// "This device" with no button. The photo sits in a ring in the sync-state colour (D157 point 5).
+function ring(size, tone){
+  return '<span class="avatar-ring ring-' + size + ' ' + tone + '" data-tone="' + tone + '">' + avatar(size) + '</span>';
+}
 function accountCard(){
-  var html='<div class="account-card acct-card"><div class="account-id">'+avatar("lg")+'<div class="account-who">';
   if(!hasFirebase){
-    html+='<div class="account-name">This device</div><p class="account-note">Cloud sync is not available. Your progress is saved on this device only.</p></div></div>';
-    return html+'</div>';
+    return '<div class="account-card acct-card"><div class="account-id">'+avatar("lg")+'<div class="account-who">'+
+      '<div class="account-name">This device</div><p class="account-note">Cloud sync is not available. Your progress is saved on this device only.</p></div></div></div>';
   }
-  if(currentUser){
-    var s=syncState();
-    html+='<div class="account-name">'+esc(accountName(true))+'</div>'+(currentUser.email?'<div class="account-email">'+esc(currentUser.email)+'</div>':'')+
-      '<div class="account-sync"><i class="sync-dot '+s.tone+'"></i>'+s.text+'</div>';
-  } else {
-    html+='<div class="account-name">Not signed in</div><p class="account-note">Not signed in. Your progress is saved on this device only. Log in to keep it in your account.</p>';
+  if(!currentUser){
+    return '<div class="account-card acct-card"><div class="account-id">'+avatar("lg")+'<div class="account-who">'+
+      '<div class="account-name">Not signed in</div><p class="account-note">Not signed in. Your progress is saved on this device only. Log in to keep it in your account.</p></div>'+
+      '<button type="button" class="acct-btn account-auth">Login</button></div></div>';
   }
-  html+='</div><button type="button" class="acct-btn account-auth">'+(currentUser?"Logout":"Login")+'</button></div></div>';
+  var s=syncState();
+  return '<button type="button" class="account-card acct-card profile-card" data-action="profile" aria-haspopup="dialog" aria-expanded="'+!!ui.profileOpen+'">'+
+    '<span class="account-id">'+ring("lg", s.tone)+'<span class="account-who">'+
+    '<span class="account-name">'+esc(accountName(true))+'</span>'+(currentUser.email?'<span class="account-email">'+esc(currentUser.email)+'</span>':'')+
+    '<span class="account-sync"><i class="sync-dot '+s.tone+'"></i>'+s.text+'</span></span>'+
+    '<span class="profile-card-more"><span class="profile-card-more-text">View profile</span>'+acctIcon('chevron','profile-card-ic')+'</span></span></button>';
+}
+
+// ---------- profile panel (slice 4.10i, D163 point 4) ----------
+
+var MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+function loggedDays(){
+  var seen = {};
+  (state.streakDates || []).forEach(function(d){ if(typeof d === "string" && /^\d{4}-\d{2}-\d{2}$/.test(d)) seen[d] = true; });
+  return Object.keys(seen).sort();
+}
+// The longest run of consecutive local calendar days in `streakDates` (D71: real values only).
+export function longestStreak(days){
+  var best = 0, run = 0, prev = null;
+  days.forEach(function(d){
+    var next = null;
+    if(prev){ var q = prev.split("-"); next = localISO(new Date(+q[0], +q[1] - 1, +q[2] + 1)); }
+    run = (prev && d === next) ? run + 1 : 1;
+    if(run > best) best = run;
+    prev = d;
+  });
+  return best;
+}
+function daysText(n){ return n + (n === 1 ? " day" : " days"); }
+function stat(label, value, sub){
+  return '<div class="profile-stat"><span class="profile-stat-label">' + label + '</span><span class="profile-stat-val">' + value + '</span>' +
+    (sub ? '<span class="profile-stat-sub">' + sub + '</span>' : '') + '</div>';
+}
+// The three rails with their values and no percentage (D163 point 4, as D152 point 2).
+function profileRails(){
+  var html = '';
+  if(BHGS_PACK){
+    var t = techniqueRail(), i = Math.min(state.phaseIndex, PHASES.length - 1), sum = phaseSummary(i);
+    t.status = sum.done + ' of ' + sum.total + ' done';
+    html += '<div class="profile-rail">' + renderRail(t) + '</div>';
+  }
+  var m = improvRail();
+  if(m.status !== "Complete"){ var p = m.status.split("/"); m.status = p[0] + ' of ' + p[1] + ' mastered'; }
+  html += '<div class="profile-rail">' + renderRail(m) + '</div>';
+  html += '<div class="profile-rail">' + renderRail(theoryRail()) + '</div>';
+  return html;
+}
+export function renderProfilePanel(){
+  var s = syncState(), days = loggedDays();
+  var since = days.length ? (function(p){ return MONTHS[+p[1] - 1] + ' ' + p[0]; })(days[0].split("-")) : "Not yet";
+  var html = '<div class="profile-backdrop" data-action="closeprofile"></div>' +
+    '<div class="profile-dialog' + (ui.profileAnim ? ' is-entering' : '') + '" id="profile-dialog" role="dialog" aria-modal="true" aria-labelledby="profile-title">' +
+    '<div class="profile-head"><h2 class="profile-title" id="profile-title">Profile</h2>' +
+    '<button type="button" class="profile-close" data-action="closeprofile" aria-label="Close profile">' + acctIcon('close', 'profile-close-ic') + '</button></div>' +
+    '<div class="profile-id">' + ring("xl", s.tone) +
+    '<div class="profile-name">' + esc(accountName(true)) + '</div>' +
+    (currentUser && currentUser.email ? '<div class="profile-email">' + esc(currentUser.email) + '</div>' : '') +
+    '<div class="profile-meta"><span class="profile-google">' + acctIcon('google', 'profile-meta-ic') + 'Signed in with Google</span>' +
+    '<span class="profile-sync"><i class="sync-dot ' + s.tone + '"></i>' + s.text + '</span></div></div>' +
+    '<div class="profile-stats">' +
+      stat('Practising since', since, days.length ? 'first logged day' : '') +
+      stat('Days logged', String(totalStreak())) +
+      stat('Current streak', daysText(currentStreak())) +
+      stat('Longest streak', daysText(longestStreak(days))) +
+    '</div>' +
+    '<h3 class="profile-subhead">Pillars</h3><div class="profile-rails">' + profileRails() + '</div>' +
+    '<button type="button" class="profile-logout account-auth">' + acctIcon('logout', 'profile-logout-ic') + 'Logout</button>' +
+    '</div>';
   return html;
 }
 
@@ -105,7 +188,7 @@ function backupsGroup(){
   return group('backups', 'Backups', '<div class="acct-card acct-list">' +
     row({ id: 'download', icon: 'download', name: 'Download backup', sub: 'Save a copy of your progress as a file.', control: btn('downloadbackup', 'Download', ' aria-describedby="acct-s-download"' + off()) }) +
     row({ id: 'restore', icon: 'restore', name: 'Restore backup', sub: 'From a copy on this device or from a file.',
-      control: btn('openrestore', 'Restore…', ' aria-describedby="acct-s-restore" aria-expanded="' + open + '"' + (open ? ' aria-controls="acct-panel-restore"' : '')),
+      control: btn('openrestore', 'Restore', ' aria-describedby="acct-s-restore" aria-expanded="' + open + '"' + (open ? ' aria-controls="acct-panel-restore"' : '')),
       panel: open ? renderRestore() : '' }) +
     '</div>');
 }
@@ -127,15 +210,15 @@ function resetGroup(){
   }
   return group('reset', 'Reset', '<div class="acct-list acct-danger">' +
     row({ id: 'reset', icon: 'warn', name: 'Reset progress', sub: 'Erases Technique, Improv, Theory and Creative progress. Your streak, calendar and SETUP are kept. A backup is saved on this device first.',
-      control: btn('reset', 'Reset…', ' aria-describedby="acct-s-reset" aria-expanded="' + !!ui.resetConfirm + '"' + (ui.resetConfirm ? ' aria-controls="acct-panel-reset"' : '')),
+      control: btn('reset', 'Reset', ' aria-describedby="acct-s-reset" aria-expanded="' + !!ui.resetConfirm + '"' + (ui.resetConfirm ? ' aria-controls="acct-panel-reset"' : '')),
       panel: panel }) +
     '</div>');
 }
 
 export function renderAccount(){
-  var html=backToMore()+pageHeader('Account','Account &amp; data');
+  var html=backToMore()+pageHeader('Settings','Account &amp; data');
   html+='<div class="acct-cols"><div class="acct-col">'+
-    group('account', 'Account', accountCard())+
+    group('profile', 'Profile', accountCard())+
     (hasFirebase ? cloudGroup() : '')+
     backupsGroup()+
     '</div><div class="acct-col">'+
