@@ -1,4 +1,8 @@
 // DAILY view.
+// Slice 4.10h (D162; AUDIT-4.10 points 24, 25, 28, 31, 33, 32): today's date as the eyebrow above the title; the title
+// "Daily Practice" where it fits on one line, else "Daily" (fitDailyHeader); the HOME streak line on the right (phone:
+// the streak pill); no count bar or count text; from 1180 px the day buttons sit over the session column only and the
+// companion column starts level with them. Behaviour unchanged.
 // Slice 4.10c (D152 points 14, 16, 17, 21, 22, 23): title on the left and today's date on the right (no eyebrow); the
 // count as a thin bar under the day buttons; session and companion column share the full width (3 : 2);
 // "Phase n · Label" inside the Focused block; the Friday Phase test as a line with one dot per category;
@@ -15,36 +19,60 @@ import { DAY_FULL } from "../data/days.js?v=1";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=2";
 import { todayISO, todayName, isWeekendDay, activeDay } from "../logic/dates.js?v=7";
-import { k } from "../logic/technique.js?v=36";
-import { sessionPlan, isBlockPracticed } from "../logic/daily.js?v=36";
+import { k } from "../logic/technique.js?v=37";
 import { BHGS_PACK } from "../pack.js?v=1";
-import { linked, checkItem, prereqItem, docItem, chopRow, dayPicker, blk, getDailyActiveSequence } from "./components.js?v=36";
-import { renderDailySide } from "./daily-side.js?v=15";
-import { improvKeyOfDay, improvReviewPicks, exerciseLines } from "./improv.js?v=27";
+import { linked, checkItem, prereqItem, docItem, chopRow, dayPicker, blk, getDailyActiveSequence } from "./components.js?v=37";
+import { renderDailySide } from "./daily-side.js?v=16";
+import { streakLine, streakPill } from "./streak.js?v=1";
+import { improvKeyOfDay, improvReviewPicks, exerciseLines } from "./improv.js?v=28";
 
-// Slice 4.10c (D152 point 16): today's date on the right of the title, long on desktop, short on the phone
-// ("Tuesday · November 10th, 2026" / "Tue · Nov 10th, 2026"), from the device's local day like every other date.
+// Slice 4.10h (D162 point 4; AUDIT-4.10 point 33): today's date (the device's local day) as the page eyebrow, long
+// ("Tuesday · November 10th, 2026") or short ("Tue · Nov 10th, 2026"); the title "Daily Practice" or "Daily"; on the
+// right the HOME streak line (desktop) or the streak pill (phone, CSS). Both forms of the date and of the title are in
+// the page; fitDailyHeader() shows the long ones only where they fit on one line. Screen readers always hear
+// "Daily Practice" (the visible title spans are hidden from them).
 var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 function ordinal(n){ var v = n % 100, s = ['th','st','nd','rd']; return n + (s[(v - 20) % 10] || s[v] || s[0]); }
 function dailyHeader(){
   var d = new Date(), dn = todayName(), m = MONTHS[d.getMonth()], tail = ordinal(d.getDate()) + ', ' + d.getFullYear();
-  return '<header class="page-head daily-head"><div class="page-head-main"><h1 class="page-title">Daily</h1></div>' +
-    '<div class="page-head-right"><time class="eyebrow daily-date" datetime="' + todayISO() + '">' +
+  return '<header class="page-head daily-head"><div class="page-head-main">' +
+    '<time class="eyebrow page-eyebrow daily-date" datetime="' + todayISO() + '">' +
     '<span class="daily-date-long">' + DAY_FULL[dn] + ' &middot; ' + m + ' ' + tail + '</span>' +
-    '<span class="daily-date-short">' + dn + ' &middot; ' + m.slice(0, 3) + ' ' + tail + '</span></time></div></header>';
+    '<span class="daily-date-short">' + dn + ' &middot; ' + m.slice(0, 3) + ' ' + tail + '</span></time>' +
+    '<h1 class="page-title daily-title"><span class="daily-title-long" aria-hidden="true">Daily Practice</span>' +
+    '<span class="daily-title-short" aria-hidden="true">Daily</span><span class="daily-sr">Daily Practice</span></h1></div>' +
+    '<div class="page-head-right">' + streakLine() + streakPill() + '</div></header>';
 }
 
-// Slice 4.10c (D152 point 16; D133 point 3): the count as a thin bar under the day buttons, "n of N practiced" and the
-// minutes; another day (read-only) shows the minutes only. The fill width comes from a class (twelfths), never a style.
-function sessionProgress(day, editable){
-  var plan = sessionPlan(day, state.phaseIndex), min = 0, done = 0;
-  plan.forEach(function(b){ min += b.min || 0; if(isBlockPracticed(b.name, day)) done++; });
-  var minHtml = min ? '<span class="daily-progress-min">' + min + ' min</span>' : '';
-  if(!editable) return minHtml ? '<div class="daily-progress ro"><div class="daily-progress-text">' + minHtml + '</div></div>' : '';
-  var n = plan.length, fill = n ? Math.round(done * 12 / n) : 0;
-  return '<div class="daily-progress"><div class="daily-progress-text"><span class="daily-progress-count">' + done + ' of ' + n + ' practiced</span>' + minHtml + '</div>' +
-    '<div class="daily-progress-bar" role="progressbar" aria-label="Blocks practiced" aria-valuemin="0" aria-valuemax="' + n + '" aria-valuenow="' + done + '" aria-valuetext="' + done + ' of ' + n + ' practiced">' +
-    '<span class="daily-progress-fill f' + fill + '"></span></div></div>';
+// Slice 4.10h (D162 point 4): the long title and the long date only where they fit on one line beside the right-hand
+// side, measured on the page (not by device). Runs after every render, whenever the header changes size (window
+// resize, the DAILY page becoming visible) and once the web fonts have loaded. Reads the layout only; writes nothing.
+var headObserver = null, fontsHooked = false;
+export function fitDailyHeader(){
+  var head = document.querySelector('#panel-daily .daily-head');
+  if(!head || !head.offsetWidth) return; // not on screen: measured when it becomes visible
+  head.classList.remove('fit-short-title', 'fit-short-date');
+  var right = head.querySelector('.page-head-right');
+  var gap = parseFloat(getComputedStyle(head).columnGap) || 0;
+  var room = head.clientWidth - (right ? right.getBoundingClientRect().width + gap : 0) - 2;
+  var longTitle = head.querySelector('.daily-title-long'), longDate = head.querySelector('.daily-date-long');
+  if(longTitle && longTitle.getBoundingClientRect().width > room) head.classList.add('fit-short-title');
+  if(longDate && longDate.getBoundingClientRect().width > room) head.classList.add('fit-short-date');
+  head.classList.add('fitted');
+}
+export function watchDailyHeader(){
+  var head = document.querySelector('#panel-daily .daily-head');
+  if(headObserver) headObserver.disconnect();
+  if(head && typeof ResizeObserver === 'function'){
+    headObserver = new ResizeObserver(function(){ fitDailyHeader(); });
+    headObserver.observe(head);
+  }
+  if(!fontsHooked && document.fonts){
+    fontsHooked = true;
+    if(document.fonts.ready) document.fonts.ready.then(fitDailyHeader);
+    if(document.fonts.addEventListener) document.fonts.addEventListener('loadingdone', fitDailyHeader);
+  }
+  fitDailyHeader();
 }
 
 // Slice 4.10c (D152 point 16): the phase and its label inside the block that carries the phase content.
@@ -237,11 +265,12 @@ function renderSession(day, editable){
 export function renderDaily(){
   var day=ui.dayOverride||todayName();
   var editable=(day===activeDay());
-  // Slice 4.10c (D152 points 14, 16, 17): header, day buttons and the count bar use the full width; then the session
-  // and the companion column share it 3 : 2 (the companion goes under the session on narrower windows, CSS).
+  // Slice 4.10h (D162 points 2 and 3): the header uses the full width; under it the first column holds the day buttons
+  // and the session, and the companion column sits beside it (3 : 2, from 1180 px) starting level with the day buttons,
+  // or under the session on narrower windows (CSS). No count bar or count text.
   var html=dailyHeader();
-  html+='<div class="daily-top">'+dayPicker(day)+sessionProgress(day,editable)+'</div>';
   html+='<div class="daily-cols"><div class="daily-main">';
+  html+='<div class="daily-top">'+dayPicker(day)+'</div>';
   // Slice 4.7b (D135): the session area is what follows the finger when swiping between days on the phone.
   html+='<div class="daily-swipe">'+renderSession(day,editable)+'</div>';
   html+='</div>'+renderDailySide(day)+'</div>';

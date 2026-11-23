@@ -19,16 +19,16 @@
 // Slice 4.2a (D119, D25): the Technique phase bar sits at the top of HOME instead of the top of every page.
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
 import { state } from "../store.js?v=5";
-import { totalStreak, currentStreak } from "../logic/dates.js?v=7";
-import { renderRails } from "./rails.js?v=21";
-import { pageHeader, icon } from "./shell.js?v=19";
+import { renderRails } from "./rails.js?v=22";
+import { streakLine, streakPill } from "./streak.js?v=1";
+import { pageHeader, icon } from "./shell.js?v=20";
 import { DAY_FULL } from "../data/days.js?v=1";
 import { todayName, activeDay } from "../logic/dates.js?v=7";
-import { renderStreakCalendar } from "./calendar.js?v=36";
+import { renderStreakCalendar } from "./calendar.js?v=37";
 
 import { IMPROV_GATES } from "../data/improv.js?v=4";
-import { sessionPlan, isBlockPracticed } from "../logic/daily.js?v=36";
-import { improvKeyOfDay } from "./improv.js?v=27";
+import { sessionPlan, isBlockPracticed } from "../logic/daily.js?v=37";
+import { improvKeyOfDay } from "./improv.js?v=28";
 
 function esc(t){ return String(t).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]; }); }
 
@@ -68,14 +68,13 @@ function todayImprov(){
 export function renderHome(){
   var now=new Date(), MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   var dateLine=DAY_FULL[todayName()]+' \u00b7 '+now.getDate()+' '+MON[now.getMonth()];
-  var streak=currentStreak(), logged=totalStreak();
   // Phone header (slice 4.5b2, D128).
   var html='<header class="home-phone-head"><div class="home-phone-brand"><div class="brand home-brand">THE <span>SHRED</span> <small>ROADMAP</small></div>'+
     '<div class="home-date">'+dateLine+'</div></div>'+
-    '<div class="streak-pill" aria-label="'+streak+'-day streak">'+icon("flame")+'<strong>'+streak+'</strong></div></header>';
+    streakPill()+'</header>';
   // Desktop header: the streak on the right (D129).
-  var streakLine='<span class="home-streak">'+icon("flame")+'<strong class="streak-run">'+streak+'</strong> '+(streak===1?'day':'days')+' in a row \u00b7 <span class="streak-logged">'+logged+'</span> logged</span>';
-  html+=pageHeader(dateLine,'Home',streakLine);
+  // Slice 4.10h (D162 point 5): the line is shared with DAILY (views/streak.js), with even word spaces.
+  html+=pageHeader(dateLine,'Home',streakLine());
   // D127 (owner): on desktop the rails live only in the sidebar; the Progress card shows on the phone.
   html+='<div class="card home-progress"><h3>Progress</h3>'+renderRails('home')+'</div>';
 

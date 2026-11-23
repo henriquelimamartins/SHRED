@@ -23,18 +23,18 @@
 import { ui } from "./ui.js?v=2";
 import { BHGS_PACK } from "./pack.js?v=1";
 import { ensureDailyReset } from "./logic/dates.js?v=7";
-import { initCalCarousel } from "./views/calendar.js?v=36";
-import { renderHome } from "./views/home.js?v=36";
-import { renderTechnique } from "./views/technique.js?v=22";
-import { renderDaily } from "./views/daily.js?v=36";
-import { renderImprov } from "./views/improv.js?v=27";
-import { renderLibrary } from "./views/library.js?v=36";
-import { renderSetup } from "./views/setup.js?v=26";
-import { renderDojoView } from "./views/dojo.js?v=27";
-import { renderRails } from "./views/rails.js?v=21";
-import { renderAccount } from "./views/account.js?v=20";
-import { renderMore } from "./views/more.js?v=18";
-import { icon, sidebarLogo, sidebarMenu, accountRow, syncState } from "./views/shell.js?v=19";
+import { initCalCarousel } from "./views/calendar.js?v=37";
+import { renderHome } from "./views/home.js?v=37";
+import { renderTechnique } from "./views/technique.js?v=23";
+import { renderDaily, watchDailyHeader } from "./views/daily.js?v=37";
+import { renderImprov } from "./views/improv.js?v=28";
+import { renderLibrary } from "./views/library.js?v=37";
+import { renderSetup } from "./views/setup.js?v=27";
+import { renderDojoView } from "./views/dojo.js?v=28";
+import { renderRails } from "./views/rails.js?v=22";
+import { renderAccount } from "./views/account.js?v=21";
+import { renderMore } from "./views/more.js?v=19";
+import { icon, sidebarLogo, sidebarMenu, accountRow, syncState } from "./views/shell.js?v=20";
 
 export function initAppLayout() {
   var root = document.getElementById("root");
@@ -158,6 +158,8 @@ export function render(){
        }
        p.scrollTop = tops[p.id] || 0;
     });
+    // Slice 4.10h (D162 point 4): DAILY shows its long title and date only where they fit on one line (measured).
+    watchDailyHeader();
     
     initCalCarousel();
 

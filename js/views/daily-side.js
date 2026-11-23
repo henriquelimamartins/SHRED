@@ -1,4 +1,6 @@
 // DAILY companion column (slice 4.7, D132 point 1, D133 points 4-5): MICRO-DOSES and KEY.
+// Slice 4.10h (D162 point 1; AUDIT-4.10 point 24): KEY first, MICRO-DOSES under it and only when the day on screen has a
+// micro-dose (Mon-Fri from Phase 1); none on Saturday, Sunday or in Phase 0; the Friday card without its last sentence.
 // Desktop only (hidden on the phone by CSS, D133 point 2). Everything here only reads the state; the key picked
 // on the circle lives in `ui.dailyKey` (page state, back to today's key on reload) and is never saved.
 import { PHASES, ESSENTIAL, ESSENTIAL_URL } from "../data/bhgs.js?v=1";
@@ -7,7 +9,7 @@ import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=2";
 import { BHGS_PACK } from "../pack.js?v=1";
 import { todayName, isWeekendDay, localISO } from "../logic/dates.js?v=7";
-import { improvKeyOfDay } from "./improv.js?v=27";
+import { improvKeyOfDay } from "./improv.js?v=28";
 
 function svg(path, cls){
   return '<svg class="ico' + (cls ? ' ' + cls : '') + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + path + '"></path></svg>';
@@ -31,31 +33,28 @@ function weekDates(){
   return WEEK.map(function(_, i){ return localISO(new Date(d.getFullYear(), d.getMonth(), d.getDate() - back + i)); });
 }
 
-// ---------- MICRO-DOSES (D133 point 4) ----------
+// ---------- MICRO-DOSES (D133 point 4; slice 4.10h, D162 point 1) ----------
+// A day has a micro-dose from Monday to Friday, outside Phase 0 (Setup).
+function hasMicroDose(day){ return PHASES[state.phaseIndex].kind !== "setup" && !isWeekendDay(day); }
 function microCard(day){
   var today = todayName(), isToday = day === today;
-  var setup = PHASES[state.phaseIndex].kind === "setup"; // Phase 0 (Setup) has no micro-dose
-  var none = setup || isWeekendDay(day);
   var html = '<section class="daily-card daily-micro-card" aria-label="Micro-doses this week">' +
     '<div class="dc-head"><span class="dc-label red">Micro-doses &middot; 5 min a day</span><span class="dc-aside">Mon &ndash; Fri</span></div>';
-  if(none){
-    html += '<p class="dc-none">' + (isToday ? 'No micro-dose today' : 'No micro-dose on ' + DAY_FULL[day]) + '</p>';
-  } else {
-    var name = ESSENTIAL[day], url = ESSENTIAL_URL[name];
-    var whose = isToday ? "Today's micro-dose" : DAY_FULL[day] + "'s micro-dose";
-    var line = day === "Fri" ? "The whole Focused block reinforces your weakest skill" : whose + ", at the end of the Focused block";
-    html += '<div class="dc-front"><span class="dc-front-ic">' + svg(MICRO_ICONS[name]) + '</span><div class="dc-front-text"><div class="dc-front-name">' + name + '</div><div class="dc-front-line">' + line + '</div></div></div>';
-    if(url) html += '<a class="dc-btn red" href="' + url + '" target="_blank" rel="noopener">' + svg(OPEN) + (isToday ? "Open today's video" : 'Open ' + DAY_FULL[day] + "'s video") + '</a>';
-  }
+  var name = ESSENTIAL[day], url = ESSENTIAL_URL[name];
+  var whose = isToday ? "Today's micro-dose" : DAY_FULL[day] + "'s micro-dose";
+  var line = day === "Fri" ? "The whole Focused block reinforces your weakest skill" : whose + ", at the end of the Focused block";
+  html += '<div class="dc-front"><span class="dc-front-ic">' + svg(MICRO_ICONS[name]) + '</span><div class="dc-front-text"><div class="dc-front-name">' + name + '</div><div class="dc-front-line">' + line + '</div></div></div>';
+  if(url) html += '<a class="dc-btn red" href="' + url + '" target="_blank" rel="noopener">' + svg(OPEN) + (isToday ? "Open today's video" : 'Open ' + DAY_FULL[day] + "'s video") + '</a>';
   var dates = weekDates(), logged = state.streakDates || [];
   html += '<div class="dc-week">' + WEEK.map(function(d, i){
-    var name = ESSENTIAL[d], ticked = logged.indexOf(dates[i]) >= 0, cur = !none && d === day;
+    var name = ESSENTIAL[d], ticked = logged.indexOf(dates[i]) >= 0, cur = d === day;
     var label = DAY_FULL[d] + ': ' + name + (ticked ? ', practised' : '');
     return '<div class="dc-tile' + (cur ? ' cur' : '') + (ticked ? ' ticked' : '') + '" data-day="' + d + '" role="img" aria-label="' + label + '">' +
       '<span class="dc-tile-day">' + d + '</span><span class="dc-tile-ic">' + svg(ticked ? TICK : MICRO_ICONS[name], ticked ? 'tick' : '') + '</span>' +
       '<span class="dc-tile-name">' + name + '</span></div>';
   }).join('') + '</div>';
-  html += '<p class="dc-foot">Friday has no separate video: the whole Focused block reinforces your weakest skill. A tick = a day you practised.</p>';
+  // The Friday card leaves out this sentence (owner, AUDIT-4.10 point 24): its own line already says it.
+  if(day !== "Fri") html += '<p class="dc-foot">Friday has no separate video: the whole Focused block reinforces your weakest skill. A tick = a day you practised.</p>';
   return html + '</section>';
 }
 
@@ -155,6 +154,7 @@ function keyCard(){
 }
 
 export function renderDailySide(day){
+  // Slice 4.10h (D162 point 1): KEY first; MICRO-DOSES under it, only on a day with a micro-dose.
   // With the BHGS pack off the micro-doses (BHGS content, D113) are left out; the KEY card stays.
-  return '<aside class="daily-side">' + (BHGS_PACK ? microCard(day) : '') + keyCard() + '</aside>';
+  return '<aside class="daily-side">' + keyCard() + (BHGS_PACK && hasMicroDose(day) ? microCard(day) : '') + '</aside>';
 }
