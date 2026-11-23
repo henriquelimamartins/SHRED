@@ -22,7 +22,7 @@ test('there is no splash screen and the installed app uses the dark colours', as
   const manifest = await page.evaluate(async () => (await fetch('./manifest.json')).json());
   expect(manifest.background_color).toBe('#0D0D0F');
   expect(manifest.theme_color).toBe('#0D0D0F');
-  expect(manifest.icons.map(i => i.src)).toEqual(['icon-192.png', 'icon-512.png']);
+  expect(manifest.icons.map(i => i.src)).toEqual(['icon-192.png', 'icon-512.png', 'icon-maskable-512.png']);
   expect(monitor.pageErrors).toEqual([]);
   expect(unexpectedConsoleErrors(monitor)).toEqual([]);
 });
