@@ -54,7 +54,7 @@ for (const signed of ['out', 'in']) {
     }
     // Open the Library sections and the Dojo Codex too, so their content is drawn.
     await goTo(page, 'library');
-    for (const acc of ['theory', 'expression', 'listening', 'creative', 'bonuslib', 'guide']) {
+    for (const acc of ['theory', 'listening', 'creative', 'bonuslib', 'documents', 'guide']) {
       await page.locator(`#panel-library [data-acc="${acc}"]`).first().click();
     }
     // Slice 4.3: the TECHNIQUE page's other phases, Essential Skills and Phase settings.

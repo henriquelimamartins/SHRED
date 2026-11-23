@@ -1156,6 +1156,12 @@ button.tech-phase{width:100%;text-align:left;color:var(--text);font:inherit;curs
 #panel-library .chev{display:flex;color:var(--muted);}
 #panel-library .lib-chev{width:18px;height:18px;flex:0 0 18px;}
 #panel-library .lib-body{padding:0 18px 18px;margin:0;border:0;}
+/* Slice 4.10k (D165): two groups, side by side from 1180 px (the pack column is hidden without the pack). */
+#panel-library .lib-cols{display:grid;grid-template-columns:minmax(0,1fr);gap:28px;align-items:start;}
+@media (min-width:1180px){ #panel-library .lib-cols{grid-template-columns:minmax(0,1fr) minmax(0,1fr);} }
+#panel-library .lib-col{min-width:0;}
+#panel-library .lib-col-title{margin-bottom:4px;}
+#panel-library .lib-col-sub{margin:0 0 10px;font-size:12px;color:var(--muted);}
 #panel-library .lib-groups{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(280px,100%),1fr));gap:14px;align-items:start;}
 #panel-library .lib-groups-wide, #panel-library .lib-groups-guide{grid-template-columns:repeat(auto-fill,minmax(min(380px,100%),1fr));}
 #panel-library .lib-group{min-width:0;background:var(--sunk);border:1px solid var(--line);border-radius:12px;padding:14px 16px 6px;box-sizing:border-box;}

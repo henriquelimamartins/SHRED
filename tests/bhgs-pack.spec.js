@@ -62,11 +62,11 @@ test('pack off: HOME hides the Technique rail, phase %, Phase Transition Test an
   await expect(home.locator('.home-key')).toBeAttached();
 });
 
-test('pack off: LIBRARY keeps Expression Track, Listening Vault and the guide, with a pack-free guide text', async ({ page }) => {
+test('pack off: LIBRARY keeps Listening Vault and the guide (4.10k: no Expression Track), with a pack-free guide text', async ({ page }) => {
   await openApp(page, { bhgsPack: false });
   await openView(page, 'library');
-  const accs = await page.locator('#panel-library > .panel-content > .acc > .acchead').evaluateAll((h) => h.map((x) => x.dataset.acc));
-  expect(accs).toEqual(['expression', 'listening', 'guide']);
+  const accs = await page.locator('#panel-library .acc > .acchead').evaluateAll((h) => h.map((x) => x.dataset.acc));
+  expect(accs).toEqual(['listening', 'guide']);
   await page.locator('#panel-library [data-acc="guide"]').click();
   await expect(page.locator('#panel-library')).toContainText('How This App Works');
   await expect(page.locator('#panel-library')).not.toContainText('Weekly Rhythm');
@@ -80,13 +80,13 @@ test('pack off: DAILY still opens without errors (its content without the pack c
   expect(monitor.pageErrors).toEqual([]);
 });
 
-test('pack off: phone bar shows LIBRARY instead of keeping it in More (D119 point 6)', async ({ page, isMobile }) => {
+test('pack off, phone: the bar has no LIBRARY; More lists it under Resources (4.10k, D165 supersedes D120 point 2)', async ({ page, isMobile }) => {
   test.skip(!isMobile, 'phone bar');
   await openApp(page, { bhgsPack: false });
   const views = await page.locator('#botnav [data-action="go"]').evaluateAll((b) => b.map((x) => x.dataset.view));
-  expect(views).toEqual(['home', 'daily', 'improv', 'dojo', 'library']);
+  expect(views).toEqual(['home', 'daily', 'improv', 'dojo']);
   await page.locator('#botnav [data-action="more"]').click();
-  await expect(page.locator('#panel-more [data-view="library"]')).toHaveCount(0);
+  await expect(page.locator('#panel-more [data-view="library"]')).toHaveCount(1);
   await expect(page.locator('#panel-more [data-view="setup"]')).toHaveCount(1);
 });
 

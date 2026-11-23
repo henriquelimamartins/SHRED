@@ -8,7 +8,7 @@ import { saveState, state, backupBeforeReplace, newerSchema, NEWER_SCHEMA_MSG } 
 import { ui, showToast } from "../ui.js?v=2";
 import { todayISO, ensureDailyReset, updateStreakStatus } from "./dates.js?v=7";
 import { isFullyDoneToday } from "./daily.js?v=39";
-import { render } from "../render.js?v=39";
+import { render } from "../render.js?v=40";
 
 export function k(){return Array.prototype.slice.call(arguments).join(".");}
 

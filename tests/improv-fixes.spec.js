@@ -31,7 +31,7 @@ test('the 4-fret box spans match the verifier for all 12 keys and 5 boxes', asyn
   expect(got).toEqual(BOXES);
 });
 
-test('today (fixed clock, C# minor): the B string and box 5 of C# minor at frets 6–9, also in LIBRARY', async ({ page }) => {
+test('today (fixed clock, C# minor): the B string and box 5 of C# minor at frets 6–9', async ({ page }) => {
   await openApp(page);
   await openView(page, 'improv');
   await expect(exercise(page, '1. One-String Doom').locator('.ex-line-rule .ex-today')).toHaveText('B');
@@ -39,10 +39,6 @@ test('today (fixed clock, C# minor): the B string and box 5 of C# minor at frets
   await expect(box).toContainText('Stay strictly between frets 6 and 9 today: box 5 of the C# minor pentatonic (the box changes from day to day).');
   await expect(box.locator('.ex-today')).toHaveText(['6 and 9', 'box 5 of the C# minor pentatonic']);
   await expect(imp(page)).not.toContainText('{');
-  await openView(page, 'library');
-  await page.locator('#panel-library [data-acc="expression"]').click();
-  await page.locator('#panel-library [data-acc="libGate0"]').click();
-  await expect(page.locator('#panel-library li.mrow', { hasText: '2. The 4-Fret Box' })).toContainText('frets 6 and 9 today');
 });
 
 test('another day moves the key, the box and (every 12 days) the string', async ({ page }) => {

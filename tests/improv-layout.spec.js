@@ -1,4 +1,4 @@
-// Slice 4.8c (D132 point 3, D139): IMPROVISATION as drawn on the 4.6 boards, and the Expression Track in LIBRARY
+// Slice 4.8c (D132 point 3, D139): IMPROVISATION as drawn on the 4.6 boards, and (until 4.10k) the Expression Track in LIBRARY
 // showing the same exercise lines. Behaviour (marks, Unlock, stored keys, the key of the day) is covered by improv.spec.js.
 const { test, expect } = require('@playwright/test');
 const { openApp, openView, localSaved, cloudWrites, unexpectedConsoleErrors } = require('./support/app');
@@ -216,20 +216,7 @@ test('all 5 Gates done: the mastered card with an icon and every Gate as a passe
   await expect(imp(page).locator('.improv-target, .improv-gate')).toHaveCount(0);
 });
 
-test('LIBRARY Expression Track shows the same lines and listening box as IMPROVISATION', async ({ page }) => {
-  await openApp(page);
-  await openView(page, 'improv');
-  const onImprov = await lines(exercise(page, '3. The Singing Acoustic Slide'));
-  const listenImprov = await exercise(page, '3. The Singing Acoustic Slide').locator('.ex-listen').textContent();
-  await openView(page, 'library');
-  const lib = page.locator('#panel-library');
-  await lib.locator('[data-acc="expression"]').click();
-  await lib.locator('[data-acc="libGate0"]').click();
-  const ex = lib.locator('li.mrow', { hasText: '3. The Singing Acoustic Slide' });
-  expect(await lines(ex)).toEqual(onImprov);
-  await expect(ex.locator('.ex-listen')).toHaveText(listenImprov);
-  await expect(lib).not.toContainText('Key:');
-});
+// Slice 4.10k (D165): the LIBRARY copy of the Expression Track was removed (D107 point 5); its test went with it.
 
 test('showing the page writes nothing (signed in too); no sideways overflow; no errors', async ({ page }) => {
   const monitor = await openApp(page, { user: TEST_USER, docs: { [USER_DOC]: baseState({ improvIndex: 1, improvChecks: allMastered(0, 4) }) } });

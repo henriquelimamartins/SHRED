@@ -9,7 +9,6 @@ const { baseState, TEST_USER, USER_DOC } = require('./support/fixtures');
 test.use({ timezoneId: 'Europe/Lisbon' });
 
 const improv = (page) => page.locator('#panel-improv');
-const library = (page) => page.locator('#panel-library');
 const toast = (page) => page.locator('#toast');
 
 // Gate titles and exercise counts on main.
@@ -156,42 +155,17 @@ test.describe('daily transposition target', () => {
   }
 });
 
-test.describe('Expression Track in Library (same marks)', () => {
-  test('a mark made in Library shows in IMPROV and vice versa', async ({ page }) => {
+// Slice 4.10k (D165): the Expression Track left LIBRARY (it lives here). The Library-side tests went with it (D107 point 5);
+// the marks are checked here on this page only.
+test.describe('Marks on IMPROV (saved and shown again)', () => {
+  test('a mark made on IMPROV is saved and still shown after a reload', async ({ page }) => {
     await openApp(page);
-    await goTo(page, 'library');
-    await library(page).locator('[data-acc="expression"]').click();
-    await library(page).locator('[data-acc="libGate0"]').click();
-    await masteryBtn(library(page), 0, 1).click();
-    await expect(masteryBtn(library(page), 0, 1)).toHaveText('✓ Mastered');
     await goTo(page, 'improv');
+    await masteryBtn(improv(page), 0, 1).click();
     await expect(masteryBtn(improv(page), 0, 1)).toHaveText('✓ Mastered');
     expect((await localSaved(page)).improvChecks).toEqual({ g0e1: true });
-  });
-
-  test('current behaviour: exercises of a locked gate can be marked from Library', async ({ page }) => {
-    await openApp(page);
-    await goTo(page, 'library');
-    await library(page).locator('[data-acc="expression"]').click();
-    await library(page).locator('[data-acc="libGate4"]').click();
-    await masteryBtn(library(page), 4, 0).click();
-    const saved = await localSaved(page);
-    expect(saved.improvChecks).toEqual({ g4e0: true });
-    expect(saved.improvIndex).toBe(0);
+    await page.reload();
     await goTo(page, 'improv');
-    await expect(lockedRow(page, 5, 'Total Audiation')).toBeVisible();
-  });
-
-  test('current behaviour: un-marking an exercise of a passed gate does not lock that gate again', async ({ page }) => {
-    await openApp(page, { localState: baseState({ improvIndex: 1, improvChecks: allMastered(0, 4) }) });
-    await goTo(page, 'library');
-    await library(page).locator('[data-acc="expression"]').click();
-    await library(page).locator('[data-acc="libGate0"]').click();
-    await masteryBtn(library(page), 0, 0).click();
-    const saved = await localSaved(page);
-    expect(saved.improvChecks.g0e0).toBe(false);
-    expect(saved.improvIndex).toBe(1);
-    await goTo(page, 'improv');
-    await expect(gateCard(page, 'Gate 2 · The Chord Tone Architect')).toBeVisible();
+    await expect(masteryBtn(improv(page), 0, 1)).toHaveText('✓ Mastered');
   });
 });

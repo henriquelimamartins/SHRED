@@ -35,12 +35,10 @@ export function renderMore(){
   var acct = '<button class="more-acct" data-action="go" data-view="account" aria-label="Account and data">' + avatar("md") + '</button>';
   var html = pageHeader("Resources &amp; account", "More", acct);
 
-  // With the BHGS pack off LIBRARY sits in the phone bar, so RESOURCES would be empty until the Explorer exists.
-  if(BHGS_PACK){
-    html += group("resources", "Resources", [
-      row('data-action="go" data-view="library"', "Library", "Theory Track, Expression Track, Listening Vault &amp; guide")
-    ]);
-  }
+  // Slice 4.10k (D165): LIBRARY is in More with or without the pack; without it the rows are Listening Vault and the guide.
+  html += group("resources", "Resources", [
+    row('data-action="go" data-view="library"', "Library", BHGS_PACK ? "Theory Track, Documents, Listening Vault &amp; guide" : "Listening Vault &amp; guide")
+  ]);
   html += group("tools", "Tools", [
     row('data-action="go" data-view="setup"', "Guitar setup", esc(setupLine()))
   ]);

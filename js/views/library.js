@@ -1,4 +1,9 @@
 // LIBRARY view.
+// Slice 4.10k (D165, AUDIT-4.10 point 20): LIBRARY = resources. Two groups as drawn on the canvas "ronda de design 4.10"
+// (Library-desktop): "Listening & guide" (Listening Vault, Guide & Info) and "BHGS pack" (Theory Track, Creative, Bonus
+// Content, Documents), side by side from 1180 px, stacked below; the BHGS group is hidden with the pack off. The Expression
+// Track leaves (it lives on IMPROVISATION). Listening Vault content unchanged (rewritten in Phase 7). "‹ More" on the phone:
+// LIBRARY is reached from MORE with or without the pack.
 // Slice 4.8a (D132 point 4, D137): LIBRARY as drawn on the 4.6 boards. Each section is a card row that opens in place
 // (a button with aria-expanded); inside, groups are cards side by side on desktop and stacked on the phone; Watched
 // marks are pills; documents show a file icon and their kind; the Listening Vault uses the app red (purple only for the
@@ -11,8 +16,6 @@
 // the Weekly Rhythm and the BHGS guide text are hidden; Expression Track, Listening Vault and the guide stay.
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
 import { CREATIVE, THEORY_DOCS, THEORY_ROOT_ITEMS, THEORY_GROUPS, WEEKLY_RHYTHM } from "../data/bhgs.js?v=1";
-import { IMPROV_GATES } from "../data/improv.js?v=4";
-import { exerciseLines, listenBox, masteryButton } from "./improv.js?v=30";
 import { LISTENING_VAULT } from "../data/listening.js?v=1";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=2";
@@ -53,9 +56,13 @@ function group(title, inner, cls){
   return '<div class="lib-group' + (cls ? ' ' + cls : '') + '">' + (title ? '<h3>' + title + '</h3>' : '') + inner + '</div>';
 }
 
+// Slice 4.10k: the two PDFs are listed under Documents (their own section), not under Theory Track.
+function documentsBody(){
+  return '<div class="lib-groups">' + group('', '<ul class="check">' + THEORY_DOCS.map(function(d){ return docRow(d.t, d.url); }).join('') + '</ul>', 'lib-group-docs') + '</div>';
+}
+
 function theoryBody(){
-  var first = THEORY_DOCS.map(function(d){ return docRow(d.t, d.url); }).join('') +
-    THEORY_ROOT_ITEMS.map(function(t){ return watchItem(t.t, t.key, t.url); }).join('');
+  var first = THEORY_ROOT_ITEMS.map(function(t){ return watchItem(t.t, t.key, t.url); }).join('');
   var html = group('Start Here', '<ul class="check">' + first + '</ul>');
   THEORY_GROUPS.forEach(function(g){
     var rows = (g.docs || []).map(function(d){ return docRow(d.t, d.url); }).join('') +
@@ -63,35 +70,6 @@ function theoryBody(){
     html += group(g.title, '<ul class="check">' + rows + '</ul>');
   });
   return '<div class="lib-groups">' + html + '</div>';
-}
-
-function expressionBody(){
-  var html = '';
-  IMPROV_GATES.forEach(function(g, i){
-    var acc = 'libGate' + i, gateOpen = !!ui.lib[acc];
-    html += '<div class="acc lib-gate' + (gateOpen ? ' open' : '') + '">' +
-      '<button type="button" class="acchead lib-gate-head" data-action="toggleacc" data-acc="' + acc + '" aria-expanded="' + gateOpen + '">' +
-      '<b class="improv">Gate ' + (i + 1) + ': ' + g.title + '</b><span class="acc-right"><span class="chev' + (gateOpen ? ' open' : '') + '">' +
-      libIcon('chevron', 'lib-chev') + '</span></span></button>';
-    if(gateOpen){
-      html += '<div class="accbody lib-gate-body">';
-      html += '<p class="lib-gate-desc">' + g.desc + '</p>';
-      html += '<ul class="check">';
-      g.exercises.forEach(function(ex, j){
-        // Slice 4.8c (D139 point 5): the same lines, button and listening box as IMPROVISATION (shared helpers).
-        html += '<li class="mrow mrow-stack">' +
-          '<div class="ex-head">' +
-            '<b class="ex-title">' + ex.t + '</b>' +
-            '<div class="ex-btn">' + masteryButton(i, j) + '</div>' +
-          '</div>' +
-          exerciseLines(ex) + listenBox(ex) +
-          '</li>';
-      });
-      html += '</ul></div>';
-    }
-    html += '</div>';
-  });
-  return '<div class="lib-gates">' + html + '</div>';
 }
 
 function listeningBody(){
@@ -137,7 +115,7 @@ function guideBody(){
   }
   html += group('How This App Works', paras([
     'The app rests on two pillars: Improvisation and Theory. DAILY tells you what to practise each day; HOME shows today\'s session, your streak and the calendar.',
-    'Improvisation has its own track: on the IMPROV page you work through 5 Gates, playing every exercise in the key of the day. Exercises you have marked Mastered come back as a short review in DAILY\'s Improvisation block. Here in LIBRARY, the Expression Track lists the same exercises and the Listening Vault gathers listening references.',
+    'Improvisation has its own track: on the IMPROV page you work through 5 Gates, playing every exercise in the key of the day. Exercises you have marked Mastered come back as a short review in DAILY\'s Improvisation block. Here in LIBRARY, the Listening Vault gathers listening references.',
     'Theory is always open: it never locks anything in Improvisation.',
     'The Musical Development rails show where you stand in each pillar, each counted on its own.'
   ]), 'lib-group-text');
@@ -145,19 +123,27 @@ function guideBody(){
 }
 
 export function renderLibrary(){
-  // Phone with the pack on: LIBRARY is reached from MORE, so the board shows "‹ More" instead of the eyebrow.
-  var html = BHGS_PACK ? backToMore() : '';
+  // Slice 4.10k: LIBRARY is reached from MORE on the phone, with or without the pack, so "‹ More" always shows there.
+  var html = backToMore();
   html += pageHeader('Reference &amp; Review', 'Library');
   html += '<p class="lede lib-lede">Browse and check off any item, anytime - it all counts toward the same progress as Daily Practice.</p>';
 
-  if(BHGS_PACK) html += section('theory', 'Theory Track', 'Intervals, Modes &amp; Chords', theoryBody);
-  html += section('expression', 'Expression Track', 'The 5 Gates', expressionBody, 'lib-sec-improv');
-  html += section('listening', 'Listening Vault', 'Inspiration &amp; Refs', listeningBody);
+  var left = '<div class="lib-col">' +
+    '<div class="gh lib-col-title">Listening &amp; guide</div>' +
+    section('listening', 'Listening Vault', 'Inspiration &amp; Refs', listeningBody) +
+    section('guide', 'Guide &amp; Info', 'App Instructions', guideBody) +
+    '</div>';
+  var right = '';
   if(BHGS_PACK){
-    html += section('creative', 'Creative', 'Songwriting &amp; Production', creativeBody);
-    html += section('bonuslib', 'Bonus Content', 'Extras &amp; Workouts', bonusBody);
+    right = '<div class="lib-col lib-col-pack">' +
+      '<div class="gh lib-col-title">BHGS pack</div>' +
+      '<p class="lib-col-sub">Bradley Hall\'s Guitar School · Patreon</p>' +
+      section('theory', 'Theory Track', 'Intervals, Modes &amp; Chords', theoryBody) +
+      section('creative', 'Creative', 'Songwriting &amp; Production', creativeBody) +
+      section('bonuslib', 'Bonus Content', 'Extras &amp; Workouts', bonusBody) +
+      section('documents', 'Documents', 'Music Theory Cheat Sheet · Scales Handbook (PDF)', documentsBody) +
+      '</div>';
   }
-  html += '<hr class="divider lib-divider">';
-  html += section('guide', 'Guide &amp; Info', 'App Instructions', guideBody);
+  html += '<div class="lib-cols">' + left + right + '</div>';
   return html;
 }

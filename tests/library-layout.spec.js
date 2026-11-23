@@ -26,7 +26,7 @@ const GUIDE_PACK = [
 const CREDIT = "Technique content (phases, exercises, chop-builders, the Phase Transition Test, and the Technique blocks and micro-doses in DAILY) follows Bradley Hall's Guitar School (BHGS) Official Roadmap; the Theory Track, Creative and Bonus Content videos here in LIBRARY are BHGS lessons too. Video links open on Patreon and need a BHGS membership. The daily routine and the Improvisation and Theory pillars are this app's own.";
 const GUIDE_NOPACK = [
   "The app rests on two pillars: Improvisation and Theory. DAILY tells you what to practise each day; HOME shows today's session, your streak and the calendar.",
-  'Improvisation has its own track: on the IMPROV page you work through 5 Gates, playing every exercise in the key of the day. Exercises you have marked Mastered come back as a short review in DAILY\'s Improvisation block. Here in LIBRARY, the Expression Track lists the same exercises and the Listening Vault gathers listening references.',
+  'Improvisation has its own track: on the IMPROV page you work through 5 Gates, playing every exercise in the key of the day. Exercises you have marked Mastered come back as a short review in DAILY\'s Improvisation block. Here in LIBRARY, the Listening Vault gathers listening references.',
   'Theory is always open: it never locks anything in Improvisation.',
   'The Musical Development rails show where you stand in each pillar, each counted on its own.',
 ];
@@ -34,7 +34,7 @@ const GUIDE_NOPACK = [
 test('sections are buttons that say whether they are open, and open with the keyboard too', async ({ page }) => {
   await openApp(page);
   await openView(page, 'library');
-  const heads = lib(page).locator(':scope .panel-content > .acc > .acchead');
+  const heads = lib(page).locator('.acc > .acchead'); // slice 4.10k: sections sit in the two groups
   expect(await heads.evaluateAll((h) => h.map((x) => [x.tagName, x.getAttribute('aria-expanded')]))).toEqual(
     Array(6).fill(['BUTTON', 'false']));
   await head(page, 'listening').click();
@@ -46,15 +46,10 @@ test('sections are buttons that say whether they are open, and open with the key
   await expect(body(page, 'guide')).toBeVisible();
 });
 
-test('Expression Track: title in purple, its Gates as buttons inside; Listening Vault headings in the app red, no emoji', async ({ page }) => {
+test('Listening Vault headings in the app red, no emoji; the Expression Track is not in LIBRARY (4.10k)', async ({ page }) => {
   await openApp(page);
   await openView(page, 'library');
-  const color = (loc) => loc.evaluate((el) => getComputedStyle(el).color);
-  expect(await color(head(page, 'expression').locator('b'))).toBe('rgb(183, 156, 255)'); // purple tint
-  expect(await color(head(page, 'listening').locator('b'))).toBe('rgb(242, 242, 244)'); // plain text
-  await head(page, 'expression').click();
-  expect(await body(page, 'expression').locator('[data-acc^="libGate"]').evaluateAll((b) => b.map((x) => x.tagName + ':' + x.getAttribute('aria-expanded'))))
-    .toEqual(Array(5).fill('BUTTON:false'));
+  await expect(lib(page).locator('[data-acc="expression"]')).toHaveCount(0);
   await head(page, 'listening').click();
   const h3 = body(page, 'listening').locator('.lib-group h3');
   await expect(h3).toHaveCount(4);
@@ -64,25 +59,24 @@ test('Expression Track: title in purple, its Gates as buttons inside; Listening 
   await expect(body(page, 'listening').locator('.vault-title').first()).toHaveText('Tony Iommi (Black Sabbath)');
 });
 
-test('Theory Track documents show a file icon and their kind', async ({ page }) => {
+test('Documents (own section, pack on) show a file icon and their kind', async ({ page }) => {
   await openApp(page);
   await openView(page, 'library');
-  await head(page, 'theory').click();
-  const docs = body(page, 'theory').locator('.lib-doc');
-  await expect(docs.locator('svg')).toHaveCount(3);
-  expect(await docs.locator('.lib-doc-kind').allTextContents()).toEqual(['PDF', 'PDF', 'Doc']);
-  expect(await docs.locator('a').evaluateAll((as) => as.map((a) => a.getAttribute('target')))).toEqual(['_blank', '_blank', '_blank']);
+  await head(page, 'documents').click();
+  const docs = body(page, 'documents').locator('.lib-doc');
+  await expect(docs.locator('svg')).toHaveCount(2);
+  expect(await docs.locator('.lib-doc-kind').allTextContents()).toEqual(['PDF', 'PDF']);
+  expect(await docs.locator('a').evaluateAll((as) => as.map((a) => a.getAttribute('target')))).toEqual(['_blank', '_blank']);
 });
 
-test('groups sit side by side on desktop and stack on the phone', async ({ page, isMobile }) => {
+test('the two groups sit side by side on desktop and stack on the phone (4.10k)', async ({ page, isMobile }) => {
   await openApp(page);
   await openView(page, 'library');
-  await head(page, 'theory').click();
-  const boxes = await body(page, 'theory').locator('.lib-group').evaluateAll((g) => g.map((x) => x.getBoundingClientRect()).map((r) => ({ x: Math.round(r.x), y: Math.round(r.y) })));
-  expect(boxes).toHaveLength(4);
+  const boxes = await lib(page).locator('.lib-col').evaluateAll((g) => g.map((x) => x.getBoundingClientRect()).map((r) => ({ x: Math.round(r.x), y: Math.round(r.y) })));
+  expect(boxes).toHaveLength(2);
   if (isMobile) {
     expect(new Set(boxes.map((b) => b.x)).size).toBe(1);
-    for (let i = 1; i < boxes.length; i++) expect(boxes[i].y).toBeGreaterThan(boxes[i - 1].y);
+    expect(boxes[1].y).toBeGreaterThan(boxes[0].y);
   } else {
     expect(boxes[1].y).toBe(boxes[0].y);
     expect(boxes[1].x).toBeGreaterThan(boxes[0].x);
@@ -138,12 +132,12 @@ test('phone with the pack on: "‹ More" instead of the eyebrow, and it opens MO
   await expect(page.locator('#panel-more')).toHaveClass(/active/);
 });
 
-test('phone with the pack off: LIBRARY is in the bar, so no "‹ More"; the eyebrow stays', async ({ page, isMobile }) => {
+test('phone with the pack off: LIBRARY is in MORE, so "‹ More" shows as with the pack (4.10k)', async ({ page, isMobile }) => {
   test.skip(!isMobile, 'phone header');
   await openApp(page, { bhgsPack: false });
   await openView(page, 'library');
-  await expect(lib(page).locator('.page-back')).toHaveCount(0);
-  await expect(lib(page).locator('.page-eyebrow')).toBeVisible();
+  await expect(lib(page).locator('.page-back')).toHaveText('More');
+  await expect(lib(page).locator('.page-eyebrow')).toBeHidden();
 });
 
 test('desktop: no "‹ More" (the sidebar is there); eyebrow and title as before', async ({ page, isMobile }) => {
