@@ -5,7 +5,7 @@
 import { state } from "../store.js?v=5";
 import { BHGS_PACK } from "../pack.js?v=1";
 import { setupData } from "../data/setup.js?v=1";
-import { pageHeader, avatar, syncState } from "./shell.js?v=22";
+import { pageHeader, avatar, syncState } from "./shell.js?v=23";
 
 function esc(t){ return String(t).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]; }); }
 

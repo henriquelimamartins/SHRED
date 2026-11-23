@@ -21,12 +21,12 @@
 import { defaultState, defaultDojoState, saveState, state, replaceState, backupBeforeReplace, migrate, newerSchema, NEWER_SCHEMA_MSG } from "./store.js?v=5";
 import { hasFirebase, auth, db, googleProvider, currentUser, cloudReady, cloudReadFailed, CLOUD_READ_FAILED_MSG, requestCloudWrite, loadFromCloud, signInWithPopup, signOut } from "./firebase.js?v=5";
 import { ui, showToast } from "./ui.js?v=2";
-import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=39";
-import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=39";
-import { changeCalMonth, calCanGo } from "./views/calendar.js?v=39";
-import { currentMinigame, startArchitectGame, handleDojoAnswer, renderCodexList, renderCodexReader, focusSubTitle } from "./views/dojo.js?v=30";
-import { updateNav, render, updateAccountRow } from "./render.js?v=40";
-import { initDailySwipe } from "./views/daily-swipe.js?v=17";
+import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=40";
+import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=40";
+import { changeCalMonth, calCanGo } from "./views/calendar.js?v=40";
+import { currentMinigame, startArchitectGame, handleDojoAnswer, renderCodexList, renderCodexReader, focusSubTitle } from "./views/dojo.js?v=31";
+import { updateNav, render, updateAccountRow } from "./render.js?v=41";
+import { initDailySwipe } from "./views/daily-swipe.js?v=18";
 import { buildBackupFile, backupFileName, listDeviceBackups, parseBackupFile, isNewerCopy, restoredState, formatLocalTime, reasonLabel, MAX_BACKUP_FILE_BYTES, INVALID_BACKUP_MSG, NEWER_BACKUP_MSG } from "./logic/backup.js?v=2";
 
 // Slice 4.8e (D149): Restore and Reset open in place on the same page, so opening one closes the other.

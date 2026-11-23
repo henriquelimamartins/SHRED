@@ -1048,6 +1048,24 @@ button.tech-phase{width:100%;text-align:left;color:var(--text);font:inherit;curs
 /* Companion cards. */
 .daily-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-card);padding:16px 18px;display:flex;flex-direction:column;gap:14px;}
 .daily-micro-card{border-color:var(--red-edge-soft);}
+/* Slice 4.10l (D154 point 3, AUDIT-4.10 point 19): the optional extra review on Mon, Thu and Sat, collapsed by default. */
+#panel-daily .daily-extra{margin:0;border:1px dashed var(--line-2);border-radius:var(--r-card);background:var(--card);}
+#panel-daily .daily-extra>summary{display:flex;align-items:center;gap:10px;min-height:48px;padding:4px 16px 4px 20px;list-style:none;cursor:pointer;color:var(--text-2);}
+#panel-daily .daily-extra>summary::-webkit-details-marker{display:none;}
+#panel-daily .daily-extra>summary:hover .daily-extra-title{text-decoration:underline;text-underline-offset:3px;}
+#panel-daily .daily-extra-title{flex:1 1 auto;min-width:0;padding:8px 0;font-family:var(--font-head);font-size:var(--fs-md);letter-spacing:.1em;text-transform:uppercase;text-wrap:balance;}
+#panel-daily .daily-extra-side{flex:none;display:flex;align-items:center;gap:10px;margin-left:auto;font-size:var(--fs-sm);white-space:nowrap;}
+#panel-daily .daily-extra-min{color:var(--text-3);}
+#panel-daily .daily-extra-tag{padding:2px 8px;border:1px solid var(--line-2);border-radius:var(--r-pill);color:var(--muted);}
+#panel-daily .daily-extra>summary .daily-review-chev{width:16px;height:16px;flex:none;transition:transform .15s;}
+#panel-daily .daily-extra[open]>summary .daily-review-chev{transform:rotate(90deg);}
+#panel-daily .daily-extra-body{display:flex;flex-direction:column;gap:8px;padding:2px 16px 16px 20px;}
+#panel-daily .daily-extra-body p{margin:0;font-size:var(--fs-md);color:var(--text-3);text-wrap:pretty;}
+#panel-daily .daily-extra-body p.daily-review-name{font-size:var(--fs-base);color:var(--text-soft);}
+#panel-daily .daily-extra-body p.daily-review-note{font-size:var(--fs-sm);color:var(--muted);}
+#panel-daily .daily-extra-body .daily-review-list{margin-top:4px;}
+@media (prefers-reduced-motion: reduce){ #panel-daily .daily-extra>summary .daily-review-chev{transition:none;} }
+
 .daily-key-card{border-color:var(--purple-edge);gap:12px;}
 .dc-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;}
 .dc-head-key{align-items:center;min-height:36px;}

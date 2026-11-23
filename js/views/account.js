@@ -19,10 +19,10 @@ import { hasFirebase, currentUser } from "../firebase.js?v=5";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=2";
 import { listDeviceBackups, formatLocalTime, reasonLabel } from "../logic/backup.js?v=2";
-import { pageHeader, avatar, accountName, syncState, backToMore } from "./shell.js?v=22";
+import { pageHeader, avatar, accountName, syncState, backToMore } from "./shell.js?v=23";
 import { totalStreak, currentStreak, localISO } from "../logic/dates.js?v=7";
-import { renderRail, techniqueRail, improvRail, theoryRail } from "./rails.js?v=24";
-import { phaseSummary } from "./technique.js?v=25";
+import { renderRail, techniqueRail, improvRail, theoryRail } from "./rails.js?v=25";
+import { phaseSummary } from "./technique.js?v=26";
 import { PHASES } from "../data/bhgs.js?v=1";
 import { BHGS_PACK } from "../pack.js?v=1";
 
