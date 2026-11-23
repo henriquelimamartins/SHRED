@@ -1,6 +1,7 @@
 // DAILY companion column (slice 4.7, D132 point 1, D133 points 4-5): MICRO-DOSES and KEY.
 // Slice 4.10h (D162 point 1; AUDIT-4.10 point 24): KEY first, MICRO-DOSES under it and only when the day on screen has a
 // micro-dose (Mon-Fri from Phase 1); none on Saturday, Sunday or in Phase 0; the Friday card without its last sentence.
+// Slice 4.10j (D164 point 5): the circle, the chord row and the key helpers are also used by HOME (no change here).
 // Desktop only (hidden on the phone by CSS, D133 point 2). Everything here only reads the state; the key picked
 // on the circle lives in `ui.dailyKey` (page state, back to today's key on reload) and is never saved.
 import { PHASES, ESSENTIAL, ESSENTIAL_URL } from "../data/bhgs.js?v=1";
@@ -9,7 +10,7 @@ import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=2";
 import { BHGS_PACK } from "../pack.js?v=1";
 import { todayName, isWeekendDay, localISO } from "../logic/dates.js?v=7";
-import { improvKeyOfDay } from "./improv.js?v=29";
+import { improvKeyOfDay } from "./improv.js?v=30";
 
 function svg(path, cls){
   return '<svg class="ico' + (cls ? ' ' + cls : '') + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + path + '"></path></svg>';
@@ -61,15 +62,15 @@ function microCard(day){
 // ---------- KEY: circle of fifths (D133 point 5) ----------
 const LETTERS = 'CDEFGAB', NATURAL = [0, 2, 4, 5, 7, 9, 11];
 const SCALE = { maj: [0, 2, 4, 5, 7, 9, 11], min: [0, 2, 3, 5, 7, 8, 10] };
-const NUMERALS = { maj: ['I', 'ii', 'iii', 'IV', 'V', 'vi', 'vii°'], min: ['i', 'ii°', 'III', 'iv', 'v', 'VI', 'VII'] };
-const QUALITY = { maj: ['', 'm', 'm', '', '', 'm', '°'], min: ['m', '°', '', 'm', 'm', '', ''] };
+export const NUMERALS = { maj: ['I', 'ii', 'iii', 'IV', 'V', 'vi', 'vii°'], min: ['i', 'ii°', 'III', 'iv', 'v', 'VI', 'VII'] };
+export const QUALITY = { maj: ['', 'm', 'm', '', '', 'm', '°'], min: ['m', '°', '', 'm', 'm', '', ''] };
 // Clockwise from the top. The minor ring is spelled as the app's key list (E♭ minor, B♭ minor); slice 4.7c (D136):
 // position 7 is G♭ major / E♭ minor, so each major sits with its relative minor (same key signature, 6 flats).
-const RING = {
+export const RING = {
   maj: ["C", "G", "D", "A", "E", "B", "Gb", "Db", "Ab", "Eb", "Bb", "F"],
   min: ["A", "E", "B", "F#", "C#", "G#", "Eb", "Bb", "F", "C", "G", "D"]
 };
-function pretty(n){ return n.replace(/#/g, '♯').replace(/([A-G])b/g, '$1♭'); }
+export function pretty(n){ return n.replace(/#/g, '♯').replace(/([A-G])b/g, '$1♭'); }
 // The seven notes of a key, each letter used once (e.g. E♭ minor: E♭ F G♭ A♭ B♭ C♭ D♭).
 export function spellKey(tonic, mode){
   var li = LETTERS.indexOf(tonic[0]), acc = tonic[1] === '#' ? 1 : (tonic[1] === 'b' ? -1 : 0);
@@ -81,12 +82,12 @@ export function spellKey(tonic, mode){
   });
 }
 // Today's key (the Improv key of the day) as a position on the circle; null if it is not on it.
-function todayKey(){
+export function todayKey(){
   var k = improvKeyOfDay().k.split(' '), mode = k[1] === 'major' ? 'maj' : 'min';
   var i = RING[mode].indexOf(k[0]);
   return i < 0 ? null : { m: mode, i: i };
 }
-function keyLabel(m, i){ return pretty(RING[m][i]) + (m === 'min' ? ' minor' : ' major'); }
+export function keyLabel(m, i){ return pretty(RING[m][i]) + (m === 'min' ? ' minor' : ' major'); }
 
 // Slice 4.7c (D136): the chosen key (and its relative) is marked by its slice of the ring, not by a circle:
 // curved inner and outer edges on the ring lines, straight sides between keys. Drawn as SVG paths (no inline style).
@@ -107,7 +108,8 @@ function arrowArc(a0, a1, clockwise){
   d += ' M' + h(0.5) + ' L' + ex.toFixed(2) + ' ' + ey.toFixed(2) + ' L' + h(-0.5);
   return '<path class="kc-arrow" d="' + d + '"></path>';
 }
-function circleSvg(sel){
+function circleSvg(sel, pfx){
+  pfx = pfx || 'kc';
   var svg = '<svg class="kc-svg" viewBox="0 0 280 280" aria-hidden="true">';
   [['maj', R_MID, R_OUT], ['min', R_IN, R_MID]].forEach(function(ring){
     for(var i = 0; i < 12; i++){
@@ -119,18 +121,39 @@ function circleSvg(sel){
   // Centre (owner, slice 4.7c): clockwise = fifths (upper arrow), anticlockwise = fourths (lower arrow).
   svg += arrowArc(-140, -40, true) + arrowArc(140, 40, false);
   // The words follow the arrows (owner): along an arc inside each one, read left to right.
-  svg += '<path id="kc-fifths-path" class="kc-guide" d="M' + pt(25, -155) + ' A25 25 0 0 1 ' + pt(25, -25) + '"></path>';
-  svg += '<path id="kc-fourths-path" class="kc-guide" d="M' + pt(31, 155) + ' A31 31 0 0 0 ' + pt(31, 25) + '"></path>';
-  svg += '<text class="kc-dir"><textPath href="#kc-fifths-path" startOffset="50%" text-anchor="middle">Fifths</textPath></text>';
-  svg += '<text class="kc-dir"><textPath href="#kc-fourths-path" startOffset="50%" text-anchor="middle">Fourths</textPath></text>';
+  svg += '<path id="' + pfx + '-fifths-path" class="kc-guide" d="M' + pt(25, -155) + ' A25 25 0 0 1 ' + pt(25, -25) + '"></path>';
+  svg += '<path id="' + pfx + '-fourths-path" class="kc-guide" d="M' + pt(31, 155) + ' A31 31 0 0 0 ' + pt(31, 25) + '"></path>';
+  svg += '<text class="kc-dir"><textPath href="#' + pfx + '-fifths-path" startOffset="50%" text-anchor="middle">Fifths</textPath></text>';
+  svg += '<text class="kc-dir"><textPath href="#' + pfx + '-fourths-path" startOffset="50%" text-anchor="middle">Fourths</textPath></text>';
   return svg + '</svg>';
+}
+
+// The key's diatonic chords with their degrees (the row under the circle). Slice 4.10j: shared with HOME (D164 point 5).
+export function chordRow(sel){
+  var notes = spellKey(RING[sel.m][sel.i], sel.m);
+  return '<div class="kc-degrees">' + notes.map(function(n, k){
+    return '<div class="kc-deg' + (k === 0 ? ' root' : '') + '"><span class="kc-num">' + NUMERALS[sel.m][k] + '</span><span class="kc-chord">' + pretty(n) + QUALITY[sel.m][k] + '</span></div>';
+  }).join('') + '</div>';
+}
+
+// Slice 4.10j (D164 point 5): the same circle for HOME, showing today's key only. Not interactive there (the key
+// names are plain labels, not buttons; another key is chosen in DAILY); hidden from screen readers, since the card
+// names the key and its chords in text. Its own path ids, so DAILY's and HOME's circles never share an id.
+export function staticCircle(sel){
+  var html = '<div class="kc kc-static" aria-hidden="true">' + circleSvg(sel, 'hkc');
+  ['maj', 'min'].forEach(function(m){
+    RING[m].forEach(function(t, i){
+      var on = sel.m === m && sel.i === i, rel = !on && sel.i === i;
+      html += '<span class="kc-key kc-' + m + ' kc-' + m + '-' + i + (on ? ' on' : '') + (rel ? ' rel' : '') + '">' + pretty(t) + (m === 'min' ? 'm' : '') + '</span>';
+    });
+  });
+  return html + '</div>';
 }
 
 function keyCard(){
   var today = todayKey(), tk = improvKeyOfDay();
   var sel = ui.dailyKey || today || { m: 'min', i: 0 };
   var isToday = !!today && sel.m === today.m && sel.i === today.i;
-  var notes = spellKey(RING[sel.m][sel.i], sel.m);
   var html = '<section class="daily-card daily-key-card" aria-label="Key">' +
     '<div class="dc-head dc-head-key"><span class="dc-label purple">' + (isToday ? "Today's key" : 'Key') + '</span>' +
     (isToday ? '<span class="dc-aside">' + tk.t + '</span>'
@@ -146,9 +169,7 @@ function keyCard(){
     });
   });
   html += '</div>';
-  html += '<div class="kc-degrees">' + notes.map(function(n, k){
-    return '<div class="kc-deg' + (k === 0 ? ' root' : '') + '"><span class="kc-num">' + NUMERALS[sel.m][k] + '</span><span class="kc-chord">' + pretty(n) + QUALITY[sel.m][k] + '</span></div>';
-  }).join('') + '</div>';
+  html += chordRow(sel);
   html += '<p class="dc-foot dc-center">Tap a key on the circle to see its notes and chords.</p>';
   return html + '</section>';
 }

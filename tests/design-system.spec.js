@@ -140,9 +140,9 @@ test('small coloured text uses the tints; filled buttons use the filled colours 
   await openApp(page, { localState: progressState({ phaseIndex: 1 }) });
   // Slice 4.5b (D126): page eyebrows are muted, as drawn; other eyebrows keep their pillar tint.
   await expect(page.locator('#panel-home .page-eyebrow')).toHaveCSS('color', rgb(TOKENS['--muted']));
-  await expect(page.locator('#panel-home .home-improv .home-link-label')).toHaveCSS('color', rgb(TOKENS['--purple-tint'])); // slice 4.5c
+  await expect(page.locator('#panel-home .home-key .hk-label')).toHaveCSS('color', rgb(TOKENS['--purple-tint'])); // slice 4.10j
   await expect(page.locator('.s-day.today .s-date')).toHaveCSS('color', rgb(TOKENS['--red-tint']));
-  await expect(page.locator('#panel-home .home-continue')).toHaveCSS('background-color', rgb(TOKENS['--red-fill'])); // slice 4.5c: Today shows only on another month
+  await expect(page.locator('#panel-home .hb-continue')).toHaveCSS('background-color', rgb(TOKENS['--red-fill'])); // slice 4.10j: Today shows only on another month
   const activeNav = page.locator('#botnav:visible, #sidebar-nav-inner:visible').first().locator('.active');
   await expect(activeNav).toHaveCSS('color', rgb(TOKENS['--red-tint']));
 

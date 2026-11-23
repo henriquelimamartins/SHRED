@@ -188,7 +188,7 @@ test.describe('month picker', () => {
     await pickBtn(page).click();
     await expect(picker(page)).toHaveCount(0);
     await pickBtn(page).click();
-    await home(page).locator('.home-session').first().click({ position: { x: 5, y: 5 } });
+    await home(page).locator('.home-brief').first().click({ position: { x: 5, y: 5 } }); // slice 4.10j: the briefing card
     await expect(picker(page)).toHaveCount(0);
     expect(await titleText(page)).toEqual(['November', '2026']);
   });

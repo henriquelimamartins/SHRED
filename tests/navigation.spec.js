@@ -93,7 +93,9 @@ test.describe('phone', () => {
 
   test('page header is at most 120 px (D112)', async ({ page }) => {
     await openApp(page, { localState: progressState({ phaseIndex: 1 }) });
-    const h = await page.locator('#panel-home .home-phone-head').evaluate((el) => el.getBoundingClientRect().height);
+    // Slice 4.10j (D164 point 2): from the top of the brand row to the bottom of the date / title / pill row.
+    const h = await page.evaluate(() => document.querySelector('#panel-home .home-head').getBoundingClientRect().bottom
+      - document.querySelector('#panel-home .home-brand-row').getBoundingClientRect().top);
     expect(h).toBeLessThanOrEqual(110); // 10 px margin for the real web fonts (CHECKPOINT test note, slice 4.4)
   });
 });

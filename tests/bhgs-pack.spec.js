@@ -58,8 +58,8 @@ test('pack off: HOME hides the Technique rail, phase %, Phase Transition Test an
   await expect(home.locator('[data-action="setphase"]')).toHaveCount(0);
   await expect(home.locator('[data-view="technique"]')).toHaveCount(0);
   await expect(home.locator('.s-day').first()).toBeVisible();
-  await expect(home.locator('.home-session')).toBeAttached(); // Today's session and Today's Improv stay (4.5c)
-  await expect(home.locator('.home-improv')).toBeAttached();
+  await expect(home.locator('.home-brief')).toBeAttached(); // the briefing and Today's key stay (4.10j, D164)
+  await expect(home.locator('.home-key')).toBeAttached();
 });
 
 test('pack off: LIBRARY keeps Expression Track, Listening Vault and the guide, with a pack-free guide text', async ({ page }) => {
