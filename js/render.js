@@ -23,18 +23,19 @@
 import { ui } from "./ui.js?v=2";
 import { BHGS_PACK } from "./pack.js?v=1";
 import { ensureDailyReset } from "./logic/dates.js?v=7";
-import { initCalCarousel } from "./views/calendar.js?v=37";
-import { renderHome } from "./views/home.js?v=37";
-import { renderTechnique } from "./views/technique.js?v=23";
-import { renderDaily, watchDailyHeader } from "./views/daily.js?v=37";
-import { renderImprov } from "./views/improv.js?v=28";
-import { renderLibrary } from "./views/library.js?v=37";
-import { renderSetup } from "./views/setup.js?v=27";
-import { renderDojoView } from "./views/dojo.js?v=28";
-import { renderRails } from "./views/rails.js?v=22";
-import { renderAccount } from "./views/account.js?v=21";
-import { renderMore } from "./views/more.js?v=19";
-import { icon, sidebarLogo, sidebarMenu, accountRow, syncState } from "./views/shell.js?v=20";
+import { initCalCarousel } from "./views/calendar.js?v=38";
+import { renderHome } from "./views/home.js?v=38";
+import { renderTechnique } from "./views/technique.js?v=24";
+import { renderDaily, watchDailyHeader } from "./views/daily.js?v=38";
+import { renderImprov } from "./views/improv.js?v=29";
+import { renderLibrary } from "./views/library.js?v=38";
+import { renderSetup } from "./views/setup.js?v=28";
+import { renderDojoView } from "./views/dojo.js?v=29";
+import { renderRails } from "./views/rails.js?v=23";
+import { renderAccount, renderProfilePanel } from "./views/account.js?v=22";
+import { currentUser } from "./firebase.js?v=5";
+import { renderMore } from "./views/more.js?v=20";
+import { icon, sidebarLogo, sidebarMenu, accountRow, syncState } from "./views/shell.js?v=21";
 
 export function initAppLayout() {
   var root = document.getElementById("root");
@@ -61,6 +62,7 @@ export function initAppLayout() {
       </div>
       <nav class="botnav" id="botnav"></nav>
     </main>
+    <div id="profile-layer" class="profile-layer" hidden></div>
   `;
 }
 
@@ -116,11 +118,32 @@ export function updateAccountRow(){
   }
   // Slice 4.10a: the sync line of the Account card on the Account & data page follows too (it was drawn once and
   // could stay on "Changes not synced yet" while the sidebar row already read "Synced"). Reads only, writes nothing.
-  var acct = document.querySelector('#panel-account .account-sync');
-  if(acct){
-    var acctLine = '<i class="sync-dot ' + s.tone + '"></i>' + s.text;
-    if(acct.innerHTML !== acctLine) acct.innerHTML = acctLine;
-  }
+  var acctLine = '<i class="sync-dot ' + s.tone + '"></i>' + s.text;
+  document.querySelectorAll('#panel-account .account-sync, #profile-layer .profile-sync').forEach(function(el){
+    if(el.innerHTML !== acctLine) el.innerHTML = acctLine;
+  });
+  // Slice 4.10i (D163): the rings round the photo on the PROFILE card and in the profile panel follow the state too.
+  document.querySelectorAll('#panel-account .avatar-ring, #profile-layer .avatar-ring').forEach(function(el){
+    if(el.dataset.tone !== s.tone){ el.classList.remove('ok', 'wait', 'none'); el.classList.add(s.tone); el.dataset.tone = s.tone; }
+  });
+}
+
+// Slice 4.10i (D163 point 4): the profile panel lives in its own layer over the whole app (sidebar and bottom bar
+// included). While it is open the rest of the app is inert, so keyboard focus stays in the panel. It shows only on
+// Account & data with a signed-in account; otherwise it closes. Page state only, nothing written.
+function renderProfileLayer(){
+  var layer = document.getElementById('profile-layer');
+  if(!layer) return;
+  if(ui.profileOpen && !(currentUser && ui.view === 'account')) ui.profileOpen = false;
+  var open = !!ui.profileOpen;
+  var focusKey = null, ae = document.activeElement;
+  if(open && ae && layer.contains(ae)) focusKey = ae.classList.contains('profile-logout') ? '.profile-logout' : '.profile-close';
+  layer.innerHTML = open ? renderProfilePanel() : '';
+  layer.hidden = !open;
+  ui.profileAnim = false; // the entry animation plays once, not on every later render
+  document.querySelectorAll('#sidebar, .main-area').forEach(function(el){ if(open) el.setAttribute('inert', ''); else el.removeAttribute('inert'); });
+  document.body.classList.toggle('profile-open', open);
+  if(focusKey){ var f = layer.querySelector(focusKey); if(f) f.focus({preventScroll:true}); }
 }
 
 export function render(){
@@ -158,6 +181,7 @@ export function render(){
        }
        p.scrollTop = tops[p.id] || 0;
     });
+    renderProfileLayer();
     // Slice 4.10h (D162 point 4): DAILY shows its long title and date only where they fit on one line (measured).
     watchDailyHeader();
     

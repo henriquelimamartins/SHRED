@@ -102,7 +102,7 @@ test.describe('Account & data buttons', () => {
     await expect(group.locator('[data-row="download"] .acct-row-name')).toHaveText('Download backup');
     await expect(group.locator('[data-action="downloadbackup"]')).toHaveText('Download');
     await expect(group.locator('[data-row="restore"] .acct-row-name')).toHaveText('Restore backup');
-    await expect(group.locator('[data-action="openrestore"]')).toHaveText('Restore…');
+    await expect(group.locator('[data-action="openrestore"]')).toHaveText('Restore'); // slice 4.10i (D163 point 5)
   });
 });
 

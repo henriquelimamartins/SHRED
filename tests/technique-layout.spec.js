@@ -47,7 +47,7 @@ test.describe('desktop', () => {
     await expect(tech(page).locator('.tech-links')).toBeHidden();
     await expect(tech(page).locator('.tech-back:visible')).toHaveCount(0);
     await expect(part(page, 'settings').locator('.tech-settings')).toHaveCSS('border-top-style', 'dashed');
-    await expect(part(page, 'settings').locator('[data-action="phasesettings"]')).toHaveText('Change phase…');
+    await expect(part(page, 'settings').locator('[data-action="phasesettings"]')).toHaveText('Change phase'); // slice 4.10i (D163 point 5)
   });
 
   test('All phases: every row ends with ›; the current row is a button back to the current phase', async ({ page }) => {

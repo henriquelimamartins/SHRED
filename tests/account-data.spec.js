@@ -18,15 +18,15 @@ test('HOME no longer holds Cloud Sync, the backup buttons or Reset Everything', 
 test('the page holds every button: Save, Load, Download, Restore, Reset (groups since slice 4.8e, D149)', async ({ page }) => {
   const monitor = await openApp(page, { localState: progressState({ phaseIndex: 1 }) });
   const account = await accountPanel(page);
-  await expect(account.locator('.page-eyebrow')).toHaveText('Account');
+  await expect(account.locator('.page-eyebrow')).toHaveText('Settings'); // slice 4.10i (D163 point 1)
   await expect(account.locator('.page-title')).toHaveText('Account & data');
   const cloud = account.locator('[data-group="cloud"]');
   await expect(cloud).toContainText('Your progress syncs automatically when logged in.');
   await expect(cloud.locator('[data-action="cloudsave"]')).toHaveText('Save');
   await expect(cloud.locator('[data-action="cloudload"]')).toHaveText('Load');
   await expect(account.locator('[data-group="backups"] [data-action="downloadbackup"]')).toHaveText('Download');
-  await expect(account.locator('[data-group="backups"] [data-action="openrestore"]')).toHaveText('Restore…');
-  await expect(account.locator('[data-group="reset"] [data-action="reset"]')).toHaveText('Reset…');
+  await expect(account.locator('[data-group="backups"] [data-action="openrestore"]')).toHaveText('Restore'); // slice 4.10i: no final punctuation (D163 point 5)
+  await expect(account.locator('[data-group="reset"] [data-action="reset"]')).toHaveText('Reset');
   expect(monitor.pageErrors).toEqual([]);
   expect(unexpectedConsoleErrors(monitor)).toEqual([]);
 });
@@ -40,10 +40,12 @@ test('signed out, the page says progress is saved on this device only', async ({
 test('signed in, the page names the account', async ({ page }) => {
   await openApp(page, { user: TEST_USER, docs: { [USER_DOC]: progressState({ phaseIndex: 1 }) } });
   const account = await accountPanel(page);
-  // Slice 4.5b (D126): name, email and sync state; Logout sits here.
+  // Slice 4.5b (D126): name, email and sync state. Slice 4.10i (D163 point 3): Logout moved into the profile panel.
   await expect(account.locator('.account-card .account-name')).toHaveText('tester');
   await expect(account.locator('.account-card .account-email')).toHaveText('tester@example.com');
-  await expect(account.locator('.account-card .account-auth')).toHaveText('Logout');
+  await expect(account.locator('.account-card .account-auth')).toHaveCount(0);
+  await account.locator('.profile-card').click();
+  await expect(page.locator('#profile-dialog .account-auth')).toHaveText('Logout');
 });
 
 test('opening the page writes nothing (device or cloud)', async ({ page }) => {

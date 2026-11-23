@@ -19,16 +19,16 @@
 // Slice 4.2a (D119, D25): the Technique phase bar sits at the top of HOME instead of the top of every page.
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
 import { state } from "../store.js?v=5";
-import { renderRails } from "./rails.js?v=22";
-import { streakLine, streakPill } from "./streak.js?v=1";
-import { pageHeader, icon } from "./shell.js?v=20";
+import { renderRails } from "./rails.js?v=23";
+import { streakLine, streakPill } from "./streak.js?v=2";
+import { pageHeader, icon } from "./shell.js?v=21";
 import { DAY_FULL } from "../data/days.js?v=1";
 import { todayName, activeDay } from "../logic/dates.js?v=7";
-import { renderStreakCalendar } from "./calendar.js?v=37";
+import { renderStreakCalendar } from "./calendar.js?v=38";
 
 import { IMPROV_GATES } from "../data/improv.js?v=4";
-import { sessionPlan, isBlockPracticed } from "../logic/daily.js?v=37";
-import { improvKeyOfDay } from "./improv.js?v=28";
+import { sessionPlan, isBlockPracticed } from "../logic/daily.js?v=38";
+import { improvKeyOfDay } from "./improv.js?v=29";
 
 function esc(t){ return String(t).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]; }); }
 

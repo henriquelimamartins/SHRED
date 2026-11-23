@@ -21,12 +21,12 @@
 import { defaultState, defaultDojoState, saveState, state, replaceState, backupBeforeReplace, migrate, newerSchema, NEWER_SCHEMA_MSG } from "./store.js?v=5";
 import { hasFirebase, auth, db, googleProvider, currentUser, cloudReady, cloudReadFailed, CLOUD_READ_FAILED_MSG, requestCloudWrite, loadFromCloud, signInWithPopup, signOut } from "./firebase.js?v=5";
 import { ui, showToast } from "./ui.js?v=2";
-import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=37";
-import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=37";
-import { changeCalMonth, calCanGo } from "./views/calendar.js?v=37";
-import { currentMinigame, startArchitectGame, handleDojoAnswer, renderCodexList, renderCodexReader, focusSubTitle } from "./views/dojo.js?v=28";
-import { updateNav, render, updateAccountRow } from "./render.js?v=37";
-import { initDailySwipe } from "./views/daily-swipe.js?v=15";
+import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=38";
+import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=38";
+import { changeCalMonth, calCanGo } from "./views/calendar.js?v=38";
+import { currentMinigame, startArchitectGame, handleDojoAnswer, renderCodexList, renderCodexReader, focusSubTitle } from "./views/dojo.js?v=29";
+import { updateNav, render, updateAccountRow } from "./render.js?v=38";
+import { initDailySwipe } from "./views/daily-swipe.js?v=16";
 import { buildBackupFile, backupFileName, listDeviceBackups, parseBackupFile, isNewerCopy, restoredState, formatLocalTime, reasonLabel, MAX_BACKUP_FILE_BYTES, INVALID_BACKUP_MSG, NEWER_BACKUP_MSG } from "./logic/backup.js?v=2";
 
 // Slice 4.8e (D149): Restore and Reset open in place on the same page, so opening one closes the other.
@@ -195,6 +195,7 @@ document.addEventListener("scroll", function(e) {
 // Opens a page at its top (the "go" action; since slice 4.5b2 also the MORE page and its rows).
 function openPage(view){
   if(view==="technique") ui.techSub=null; // slice 4.5d: the bar always opens the main TECHNIQUE page
+  ui.profileOpen=false; // slice 4.10i: the profile panel closes when the page changes
   ui.view=view;
   var panel = document.getElementById('panel-' + ui.view);
   if(panel) panel.scrollTo({top: 0, behavior: 'smooth'});
@@ -226,7 +227,31 @@ function focusCalPicker(){
 }
 document.addEventListener("keydown", function(e){
   if(e.key === "Escape" && ui.calPicker){ e.preventDefault(); closeCalPicker(true); }
+  // Slice 4.10i (D163 point 4): Escape closes the profile panel; Tab cycles inside it (the rest of the app is inert).
+  if(ui.profileOpen){
+    if(e.key === "Escape"){ e.preventDefault(); closeProfile(); return; }
+    if(e.key === "Tab"){
+      var f = Array.prototype.slice.call(document.querySelectorAll('#profile-dialog button'));
+      if(!f.length) return;
+      var first = f[0], last = f[f.length - 1], ae = document.activeElement;
+      if(e.shiftKey && (ae === first || !f.includes(ae))){ e.preventDefault(); last.focus(); }
+      else if(!e.shiftKey && (ae === last || !f.includes(ae))){ e.preventDefault(); first.focus(); }
+    }
+  }
 });
+
+// Slice 4.10i (D163 point 4): the profile panel opens from the PROFILE card on Account & data and closes with its
+// close button, Escape or a tap on the backdrop; focus goes into it and back to the card. Page state only.
+function openProfile(){
+  ui.profileOpen = true; ui.profileAnim = true;
+  render();
+  var c = document.querySelector('#profile-dialog .profile-close'); if(c) c.focus({preventScroll:true});
+}
+function closeProfile(){
+  ui.profileOpen = false;
+  render();
+  var card = document.querySelector('#panel-account .profile-card'); if(card) card.focus({preventScroll:true});
+}
 
 document.addEventListener("click",function(e){
 
@@ -238,6 +263,7 @@ document.addEventListener("click",function(e){
   if(!t) return;
 
   if(t.classList.contains("account-auth")){
+    ui.profileOpen = false; // slice 4.10i: Logout sits in the profile panel, which closes with it
     if(currentUser){ signOut(auth).then(() => { showToast("Logged out"); render(); }); } 
     else { signInWithPopup(auth, googleProvider).catch(err => showToast("Login failed")); }
     return;
@@ -256,6 +282,8 @@ document.addEventListener("click",function(e){
   if(a==="morereset"){ openPage("account"); handleReset(); showAccountRow("reset"); return; }
 
   if(a==="go"){ openPage(t.dataset.view); return; }
+  if(a==="profile"){ openProfile(); return; }
+  if(a==="closeprofile"){ closeProfile(); return; }
   // Slice 4.10a: DAILY's "Retake Phase Test" opens the TECHNIQUE page at its Phase test (the Phase test tab on the
   // phone; on desktop the page scrolls to it). Page state only, nothing written.
   if(a==="phasetest"){

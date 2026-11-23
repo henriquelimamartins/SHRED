@@ -15,20 +15,20 @@ const SNAPSHOT = { at: '2026-11-09T10:05:00.000Z', reason: 'daily', schemaVersio
 test('groups in the drawn order; desktop two columns, phone stacked with "‹ More"', async ({ page, isMobile }) => {
   const monitor = await openApp(page, { user: TEST_USER, docs: { [USER_DOC]: progressState({ phaseIndex: 1 }) } });
   const account = await accountPanel(page);
-  await expect(account.locator('.acct-group-title')).toHaveText(['Account', 'Cloud sync', 'Backups', 'Settings', 'Reset']);
+  await expect(account.locator('.acct-group-title')).toHaveText(['Profile', 'Cloud sync', 'Backups', 'Settings', 'Reset']); // slice 4.10i (D163 point 1)
   const g = {};
-  for (const id of ['account', 'cloud', 'backups', 'settings', 'reset']) g[id] = await box(account.locator(`[data-group="${id}"]`));
-  expect(g.account.y).toBeLessThan(g.cloud.y);
+  for (const id of ['profile', 'cloud', 'backups', 'settings', 'reset']) g[id] = await box(account.locator(`[data-group="${id}"]`));
+  expect(g.profile.y).toBeLessThan(g.cloud.y);
   expect(g.cloud.y).toBeLessThan(g.backups.y);
   expect(g.settings.y).toBeLessThan(g.reset.y);
   if (isMobile) {
     expect(g.backups.y).toBeLessThan(g.settings.y);
-    for (const id of Object.keys(g)) expect(Math.abs(g[id].x - g.account.x)).toBeLessThanOrEqual(2);
+    for (const id of Object.keys(g)) expect(Math.abs(g[id].x - g.profile.x)).toBeLessThanOrEqual(2);
     await expect(account.locator('.page-back')).toBeVisible();
     await expect(account.locator('.page-back')).toHaveText('More');
   } else {
-    expect(g.settings.x).toBeGreaterThan(g.account.x + g.account.w);
-    expect(Math.abs(g.settings.y - g.account.y)).toBeLessThanOrEqual(4);
+    expect(g.settings.x).toBeGreaterThan(g.profile.x + g.profile.w);
+    expect(Math.abs(g.settings.y - g.profile.y)).toBeLessThanOrEqual(4);
     await expect(account.locator('.page-back')).toBeHidden();
   }
   expect(monitor.pageErrors).toEqual([]);
@@ -42,8 +42,8 @@ test('rows as drawn: name, description and button; Reset in the dashed box; no e
     save: ['Save to cloud', 'Your progress syncs automatically when logged in. Push a save by hand.', 'cloudsave', 'Save'],
     load: ['Load from cloud', 'Pull your latest cloud progress. A backup is saved on this device first.', 'cloudload', 'Load'],
     download: ['Download backup', 'Save a copy of your progress as a file.', 'downloadbackup', 'Download'],
-    restore: ['Restore backup', 'From a copy on this device or from a file.', 'openrestore', 'Restore…'],
-    reset: ['Reset progress', 'Erases Technique, Improv, Theory and Creative progress. Your streak, calendar and SETUP are kept. A backup is saved on this device first.', 'reset', 'Reset…'],
+    restore: ['Restore backup', 'From a copy on this device or from a file.', 'openrestore', 'Restore'],
+    reset: ['Reset progress', 'Erases Technique, Improv, Theory and Creative progress. Your streak, calendar and SETUP are kept. A backup is saved on this device first.', 'reset', 'Reset'],
   };
   for (const [id, [name, sub, action, label]] of Object.entries(rows)) {
     const row = account.locator(`[data-row="${id}"]`);
@@ -113,7 +113,7 @@ test('Restore opens in place under its row; Reset confirms inside its box; one c
   const panel = account.locator('[data-row="restore"] + #acct-panel-restore');
   await expect(panel.locator('.acct-panel-text').first()).toHaveText('Choose a copy saved on this device (newest first), or a backup file you downloaded.');
   await expect(panel.locator('[data-action="pickrestore"]')).toHaveCount(1);
-  await expect(panel.locator('[data-action="pickrestorefile"]')).toHaveText('From file…');
+  await expect(panel.locator('[data-action="pickrestorefile"]')).toHaveText('From file');
   await expect(panel.locator('[data-action="pickrestorefile"] svg')).toHaveCount(1);
   await panel.locator('[data-action="pickrestore"]').click();
   await expect(panel.locator('[data-action="confirmrestore"]')).toHaveText('Yes, restore');
