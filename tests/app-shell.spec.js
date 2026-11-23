@@ -16,17 +16,18 @@ async function setFlags(page, flags) {
 }
 const sideItem = (page, view) => page.locator(`#sidebar-nav-inner .side-item[data-view="${view}"]`);
 
-const TITLES = { home: 'Home', daily: 'Daily', technique: 'Technique', improv: 'Improvisation', dojo: 'Theory', library: 'Library', setup: 'Guitar Setup', account: 'Account & data' };
+const TITLES = { home: 'Home', daily: 'Daily Practice', technique: 'Technique', improv: 'Improvisation', dojo: 'Theory', library: 'Library', setup: 'Guitar Setup', account: 'Account & data' };
 
 test('every page starts with the drawn page header (muted eyebrow + large title)', async ({ page }) => {
   const monitor = await openApp(page, { localState: progressState({ phaseIndex: 1 }) });
   for (const [view, title] of Object.entries(TITLES)) {
     await openView(page, view);
     const head = page.locator(`#panel-${view} .page-head`).first();
-    await expect(head.locator('.page-title')).toHaveText(title);
-    // Slice 4.10c (D152 point 16): DAILY has no eyebrow; today's date sits on the right of its title instead.
-    if (view === 'daily') await expect(head.locator('.page-eyebrow')).toHaveCount(0);
-    else await expect(head.locator('.page-eyebrow')).toHaveCSS('color', 'rgb(160, 160, 170)');
+    // Slice 4.10h (D162 point 4): DAILY's title is "Daily Practice" or "Daily" by the room there is; screen readers
+    // always hear "Daily Practice" (daily-companion.spec.js), and its eyebrow is today's date.
+    if (view === 'daily') await expect(head.locator('.page-title')).toHaveAccessibleName(title);
+    else await expect(head.locator('.page-title')).toHaveText(title); // the phone HOME header is hidden (no accessible name)
+    await expect(head.locator('.page-eyebrow')).toHaveCSS('color', 'rgb(160, 160, 170)');
   }
   await openView(page, 'home');
   await expect(page.locator('#panel-home .page-eyebrow')).toHaveText('Tuesday · 10 Nov');

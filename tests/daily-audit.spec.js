@@ -1,5 +1,6 @@
 // Slice 4.10c (D152 points 14, 16, 17, 21, 22, 23): DAILY after the 4.10 design round (option B).
-// Title on the left and today's date on the right (no eyebrow); the count as a thin bar under the day buttons;
+// Title on the left and today's date on the right (no eyebrow); the count as a thin bar under the day buttons
+// (both changed by slice 4.10h, D162: see daily-companion.spec.js);
 // session and companion column at full width (3 : 2, checked in daily-layout.spec.js); "Phase n · Label" in the
 // Focused block; the Friday Phase test as a line with one dot per category; Mastered / Watched buttons as in
 // LIBRARY (TECHNIQUE gets the same height); no DAILY button ends with punctuation. DAILY behaviour is unchanged
@@ -19,29 +20,9 @@ const state = (over = {}) => baseState({ phaseIndex: 1, practiced: { 'warmup.Tue
 const friday = (over = {}) => baseState({ phaseIndex: 1, practicedDate: '2026-11-13', practiced: { 'warmup.Fri': true },
   testLevel: { alt: 2, sweep: 3, legato: 1, econ: 0, tap: 0, ult: 0 }, ...over });
 
+// Slice 4.10h (D162 points 2 and 4): the header (date eyebrow, title, streak) and the absence of the count bar are
+// checked in daily-companion.spec.js; the date stays today's whatever day is viewed (below).
 test.describe('header', () => {
-  test('title DAILY on the left, today\'s date on the right, no eyebrow', async ({ page }, testInfo) => {
-    const monitor = await openApp(page, { localState: state() });
-    await openView(page, 'daily');
-    const head = daily(page).locator('.page-head');
-    await expect(head.locator('.page-eyebrow')).toHaveCount(0);
-    await expect(head.locator('.page-title')).toHaveText('Daily');
-    const date = head.locator('time.daily-date');
-    await expect(date).toHaveAttribute('datetime', '2026-11-10');
-    if (isPhone(testInfo)) {
-      await expect(date.locator('.daily-date-short')).toHaveText('Tue · Nov 10th, 2026');
-      await expect(date.locator('.daily-date-long')).toBeHidden();
-    } else {
-      await expect(date.locator('.daily-date-long')).toHaveText('Tuesday · November 10th, 2026');
-      await expect(date.locator('.daily-date-short')).toBeHidden();
-    }
-    const t = await box(head.locator('.page-title')), d = await box(date);
-    expect(d.x).toBeGreaterThan(t.x + t.width);
-    expect(d.y + d.height).toBeGreaterThan(t.y + t.height / 2); // on the same line, right-hand side
-    expect(monitor.pageErrors).toEqual([]);
-    expect(unexpectedConsoleErrors(monitor)).toEqual([]);
-  });
-
   test('the date stays today\'s when another day is viewed; ordinals are English', async ({ page }) => {
     await openApp(page, { now: '2026-11-22T10:00:00Z', localState: state({ practicedDate: '2026-11-22' }) });
     await openView(page, 'daily');
@@ -55,25 +36,6 @@ test.describe('header', () => {
       await openView(page, 'daily');
       await expect(daily(page).locator('.daily-date-long')).toContainText(`November ${suffix}, 2026`);
     }
-  });
-});
-
-test.describe('count bar', () => {
-  test('under the day buttons, full width; the fill follows the ticks', async ({ page }) => {
-    await openApp(page, { localState: state() });
-    await openView(page, 'daily');
-    const days = await box(daily(page).locator('.daypick'));
-    const bar = daily(page).locator('.daily-progress-bar');
-    const b = await box(bar);
-    expect(b.y).toBeGreaterThan(days.y + days.height);
-    expect(Math.abs(b.width - days.width)).toBeLessThan(2);
-    const fill = bar.locator('.daily-progress-fill');
-    expect(Math.abs((await box(fill)).width - b.width / 4)).toBeLessThan(2);
-    await daily(page).locator('button.blkcheck[data-block="focused"]').click();
-    await expect(bar).toHaveAttribute('aria-valuenow', '2');
-    await expect(bar).toHaveAttribute('aria-valuetext', '2 of 4 practiced');
-    await expect.poll(async () => Math.round((await box(daily(page).locator('.daily-progress-fill'))).width - b.width / 2)).toBe(0);
-    await expect(daily(page).locator('.daily-progress-fill')).not.toHaveAttribute('style', /.*/);
   });
 });
 

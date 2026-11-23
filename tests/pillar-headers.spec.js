@@ -81,11 +81,12 @@ test.describe('phone', () => {
 
   test('other pages keep the small line and the large title', async ({ page }) => {
     await openApp(page, { localState: sample() });
-    for (const [view, title] of [['daily', 'Daily'], ['library', 'Library'], ['setup', 'Guitar Setup'], ['account', 'Account & data']]) {
+    // Slice 4.10h (D162 point 4): DAILY's heading is named "Daily Practice" (visible "Daily Practice" or "Daily").
+    for (const [view, title] of [['daily', 'Daily Practice'], ['library', 'Library'], ['setup', 'Guitar Setup'], ['account', 'Account & data']]) {
       await openView(page, view);
       const t = page.locator(`#panel-${view} .page-title`).first();
       await expect(t).toBeVisible();
-      await expect(t).toHaveText(title);
+      await expect(t).toHaveAccessibleName(title);
       expect((await box(t)).height).toBeGreaterThan(10);
     }
   });

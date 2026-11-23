@@ -77,10 +77,11 @@ test.describe('phone', () => {
 
   test('other pages keep their own title as the header (pillar pages: pillar-headers.spec.js, D131)', async ({ page }) => {
     await openApp(page);
-    for (const [view, title] of [['daily', 'Daily'], ['account', 'Account & data']]) {
+    // Slice 4.10h (D162 point 4): DAILY's heading is named "Daily Practice" (visible "Daily Practice" or "Daily").
+    for (const [view, title] of [['daily', 'Daily Practice'], ['account', 'Account & data']]) {
       await openView(page, view);
       await expect(page.locator(`#panel-${view} .page-title`).first()).toBeVisible();
-      await expect(page.locator(`#panel-${view} .page-title`).first()).toHaveText(title);
+      await expect(page.locator(`#panel-${view} .page-title`).first()).toHaveAccessibleName(title);
     }
   });
 

@@ -18,27 +18,11 @@ const state = (over = {}) => baseState({ phaseIndex: 1, practiced: { 'warmup.Tue
 const rawLocal = (page) => page.evaluate(() => localStorage.getItem('shredRoadmapState_v10'));
 
 test.describe('session column (desktop and phone)', () => {
-  // Slice 4.10c (D152 point 16): the count moved from the header to a thin bar under the day buttons.
-  test('the count bar shows the session count; another day shows the minutes only', async ({ page }) => {
-    const monitor = await openApp(page, { localState: state() });
-    await openView(page, 'daily');
-    const prog = daily(page).locator('.daily-progress');
-    await expect(prog.locator('.daily-progress-count')).toHaveText('1 of 4 practiced');
-    await expect(prog.locator('.daily-progress-min')).toHaveText('60 min');
-    await expect(prog.locator('[role="progressbar"]')).toHaveAttribute('aria-valuenow', '1');
-    await dayChip(page, 'Sat').click();
-    await expect(prog.locator('.daily-progress-count')).toHaveCount(0);
-    await expect(prog.locator('[role="progressbar"]')).toHaveCount(0);
-    await expect(prog).toHaveText('60 min');
-    expect(monitor.pageErrors).toEqual([]);
-    expect(unexpectedConsoleErrors(monitor)).toEqual([]);
-  });
+  // Slice 4.10h (D162 point 2): the count bar and its text left DAILY (checked in daily-companion.spec.js).
 
-  test('Setup phase: count of its two blocks, no minutes', async ({ page }) => {
+  test('Setup phase: its two blocks are numbered 01-02', async ({ page }) => {
     await openApp(page, { localState: baseState({ phaseIndex: 0 }) });
     await openView(page, 'daily');
-    await expect(daily(page).locator('.daily-progress-count')).toHaveText('0 of 2 practiced');
-    await expect(daily(page).locator('.daily-progress-min')).toHaveCount(0);
     await expect(daily(page).locator('.blk-num')).toHaveText(['01', '02']);
   });
 
@@ -72,7 +56,6 @@ test.describe('session column (desktop and phone)', () => {
     await expect(focused).toHaveAttribute('aria-pressed', 'false');
     await focused.click();
     await expect(daily(page).locator('button.blkcheck[data-block="focused"]')).toHaveAttribute('aria-pressed', 'true');
-    await expect(daily(page).locator('.daily-progress-count')).toHaveText('2 of 4 practiced');
     await dayChip(page, 'Thu').click();
     await expect(daily(page).locator('button.blkcheck.ro')).toHaveCount(4);
     for (const b of await daily(page).locator('button.blkcheck.ro').all()) await expect(b).toBeDisabled();
@@ -101,6 +84,7 @@ test.describe('companion column (desktop)', () => {
   });
 
   // Slice 4.10c (D152 point 14, supersedes the 720 / 400 px limits of D133 point 1): both columns grow, 3 : 2.
+  // Slice 4.10h (D162 point 3): the day buttons sit over the session column only (the header keeps the full width).
   test('beside the session on a wide window (3 : 2, full width), under it on a narrow one', async ({ page }, testInfo) => {
     test.skip(isPhone(testInfo), 'desktop only');
     await openApp(page, { localState: state() });
@@ -108,10 +92,12 @@ test.describe('companion column (desktop)', () => {
     let main = await daily(page).locator('.daily-main').boundingBox();
     let aside = await side(page).boundingBox();
     const days = await daily(page).locator('.daypick').boundingBox();
+    const head = await daily(page).locator('.daily-head').boundingBox();
     expect(aside.x).toBeGreaterThan(main.x + main.width);
     expect(Math.abs(main.width / aside.width - 1.5)).toBeLessThan(0.05);
     expect(Math.abs(main.x - days.x)).toBeLessThan(2);
-    expect(Math.abs((aside.x + aside.width) - (days.x + days.width))).toBeLessThan(2);
+    expect(Math.abs(main.width - days.width)).toBeLessThan(2);
+    expect(Math.abs((aside.x + aside.width) - (head.x + head.width))).toBeLessThan(2);
     await page.setViewportSize({ width: 1024, height: 900 });
     main = await daily(page).locator('.daily-main').boundingBox();
     aside = await side(page).boundingBox();
@@ -138,7 +124,8 @@ test.describe('companion column (desktop)', () => {
     await expect(card.locator('.dc-tile[data-day="Mon"]')).toHaveAttribute('aria-label', 'Monday: Ear Training, practised');
   });
 
-  test('MICRO-DOSES: Friday has no video; Saturday shows the week only', async ({ page }, testInfo) => {
+  // Slice 4.10h (D162 point 1): no MICRO-DOSES card on Saturday, Sunday or in the Setup phase (daily-companion.spec.js).
+  test('MICRO-DOSES: Friday has no video; Saturday has no card', async ({ page }, testInfo) => {
     test.skip(isPhone(testInfo), 'desktop only');
     await openApp(page, { localState: state() });
     await openView(page, 'daily');
@@ -147,17 +134,15 @@ test.describe('companion column (desktop)', () => {
     await expect(card.locator('.dc-front-name')).toHaveText('Reinforce Weakest');
     await expect(card.locator('a.dc-btn')).toHaveCount(0);
     await dayChip(page, 'Sat').click();
-    await expect(card.locator('.dc-none')).toHaveText('No micro-dose on Saturday');
-    await expect(card.locator('.dc-front, a.dc-btn, .dc-tile.cur')).toHaveCount(0);
-    await expect(card.locator('.dc-tile')).toHaveCount(5);
+    await expect(card).toHaveCount(0);
   });
 
-  test('MICRO-DOSES: the Setup phase has no micro-dose today', async ({ page }, testInfo) => {
+  test('MICRO-DOSES: the Setup phase has no card', async ({ page }, testInfo) => {
     test.skip(isPhone(testInfo), 'desktop only');
     await openApp(page, { localState: baseState({ phaseIndex: 0 }) });
     await openView(page, 'daily');
-    await expect(side(page).locator('.daily-micro-card .dc-none')).toHaveText('No micro-dose today');
-    await expect(side(page).locator('.daily-micro-card a.dc-btn')).toHaveCount(0);
+    await expect(side(page).locator('.daily-micro-card')).toHaveCount(0);
+    await expect(side(page).locator('.daily-key-card')).toBeVisible();
   });
 
   test('without the BHGS pack the micro-doses are left out; the KEY card stays', async ({ page }, testInfo) => {

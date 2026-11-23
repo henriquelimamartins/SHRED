@@ -5,7 +5,7 @@ import { CHOP, TESTCATS, BONUS } from "../data/bhgs.js?v=1";
 import { DAY_ORDER } from "../data/days.js?v=1";
 import { state } from "../store.js?v=5";
 import { todayISO, todayName, activeDay } from "../logic/dates.js?v=7";
-import { isBlockPracticed } from "../logic/daily.js?v=36";
+import { isBlockPracticed } from "../logic/daily.js?v=37";
 
 /* ---------- render helpers ---------- */
 export function linked(label,url){ return url? '<a href="'+url+'" target="_blank" rel="noopener">'+label+'</a>' : label; }
@@ -33,7 +33,9 @@ export function prereqItem(label,key,url,editable){
     : '<button class="mbtn ro blue'+(c?" on":"")+'">'+(c?"\u2713 Completed":"Incomplete")+'</button>';
   return '<li class="mrow"><div class="itxt'+(c?" done":"")+'">'+linked(label,url)+'</div>'+btn+'</li>';
 }
-export function docItem(label,url){ return '<li class="docli"><div class="docic">\ud83d\udcd6</div><div class="itxt">'+linked(label,url)+'</div></li>'; }
+// Slice 4.10h (D162 point 7; AUDIT-4.10 point 32): the line document icon of LIBRARY instead of the book emoji.
+var DOC_ICON = '<svg class="ico docic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h7l4 4v14H7zM14 3v4h4"></path></svg>';
+export function docItem(label,url){ return '<li class="docli"><div class="docic">'+DOC_ICON+'</div><div class="itxt">'+linked(label,url)+'</div></li>'; }
 export function chopRow(target,onlyKeys,editable){
   if(editable===undefined) editable=true;
   var list=onlyKeys?CHOP.filter(function(c){return onlyKeys.indexOf(c.key)!==-1;}):CHOP;

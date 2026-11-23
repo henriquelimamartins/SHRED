@@ -763,6 +763,7 @@ button.tech-phase{width:100%;text-align:left;color:var(--text);font:inherit;curs
 .home-streak { display:flex; align-items:center; gap:8px; padding:9px 14px; border:1px solid #2A2A31; border-radius:var(--r-pill); font-size:13px; color:var(--text-2); }
 .home-streak .ico { width:16px; height:16px; color:var(--red); stroke-width:2; }
 .home-streak strong { font-weight:600; color:var(--text); }
+.home-streak .streak-text { white-space:nowrap; } /* slice 4.10h (D162 point 5): one run of text, ordinary word spaces */
 .home-cols { display:flex; flex-direction:column; gap:14px; }
 .home-col { display:flex; flex-direction:column; gap:14px; min-width:0; }
 .home-cols .card { margin-bottom:0; }
@@ -798,23 +799,22 @@ button.tech-phase{width:100%;text-align:left;color:var(--text);font:inherit;curs
   #panel-technique .page-head, #panel-improv .page-head, #panel-dojo .page-head{align-items:baseline;margin-bottom:12px;}
 }
 
-/* ---------- DAILY as drawn (slice 4.7, D132 point 1, D133; slice 4.10c, D152 points 14, 16, 17) ---------- */
-/* Title on the left, today's date on the right (no eyebrow); day buttons and the count bar at full width; then the
-   session and the companion column share the full width 3 : 2. When the window is too narrow for both (below
-   1180 px with the sidebar) the companion column goes under the session, full width; hidden on the phone (D133). */
-#panel-daily .daily-head{align-items:baseline;}
-#panel-daily .daily-head .page-title{margin:0;}
-#panel-daily .daily-date{font-family:var(--font-head);font-size:var(--fs-sm);font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);white-space:nowrap;}
-.daily-date-short{display:none;}
-.daily-top{display:flex;flex-direction:column;gap:14px;margin-bottom:20px;}
-.daily-progress-text{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-size:var(--fs-md);color:var(--text-2);}
-.daily-progress-min{color:var(--muted);margin-left:auto;}
-.daily-progress-bar{height:4px;margin-top:6px;border-radius:2px;background:var(--border);overflow:hidden;}
-.daily-progress-fill{display:block;height:100%;width:0;border-radius:2px;background:var(--red);transition:width .2s;}
-.daily-progress-fill.f1{width:8.333%}.daily-progress-fill.f2{width:16.667%}.daily-progress-fill.f3{width:25%}
-.daily-progress-fill.f4{width:33.333%}.daily-progress-fill.f5{width:41.667%}.daily-progress-fill.f6{width:50%}
-.daily-progress-fill.f7{width:58.333%}.daily-progress-fill.f8{width:66.667%}.daily-progress-fill.f9{width:75%}
-.daily-progress-fill.f10{width:83.333%}.daily-progress-fill.f11{width:91.667%}.daily-progress-fill.f12{width:100%}
+/* ---------- DAILY as drawn (slice 4.7, D132 point 1, D133; slice 4.10c, D152 points 14, 16, 17; slice 4.10h, D162) ---------- */
+/* Header at full width: today's date as the eyebrow, the title, and on the right the HOME streak line (phone: the
+   streak pill). The long title / date show only where they fit on one line (classes set by fitDailyHeader in
+   views/daily.js). Then the session column (day buttons, then the session) and the companion column share the width
+   3 : 2, both starting at the same height; below 1180 px window width (sidebar included) the companion column goes
+   under the session, full width; hidden on the phone (D133). No count bar or count text (D162 point 2). */
+#panel-daily .daily-head{align-items:flex-end;flex-wrap:nowrap;}
+#panel-daily .daily-head .page-head-main{min-width:0;}
+#panel-daily .daily-date{display:block;white-space:nowrap;}
+#panel-daily .daily-title{white-space:nowrap;}
+#panel-daily .daily-date-short, #panel-daily .daily-title-short{display:none;}
+#panel-daily .daily-head.fit-short-date .daily-date-long, #panel-daily .daily-head.fit-short-title .daily-title-long{display:none;}
+#panel-daily .daily-head.fit-short-date .daily-date-short, #panel-daily .daily-head.fit-short-title .daily-title-short{display:inline;}
+#panel-daily .daily-sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;}
+#panel-daily .daily-head .page-head-right{flex:0 0 auto;}
+#panel-daily .daily-head .streak-pill{display:none;}
 .daily-cols{display:grid;grid-template-columns:minmax(0,1fr);gap:20px;align-items:start;}
 .daily-main{min-width:0;display:flex;flex-direction:column;gap:16px;}
 .daily-side{min-width:0;display:flex;flex-direction:column;gap:16px;}
@@ -822,13 +822,11 @@ button.tech-phase{width:100%;text-align:left;color:var(--text);font:inherit;curs
 @media (max-width: 767px){
   .daily-side{display:none;}
   .daily-main{gap:14px;}
-  .daily-top{gap:12px;margin-bottom:14px;}
-  .daily-date-long{display:none;}
-  .daily-date-short{display:inline;}
+  #panel-daily .daily-head{align-items:center;}
   #panel-daily .daily-date{font-size:var(--fs-xs);}
-  .daily-progress-text{font-size:var(--fs-sm);}
+  #panel-daily .daily-head .home-streak{display:none;}
+  #panel-daily .daily-head .streak-pill{display:flex;}
 }
-@media (prefers-reduced-motion: reduce){ .daily-progress-fill{transition:none;} }
 
 /* Phase tag inside the Focused block (Phase 0: Prerequisites), slice 4.10c (D152 point 16). */
 #panel-daily .daily-phase{display:flex;}
@@ -881,12 +879,21 @@ button.tech-phase{width:100%;text-align:left;color:var(--text);font:inherit;curs
 #panel-daily .blk.improv .nm{color:var(--purple-tint);}
 #panel-daily .blk.done-today .nm{color:var(--muted);}
 #panel-daily .blk .topright{gap:12px;}
-#panel-daily .blk .min{font-size:var(--fs-sm);}
+/* Slice 4.10h (D162 point 6): the minutes look like the "Practiced" label and sit centred on its line. */
+#panel-daily .blk .min{display:flex;align-items:center;min-height:44px;font-family:var(--font-body);font-size:var(--fs-md);font-weight:500;letter-spacing:0;text-transform:none;color:var(--text-3);}
 #panel-daily .blkcheck{min-height:44px;padding:0 4px 0 8px;gap:8px;border:0;background:transparent;color:var(--text-3);font-family:var(--font-body);font-size:var(--fs-md);font-weight:500;letter-spacing:0;text-transform:none;}
 #panel-daily .blkcheck[aria-pressed="true"]{color:var(--text);}
 #panel-daily .blkcheck .box{width:22px;height:22px;flex:0 0 22px;border-radius:var(--r-sm);}
 #panel-daily .blkcheck .box.on:after{font-size:var(--fs-sm);}
 #panel-daily .blkcheck.ro{opacity:.5;}
+/* Slice 4.10h (D162 point 6): the minutes are now as large as "Practiced"; on the phone the head spaces are tighter
+   and, on a very narrow screen, the minutes and "Practiced" move together under the title instead of overlapping it. */
+@media (max-width: 767px){
+  #panel-daily .blk .top{flex-wrap:wrap;gap:0 8px;}
+  #panel-daily .blk .nm{min-width:min-content;}
+  #panel-daily .blk .topright{gap:8px;margin-left:auto;}
+  #panel-daily .blkcheck{padding-left:4px;}
+}
 #panel-daily .blk p{margin:0;font-size:var(--fs-base);line-height:1.5;color:var(--text-3);}
 #panel-daily .blk p.u-mb-8, #panel-daily .blk p.u-my-8, #panel-daily .blk p.u-mt-8{margin:6px 0 2px !important;font-size:var(--fs-md);color:var(--muted);}
 #panel-daily .blk a{color:var(--text);text-decoration:underline;text-decoration-color:var(--box-line);text-underline-offset:3px;text-transform:none;font-family:var(--font-body);font-weight:400;}
@@ -897,7 +904,10 @@ button.tech-phase{width:100%;text-align:left;color:var(--text);font:inherit;curs
 #panel-daily .itxt{font-size:var(--fs-base);}
 #panel-daily .itxt.done, #panel-daily .itxt.done a{color:var(--muted);text-decoration:underline;text-decoration-color:var(--box-line);}
 #panel-daily .mbtn{min-height:40px;padding-top:0;padding-bottom:0;} /* slice 4.10c (D152 point 21): the app's usual Mastered / Watched buttons, as LIBRARY */
-#panel-daily .docli{border-top:1px solid var(--line);}
+#panel-daily .docli{border-top:1px solid var(--line);align-items:center;}
+/* Slice 4.10h (D162 point 7): the line document icon of LIBRARY instead of the book emoji. */
+#panel-daily .docic{display:flex;align-items:center;justify-content:center;flex:0 0 18px;color:var(--muted);}
+#panel-daily .docic .ico{width:18px;height:18px;}
 
 /* Chop-builders: link + target, then − level + as drawn. */
 #panel-daily .chop{min-height:54px;padding:6px 0;border-bottom:0;border-top:1px solid var(--line);}
@@ -962,7 +972,6 @@ button.tech-phase{width:100%;text-align:left;color:var(--text);font:inherit;curs
 .dc-label.red{color:var(--red-tint);}
 .dc-label.purple{color:var(--purple-tint);}
 .dc-aside{font-size:var(--fs-sm);color:var(--muted);text-align:right;}
-.dc-none{margin:0;font-size:var(--fs-base);color:var(--text-3);}
 .dc-front{display:flex;align-items:center;gap:14px;}
 .dc-front-ic{flex:0 0 52px;height:52px;border-radius:14px;background:var(--red-bg);border:1px solid var(--red-edge);display:flex;align-items:center;justify-content:center;color:var(--red-tint);}
 .dc-front-ic .ico{width:26px;height:26px;}
