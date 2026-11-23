@@ -28,13 +28,13 @@ import { renderHome, watchHomeHeader } from "./views/home.js?v=39";
 import { renderTechnique } from "./views/technique.js?v=25";
 import { renderDaily, watchDailyHeader } from "./views/daily.js?v=39";
 import { renderImprov } from "./views/improv.js?v=30";
-import { renderLibrary } from "./views/library.js?v=39";
+import { renderLibrary } from "./views/library.js?v=40";
 import { renderSetup } from "./views/setup.js?v=29";
 import { renderDojoView } from "./views/dojo.js?v=30";
 import { renderRails } from "./views/rails.js?v=24";
 import { renderAccount, renderProfilePanel } from "./views/account.js?v=23";
 import { currentUser } from "./firebase.js?v=5";
-import { renderMore } from "./views/more.js?v=21";
+import { renderMore } from "./views/more.js?v=22";
 import { icon, sidebarLogo, sidebarMenu, accountRow, syncState } from "./views/shell.js?v=22";
 
 export function initAppLayout() {
@@ -76,8 +76,8 @@ const NAV_ITEMS = [
   { view: "library", label: "Library", more: "Resources" },
   { view: "setup", label: "Tools", more: "Tools" }
 ].filter(function(n){ return !n.pack || BHGS_PACK; });
-// LIBRARY goes into More only with the BHGS pack on (D117 point 3; until the Explorer exists, D119 point 6).
-function inMore(n){ return !!n.more && !(n.view === "library" && !BHGS_PACK); }
+// Slice 4.10k (D165): LIBRARY lives in More with or without the BHGS pack (supersedes the D120 bar slot without the pack).
+function inMore(n){ return !!n.more; }
 // Slice 4.5a (D124): the Account & data page sits in More (phone) and in the account row (desktop), not in the menu.
 // On these pages (and on the MORE page itself) the phone bar shows MORE as active.
 const MORE_VIEWS = NAV_ITEMS.filter(inMore).map(function(n){ return n.view; }).concat(["account", "more"]);

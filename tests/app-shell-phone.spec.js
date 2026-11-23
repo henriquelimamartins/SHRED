@@ -114,11 +114,11 @@ test.describe('phone', () => {
     await expect(page.locator('#botnav [data-action="more"]')).toHaveClass(/active/);
   });
 
-  test('with the BHGS pack off there is no RESOURCES group (LIBRARY is in the bar)', async ({ page }) => {
+  test('with the BHGS pack off the RESOURCES group keeps LIBRARY, and the bar has no LIBRARY (4.10k, D165)', async ({ page }) => {
     await openApp(page, { bhgsPack: false });
     const more = await openMore(page);
-    expect(await more.locator('.more-group').evaluateAll((g) => g.map((x) => x.dataset.group))).toEqual(['tools', 'account']);
-    await expect(page.locator('#botnav [data-view="library"]')).toHaveCount(1);
+    expect(await more.locator('.more-group').evaluateAll((g) => g.map((x) => x.dataset.group))).toEqual(['resources', 'tools', 'account']);
+    await expect(page.locator('#botnav [data-view="library"]')).toHaveCount(0);
   });
 
   test('account button next to the title: person icon signed out; it opens Account & data', async ({ page }) => {

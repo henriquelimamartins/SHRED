@@ -36,11 +36,12 @@ const THEORY_KEYS = [
   'theory.6', 'theory.7', 'theory.10',
 ];
 
-test('Library shows its 6 sections, all closed', async ({ page }, testInfo) => {
+test('Library shows its 6 sections in two groups, all closed', async ({ page }, testInfo) => {
   const monitor = await openApp(page);
   await goTo(page, 'library');
-  expect(await library(page).locator(':scope .panel-content > .acc > .acchead > b').allTextContents()).toEqual([
-    'Theory Track', 'Expression Track', 'Listening Vault', 'Creative', 'Bonus Content', 'Guide & Info',
+  // Slice 4.10k (D165): two groups; the Expression Track left LIBRARY, Documents is its own section.
+  expect(await library(page).locator('.acc > .acchead > b').allTextContents()).toEqual([
+    'Listening Vault', 'Guide & Info', 'Theory Track', 'Creative', 'Bonus Content', 'Documents',
   ]);
   await expect(library(page).locator('.accbody')).toHaveCount(0);
   await page.screenshot({ path: testInfo.outputPath('library-closed.png'), fullPage: true });
@@ -57,17 +58,18 @@ test('a section opens and closes again', async ({ page }) => {
   await expect(library(page).locator('.accbody')).toHaveCount(0);
 });
 
-test('Theory Track: 3 documents and 13 videos in 3 groups', async ({ page }) => {
+test('Theory Track: the Modes document, 13 videos in 4 groups (the two PDFs are under Documents, 4.10k)', async ({ page }) => {
   await openApp(page);
   await goTo(page, 'library');
   await section(page, 'theory').click();
   const body = library(page).locator('.acc:has([data-acc="theory"]) > .accbody');
-  expect(await body.locator('.docli .itxt').allTextContents())
-    .toEqual(['Music Theory Cheat Sheet', 'Scales Handbook', 'Modes Cheat Sheet']);
+  expect(await body.locator('.docli .itxt').allTextContents()).toEqual(['Modes Cheat Sheet']);
   expect(await body.locator('[data-action="togm"]').evaluateAll((els) => els.map((e) => e.dataset.key))).toEqual(THEORY_KEYS);
   expect(await body.locator('.lib-group h3').allTextContents()).toEqual(['Start Here', 'Ear Training', 'Modes', 'Chords & Soloing']);
-  await expect(body.locator('a[href="./music-theory-cheat-sheet.pdf"]')).toHaveCount(1);
-  await expect(body.locator('a[href="./scales-handbook.pdf"]')).toHaveCount(1);
+  await expect(body.locator('a[href="./music-theory-cheat-sheet.pdf"]')).toHaveCount(0);
+  await section(page, 'documents').click();
+  await expect(library(page).locator('.acc:has([data-acc="documents"]) a[href="./music-theory-cheat-sheet.pdf"]')).toHaveCount(1);
+  await expect(library(page).locator('.acc:has([data-acc="documents"]) a[href="./scales-handbook.pdf"]')).toHaveCount(1);
 });
 
 test('Theory Track: Watched stores today\'s date under theory.N; un-watching stores false', async ({ page }) => {

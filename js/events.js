@@ -25,7 +25,7 @@ import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confir
 import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=39";
 import { changeCalMonth, calCanGo } from "./views/calendar.js?v=39";
 import { currentMinigame, startArchitectGame, handleDojoAnswer, renderCodexList, renderCodexReader, focusSubTitle } from "./views/dojo.js?v=30";
-import { updateNav, render, updateAccountRow } from "./render.js?v=39";
+import { updateNav, render, updateAccountRow } from "./render.js?v=40";
 import { initDailySwipe } from "./views/daily-swipe.js?v=17";
 import { buildBackupFile, backupFileName, listDeviceBackups, parseBackupFile, isNewerCopy, restoredState, formatLocalTime, reasonLabel, MAX_BACKUP_FILE_BYTES, INVALID_BACKUP_MSG, NEWER_BACKUP_MSG } from "./logic/backup.js?v=2";
 
