@@ -226,17 +226,36 @@ test.describe('phone', () => {
     await expect(home(page).locator('.hb-tile[data-block="casual"]')).toHaveAttribute('aria-label', /^Improv & Expression, /);
   });
 
-  test('header fits at 360, 375 and 390 px: long title and date on one line, no sideways scroll, at most 110 px', async ({ page }) => {
+  // The long title shows only where it fits; which one shows depends on the font (the real Oswald on devices, a
+  // fallback in the CI, where web fonts are blocked), so the test checks the rule, not the outcome.
+  test('header at 360, 375 and 390 px: the title shown fits on one line, the long one only where it fits; no sideways scroll, at most 110 px', async ({ page }) => {
     await openApp(page, { localState: progressState() });
     for (const w of [360, 375, 390]) {
       await page.setViewportSize({ width: w, height: 760 });
       await settle(page);
-      await expect(head(page)).not.toHaveClass(/fit-short/);
-      await expect(head(page).locator('.home-title-long')).toBeVisible();
-      const m = await page.evaluate(() => ({
-        h: document.querySelector('#panel-home .home-head').getBoundingClientRect().bottom - document.querySelector('#panel-home .home-brand-row').getBoundingClientRect().top,
-        over: document.documentElement.scrollWidth - document.documentElement.clientWidth,
-      }));
+      await expect(head(page)).toHaveClass(/fitted/);
+      const m = await page.evaluate(() => {
+        const head = document.querySelector('#panel-home .home-head');
+        const right = head.querySelector('.page-head-right').getBoundingClientRect();
+        const gap = parseFloat(getComputedStyle(head).columnGap) || 0;
+        const room = head.clientWidth - right.width - gap;
+        const short = head.classList.contains('fit-short-title');
+        const title = head.querySelector('.home-title');
+        const shown = head.querySelector(short ? '.home-title-short' : '.home-title-long').getBoundingClientRect();
+        head.classList.remove('fit-short-title'); // measure the long title, then put the class back
+        const longW = head.querySelector('.home-title-long').getBoundingClientRect().width;
+        if (short) head.classList.add('fit-short-title');
+        return {
+          short, room, longW, shownRight: shown.right, pillLeft: right.left,
+          oneLine: title.getBoundingClientRect().height <= parseFloat(getComputedStyle(title).fontSize) * 1.3,
+          h: head.getBoundingClientRect().bottom - document.querySelector('#panel-home .home-brand-row').getBoundingClientRect().top,
+          over: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+        };
+      });
+      if (m.short) expect(m.longW, `width ${w}: "HOME" only when the long title does not fit`).toBeGreaterThan(m.room - 2);
+      else expect(m.longW, `width ${w}: the long title fits`).toBeLessThanOrEqual(m.room);
+      expect(m.oneLine, `width ${w}`).toBe(true);
+      expect(m.shownRight, `width ${w}`).toBeLessThanOrEqual(m.pillLeft);
       expect(m.h, `width ${w}`).toBeLessThanOrEqual(110);
       expect(m.over, `width ${w}`).toBe(0);
     }
