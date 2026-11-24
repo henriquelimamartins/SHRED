@@ -1,6 +1,6 @@
 // Slice 4.10b (D152 points 6 and 7): notifications as stacked cards and no splash screen.
 // Notifications: a card per message with an icon and a colour by kind, a close button and auto-close after 4 s;
-// desktop top right (newest on top), phone above the bottom bar (newest nearest the bar); at most 3 at once; the same
+// desktop bottom right since slice 4.10n (newest nearest the corner; AUDIT point 30), phone above the bottom bar (newest nearest the bar); at most 3 at once; the same
 // message is not stacked twice; the newest card is #toast (an empty #toast stays when none is shown).
 // Splash: the page opens straight on the app; the installed app (manifest) uses the app's dark colours.
 // Firebase is stubbed; nothing leaves the machine.
@@ -106,7 +106,7 @@ test('kinds: success, info, warn, error, unlock and milestone each get their own
   expect(kinds).toEqual(['success', 'info', 'warn', 'warn', 'warn', 'error', 'error', 'error', 'info']);
 });
 
-test('placement: desktop top right, newest on top; phone above the bottom bar', async ({ page, isMobile }) => {
+test('placement: desktop bottom right, newest nearest the corner; phone above the bottom bar', async ({ page, isMobile }) => {
   await openApp(page);
   await saveSignedOut(page);
   await page.locator('#panel-account [data-action="cloudload"]').click();
@@ -120,9 +120,11 @@ test('placement: desktop top right, newest on top; phone above the bottom bar', 
     expect(newest.y).toBeGreaterThan(older.y);
     expect(newest.x).toBeLessThan(20);
   } else {
-    expect(newest.y).toBeLessThan(60);
+    // Slice 4.10n (AUDIT point 30; changed on purpose, D107 point 4): bottom right, 20 px from the edges.
+    expect(newest.y + newest.height).toBeGreaterThan(vp.height - 40);
+    expect(newest.y + newest.height).toBeLessThanOrEqual(vp.height - 10);
     expect(newest.x + newest.width).toBeGreaterThan(vp.width - 40);
-    expect(newest.y).toBeLessThan(older.y);
+    expect(newest.y).toBeGreaterThan(older.y);
   }
 });
 

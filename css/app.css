@@ -457,7 +457,8 @@ ul.check li.lib-dayrow, ul.check li.lib-dayrow:last-child{display:flex;align-ite
 .toast-milestone{--toast-c:var(--red);--toast-soft:var(--red-bg);}
 @keyframes toast-in{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
 @media (min-width: 768px) {
-  .toasts{left:auto;right:20px;top:20px;bottom:auto;width:360px;flex-direction:column-reverse;justify-content:flex-end;}
+  /* Slice 4.10n (AUDIT point 30, owner): desktop stack at the bottom right, newest nearest the corner (as the phone). */
+  .toasts{left:auto;right:20px;top:auto;bottom:20px;width:360px;flex-direction:column;justify-content:flex-end;}
   .toast-card.toast-out{transform:translateX(12px);}
   @keyframes toast-in{from{opacity:0;transform:translateX(12px);}to{opacity:1;transform:none;}}
 }
@@ -819,7 +820,7 @@ button.tech-phase{width:100%;text-align:left;color:var(--text);font:inherit;curs
 .hb-min { font-size:var(--fs-sm); color:var(--muted); }
 /* Today's key (D164 point 5; slice 4.10m, D167): the DAILY circle, interactive with its own choice, desktop and phone. */
 .home-key { display:flex; flex-direction:column; gap:14px; }
-.hk-head { display:flex; justify-content:space-between; align-items:center; gap:8px; }
+.hk-head { display:flex; justify-content:space-between; align-items:center; gap:8px; min-height:36px; } /* slice 4.10n: room for the "Today: …" button, as DAILY, so the circle does not move */
 .hk-label { font-family:var(--font-head); font-size:var(--fs-sm); font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--purple-tint); }
 .hk-style { font-size:var(--fs-sm); color:var(--muted); text-align:right; }
 .hk-name { margin:0; font-family:var(--font-head); font-size:30px; font-weight:700; letter-spacing:.03em; line-height:1; text-transform:uppercase; color:var(--text); }
@@ -846,6 +847,7 @@ button.tech-phase{width:100%;text-align:left;color:var(--text);font:inherit;curs
   #panel-home .home-head .home-streak{display:none;}
   #panel-home .home-head .streak-pill{display:flex;}
   .hk-today { min-height:44px; }
+  .hk-head { min-height:44px; }
   .home-brief { gap:14px; }
   .hb-main { display:contents; }
   .hb-head { order:0; }
@@ -1245,7 +1247,7 @@ button.tech-phase{width:100%;text-align:left;color:var(--text);font:inherit;curs
 #panel-setup .setup-measure{background:var(--card);border:1px solid var(--border);border-radius:var(--r-card);padding:18px 20px 20px;margin-bottom:22px;}
 #panel-setup .setup-measure-title{margin:0 0 14px;font-family:var(--font-head);font-size:16px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text);}
 #panel-setup .setup-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:10px;}
-#panel-setup .setup-tile{background:var(--chrome);border:1px solid var(--line);border-radius:12px;padding:12px 14px;min-width:0;}
+#panel-setup .setup-tile{background:var(--chrome);border:1px solid var(--line);border-radius:12px;padding:12px 14px;min-width:0;text-align:center;} /* slice 4.10n (AUDIT point 27): centred */
 #panel-setup .setup-tile-label{font-family:var(--font-head);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);}
 #panel-setup .setup-tile-val{margin-top:6px;font-family:var(--font-head);font-size:20px;font-weight:600;line-height:1.1;color:var(--text);}
 #panel-setup .setup-tile-sub{margin-top:2px;font-size:var(--fs-sm);color:var(--muted);}
