@@ -1,7 +1,8 @@
 // Slice 4.5c (DECISIONS D117 point 2, D124 point 3, D127 point 2, D129): HOME as drawn on the 4.0 canvas.
 // Slice 4.10j (D164): HOME = direction A of the 4.10 canvas. Today's session became the briefing of the day (the same
 // blocks, minutes, Practiced state and counts as before), Today's Improv became Today's key (the same key and style as
-// IMPROV), two columns from 1180 px; header, account button, profile panel and Next up: home-hub.spec.js.
+// IMPROV), two columns from 1180 px; header, account button and profile panel: home-hub.spec.js.
+// Slice 4.10m (D167): Next up left HOME and the circle shows on the phone too (home-key.spec.js).
 // Firebase is stubbed; the clock is fixed at Tuesday 10 Nov 2026; nothing leaves the machine.
 const { test, expect } = require('@playwright/test');
 const { openApp, openView, cloudWrites, unexpectedConsoleErrors, STORAGE_KEY } = require('./support/app');
@@ -12,7 +13,8 @@ test.use({ timezoneId: 'Europe/Lisbon' });
 const home = (page) => page.locator('#panel-home');
 const brief = (page) => home(page).locator('.home-brief');
 // The full block names (the phone shows "Improv" for Improv & Expression; the tile's accessible name keeps the full one).
-const tileTitles = (page) => brief(page).locator('.hb-tile').evaluateAll((t) => t.map((x) => x.getAttribute('aria-label').split(', ')[0]));
+// Slice 4.10m (D167): each tile's name for screen readers is text inside it (it was an aria-label).
+const tileTitles = (page) => brief(page).locator('.hb-tile .home-sr').evaluateAll((t) => t.map((x) => x.textContent.split(', ')[0]));
 
 test('header: the streak as "N days in a row · M logged" (desktop line, also read by the phone pill)', async ({ page }) => {
   await openApp(page, { localState: progressState() }); // 7, 8, 9 Nov logged; today not yet
@@ -105,10 +107,10 @@ test('Today\'s key: the key and style of the day, as on the IMPROV page; it open
   await expect(page.locator('#panel-improv')).toHaveClass(/active/);
 });
 
-test('Today\'s key and Next up when all 5 Gates are done', async ({ page }) => {
+test('Today\'s key when all 5 Gates are done', async ({ page }) => {
   await openApp(page, { localState: baseState({ improvIndex: 5 }) });
   await expect(home(page).locator('.home-key .hk-name')).toBeVisible();
-  await expect(home(page).locator('.hn-improv .hn-label')).toHaveText('Improvisation · Complete');
+  await expect(home(page).locator('.home-key .kc-key')).toHaveCount(24);
 });
 
 test('the old HOME parts are gone: shortcut buttons, stat row, "Daily Practice System", "Consistency Grid", Today\'s Improv', async ({ page }) => {
@@ -120,13 +122,13 @@ test('the old HOME parts are gone: shortcut buttons, stat row, "Daily Practice S
   await expect(home(page).locator('.home-progress h3')).toHaveCount(0); // point 13: no "Progress" title
 });
 
-test('with the BHGS pack off HOME shows the briefing, the calendar, Today\'s key and Next up without Technique', async ({ page }) => {
+test('with the BHGS pack off HOME shows the briefing, the calendar and Today\'s key', async ({ page }) => {
   const monitor = await openApp(page, { bhgsPack: false, localState: baseState({ phaseIndex: 1 }) });
   await expect(home(page).locator('.hb-tile')).toHaveCount(4);
   await expect(brief(page).locator('.hb-next-sub')).toHaveText('5 min');
   await expect(home(page).locator('.home-calendar .s-day').first()).toBeAttached();
   await expect(home(page).locator('.home-key')).toBeAttached();
-  await expect(home(page).locator('.hn-label')).toHaveText(['Improvisation · Gate 1', 'Theory']);
+  await expect(home(page).locator('.home-next, .hn-row')).toHaveCount(0);
   expect(monitor.pageErrors).toEqual([]);
 });
 
@@ -144,29 +146,27 @@ test('opening HOME and moving the calendar writes nothing (device or cloud)', as
 test.describe('desktop', () => {
   test.skip(({ isMobile }) => isMobile, 'desktop layout');
 
-  test('two columns from 1180 px: briefing and calendar on the left, Today\'s key and Next up on the right', async ({ page }) => {
+  test('two columns from 1180 px: briefing and calendar on the left, Today\'s key on the right', async ({ page }) => {
     await openApp(page, { localState: progressState() });
     const box = async (sel) => home(page).locator(sel).boundingBox();
-    const b = await box('.home-brief'), c = await box('.home-calendar'), k = await box('.home-key'), n = await box('.home-next');
+    const b = await box('.home-brief'), c = await box('.home-calendar'), k = await box('.home-key');
     expect(c.y).toBeGreaterThan(b.y + b.height - 1);
     expect(Math.abs(c.x - b.x)).toBeLessThan(1);
     expect(k.x).toBeGreaterThan(b.x + b.width);
     expect(Math.abs(k.y - b.y)).toBeLessThan(1);
-    expect(Math.abs(n.x - k.x)).toBeLessThan(1);
-    expect(n.y).toBeGreaterThan(k.y + k.height - 1);
     expect(Math.round(k.width)).toBe(380);
     await expect(home(page).locator('.home-streak')).toBeVisible();
     await expect(home(page).locator('.home-progress')).toBeHidden(); // D127: rails in the sidebar only
-    await expect(home(page).locator('.kc-static')).toBeVisible(); // the circle on desktop
+    await expect(home(page).locator('.home-key .kc-home')).toBeVisible(); // the circle
   });
 
-  test('below 1180 px one column: briefing, key, Next up, calendar', async ({ page }) => {
+  test('below 1180 px one column: briefing, key, calendar', async ({ page }) => {
     await page.setViewportSize({ width: 1024, height: 800 });
     await openApp(page, { localState: progressState() });
-    const tops = await page.evaluate(() => ['.home-brief', '.home-key', '.home-next', '.home-calendar']
+    const tops = await page.evaluate(() => ['.home-brief', '.home-key', '.home-calendar']
       .map((s) => document.querySelector('#panel-home ' + s).getBoundingClientRect().top));
     expect([...tops].sort((a, b) => a - b)).toEqual(tops);
-    const xs = await page.evaluate(() => ['.home-brief', '.home-key', '.home-next', '.home-calendar']
+    const xs = await page.evaluate(() => ['.home-brief', '.home-key', '.home-calendar']
       .map((s) => Math.round(document.querySelector('#panel-home ' + s).getBoundingClientRect().left)));
     expect(new Set(xs).size).toBe(1);
   });
@@ -175,14 +175,14 @@ test.describe('desktop', () => {
 test.describe('phone', () => {
   test.skip(({ isMobile }) => !isMobile, 'phone layout');
 
-  test('one column: rails, briefing, key (chords, no circle), Next up, calendar (whole month)', async ({ page }) => {
+  test('one column: rails, briefing, key (circle and chords), calendar (whole month)', async ({ page }) => {
     await openApp(page, { localState: progressState() });
-    const tops = await page.evaluate(() => ['.home-progress', '.home-brief', '.home-key', '.home-next', '.home-calendar']
+    const tops = await page.evaluate(() => ['.home-progress', '.home-brief', '.home-key', '.home-calendar']
       .map((s) => document.querySelector('#panel-home ' + s).getBoundingClientRect().top));
     expect([...tops].sort((a, b) => a - b)).toEqual(tops);
     await expect(home(page).locator('.home-calendar .cal-panel[data-ym="2026-10"] .s-day')).toHaveCount(42);
     await expect(home(page).locator('.home-streak')).toBeHidden(); // the phone header shows the pill instead
-    await expect(home(page).locator('.kc-static')).toBeHidden();
+    await expect(home(page).locator('.home-key .kc-home')).toBeVisible(); // slice 4.10m: the circle on the phone too
     await expect(home(page).locator('.home-key .kc-deg')).toHaveCount(7);
     // Continue session sits under the tiles at full width.
     const t = await brief(page).locator('.hb-tiles').boundingBox(), btn = await brief(page).locator('.hb-continue').boundingBox();

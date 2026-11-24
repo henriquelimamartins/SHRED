@@ -21,12 +21,12 @@
 import { defaultState, defaultDojoState, saveState, state, replaceState, backupBeforeReplace, migrate, newerSchema, NEWER_SCHEMA_MSG } from "./store.js?v=5";
 import { hasFirebase, auth, db, googleProvider, currentUser, cloudReady, cloudReadFailed, CLOUD_READ_FAILED_MSG, requestCloudWrite, loadFromCloud, signInWithPopup, signOut } from "./firebase.js?v=5";
 import { ui, showToast } from "./ui.js?v=2";
-import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=40";
-import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=40";
-import { changeCalMonth, calCanGo } from "./views/calendar.js?v=40";
-import { currentMinigame, startArchitectGame, handleDojoAnswer, renderCodexList, renderCodexReader, focusSubTitle } from "./views/dojo.js?v=31";
-import { updateNav, render, updateAccountRow } from "./render.js?v=41";
-import { initDailySwipe } from "./views/daily-swipe.js?v=18";
+import { toggleCheck, setChop, setTest, setBonusLevel, handlePhaseSelect, confirmPhaseJumpBack, cancelPhaseJumpBack } from "./logic/technique.js?v=41";
+import { toggleBlockPracticed, setActiveDay, resetActiveDay } from "./logic/daily.js?v=41";
+import { changeCalMonth, calCanGo } from "./views/calendar.js?v=41";
+import { currentMinigame, startArchitectGame, handleDojoAnswer, renderCodexList, renderCodexReader, focusSubTitle } from "./views/dojo.js?v=32";
+import { updateNav, render, updateAccountRow } from "./render.js?v=42";
+import { initDailySwipe } from "./views/daily-swipe.js?v=19";
 import { buildBackupFile, backupFileName, listDeviceBackups, parseBackupFile, isNewerCopy, restoredState, formatLocalTime, reasonLabel, MAX_BACKUP_FILE_BYTES, INVALID_BACKUP_MSG, NEWER_BACKUP_MSG } from "./logic/backup.js?v=2";
 
 // Slice 4.8e (D149): Restore and Reset open in place on the same page, so opening one closes the other.
@@ -212,6 +212,17 @@ function focusAccount(sel){ var b=document.querySelector('#panel-account '+sel);
 
 // Slice 4.7: after the page is drawn again, keep the keyboard focus on the KEY circle.
 function focusDaily(sel){ var b=document.querySelector('#panel-daily '+sel); if(b) b.focus({preventScroll:true}); }
+// Slice 4.10m (D167): focus after a Mastered button in the IMPROVISATION Gates list (see "togimprov").
+function focusImprovMark(g, e){
+  var list=document.querySelector('#panel-improv .improv-list'); if(!list) return;
+  var b=list.querySelector('[data-action="togimprov"][data-g="'+g+'"][data-e="'+e+'"]')
+    || list.querySelector('.improv-row-wrap[data-gate="'+g+'"] [data-action="togimprov"]')
+    || list.querySelector('.improv-row-wrap[data-gate="'+g+'"] .improv-row')
+    || list.querySelector('.improv-list-title');
+  if(b) b.focus({preventScroll:true});
+}
+// Slice 4.10m (D167): the same for HOME's own circle (focus stays inside HOME).
+function focusHome(sel){ var b=document.querySelector('#panel-home '+sel); if(b) b.focus({preventScroll:true}); }
 
 // Slice 4.10f (D154 point 2): HOME calendar month picker (page state only, nothing written).
 function closeCalPicker(focusTitle){
@@ -309,6 +320,9 @@ document.addEventListener("click",function(e){
   // Slice 4.7 (D133 point 5): the KEY circle on DAILY. Page state only (ui.dailyKey), never saved.
   else if(a==="keypick"){ ui.dailyKey={ m:t.dataset.mode, i:parseInt(t.dataset.i,10) }; render(); focusDaily('.kc-'+ui.dailyKey.m+'-'+ui.dailyKey.i); }
   else if(a==="keytoday"){ ui.dailyKey=null; render(); focusDaily('.kc-key.on'); }
+  // Slice 4.10m (D167): HOME's circle keeps its own choice (ui.homeKey, page state, never saved); DAILY is untouched.
+  else if(a==="homekeypick"){ ui.homeKey={ m:t.dataset.mode, i:parseInt(t.dataset.i,10) }; render(); focusHome('.kc-'+ui.homeKey.m+'-'+ui.homeKey.i); }
+  else if(a==="homekeytoday"){ ui.homeKey=null; render(); focusHome('.kc-key.on'); }
   else if(a==="chop"){ setChop(t.dataset.t,parseInt(t.dataset.d,10)); }
   else if(a==="test"){ setTest(t.dataset.t,parseInt(t.dataset.d,10)); }
   else if(a==="bonuslvl"){ setBonusLevel(t.dataset.k,parseInt(t.dataset.d,10),parseInt(t.dataset.max,10)); }
@@ -316,8 +330,12 @@ document.addEventListener("click",function(e){
   else if(a==="togm"){ toggleCheck(t.dataset.key); }
   else if(a==="togimprov"){ 
     var gk = "g"+t.dataset.g+"e"+t.dataset.e;
+    var inList = !!t.closest('#panel-improv .improv-list');
     state.improvChecks[gk] = !state.improvChecks[gk]; 
     saveState(); render();
+    // Slice 4.10m (D167): in the Gates list keep the keyboard focus on the same button, or, when a cleared mark of a
+    // locked Gate leaves the list, on the next one there or on the list title.
+    if(inList) focusImprovMark(t.dataset.g, t.dataset.e);
   }
   else if(a==="advanceimprov"){ 
     state.improvIndex++; 

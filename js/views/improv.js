@@ -14,8 +14,8 @@
 import { IMPROV_GATES } from "../data/improv.js?v=4";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=2";
-import { pageHeader } from "./shell.js?v=23";
-import { improvPageRail, improvCard, improvSub } from "./rails.js?v=25";
+import { pageHeader } from "./shell.js?v=24";
+import { improvPageRail, improvCard, improvSub } from "./rails.js?v=26";
 
 // The Daily Transposition Target (one key per day of the year). Slice 4.5c (D129): moved out of renderImprov()
 // unchanged so HOME's "Today's Improv" card shows the same key as this page.
@@ -136,7 +136,7 @@ export function improvReviewPicks(day, today){
 // Slice 4.10l (D154 point 3, AUDIT-4.10 point 19): the optional extra review on Mon, Thu and Sat, outside the session
 // and its minutes. It reads the same Mastered pool but never moves the review queue. It takes the two exercises served
 // longest ago (walking back from the queue position) and leaves out the next three queue positions (Mon: the Tue,
-// Wed and Fri picks; Thu: the Fri pick and two of Sunday's; Sat: Sunday's three). When fewer than two are left, the
+// Wed and Fri picks; Thu: the Fri pick and two of Sunday's, all four from 8 Mastered, slice 4.10m; Sat: Sunday's three). When fewer than two are left, the
 // excluded ones fill in, longest-served first, marked as coming up in the next Review. Fixed for the day; nothing is stored.
 export var EXTRA_DAYS = { Mon: true, Thu: true, Sat: true };
 function exerciseAt(q, n){
@@ -148,7 +148,10 @@ export function improvExtraPlan(day, today){
   var pool = reviewPool(), n = pool.length;
   if(!n) return { picks: [], jam: 10, empty: true };
   var start = reviewQueuePosition(today), last = {}, excluded = {}, q, i;
-  for(q = start; q <= start + 2; q++) excluded[exerciseAt(q, n)] = true;
+  // Slice 4.10m (D167; owner's choice in 4.10l, built now): on Thursday, with at least 8 Mastered, the fourth position
+  // (Sunday's last pick) is left out too, so nothing from Friday's or Sunday's Review comes up on Thursday.
+  var lastExcluded = start + (day === 'Thu' && n >= 8 ? 3 : 2);
+  for(q = start; q <= lastExcluded; q++) excluded[exerciseAt(q, n)] = true;
   // Walking back from the queue position, the first time an exercise is met is its most recent serving.
   for(q = start - 1; q >= 0 && q >= start - 2 * n; q--){
     i = exerciseAt(q, n);
@@ -241,29 +244,49 @@ function gateCard(g, i){
   return html + '</section>';
 }
 
-// The list of the 5 Gates: passed (open in place to list their exercises, as before), current, locked.
+// The list of the 5 Gates: passed, current, locked.
+// Slice 4.10m (D167; review of 4.10k): the Expression Track left LIBRARY, so the marks of other Gates live here.
+// A passed Gate opens in place with each exercise and its Mastered button (it can be unmarked; as before, unmarking
+// does not lock the Gate again, Phase 7). A locked Gate stays locked; only when it holds marks from before (made in the
+// old LIBRARY track) it opens to list those marks, each with a button that can only clear it: nothing can be marked ahead.
+function marksIn(i){
+  var n = 0;
+  IMPROV_GATES[i].exercises.forEach(function(ex, j){ if(state.improvChecks["g" + i + "e" + j]) n++; });
+  return n;
+}
+function bodyRow(ex, i, j){
+  return '<li class="improv-sub" data-g="' + i + '" data-e="' + j + '"><span class="improv-sub-name">' + ex.t + '</span>' + masteryButton(i, j) + '</li>';
+}
 function gatesList(actGate, allDone){
-  var html = '<section class="improv-list"><h2 class="improv-list-title gates-title">The 5 Gates of Freedom</h2>';
+  var html = '<section class="improv-list"><h2 class="improv-list-title gates-title" tabindex="-1">The 5 Gates of Freedom</h2>';
   IMPROV_GATES.forEach(function(g, i){
     var isPast = i < state.improvIndex;
     var isCur = i === actGate && !allDone;
     var name = '<span class="improv-row-gate">Gate ' + (i + 1) + '</span><span class="improv-row-name">' + g.title + '</span>';
+    var acc = 'improvG' + i, open = !!ui.lib[acc], n = marksIn(i), total = g.exercises.length;
+    var chev = '<span class="chev' + (open ? ' open' : '') + '">' + improvIcon('chevron', 'improv-chev') + '</span>';
     if(isPast){
-      var acc = 'improvG' + i, open = !!ui.lib[acc];
-      html += '<div class="improv-row-wrap' + (open ? ' open' : '') + '">' +
+      var stateText = n === total ? improvIcon('check', 'improv-row-check') + 'Mastered' : 'Passed · ' + n + ' of ' + total;
+      html += '<div class="improv-row-wrap' + (open ? ' open' : '') + '" data-gate="' + i + '">' +
         '<button type="button" class="improv-row passed" data-action="toggleacc" data-acc="' + acc + '" aria-expanded="' + open + '">' + name +
-        '<span class="improv-row-state">' + improvIcon('check', 'improv-row-check') + 'Mastered</span>' +
-        '<span class="chev' + (open ? ' open' : '') + '">' + improvIcon('chevron', 'improv-chev') + '</span></button>';
+        '<span class="improv-row-state">' + stateText + '</span>' + chev + '</button>';
       if(open){
-        html += '<ul class="improv-row-body">' + g.exercises.map(function(ex){ return '<li class="done-ex">' + ex.t + '</li>'; }).join('') + '</ul>';
+        html += '<div class="improv-row-body"><ul class="improv-subs">' + g.exercises.map(function(ex, j){ return bodyRow(ex, i, j); }).join('') + '</ul></div>';
       }
       html += '</div>';
     } else if(isCur){
-      var n = 0;
-      g.exercises.forEach(function(ex, j){ if(state.improvChecks["g" + i + "e" + j]) n++; });
-      html += '<div class="improv-row cur" aria-current="step">' + name + '<span class="improv-row-state">Current · ' + n + ' of ' + g.exercises.length + '</span></div>';
+      html += '<div class="improv-row cur" aria-current="step">' + name + '<span class="improv-row-state">Current · ' + n + ' of ' + total + '</span></div>';
+    } else if(n){
+      html += '<div class="improv-row-wrap locked-marks' + (open ? ' open' : '') + '" data-gate="' + i + '">' +
+        '<button type="button" class="improv-row locked" data-action="toggleacc" data-acc="' + acc + '" aria-expanded="' + open + '">' + name +
+        '<span class="improv-row-state">' + improvIcon('lock', 'improv-lock-ic') + '<span>Locked · ' + n + ' marked</span></span>' + chev + '</button>';
+      if(open){
+        html += '<div class="improv-row-body"><p class="improv-row-note">Marked before this Gate opened. You can clear these marks; new marks come when the Gate opens.</p><ul class="improv-subs">' +
+          g.exercises.map(function(ex, j){ return state.improvChecks["g" + i + "e" + j] ? bodyRow(ex, i, j) : ''; }).join('') + '</ul></div>';
+      }
+      html += '</div>';
     } else {
-      html += '<div class="improv-row locked">' + name + '<span class="improv-row-lock" role="img" aria-label="Locked">' + improvIcon('lock', 'improv-lock-ic') + '</span></div>';
+      html += '<div class="improv-row locked" data-gate="' + i + '">' + name + '<span class="improv-row-lock" role="img" aria-label="Locked">' + improvIcon('lock', 'improv-lock-ic') + '</span></div>';
     }
   });
   return html + '</section>';

@@ -22,11 +22,14 @@ const AVATAR_PNG = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8
  *   localState - value placed in localStorage before the app starts (first load only)
  *   now        - fixed clock time (ISO string); defaults to DEFAULT_NOW
  *   bhgsPack   - false serves js/pack.js with the BHGS pack switched off (slice 4.2b, D113)
+ *   oswald     - true serves the real Oswald font (tests/support/fonts, SIL Open Font License) for the Google Fonts
+ *                request, so a test can measure text as the owner's devices draw it (slice 4.10m, D167). Every
+ *                other test keeps web fonts blocked, as before.
  *   avatar     - true serves a small test image for Google account photos (googleusercontent.com, slice 4.5b);
  *                otherwise those requests are blocked like every other outside request
  */
 async function openApp(page, options = {}) {
-  const { user = null, docs = {}, localState, now = DEFAULT_NOW, bhgsPack = true, avatar = false } = options;
+  const { user = null, docs = {}, localState, now = DEFAULT_NOW, bhgsPack = true, avatar = false, oswald = false } = options;
   const monitor = { consoleErrors: [], pageErrors: [], blockedRequests: [], firebaseBackendRequests: [] };
 
   page.on('console', (msg) => {
@@ -53,6 +56,15 @@ async function openApp(page, options = {}) {
       return route.fulfill({ status: 200, contentType: 'text/javascript; charset=utf-8', body: 'export const BHGS_PACK = false;\n' });
     }
     if (url.startsWith(appOrigin)) return route.continue();
+    // Slice 4.10m (D167): `oswald: true` answers the Google Fonts stylesheet with the bundled Oswald only.
+    if (oswald && url.startsWith('https://fonts.googleapis.com/')) {
+      return route.fulfill({ status: 200, contentType: 'text/css; charset=utf-8', headers: { 'Access-Control-Allow-Origin': '*' },
+        body: "@font-face{font-family:'Oswald';font-style:normal;font-weight:200 700;src:url(https://fonts.gstatic.com/test/oswald-wght.ttf) format('truetype');}\n" });
+    }
+    if (oswald && url === 'https://fonts.gstatic.com/test/oswald-wght.ttf') {
+      return route.fulfill({ status: 200, contentType: 'font/ttf', headers: { 'Access-Control-Allow-Origin': '*' },
+        body: fs.readFileSync(path.join(__dirname, 'fonts', 'Oswald-wght.ttf')) });
+    }
     // Slice 4.5b (D126): a stand-in Google account photo (1 x 1 PNG); nothing leaves the machine.
     if (avatar && /^https:\/\/[a-z0-9-]+\.googleusercontent\.com\//.test(url)) {
       return route.fulfill({ status: 200, contentType: 'image/png', body: Buffer.from(AVATAR_PNG, 'base64') });

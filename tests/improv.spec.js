@@ -108,9 +108,11 @@ test.describe('gates', () => {
     await expect(done).toHaveAttribute('aria-expanded', 'false');
     await done.click();
     await expect(improv(page).locator('[data-acc="improvG0"]')).toHaveAttribute('aria-expanded', 'true');
-    await expect(improv(page).locator('.improv-row-wrap:has([data-acc="improvG0"]) .done-ex')).toHaveCount(4);
-    // Gate 1's exercises can no longer be toggled from IMPROV.
-    await expect(masteryBtn(improv(page), 0, 0)).toHaveCount(0);
+    await expect(improv(page).locator('.improv-row-wrap:has([data-acc="improvG0"]) .improv-sub')).toHaveCount(4);
+    // Slice 4.10m (D167; changed on purpose, D107 point 4): with the Expression Track gone from LIBRARY, a passed Gate's
+    // exercises keep their Mastered button in the opened row (and only there).
+    await expect(masteryBtn(improv(page), 0, 0)).toHaveCount(1);
+    await expect(improv(page).locator('.improv-list').locator('[data-action="togimprov"][data-g="0"][data-e="0"]')).toHaveCount(1);
   });
 
   test('all 5 gates passed: the mastered message, no target, no open gate', async ({ page }) => {

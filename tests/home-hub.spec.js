@@ -1,8 +1,10 @@
 // Slice 4.10j (DECISIONS D164; AUDIT-4.10 points 9, 13, 1c, 33, 34): HOME = direction A.
 // Header (date eyebrow, "HOME · LEARNING HUB" or "HOME" by the measured width, streak line / pill), the phone brand row
 // (logo + account button: photo in the sync-state ring opening the profile panel over HOME, or "Sign in" opening
-// Account & data), the briefing of the day, Today's key (circle on desktop, chords, today's box and string) and
-// Next up. Real values only (D71); showing HOME or opening the panel writes nothing.
+// Account & data), the briefing of the day and Today's key (circle, chords, today's box and string). Real values only
+// (D71); showing HOME or opening the panel writes nothing. Slice 4.10m (D167): the circle became interactive and Next up
+// left HOME (tests in home-key.spec.js); the "one line" check of the phone tiles and the header with the real Oswald
+// were tightened after the review of 4.10j.
 // Firebase is stubbed; the clock is fixed at Tuesday 10 Nov 2026; nothing leaves the machine.
 const { test, expect } = require('@playwright/test');
 const { openApp, openView, settle, cloudWrites, unexpectedConsoleErrors, STORAGE_KEY } = require('./support/app');
@@ -74,32 +76,6 @@ test('Today\'s key: the DAILY chords of today\'s key; today\'s box and string, a
   await expect(card.locator('.hk-open')).toHaveText(/^Open Improvisation$/i);
 });
 
-test('the circle on HOME shows today\'s key only: not interactive, hidden from screen readers, no id shared with DAILY', async ({ page }) => {
-  await openApp(page, { localState: progressState() });
-  const circle = home(page).locator('.kc-static');
-  await expect(circle).toHaveAttribute('aria-hidden', 'true');
-  await expect(circle.locator('button')).toHaveCount(0);
-  await expect(home(page).locator('[data-action="keypick"], [data-action="keytoday"]')).toHaveCount(0);
-  await expect(circle.locator('.kc-sector.on')).toHaveCount(1);
-  await expect(circle.locator('.kc-key.on')).toHaveCount(1);
-  const dup = await page.evaluate(() => {
-    const ids = [...document.querySelectorAll('[id]')].map((e) => e.id);
-    return ids.filter((id, i) => ids.indexOf(id) !== i);
-  });
-  expect(dup).toEqual([]);
-});
-
-test('Next up: Technique, Improvisation and Theory with real values, no subtitles; each row opens its page', async ({ page }) => {
-  await openApp(page, { localState: progressState({ phaseIndex: 2 }) }); // improvIndex 1 → Gate 2
-  const rows = home(page).locator('.home-next .hn-row');
-  await expect(rows.locator('.hn-label')).toHaveText(['Technique · Phase 2', 'Improvisation · Gate 2', 'Theory']);
-  for (const [i, view] of [[0, 'technique'], [1, 'improv'], [2, 'dojo']]) {
-    await rows.nth(i).click();
-    await expect(page.locator(`#panel-${view}`)).toHaveClass(/active/);
-    await openView(page, 'home');
-  }
-});
-
 test('every block practised: "Session complete", all tiles done and "Open DAILY"', async ({ page }) => {
   const practiced = { 'warmup.Tue': true, 'focused.Tue': true, 'casual.Tue': true, 'cooldown.Tue': true };
   await openApp(page, { localState: baseState({ phaseIndex: 1, practiced, streakDates: ['2026-11-10'] }) });
@@ -112,13 +88,17 @@ test('every block practised: "Session complete", all tiles done and "Open DAILY"
   await expect(brief.locator('.hb-continue')).toHaveText('Open DAILY');
 });
 
-test('the tiles name each block and its state for screen readers', async ({ page }) => {
+test('the tiles name each block and its state for screen readers (text in the tile, the visible parts hidden from them)', async ({ page }) => {
   await openApp(page, { localState: baseState({ phaseIndex: 1, practiced: { 'warmup.Tue': true } }) });
-  const labels = await home(page).locator('.hb-tile').evaluateAll((t) => t.map((x) => x.getAttribute('aria-label')));
-  expect(labels).toEqual(['Warm-Up, 5 min, practised', 'Focused, 30 + 5 min, next', 'Improv & Expression, 15 min, not practised yet', 'Cool-Down, 5 min, not practised yet']);
+  const tiles = home(page).locator('.hb-tile');
+  await expect(tiles.locator('.home-sr')).toHaveText(['Warm-Up, 5 min, practised', 'Focused, 30 + 5 min, next', 'Improv & Expression, 15 min, not practised yet', 'Cool-Down, 5 min, not practised yet']);
+  expect(await tiles.evaluateAll((t) => t.filter((x) => x.hasAttribute('aria-label')).length)).toBe(0);
+  // Everything else in a tile is decoration for screen readers.
+  const shown = await tiles.evaluateAll((t) => t.flatMap((x) => [...x.children].filter((c) => !c.classList.contains('home-sr') && c.getAttribute('aria-hidden') !== 'true').map((c) => c.className)));
+  expect(shown).toEqual([]);
 });
 
-test('showing HOME, opening and closing the profile panel and the Next up rows write nothing (device or cloud)', async ({ page, isMobile }) => {
+test('showing HOME and opening and closing the profile panel write nothing (device or cloud)', async ({ page, isMobile }) => {
   await signedIn(page);
   const before = await page.evaluate((k) => localStorage.getItem(k), STORAGE_KEY);
   const writesBefore = (await cloudWrites(page)).length;
@@ -128,7 +108,7 @@ test('showing HOME, opening and closing the profile panel and the Next up rows w
     await page.keyboard.press('Escape');
     await expect(page.locator('#profile-layer')).toBeHidden();
   }
-  await home(page).locator('.hn-row').first().click();
+  await openView(page, 'daily');
   await openView(page, 'home');
   await settle(page);
   expect(await page.evaluate((k) => localStorage.getItem(k), STORAGE_KEY)).toBe(before);
@@ -217,13 +197,18 @@ test.describe('phone', () => {
     for (const w of [360, 375, 390]) {
       await page.setViewportSize({ width: w, height: 760 });
       await settle(page);
-      const titles = await home(page).locator('.hb-title').evaluateAll((els) => els.map((e) => ({ t: e.innerText,
-        one: e.getBoundingClientRect().height <= parseFloat(getComputedStyle(e).lineHeight || '0') + 1 || e.getClientRects().length === 1,
-        fits: e.getBoundingClientRect().right <= e.closest('.hb-tile').getBoundingClientRect().right })));
+      // One line = every line box of the visible text has the same top (a Range over the text, so a wrapped title is
+      // caught: a block element alone always reports one box).
+      const titles = await home(page).locator('.hb-title').evaluateAll((els) => els.map((e) => {
+        const shown = [...e.querySelectorAll('span')].find((x) => getComputedStyle(x).display !== 'none') || e;
+        const r = document.createRange(); r.selectNodeContents(shown);
+        const tops = new Set([...r.getClientRects()].filter((b) => b.width > 0).map((b) => Math.round(b.top)));
+        return { t: e.innerText, one: tops.size === 1, fits: e.getBoundingClientRect().right <= e.closest('.hb-tile').getBoundingClientRect().right };
+      }));
       expect(titles.map((x) => x.t), `width ${w}`).toEqual(['Warm-Up', 'Focused', 'Improv', 'Cool-Down']);
       expect(titles.every((x) => x.one && x.fits), `width ${w}`).toBe(true);
     }
-    await expect(home(page).locator('.hb-tile[data-block="casual"]')).toHaveAttribute('aria-label', /^Improv & Expression, /);
+    await expect(home(page).locator('.hb-tile[data-block="casual"] .home-sr')).toHaveText(/^Improv & Expression, /);
   });
 
   // The long title shows only where it fits; which one shows depends on the font (the real Oswald on devices, a
@@ -258,6 +243,24 @@ test.describe('phone', () => {
       expect(m.shownRight, `width ${w}`).toBeLessThanOrEqual(m.pillLeft);
       expect(m.h, `width ${w}`).toBeLessThanOrEqual(110);
       expect(m.over, `width ${w}`).toBe(0);
+    }
+  });
+
+  // Slice 4.10m (D167; review of 4.10j): with the real Oswald (bundled for this test), the long title fits beside the
+  // streak pill at 360, 375 and 390 px, as on the owner's iPhone and on the approved boards (D164 point 2).
+  test('with the real Oswald the long title "HOME · LEARNING HUB" shows at 360, 375 and 390 px', async ({ page }) => {
+    await openApp(page, { localState: progressState(), oswald: true });
+    // A loaded Oswald face (document.fonts.check alone is true even when no face is registered).
+    expect(await page.evaluate(async () => { await document.fonts.ready;
+      return [...document.fonts].some((f) => f.family.replace(/["']/g, '') === 'Oswald' && f.status === 'loaded'); })).toBe(true);
+    for (const w of [360, 375, 390]) {
+      await page.setViewportSize({ width: w, height: 760 });
+      await settle(page);
+      await expect(head(page)).toHaveClass(/fitted/);
+      await expect(head(page), `width ${w}`).not.toHaveClass(/fit-short-title/);
+      await expect(head(page).locator('.home-title-long'), `width ${w}`).toBeVisible();
+      const one = await head(page).locator('.home-title').evaluate((el) => el.getBoundingClientRect().height <= parseFloat(getComputedStyle(el).fontSize) * 1.3);
+      expect(one, `width ${w}`).toBe(true);
     }
   });
 });

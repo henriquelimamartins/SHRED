@@ -787,8 +787,7 @@ button.tech-phase{width:100%;text-align:left;color:var(--text);font:inherit;curs
 .home-grid { display:flex; flex-direction:column; gap:14px; }
 .home-col { display:contents; }
 .home-grid .card { margin-bottom:0; min-width:0; }
-.home-brief { order:1; } .home-key { order:2; } .home-next { order:3; } .home-calendar { order:4; }
-.home-card-title { margin:0; font-family:var(--font-head); font-size:18px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; }
+.home-brief { order:1; } .home-key { order:2; } .home-calendar { order:3; }
 /* Briefing of the day (D164 point 4), styled like the MICRO-DOSES card. */
 .home-brief { display:flex; flex-direction:column; gap:16px; }
 .hb-head { display:flex; justify-content:space-between; align-items:baseline; gap:8px; }
@@ -804,7 +803,7 @@ button.tech-phase{width:100%;text-align:left;color:var(--text);font:inherit;curs
 .hb-next-sub { margin:3px 0 0; font-size:var(--fs-md); color:var(--text-3); }
 .hb-continue { flex:none; display:inline-flex; align-items:center; justify-content:center; gap:6px; min-height:44px; padding:0 14px 0 18px; border:0; border-radius:10px; background:var(--red-fill); color:var(--white); font-family:var(--font-body); font-size:var(--fs-base); font-weight:600; cursor:pointer; }
 .hb-continue .ico { width:16px; height:16px; }
-.hb-continue:focus-visible, .hk-open:focus-visible, .hn-row:focus-visible { outline:2px solid var(--red-tint); outline-offset:2px; }
+.hb-continue:focus-visible, .hk-open:focus-visible { outline:2px solid var(--red-tint); outline-offset:2px; }
 .hb-tiles { list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:10px; }
 .hb-tiles.hb-n2 { grid-template-columns:repeat(2, minmax(0,1fr)); }
 .hb-tile { display:flex; flex-direction:column; align-items:center; gap:6px; padding:14px 8px; border:1px solid var(--border); border-radius:12px; background:var(--card2); text-align:center; min-width:0; }
@@ -818,15 +817,16 @@ button.tech-phase{width:100%;text-align:left;color:var(--text);font:inherit;curs
 .hb-title-short { display:none; }
 .hb-tile.done .hb-title { color:var(--text-3); }
 .hb-min { font-size:var(--fs-sm); color:var(--muted); }
-/* Today's key (D164 point 5): the DAILY circle, not interactive here, desktop only; the chords on both. */
+/* Today's key (D164 point 5; slice 4.10m, D167): the DAILY circle, interactive with its own choice, desktop and phone. */
 .home-key { display:flex; flex-direction:column; gap:14px; }
-.hk-head { display:flex; justify-content:space-between; align-items:baseline; gap:8px; }
+.hk-head { display:flex; justify-content:space-between; align-items:center; gap:8px; }
 .hk-label { font-family:var(--font-head); font-size:var(--fs-sm); font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--purple-tint); }
 .hk-style { font-size:var(--fs-sm); color:var(--muted); text-align:right; }
 .hk-name { margin:0; font-family:var(--font-head); font-size:30px; font-weight:700; letter-spacing:.03em; line-height:1; text-transform:uppercase; color:var(--text); }
-.kc-static .kc-key { display:flex; align-items:center; justify-content:center; cursor:default; }
-.kc-static .kc-key:hover { color:inherit; }
-.kc-static .kc-key.on { color:var(--white); }
+.hk-today { display:flex; align-items:center; gap:6px; min-height:36px; padding:0 10px; border:1px solid var(--purple-edge-2); border-radius:var(--r-pill); background:transparent; color:var(--purple-tint); font-family:var(--font-body); font-size:var(--fs-sm); font-weight:500; cursor:pointer; white-space:nowrap; }
+.hk-today .ico { width:14px; height:14px; flex:0 0 14px; }
+.hk-today:hover { background:var(--purple-bg-soft); }
+.hk-today:focus-visible { outline:2px solid var(--purple-tint); outline-offset:2px; }
 .home-key .kc-degrees { padding-top:0; border-top:0; }
 .hk-tiles { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:10px; }
 .hk-tile { display:flex; flex-direction:column; gap:4px; padding:10px 12px; border-radius:10px; background:var(--card2); min-width:0; }
@@ -835,17 +835,6 @@ button.tech-phase{width:100%;text-align:left;color:var(--text);font:inherit;curs
 .hk-open { display:flex; align-items:center; justify-content:space-between; gap:8px; width:100%; min-height:44px; padding:0; border:0; background:transparent; color:var(--purple-tint); font-family:var(--font-body); font-size:var(--fs-base); cursor:pointer; text-align:left; }
 .hk-open-page { text-transform:uppercase; }
 .hk-open .ico { width:16px; height:16px; }
-/* Next up (D164 point 6): no subtitles; each row opens its page. */
-.hn-list { list-style:none; margin:10px 0 0; padding:0; }
-.hn-row { display:flex; align-items:center; gap:14px; width:100%; min-height:56px; padding:0; border:0; border-bottom:1px solid var(--line); background:transparent; color:var(--text); font-family:var(--font-body); font-size:15px; font-weight:600; text-align:left; cursor:pointer; }
-.hn-list li:last-child .hn-row { border-bottom:0; }
-.hn-ic { flex:0 0 34px; height:34px; border-radius:9px; background:var(--card2); display:flex; align-items:center; justify-content:center; }
-.hn-tech .hn-ic { color:var(--red); }
-.hn-improv .hn-ic { color:var(--purple-tint); }
-.hn-theory .hn-ic { color:var(--blue); }
-.hn-label { flex:1; min-width:0; }
-.hn-chev { width:16px; height:16px; color:var(--muted); }
-.hn-row:hover .hn-label { color:var(--white); }
 @media (min-width: 1180px){
   .home-grid { display:grid; grid-template-columns:minmax(0,1fr) 380px; gap:20px; align-items:start; }
   .home-col { display:flex; flex-direction:column; gap:20px; min-width:0; }
@@ -856,7 +845,7 @@ button.tech-phase{width:100%;text-align:left;color:var(--text);font:inherit;curs
   #panel-home .home-date{font-size:var(--fs-xs);}
   #panel-home .home-head .home-streak{display:none;}
   #panel-home .home-head .streak-pill{display:flex;}
-  .kc-static { display:none; }
+  .hk-today { min-height:44px; }
   .home-brief { gap:14px; }
   .hb-main { display:contents; }
   .hb-head { order:0; }
@@ -962,6 +951,7 @@ button.tech-phase{width:100%;text-align:left;color:var(--text);font:inherit;curs
 #panel-daily .blk.improv .nm{color:var(--purple-tint);}
 #panel-daily .blk.done-today .nm{color:var(--muted);}
 #panel-daily .blk .topright{gap:12px;}
+#panel-daily .blk .blk-sep{margin:0 -4px;font-size:var(--fs-md);font-weight:500;color:var(--text-3);} /* slice 4.10m (D167): "30 + 5 min · Practiced" */
 /* Slice 4.10h (D162 point 6): the minutes look like the "Practiced" label and sit centred on its line. */
 #panel-daily .blk .min{display:flex;align-items:center;min-height:44px;font-family:var(--font-body);font-size:var(--fs-md);font-weight:500;letter-spacing:0;text-transform:none;color:var(--text-3);}
 #panel-daily .blkcheck{min-height:44px;padding:0 4px 0 8px;gap:8px;border:0;background:transparent;color:var(--text-3);font-family:var(--font-body);font-size:var(--fs-md);font-weight:500;letter-spacing:0;text-transform:none;}
@@ -1048,23 +1038,42 @@ button.tech-phase{width:100%;text-align:left;color:var(--text);font:inherit;curs
 /* Companion cards. */
 .daily-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-card);padding:16px 18px;display:flex;flex-direction:column;gap:14px;}
 .daily-micro-card{border-color:var(--red-edge-soft);}
-/* Slice 4.10l (D154 point 3, AUDIT-4.10 point 19): the optional extra review on Mon, Thu and Sat, collapsed by default. */
-#panel-daily .daily-extra{margin:0;border:1px dashed var(--line-2);border-radius:var(--r-card);background:var(--card);}
-#panel-daily .daily-extra>summary{display:flex;align-items:center;gap:10px;min-height:48px;padding:4px 16px 4px 20px;list-style:none;cursor:pointer;color:var(--text-2);}
+/* Slice 4.10l (D154 point 3, AUDIT-4.10 point 19): the optional extra review on Mon, Thu and Sat, collapsed by default.
+   Slice 4.10m (D167): the "Bonus round" card (dashed purple, bolt icon, tiles instead of paragraphs). */
+#panel-daily .daily-extra{margin:0;border:1.5px dashed var(--purple-fill);border-radius:var(--r-card);background:var(--card);}
+#panel-daily .dx-head{display:flex;align-items:center;gap:12px;min-height:56px;padding:9px 16px;box-sizing:border-box;list-style:none;color:var(--text);}
+#panel-daily .daily-extra>summary{cursor:pointer;}
 #panel-daily .daily-extra>summary::-webkit-details-marker{display:none;}
-#panel-daily .daily-extra>summary:hover .daily-extra-title{text-decoration:underline;text-underline-offset:3px;}
-#panel-daily .daily-extra-title{flex:1 1 auto;min-width:0;padding:8px 0;font-family:var(--font-head);font-size:var(--fs-md);letter-spacing:.1em;text-transform:uppercase;text-wrap:balance;}
-#panel-daily .daily-extra-side{flex:none;display:flex;align-items:center;gap:10px;margin-left:auto;font-size:var(--fs-sm);white-space:nowrap;}
-#panel-daily .daily-extra-min{color:var(--text-3);}
-#panel-daily .daily-extra-tag{padding:2px 8px;border:1px solid var(--line-2);border-radius:var(--r-pill);color:var(--muted);}
-#panel-daily .daily-extra>summary .daily-review-chev{width:16px;height:16px;flex:none;transition:transform .15s;}
-#panel-daily .daily-extra[open]>summary .daily-review-chev{transform:rotate(90deg);}
-#panel-daily .daily-extra-body{display:flex;flex-direction:column;gap:8px;padding:2px 16px 16px 20px;}
-#panel-daily .daily-extra-body p{margin:0;font-size:var(--fs-md);color:var(--text-3);text-wrap:pretty;}
-#panel-daily .daily-extra-body p.daily-review-name{font-size:var(--fs-base);color:var(--text-soft);}
-#panel-daily .daily-extra-body p.daily-review-note{font-size:var(--fs-sm);color:var(--muted);}
-#panel-daily .daily-extra-body .daily-review-list{margin-top:4px;}
-@media (prefers-reduced-motion: reduce){ #panel-daily .daily-extra>summary .daily-review-chev{transition:none;} }
+#panel-daily .daily-extra>summary:focus-visible{outline:2px solid var(--purple-tint);outline-offset:2px;border-radius:var(--r-card);}
+#panel-daily .dx-ic{flex:0 0 38px;height:38px;border-radius:10px;background:var(--purple-bg);color:var(--purple-tint);display:flex;align-items:center;justify-content:center;}
+#panel-daily .dx-bolt{width:20px;height:20px;}
+#panel-daily .dx-text{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px;}
+#panel-daily .daily-extra-title{font-family:var(--font-head);font-size:17px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text);}
+#panel-daily .daily-extra>summary:hover .daily-extra-title{color:var(--white);}
+#panel-daily .dx-sub{font-size:var(--fs-sm);color:var(--purple-tint);text-wrap:pretty;}
+#panel-daily .dx-sub-open, #panel-daily .daily-extra[open] .dx-sub-closed{display:none;}
+#panel-daily .daily-extra[open] .dx-sub-open{display:block;}
+#panel-daily .daily-extra-tag{flex:none;padding:3px 9px;border:1px solid var(--purple-edge-2);border-radius:var(--r-pill);font-size:var(--fs-xs);font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--purple-tint);}
+#panel-daily .dx-chev{flex:none;width:18px;height:18px;color:var(--muted);transition:transform .15s;}
+#panel-daily .daily-extra[open] .dx-chev{transform:rotate(180deg);}
+#panel-daily .daily-extra-body{display:flex;flex-direction:column;gap:12px;padding:2px 16px 16px;}
+#panel-daily .dx-tiles{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;}
+#panel-daily .dx-tile{min-width:0;display:flex;flex-direction:column;gap:4px;padding:10px 12px;border:1px solid var(--border);border-radius:12px;background:var(--card2);}
+#panel-daily .dx-tile:has(details[open]){grid-column:1 / -1;}
+#panel-daily .dx-combo, #panel-daily .dx-jam{border-style:dashed;background:transparent;}
+#panel-daily .dx-tag{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;font-size:var(--fs-xs);font-weight:600;letter-spacing:.04em;color:var(--purple-tint);}
+#panel-daily .dx-again{padding:1px 7px;border-radius:var(--r-pill);background:var(--purple-bg);font-weight:500;letter-spacing:0;color:var(--purple-soft);}
+#panel-daily .daily-extra-body p.dx-name{margin:0;font-size:var(--fs-base);font-weight:700;color:var(--text);}
+#panel-daily .dx-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:0 10px;font-size:var(--fs-sm);color:var(--muted);}
+#panel-daily .dx-ex .dx-row{margin:-6px 0;} /* the Show summary is 40 / 44 px tall: no blank band under the name */
+#panel-daily .dx-more{margin-left:auto;}
+#panel-daily .dx-more[open]{flex:1 1 100%;margin-left:0;}
+#panel-daily .dx-note{flex:1 1 100%;color:var(--text-3);}
+#panel-daily .daily-extra-body p.daily-review-note{margin:0;font-size:var(--fs-sm);color:var(--muted);}
+#panel-daily .dx-foot{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:var(--fs-sm);color:var(--muted);}
+#panel-daily .dx-foot span{display:inline-flex;align-items:center;gap:6px;}
+#panel-daily .dx-foot-ic{width:15px;height:15px;flex:0 0 15px;color:var(--purple-tint);}
+@media (prefers-reduced-motion: reduce){ #panel-daily .dx-chev{transition:none;} }
 
 .daily-key-card{border-color:var(--purple-edge);gap:12px;}
 .dc-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;}
@@ -1178,8 +1187,10 @@ button.tech-phase{width:100%;text-align:left;color:var(--text);font:inherit;curs
 #panel-library .lib-cols{display:grid;grid-template-columns:minmax(0,1fr);gap:28px;align-items:start;}
 @media (min-width:1180px){ #panel-library .lib-cols{grid-template-columns:minmax(0,1fr) minmax(0,1fr);} }
 #panel-library .lib-col{min-width:0;}
-#panel-library .lib-col-title{margin-bottom:4px;}
-#panel-library .lib-col-sub{margin:0 0 10px;font-size:12px;color:var(--muted);}
+/* Slice 4.10m (D167): group heading and its line on one row, the same height in both columns. */
+#panel-library .lib-col-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 12px;min-height:24px;margin-bottom:10px;}
+#panel-library .lib-col-title{margin:0;font-family:var(--font-head);font-size:var(--fs-sm);font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);}
+#panel-library .lib-col-sub{margin:0;font-size:12px;color:var(--muted);}
 #panel-library .lib-groups{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(280px,100%),1fr));gap:14px;align-items:start;}
 #panel-library .lib-groups-wide, #panel-library .lib-groups-guide{grid-template-columns:repeat(auto-fill,minmax(min(380px,100%),1fr));}
 #panel-library .lib-group{min-width:0;background:var(--sunk);border:1px solid var(--line);border-radius:12px;padding:14px 16px 6px;box-sizing:border-box;}
@@ -1271,7 +1282,7 @@ button.tech-phase{width:100%;text-align:left;color:var(--text);font:inherit;curs
 }
 
 /* ---------- IMPROVISATION as drawn (slice 4.8c, D132 point 3, D139) ---------- */
-#panel-improv .improv-lede{max-width:760px;margin:0 0 22px;font-size:var(--fs-base);line-height:1.55;color:var(--text-soft);text-align:left;}
+#panel-improv .improv-lede{max-width:none;margin:0 0 22px;font-size:var(--fs-base);line-height:1.55;color:var(--text-soft);text-align:left;}
 #panel-improv .improv-cols{display:grid;grid-template-columns:minmax(0,1fr);grid-template-areas:"target" "gate" "list";gap:14px;}
 #panel-improv .improv-target{grid-area:target;display:flex;flex-direction:column;gap:6px;padding:16px 18px;background:var(--purple-bg-mid);border:1px solid var(--purple-edge);border-radius:var(--r-card);}
 #panel-improv .improv-target-label{font-family:var(--font-head);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--purple-tint);}
@@ -1310,8 +1321,18 @@ button.tech-phase{width:100%;text-align:left;color:var(--text);font:inherit;curs
 #panel-improv .improv-row.passed:focus-visible{outline:2px solid var(--purple);outline-offset:2px;}
 #panel-improv .improv-row-check{width:14px;height:14px;flex:0 0 14px;}
 #panel-improv .improv-row-wrap.open .improv-row{border-bottom-left-radius:0;border-bottom-right-radius:0;}
-#panel-improv .improv-row-body{list-style:none;margin:0;padding:6px 16px 10px 88px;background:var(--card);border:1px solid var(--border);border-top:0;border-radius:0 0 12px 12px;}
-#panel-improv .done-ex{padding:6px 0;font-size:13px;color:var(--muted);}
+#panel-improv .improv-row-body{margin:0;padding:2px 16px 8px;background:var(--card);border:1px solid var(--border);border-top:0;border-radius:0 0 12px 12px;}
+/* Slice 4.10m (D167): each exercise of a passed Gate (and each old mark of a locked Gate) with its Mastered button. */
+#panel-improv .improv-subs{list-style:none;margin:0;padding:0;}
+#panel-improv .improv-sub{display:flex;align-items:center;gap:12px;padding:8px 0;border-top:1px solid var(--line);}
+#panel-improv .improv-sub:first-child{border-top:0;}
+#panel-improv .improv-sub-name{flex:1;min-width:0;font-size:var(--fs-md);color:var(--text-2);}
+#panel-improv .improv-row-note{margin:6px 0 4px;font-size:var(--fs-sm);line-height:1.5;color:var(--muted);}
+#panel-improv button.improv-row.locked{cursor:pointer;}
+#panel-improv button.improv-row.locked:hover{background:var(--sunk-2);}
+#panel-improv button.improv-row.locked:focus-visible{outline:2px solid var(--purple);outline-offset:2px;}
+#panel-improv .improv-list-title:focus{outline:none;}
+#panel-improv .improv-list-title:focus-visible{outline:2px solid var(--purple);outline-offset:4px;border-radius:4px;}
 #panel-improv .improv-row .chev{display:flex;color:var(--muted);}
 #panel-improv .improv-chev, #panel-improv .improv-lock-ic{width:16px;height:16px;flex:0 0 16px;}
 #panel-improv .improv-row-lock{display:flex;}
@@ -1321,7 +1342,6 @@ button.tech-phase{width:100%;text-align:left;color:var(--text);font:inherit;curs
 @media (max-width: 767px){
   #panel-improv .improv-lede{display:none;} /* not on the phone board */
   #panel-improv .mbtn{min-height:44px;}
-  #panel-improv .improv-row-body{padding-left:16px;}
 }
 
 /* Exercise lines and listening box: IMPROVISATION and LIBRARY's Expression Track (slice 4.8c, D139 point 5) */

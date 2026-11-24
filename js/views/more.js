@@ -5,7 +5,7 @@
 import { state } from "../store.js?v=5";
 import { BHGS_PACK } from "../pack.js?v=1";
 import { setupData } from "../data/setup.js?v=1";
-import { pageHeader, avatar, syncState } from "./shell.js?v=23";
+import { pageHeader, avatar, syncState } from "./shell.js?v=24";
 
 function esc(t){ return String(t).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]; }); }
 
@@ -37,7 +37,7 @@ export function renderMore(){
 
   // Slice 4.10k (D165): LIBRARY is in More with or without the pack; without it the rows are Listening Vault and the guide.
   html += group("resources", "Resources", [
-    row('data-action="go" data-view="library"', "Library", BHGS_PACK ? "Theory Track, Documents, Listening Vault &amp; guide" : "Listening Vault &amp; guide")
+    row('data-action="go" data-view="library"', "Library", BHGS_PACK ? "BHGS pack, Listening Vault &amp; guide" : "Listening Vault &amp; guide")
   ]);
   html += group("tools", "Tools", [
     row('data-action="go" data-view="setup"', "Guitar setup", esc(setupLine()))

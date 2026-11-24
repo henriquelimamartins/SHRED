@@ -4,26 +4,29 @@
 // (fitHomeHeader, as DAILY); on the right the streak line (desktop) or the streak pill (phone). Phone: a brand row
 // above it with the logo and the account button (photo in the sync-state ring, which opens the profile panel over
 // HOME; signed out "Sign in", which opens Account & data). Then the briefing of the day (next block, the day's
-// blocks as tiles, Continue session), Today's key (circle of fifths on desktop, chords, today's box and string),
-// Next up for the three pillars and the calendar. From 1180 px two columns, else one. Showing HOME writes nothing.
+// blocks as tiles, Continue session), Today's key (circle of fifths, chords, today's box and string) and the
+// calendar. From 1180 px two columns, else one. Showing HOME writes nothing.
+// Slice 4.10m (D167): the circle is interactive on desktop and phone (another key → "Key" and a "Today: …" button,
+// as DAILY; page state ui.homeKey, never saved); the 4-Fret Box tile follows the chosen key; Next up leaves HOME.
 // Slice 4.5c (D117 point 2, D124 point 3, D127 point 2, D129): Today's session read-only, the calendar as drawn,
 // the Progress card with the rails on the phone only (D127). Slice 4.5b2 (D128): HOME's own phone header.
 // Slice 4.5a (D124): the Cloud Sync card moved to the Account & data page (js/views/account.js).
 // Moved unchanged from index.html in Phase 2, slice 2.4 (DECISIONS D95, D97); only import/export lines added.
 import { state } from "../store.js?v=5";
+import { ui } from "../ui.js?v=2";
 import { hasFirebase, currentUser } from "../firebase.js?v=5";
 import { BHGS_PACK } from "../pack.js?v=1";
-import { renderRails } from "./rails.js?v=25";
-import { streakLine, streakPill } from "./streak.js?v=4";
-import { icon, sidebarLogo, avatar, syncState } from "./shell.js?v=23";
+import { renderRails } from "./rails.js?v=26";
+import { streakLine, streakPill } from "./streak.js?v=5";
+import { icon, sidebarLogo, avatar, syncState } from "./shell.js?v=24";
 import { DAY_FULL } from "../data/days.js?v=1";
 import { ESSENTIAL } from "../data/bhgs.js?v=1";
 import { todayName, todayISO, activeDay, isWeekendDay } from "../logic/dates.js?v=7";
-import { renderStreakCalendar } from "./calendar.js?v=40";
+import { renderStreakCalendar } from "./calendar.js?v=41";
 import { IMPROV_GATES } from "../data/improv.js?v=4";
-import { sessionPlan, isBlockPracticed } from "../logic/daily.js?v=40";
-import { improvKeyOfDay, improvDayContext } from "./improv.js?v=31";
-import { todayKey, staticCircle, chordRow } from "./daily-side.js?v=19";
+import { sessionPlan, isBlockPracticed } from "../logic/daily.js?v=41";
+import { improvKeyOfDay, improvDayContext, boxFrets } from "./improv.js?v=32";
+import { todayKey, keyLabel, homeCircle, chordRow, RING } from "./daily-side.js?v=20";
 
 function esc(t){ return String(t).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]; }); }
 function svg(path, cls){
@@ -138,7 +141,9 @@ function briefing(){
   var tiles = plan.map(function(b, i){
     var cls = b.on ? ' done' : (b === next ? ' next' : '');
     var st = b.on ? 'practised' : (b === next ? 'next' : 'not practised yet');
-    return '<li class="hb-tile' + cls + '" data-block="' + b.name + '" aria-label="' + esc(b.title) + (minText(b) ? ', ' + minText(b) : '') + ', ' + st + '">' +
+    // Slice 4.10m (D167): the tile's name is text for screen readers (an aria-label on a plain list item is not read
+    // reliably); the visible parts stay hidden from them.
+    return '<li class="hb-tile' + cls + '" data-block="' + b.name + '"><span class="home-sr">' + esc(b.title) + (minText(b) ? ', ' + minText(b) : '') + ', ' + st + '</span>' +
       '<span class="hb-num" aria-hidden="true">' + (i < 9 ? '0' : '') + (i + 1) + '</span>' +
       '<span class="hb-ic" aria-hidden="true">' + svg(b.on ? TICK : blockIcon(b)) + '</span>' +
       '<span class="hb-title" aria-hidden="true">' + tileTitle(b.title) + '</span>' +
@@ -151,35 +156,33 @@ function briefing(){
     '<ul class="hb-tiles hb-n' + plan.length + '">' + tiles + '</ul></section>';
 }
 
-// ---------- Today's key (D164 point 5) ----------
+// ---------- Today's key (D164 point 5; slice 4.10m, D167) ----------
+// The card starts on today's key (the Improv key of the day) and offers another one on the circle; the choice lives in
+// ui.homeKey (page state, back to today's key on reload) and never touches DAILY's own choice (ui.dailyKey).
+const BACK = 'M4 12a8 8 0 1 0 2.5-5.8M4 5v4h4M12 8v4.5l3 2';
 function exerciseLabel(t){ return t.replace(/^\d+\.\s*/, '').replace(/^The\s+/, ''); }
 function todayKeyCard(){
-  var tk = improvKeyOfDay(), sel = todayKey(), c = improvDayContext();
+  var tk = improvKeyOfDay(), today = todayKey(), c = improvDayContext();
+  var sel = ui.homeKey || today;
+  var isToday = !!today && !!sel && sel.m === today.m && sel.i === today.i;
   var ex = IMPROV_GATES[0].exercises;
   var oneString = exerciseLabel(ex[0].t), box = exerciseLabel(ex[1].t);
+  // The 4-Fret Box frets follow the key on screen (owner): today's box number, on the minor pentatonic of the chosen
+  // key (a major key uses its relative minor's box: the same notes). The One-String Doom string does not depend on the key.
+  var from = c.boxFrom, to = c.boxTo;
+  if(sel && !isToday){ var f = boxFrets(RING.min[sel.i], c.box - 1); if(f){ from = f[0]; to = f[1]; } }
+  var name = sel ? keyLabel(sel.m, sel.i) : tk.k.replace('#', '♯').replace(/^([A-G])b/, '$1♭');
+  var aside = isToday || !sel || !today ? '<span class="hk-style">' + esc(tk.t) + '</span>'
+    : '<button type="button" class="hk-today" data-action="homekeytoday">' + svg(BACK) + 'Today: ' + keyLabel(today.m, today.i) + '</button>';
   return '<section class="card home-key" aria-labelledby="home-key-label">' +
-    '<div class="hk-head"><span class="hk-label" id="home-key-label">Today\'s key</span><span class="hk-style">' + esc(tk.t) + '</span></div>' +
-    '<p class="hk-name">' + esc(tk.k.replace('#', '♯').replace(/^([A-G])b/, '$1♭')) + '</p>' +
-    (sel ? staticCircle(sel) + chordRow(sel) : '') +
+    '<div class="hk-head"><span class="hk-label" id="home-key-label">' + (isToday || !sel ? 'Today\'s key' : 'Key') + '</span>' + aside + '</div>' +
+    '<p class="hk-name">' + esc(name) + '</p>' +
+    (sel ? homeCircle(sel) + chordRow(sel) : '') +
     '<div class="hk-tiles">' +
-      '<div class="hk-tile"><span class="hk-tile-label">' + esc(box) + '</span><span class="hk-tile-val">Box ' + c.box + ' · frets ' + c.boxFrom + '–' + c.boxTo + '</span></div>' +
+      '<div class="hk-tile"><span class="hk-tile-label">' + esc(box) + '</span><span class="hk-tile-val">Box ' + c.box + ' · frets ' + from + '–' + to + '</span></div>' +
       '<div class="hk-tile"><span class="hk-tile-label">' + esc(oneString) + '</span><span class="hk-tile-val">' + c.oneString + ' string</span></div>' +
     '</div>' +
     '<button class="hk-open" data-action="go" data-view="improv"><span>Open <span class="hk-open-page">Improvisation</span></span>' + svg(CHEVRON) + '</button></section>';
-}
-
-// ---------- Next up (D164 point 6) ----------
-function nextUp(){
-  var rows = [];
-  if(BHGS_PACK) rows.push({ view: 'technique', ic: 'technique', cls: 'tech', label: 'Technique · Phase ' + state.phaseIndex });
-  var allDone = state.improvIndex >= IMPROV_GATES.length;
-  rows.push({ view: 'improv', ic: 'improv', cls: 'improv', label: 'Improvisation · ' + (allDone ? 'Complete' : 'Gate ' + (state.improvIndex + 1)) });
-  rows.push({ view: 'dojo', ic: 'dojo', cls: 'theory', label: 'Theory' });
-  return '<section class="card home-next" aria-labelledby="home-next-title"><h2 class="home-card-title" id="home-next-title">Next up</h2>' +
-    '<ul class="hn-list">' + rows.map(function(r){
-      return '<li><button class="hn-row hn-' + r.cls + '" data-action="go" data-view="' + r.view + '"><span class="hn-ic">' + icon(r.ic) + '</span>' +
-        '<span class="hn-label">' + r.label + '</span>' + svg(CHEVRON, 'hn-chev') + '</button></li>';
-    }).join('') + '</ul></section>';
 }
 
 /* ---------- view ---------- */
@@ -187,9 +190,10 @@ export function renderHome(){
   var html = homeHeader();
   // D127: on desktop the rails live only in the sidebar; the phone shows them in a card (no "Progress" title, point 13).
   html += '<div class="card home-progress" aria-label="Progress">' + renderRails('home') + '</div>';
-  // Two columns from 1180 px (briefing and calendar | key and Next up); one column below, in reading order.
+  // Two columns from 1180 px (briefing and calendar | key); one column below, in reading order. Slice 4.10m (D167):
+  // Next up leaves HOME (owner).
   html += '<div class="home-grid"><div class="home-col home-col-main">' + briefing() +
     '<section class="card home-calendar" aria-label="Practice calendar">' + renderStreakCalendar() + '</section></div>' +
-    '<div class="home-col home-col-side">' + todayKeyCard() + nextUp() + '</div></div>';
+    '<div class="home-col home-col-side">' + todayKeyCard() + '</div></div>';
   return html;
 }

@@ -123,9 +123,8 @@ test('HOME has no Phase Transition Test, Jump to phase or shortcut buttons', asy
   await expect(home(page).locator('[data-action="test"]')).toHaveCount(0);
   await expect(home(page).locator('[data-action="setphase"]')).toHaveCount(0);
   await expect(home(page).locator('[data-rail="technique"]')).toHaveCount(1); // the rail replaced the phase bar (4.4)
-  // Slice 4.10j (D164 point 6): the only way to TECHNIQUE on HOME is its "Next up" row; no shortcut buttons.
-  await expect(home(page).locator('.navbtn, [data-action="go"][data-view="technique"]:not(.hn-row), [data-action="go"][data-view="library"]')).toHaveCount(0);
-  await expect(home(page).locator('.hn-row[data-view="technique"]')).toHaveCount(1);
+  // Slice 4.10m (D167): Next up left HOME, so HOME has no link to TECHNIQUE or LIBRARY at all (menu and phone bar).
+  await expect(home(page).locator('.navbtn, [data-action="go"][data-view="technique"], [data-action="go"][data-view="library"]')).toHaveCount(0);
 });
 
 test('LIBRARY no longer holds the phases or Essential Skills', async ({ page }) => {

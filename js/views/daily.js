@@ -7,7 +7,8 @@
 // count as a thin bar under the day buttons; session and companion column share the full width (3 : 2);
 // "Phase n · Label" inside the Focused block; the Friday Phase test as a line with one dot per category;
 // Mastered / Watched buttons as in LIBRARY; buttons without final punctuation. Behaviour unchanged.
-// Slice 4.10l (D154 point 3): the optional extra review on Mon, Thu and Sat (extraPart), after the last block.
+// Slice 4.10l (D154 point 3): the optional extra review on Mon, Thu and Sat (extraPart); since slice 4.10m (D167) it
+// sits before Cool-Down on Mon and Thu and after Casual on Sat.
 // Slice 4.8c3 (D146): the Improv & Expression block starts with a Review part (already-Mastered exercises).
 // Slice 4.7 (D133): DAILY as drawn on the 4.6 canvas: header with the session count, day buttons, numbered blocks,
 // the micro-dose as a dashed "+ 5 min" box and, on desktop, the companion column (views/daily-side.js).
@@ -20,12 +21,12 @@ import { DAY_FULL } from "../data/days.js?v=1";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=2";
 import { todayISO, todayName, isWeekendDay, activeDay } from "../logic/dates.js?v=7";
-import { k } from "../logic/technique.js?v=40";
+import { k } from "../logic/technique.js?v=41";
 import { BHGS_PACK } from "../pack.js?v=1";
-import { linked, checkItem, prereqItem, docItem, chopRow, dayPicker, blk, getDailyActiveSequence } from "./components.js?v=40";
-import { renderDailySide } from "./daily-side.js?v=19";
-import { streakLine, streakPill } from "./streak.js?v=4";
-import { improvKeyOfDay, improvReviewPicks, improvExtraPlan, improvDayContext, exerciseLines, EXTRA_DAYS } from "./improv.js?v=31";
+import { linked, checkItem, prereqItem, docItem, chopRow, dayPicker, blk, getDailyActiveSequence } from "./components.js?v=41";
+import { renderDailySide } from "./daily-side.js?v=20";
+import { streakLine, streakPill } from "./streak.js?v=5";
+import { improvKeyOfDay, improvReviewPicks, improvExtraPlan, improvDayContext, exerciseLines, EXTRA_DAYS } from "./improv.js?v=32";
 
 // Slice 4.10h (D162 point 4; AUDIT-4.10 point 33): today's date (the device's local day) as the page eyebrow, long
 // ("Tuesday · November 10th, 2026") or short ("Tue · Nov 10th, 2026"); the title "Daily Practice" or "Daily"; on the
@@ -128,32 +129,52 @@ function reviewPart(day){
     '<ul class="daily-review-list">' + items + '</ul></div>';
 }
 
-// Slice 4.10l (D154 point 3, AUDIT-4.10 point 19): the optional extra review after the last block of Mon, Thu and
-// Sat. Collapsed by default and outside the blocks: no Practiced tick, not in the session minutes or the count, and
-// nothing is written. Mon and Thu end with a stretch reminder; the review queue is not touched (improv.js).
+// Slice 4.10l (D154 point 3, AUDIT-4.10 point 19): the optional extra review on Mon, Thu and Sat (before Cool-Down on
+// Mon / Thu, after Casual on Sat, slice 4.10m). Collapsed by default and outside the blocks: no Practiced tick, not in the session minutes or the count, and
+// nothing is written; the review queue is not touched (improv.js).
+// Slice 4.10m (D167; owner approved the "Bonus round" pitch, 2026-11-23): a short card instead of paragraphs. Closed:
+// bolt icon, EXTRA TIME, one line (Bonus round · n exercises · minutes), Optional. Open: one line with the key and how
+// to play, the exercises as tiles (number · Gate, name, 5 min, Show to open its lines; "Next Review too" when it also
+// comes up in the next Review), a Combo tile on Mon / Thu, a Free jam tile with one Mastered, and one footer line.
+// Nothing Mastered: the card is not openable and its line says the free jam. Owner's 4.10l choices built here: the
+// stretch line on all three days, "over a drone or any track" and "If they clash, alternate them every phrase."
+var BOLT = '<svg class="ico dx-bolt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3L4 14h7l-1 7 9-11h-7l1-7z"></path></svg>';
+function dxIcon(path){ return '<svg class="ico dx-foot-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + path + '"></path></svg>'; }
+var DX_DOWN = '<svg class="ico dx-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>';
+function extraHead(sub, subOpen, openable){
+  return '<span class="dx-ic">' + BOLT + '</span><span class="dx-text"><span class="daily-extra-title">Extra time</span>' +
+    '<span class="dx-sub dx-sub-closed">' + sub + '</span>' + (subOpen ? '<span class="dx-sub dx-sub-open">' + subOpen + '</span>' : '') + '</span>' +
+    '<span class="daily-extra-tag">Optional</span>' + (openable ? DX_DOWN : '');
+}
+function extraTile(cls, tag, name, min, extra, attrs){
+  return '<li class="dx-tile' + (cls ? ' ' + cls : '') + '"' + (attrs || '') + '><span class="dx-tag">' + tag + '</span>' +
+    '<p class="dx-name">' + name + '</p><div class="dx-row"><span class="dx-min">' + min + '</span>' + (extra || '') + '</div></li>';
+}
 function extraPart(day){
   if(!EXTRA_DAYS[day]) return '';
   var plan = improvExtraPlan(day, todayISO()), ctx = improvDayContext();
-  var key = improvKeyOfDay().k.replace(' ', '&nbsp;'), where = key + ', box ' + ctx.box, mon = day !== 'Sat';
-  var many = plan.picks.length > 1, combine = mon && plan.picks.length === 2;
-  var body = '<p class="daily-extra-lede">Only if you have spare time. Not part of today\'s session; it does not count for the streak or the full session.</p>';
-  if(plan.empty) body += '<p class="daily-extra-jam">Nothing to review yet: free jam in ' + where + ', 10&nbsp;min.</p>';
-  else {
-    body += '<p class="daily-extra-help">' + (many ? '5&nbsp;min each' : '5&nbsp;min') + ', from memory, in today\'s key (' + key + '). Then open ' + (many ? 'each' : 'it') + ' to check.</p>';
-    body += '<ul class="daily-review-list">' + plan.picks.map(function(p){
-      var name = p.ex.t.replace(/^\d+\.\s*/, '');
-      return '<li class="daily-review-ex" data-g="' + p.g + '" data-e="' + p.e + '">' +
-        '<p class="daily-review-name"><b>' + name + '</b> &middot; Gate&nbsp;' + (p.g + 1) + '</p>' +
-        (p.again ? '<p class="daily-review-note">Also coming up in your next Review.</p>' : '') +
-        '<details class="daily-review-more"><summary>' + CHEVRON + '<span class="daily-review-show">Show exercise</span><span class="daily-review-hide">Hide exercise</span></summary>' +
-        '<div class="daily-review-body"><p class="daily-review-note">' + REVIEW_NOTE + '</p>' + exerciseLines(p.ex) + '</div></details></li>';
-    }).join('') + '</ul>';
-    if(combine) body += '<p class="daily-extra-tip">Optional, 3&ndash;5&nbsp;min: play both together, each rule at the same time.</p>';
-    if(plan.jam) body += '<p class="daily-extra-jam">Then 5&nbsp;min free jam in ' + where + '.</p>';
+  var key = improvKeyOfDay().k.replace(' ', '&nbsp;'), where = key + ' &middot; box&nbsp;' + ctx.box, mon = day !== 'Sat';
+  var count = plan.picks.length, combine = mon && count === 2;
+  var min = (combine ? '10&ndash;15' : '10') + '&nbsp;min';
+  if(plan.empty){
+    return '<div class="daily-extra dx-static" role="group" aria-label="Extra time, optional"><div class="dx-head">' +
+      extraHead('Free jam &middot; ' + where + ' &middot; ' + min, '', false) + '</div></div>';
   }
-  if(mon) body += '<p class="daily-extra-tip">After the extra time, stretch your hands and forearms for a minute.</p>';
-  return '<details class="daily-extra"><summary>' + CHEVRON + '<span class="daily-extra-title">Extra time &middot; Improv review</span>' +
-    '<span class="daily-extra-side"><span class="daily-extra-min">' + (combine ? '10&ndash;15' : '10') + '&nbsp;min</span><span class="daily-extra-tag">Optional</span></span></summary><div class="daily-extra-body">' + body + '</div></details>';
+  var sub = 'Bonus round &middot; ' + count + (count === 1 ? ' exercise + free jam' : ' exercises') + ' &middot; ' + min;
+  var subOpen = 'In ' + key + ', from memory, over a drone or any track';
+  var tiles = plan.picks.map(function(p, k){
+    var name = p.ex.t.replace(/^\d+\.\s*/, '');
+    var show = '<details class="daily-review-more dx-more"><summary>' + CHEVRON + '<span class="daily-review-show">Show</span><span class="daily-review-hide">Hide</span></summary>' +
+      '<div class="daily-review-body"><p class="daily-review-note">' + REVIEW_NOTE + '</p>' + exerciseLines(p.ex) + '</div></details>';
+    return extraTile('dx-ex', '0' + (k + 1) + ' &middot; Gate&nbsp;' + (p.g + 1) + (p.again ? '<span class="dx-again">Next Review too</span>' : ''),
+      name, '5&nbsp;min', show, ' data-g="' + p.g + '" data-e="' + p.e + '"');
+  }).join('');
+  if(combine) tiles += extraTile('dx-combo', '+ Combo', 'Both rules at once', '3&ndash;5&nbsp;min', '<span class="dx-note">If they clash, alternate them every phrase.</span>');
+  if(plan.jam) tiles += extraTile('dx-jam', '+ Jam', 'Free jam', plan.jam + '&nbsp;min', '<span class="dx-note">' + where + '</span>');
+  var foot = '<div class="dx-foot"><span>' + dxIcon('M5 5l14 14M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z') + 'Not counted in the session or the streak</span>' +
+    '<span>' + dxIcon('M8 13V5a1.5 1.5 0 0 1 3 0v6M11 11V4a1.5 1.5 0 0 1 3 0v7M14 11V5a1.5 1.5 0 0 1 3 0v8M17 13v-2a1.5 1.5 0 0 1 3 0v3a7 7 0 0 1-7 7h-1a7 7 0 0 1-5.6-2.8L4 15.5a1.5 1.5 0 0 1 2.3-1.9L8 15') + 'Stretch your hands and forearms after</span></div>';
+  return '<details class="daily-extra"><summary class="dx-head">' + extraHead(sub, subOpen, true) + '</summary>' +
+    '<div class="daily-extra-body"><ul class="dx-tiles">' + tiles + '</ul>' + foot + '</div></details>';
 }
 
 // The Improv & Expression block body (weekday and Sunday): the Review part first (4.8c3), then the unchanged texts and button.
@@ -288,8 +309,9 @@ function renderSession(day, editable){
     html+=block("casual","Improv & Expression","15 min",improvBody(day),"improv");
   }
 
-  html+=block("cooldown","Cool-Down","5 min",'<p>Quick review - what clicked, what didn\'t.</p>');
+  // Slice 4.10m (D167; owner): on Mon and Thu the optional extra time comes before Cool-Down (Sat: after Casual).
   html+=extraPart(day);
+  html+=block("cooldown","Cool-Down","5 min",'<p>Quick review - what clicked, what didn\'t.</p>');
   return html;
 }
 
