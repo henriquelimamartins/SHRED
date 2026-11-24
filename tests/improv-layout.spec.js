@@ -200,7 +200,8 @@ test('passed Gates open in place with their exercises; Unlock has an icon instea
   await passed.focus();
   await page.keyboard.press('Enter');
   await expect(imp(page).locator('[data-acc="improvG0"]')).toHaveAttribute('aria-expanded', 'true');
-  expect(await imp(page).locator('.improv-row-body .done-ex').allTextContents()).toEqual(
+  // Slice 4.10m (D167): each exercise with its Mastered button (changed on purpose, D107 point 4).
+  expect(await imp(page).locator('.improv-row-body .improv-sub-name').allTextContents()).toEqual(
     ['1. One-String Doom', '2. The 4-Fret Box', '3. The Singing Acoustic Slide', '4. Pre-Bending the Fuzz']);
   const unlock = imp(page).locator('[data-action="advanceimprov"]');
   await expect(unlock).toHaveText('Unlock Gate 3');

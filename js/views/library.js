@@ -20,8 +20,8 @@ import { LISTENING_VAULT } from "../data/listening.js?v=1";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=2";
 import { BHGS_PACK } from "../pack.js?v=1";
-import { pageHeader, backToMore } from "./shell.js?v=23";
-import { watchItem, linked, renderBonusList } from "./components.js?v=40";
+import { pageHeader, backToMore } from "./shell.js?v=24";
+import { watchItem, linked, renderBonusList } from "./components.js?v=41";
 
 // Line icons as drawn on the boards (same stroke style as the shell icons).
 var LIB_ICONS = {
@@ -100,7 +100,7 @@ function guideBody(){
   var html = '<div class="lib-groups lib-groups-guide">';
   if(BHGS_PACK){
     html += group('How This App Works', paras([
-      'The app rests on three pillars: Technique, Improvisation and Theory. DAILY tells you what to practise each day; HOME shows today\'s session, your streak and the calendar.',
+      'The app rests on three pillars: Technique, Improvisation and Theory. DAILY tells you what to practise each day; HOME shows today\'s session, today\'s key with its chords, your streak and the calendar.',
       'Technique follows the BHGS Roadmap in order. Phase 0 sets up your prerequisites, warm-up and a baseline test; then, whatever your level, you start at Phase 1 and work through every exercise, chop-builder and solo of a phase before moving on, up to Phase 4. Each of Phases 1 to 4 is complete when every checklist item is mastered, the chop-builder targets are reached and all 6 categories of the Phase Transition Test, including the Ultimate Technique Workout, are at the required level.',
       'Improvisation has its own track: on the IMPROV page you work through 5 Gates, playing every exercise in the key of the day. Exercises you have marked Mastered come back as a short review in DAILY\'s Improvisation block.',
       'Theory is always open: it never locks anything in Technique or Improvisation.',
@@ -114,7 +114,7 @@ function guideBody(){
     return html;
   }
   html += group('How This App Works', paras([
-    'The app rests on two pillars: Improvisation and Theory. DAILY tells you what to practise each day; HOME shows today\'s session, your streak and the calendar.',
+    'The app rests on two pillars: Improvisation and Theory. DAILY tells you what to practise each day; HOME shows today\'s session, today\'s key with its chords, your streak and the calendar.',
     'Improvisation has its own track: on the IMPROV page you work through 5 Gates, playing every exercise in the key of the day. Exercises you have marked Mastered come back as a short review in DAILY\'s Improvisation block. Here in LIBRARY, the Listening Vault gathers listening references.',
     'Theory is always open: it never locks anything in Improvisation.',
     'The Musical Development rails show where you stand in each pillar, each counted on its own.'
@@ -126,18 +126,21 @@ export function renderLibrary(){
   // Slice 4.10k: LIBRARY is reached from MORE on the phone, with or without the pack, so "‹ More" always shows there.
   var html = backToMore();
   html += pageHeader('Reference &amp; Review', 'Library');
-  html += '<p class="lede lib-lede">Browse and check off any item, anytime - it all counts toward the same progress as Daily Practice.</p>';
-
+  // Slice 4.10m (D167): the intro says what is true for each case (without the pack nothing here is checked off).
+  html += '<p class="lede lib-lede">' + (BHGS_PACK
+    ? 'Browse and check off any item, anytime - it all counts toward the same progress as Daily Practice.'
+    : 'Listening references and a guide to how the app works.') + '</p>';
+  // Slice 4.10m (D167): each group title is a heading, and its line sits beside it, so both columns start their first
+  // row at the same height when they stand side by side.
   var left = '<div class="lib-col">' +
-    '<div class="gh lib-col-title">Listening &amp; guide</div>' +
+    '<div class="lib-col-head"><h2 class="lib-col-title">Listening &amp; guide</h2></div>' +
     section('listening', 'Listening Vault', 'Inspiration &amp; Refs', listeningBody) +
     section('guide', 'Guide &amp; Info', 'App Instructions', guideBody) +
     '</div>';
   var right = '';
   if(BHGS_PACK){
     right = '<div class="lib-col lib-col-pack">' +
-      '<div class="gh lib-col-title">BHGS pack</div>' +
-      '<p class="lib-col-sub">Bradley Hall\'s Guitar School · Patreon</p>' +
+      '<div class="lib-col-head"><h2 class="lib-col-title">BHGS pack</h2><p class="lib-col-sub">Bradley Hall\'s Guitar School · Patreon</p></div>' +
       section('theory', 'Theory Track', 'Intervals, Modes &amp; Chords', theoryBody) +
       section('creative', 'Creative', 'Songwriting &amp; Production', creativeBody) +
       section('bonuslib', 'Bonus Content', 'Extras &amp; Workouts', bonusBody) +

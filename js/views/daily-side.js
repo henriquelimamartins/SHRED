@@ -1,7 +1,8 @@
 // DAILY companion column (slice 4.7, D132 point 1, D133 points 4-5): MICRO-DOSES and KEY.
 // Slice 4.10h (D162 point 1; AUDIT-4.10 point 24): KEY first, MICRO-DOSES under it and only when the day on screen has a
 // micro-dose (Mon-Fri from Phase 1); none on Saturday, Sunday or in Phase 0; the Friday card without its last sentence.
-// Slice 4.10j (D164 point 5): the circle, the chord row and the key helpers are also used by HOME (no change here).
+// Slice 4.10j (D164 point 5): the circle, the chord row and the key helpers are also used by HOME.
+// Slice 4.10m (D167): HOME's circle is interactive too (homeCircle); DAILY's markup is unchanged.
 // Desktop only (hidden on the phone by CSS, D133 point 2). Everything here only reads the state; the key picked
 // on the circle lives in `ui.dailyKey` (page state, back to today's key on reload) and is never saved.
 import { PHASES, ESSENTIAL, ESSENTIAL_URL } from "../data/bhgs.js?v=1";
@@ -10,7 +11,7 @@ import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=2";
 import { BHGS_PACK } from "../pack.js?v=1";
 import { todayName, isWeekendDay, localISO } from "../logic/dates.js?v=7";
-import { improvKeyOfDay } from "./improv.js?v=31";
+import { improvKeyOfDay } from "./improv.js?v=32";
 
 function svg(path, cls){
   return '<svg class="ico' + (cls ? ' ' + cls : '') + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + path + '"></path></svg>';
@@ -136,18 +137,25 @@ export function chordRow(sel){
   }).join('') + '</div>';
 }
 
-// Slice 4.10j (D164 point 5): the same circle for HOME, showing today's key only. Not interactive there (the key
-// names are plain labels, not buttons; another key is chosen in DAILY); hidden from screen readers, since the card
-// names the key and its chords in text. Its own path ids, so DAILY's and HOME's circles never share an id.
-export function staticCircle(sel){
-  var html = '<div class="kc kc-static" aria-hidden="true">' + circleSvg(sel, 'hkc');
+// The 24 key buttons over the circle. `action` names what a tap does: DAILY "keypick" (ui.dailyKey), HOME
+// "homekeypick" (ui.homeKey, slice 4.10m). The same markup on both pages.
+function keyButtons(sel, action){
+  var html = '';
   ['maj', 'min'].forEach(function(m){
     RING[m].forEach(function(t, i){
       var on = sel.m === m && sel.i === i, rel = !on && sel.i === i;
-      html += '<span class="kc-key kc-' + m + ' kc-' + m + '-' + i + (on ? ' on' : '') + (rel ? ' rel' : '') + '">' + pretty(t) + (m === 'min' ? 'm' : '') + '</span>';
+      html += '<button type="button" class="kc-key kc-' + m + ' kc-' + m + '-' + i + (on ? ' on' : '') + (rel ? ' rel' : '') + '" data-action="' + action + '" data-mode="' + m + '" data-i="' + i + '"' +
+        ' aria-label="' + keyLabel(m, i) + '" aria-pressed="' + on + '">' + pretty(t) + (m === 'min' ? 'm' : '') + '</button>';
     });
   });
-  return html + '</div>';
+  return html;
+}
+
+// Slice 4.10m (D167; owner, 2026-11-23): HOME's circle is interactive, as DAILY's, on desktop and phone. HOME keeps its
+// own choice (ui.homeKey, page state, never saved), so a tap on HOME never changes DAILY. Its own path ids (prefix
+// "hkc"), so DAILY's and HOME's circles never share an id. Replaces the static circle of slice 4.10j.
+export function homeCircle(sel){
+  return '<div class="kc kc-home" role="group" aria-label="Circle of fifths">' + circleSvg(sel, 'hkc') + keyButtons(sel, 'homekeypick') + '</div>';
 }
 
 function keyCard(){
@@ -160,14 +168,7 @@ function keyCard(){
       : (today ? '<button type="button" class="dc-today" data-action="keytoday">' + svg(BACK) + 'Today: ' + keyLabel(today.m, today.i) + '</button>' : '')) +
     '</div>' +
     '<div class="dc-keyname">' + keyLabel(sel.m, sel.i) + '</div>' +
-    '<div class="kc">' + circleSvg(sel);
-  ['maj', 'min'].forEach(function(m){
-    RING[m].forEach(function(t, i){
-      var on = sel.m === m && sel.i === i, rel = !on && sel.i === i;
-      html += '<button type="button" class="kc-key kc-' + m + ' kc-' + m + '-' + i + (on ? ' on' : '') + (rel ? ' rel' : '') + '" data-action="keypick" data-mode="' + m + '" data-i="' + i + '"' +
-        ' aria-label="' + keyLabel(m, i) + '" aria-pressed="' + on + '">' + pretty(t) + (m === 'min' ? 'm' : '') + '</button>';
-    });
-  });
+    '<div class="kc">' + circleSvg(sel) + keyButtons(sel, 'keypick');
   html += '</div>';
   html += chordRow(sel);
   html += '<p class="dc-foot dc-center">Tap a key on the circle to see its notes and chords.</p>';

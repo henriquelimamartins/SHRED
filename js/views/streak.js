@@ -3,7 +3,7 @@
 // with the flame also sits on the right of the DAILY header. Its words and numbers are one run of text inside the
 // flex row, so the numbers get ordinary word spaces (before, the flex gap added space around them). Reads only.
 import { totalStreak, currentStreak } from "../logic/dates.js?v=7";
-import { icon } from "./shell.js?v=23";
+import { icon } from "./shell.js?v=24";
 
 // Desktop: flame + "N days in a row · M logged" (the numbers keep their own classes, read by the tests).
 export function streakLine(){

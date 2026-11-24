@@ -5,7 +5,7 @@ import { CHOP, TESTCATS, BONUS } from "../data/bhgs.js?v=1";
 import { DAY_ORDER } from "../data/days.js?v=1";
 import { state } from "../store.js?v=5";
 import { todayISO, todayName, activeDay } from "../logic/dates.js?v=7";
-import { isBlockPracticed } from "../logic/daily.js?v=40";
+import { isBlockPracticed } from "../logic/daily.js?v=41";
 
 /* ---------- render helpers ---------- */
 export function linked(label,url){ return url? '<a href="'+url+'" target="_blank" rel="noopener">'+label+'</a>' : label; }
@@ -79,6 +79,7 @@ export function dayPicker(selectedDay){
 }
 // Slice 4.7 (D133): `num` (optional) shows the block number (01, 02…) before the title; "Practiced" is a button
 // (the same data-action), with the label before the box as drawn. Read-only days show a disabled button.
+// Slice 4.10m (D167; owner): a middle dot between the minutes and "Practiced" (decoration, hidden from screen readers).
 export function blk(name,day,title,minText,bodyHtml,editable,customClass,num){
   if(editable===undefined) editable=true;
   var done=isBlockPracticed(name,day);
@@ -87,7 +88,7 @@ export function blk(name,day,title,minText,bodyHtml,editable,customClass,num){
     : '<button type="button" class="blkcheck ro" disabled aria-pressed="'+done+'"><span>Practiced</span><span class="box'+(done?" on":"")+'"></span></button>';
   var cClass = customClass ? ' ' + customClass : '';
   var numHtml = num ? '<span class="blk-num" aria-hidden="true">'+(num<10?"0":"")+num+'</span>' : '';
-  return '<div class="blk'+cClass+(done?" done-today":"")+'"><div class="top">'+numHtml+'<div class="nm">'+title+'</div><div class="topright">'+(minText?'<div class="min">'+minText+'</div>':'')+check+'</div></div>'+bodyHtml+'</div>';
+  return '<div class="blk'+cClass+(done?" done-today":"")+'"><div class="top">'+numHtml+'<div class="nm">'+title+'</div><div class="topright">'+(minText?'<div class="min">'+minText+'</div><span class="blk-sep" aria-hidden="true">&middot;</span>':'')+check+'</div></div>'+bodyHtml+'</div>';
 }
 
 export function getDailyActiveSequence(list, prefix, editable, isWatch){
