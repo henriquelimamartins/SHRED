@@ -265,7 +265,10 @@ test.describe('header', () => {
     test.skip(isPhone(testInfo), 'the line shows on desktop (the phone shows the pill)');
     await openApp(page, { localState: baseState({ streakDates: ['2026-11-08', '2026-11-09', '2026-11-10'].concat(
       Array.from({ length: 24 }, (_, i) => `2026-10-${String(i + 1).padStart(2, '0')}`)) }) });
-    for (const view of ['home', 'daily']) {
+    // Slice 4.10o (D169 point 4): the line left the desktop HOME header; HOME keeps the same component in the page
+    // (text checked), the spacing is measured where it shows (DAILY).
+    await expect(page.locator('#panel-home .page-head .home-streak')).toHaveText('3 days in a row · 27 logged');
+    for (const view of ['daily']) {
       await openView(page, view);
       const line = page.locator(`#panel-${view} .page-head .home-streak`);
       await expect(line).toHaveText('3 days in a row · 27 logged');

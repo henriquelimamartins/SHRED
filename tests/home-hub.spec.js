@@ -121,7 +121,8 @@ test.describe('desktop', () => {
   test('no brand row and no account button on HOME: the sidebar has the logo and the account row', async ({ page }) => {
     await signedIn(page);
     await expect(home(page).locator('.home-brand-row')).toBeHidden();
-    await expect(head(page).locator('.home-streak')).toBeVisible();
+    // Slice 4.10o (D169 point 4): the streak line leaves the desktop header (This week carries the streak).
+    await expect(head(page).locator('.home-streak')).toBeHidden();
     await expect(head(page).locator('.streak-pill')).toBeHidden();
     await expect(page.locator('#sidebar .side-logo')).toBeVisible();
   });

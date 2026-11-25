@@ -147,6 +147,7 @@ test.describe('desktop', () => {
   test.skip(({ isMobile }) => isMobile, 'desktop layout');
 
   test('two columns from 1180 px: briefing and calendar on the left, Today\'s key on the right', async ({ page }) => {
+    await page.setViewportSize({ width: 1300, height: 900 }); // slice 4.10o (D169): three columns from 1400 px
     await openApp(page, { localState: progressState() });
     const box = async (sel) => home(page).locator(sel).boundingBox();
     const b = await box('.home-brief'), c = await box('.home-calendar'), k = await box('.home-key');
@@ -155,7 +156,7 @@ test.describe('desktop', () => {
     expect(k.x).toBeGreaterThan(b.x + b.width);
     expect(Math.abs(k.y - b.y)).toBeLessThan(1);
     expect(Math.round(k.width)).toBe(380);
-    await expect(home(page).locator('.home-streak')).toBeVisible();
+    await expect(home(page).locator('.home-streak')).toBeHidden(); // D169 point 4: This week carries the streak
     await expect(home(page).locator('.home-progress')).toBeHidden(); // D127: rails in the sidebar only
     await expect(home(page).locator('.home-key .kc-home')).toBeVisible(); // the circle
   });

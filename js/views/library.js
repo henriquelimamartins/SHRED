@@ -20,8 +20,8 @@ import { LISTENING_VAULT } from "../data/listening.js?v=1";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=2";
 import { BHGS_PACK } from "../pack.js?v=1";
-import { pageHeader, backToMore } from "./shell.js?v=24";
-import { watchItem, linked, renderBonusList } from "./components.js?v=41";
+import { pageHeader, backToMore } from "./shell.js?v=25";
+import { watchItem, linked, renderBonusList } from "./components.js?v=42";
 
 // Line icons as drawn on the boards (same stroke style as the shell icons).
 var LIB_ICONS = {

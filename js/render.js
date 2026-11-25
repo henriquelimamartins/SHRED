@@ -23,19 +23,19 @@
 import { ui } from "./ui.js?v=2";
 import { BHGS_PACK } from "./pack.js?v=1";
 import { ensureDailyReset } from "./logic/dates.js?v=7";
-import { initCalCarousel } from "./views/calendar.js?v=41";
-import { renderHome, watchHomeHeader } from "./views/home.js?v=41";
-import { renderTechnique } from "./views/technique.js?v=27";
-import { renderDaily, watchDailyHeader } from "./views/daily.js?v=41";
-import { renderImprov } from "./views/improv.js?v=32";
-import { renderLibrary } from "./views/library.js?v=42";
-import { renderSetup } from "./views/setup.js?v=31";
-import { renderDojoView } from "./views/dojo.js?v=32";
-import { renderRails } from "./views/rails.js?v=26";
-import { renderAccount, renderProfilePanel } from "./views/account.js?v=25";
+import { initCalCarousel } from "./views/calendar.js?v=42";
+import { renderHome, watchHomeHeader } from "./views/home.js?v=42";
+import { renderTechnique } from "./views/technique.js?v=28";
+import { renderDaily, watchDailyHeader } from "./views/daily.js?v=42";
+import { renderImprov } from "./views/improv.js?v=33";
+import { renderLibrary } from "./views/library.js?v=43";
+import { renderSetup } from "./views/setup.js?v=32";
+import { renderDojoView } from "./views/dojo.js?v=33";
+import { renderRails } from "./views/rails.js?v=27";
+import { renderAccount, renderProfilePanel } from "./views/account.js?v=26";
 import { currentUser } from "./firebase.js?v=5";
-import { renderMore } from "./views/more.js?v=24";
-import { icon, sidebarLogo, sidebarMenu, accountRow, syncState } from "./views/shell.js?v=24";
+import { renderMore } from "./views/more.js?v=25";
+import { icon, sidebarLogo, sidebarMenu, accountRow, syncState } from "./views/shell.js?v=25";
 
 export function initAppLayout() {
   var root = document.getElementById("root");

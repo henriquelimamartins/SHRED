@@ -8,6 +8,10 @@
 // calendar. From 1180 px two columns, else one. Showing HOME writes nothing.
 // Slice 4.10m (D167): the circle is interactive on desktop and phone (another key → "Key" and a "Today: …" button,
 // as DAILY; page state ui.homeKey, never saved); the 4-Fret Box tile follows the chosen key; Next up leaves HOME.
+// Slice 4.10o (D169, option A5): Today's key adds "Gate n · up next"; a This week card (the current local week day by
+// day, then Current streak, Longest streak, Practising since with the days logged), desktop only; three columns from
+// 1400 px (briefing + calendar | key | This week), two from 1180 px (This week under the calendar), one below; the
+// streak line leaves the header on desktop (the phone keeps its pill).
 // Slice 4.5c (D117 point 2, D124 point 3, D127 point 2, D129): Today's session read-only, the calendar as drawn,
 // the Progress card with the rails on the phone only (D127). Slice 4.5b2 (D128): HOME's own phone header.
 // Slice 4.5a (D124): the Cloud Sync card moved to the Account & data page (js/views/account.js).
@@ -16,17 +20,18 @@ import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=2";
 import { hasFirebase, currentUser } from "../firebase.js?v=5";
 import { BHGS_PACK } from "../pack.js?v=1";
-import { renderRails } from "./rails.js?v=26";
-import { streakLine, streakPill } from "./streak.js?v=5";
-import { icon, sidebarLogo, avatar, syncState } from "./shell.js?v=24";
+import { renderRails } from "./rails.js?v=27";
+import { streakLine, streakPill } from "./streak.js?v=6";
+import { icon, sidebarLogo, avatar, syncState } from "./shell.js?v=25";
 import { DAY_FULL } from "../data/days.js?v=1";
 import { ESSENTIAL } from "../data/bhgs.js?v=1";
-import { todayName, todayISO, activeDay, isWeekendDay } from "../logic/dates.js?v=7";
-import { renderStreakCalendar } from "./calendar.js?v=41";
+import { todayName, todayISO, activeDay, isWeekendDay, localISO, currentStreak, totalStreak } from "../logic/dates.js?v=7";
+import { renderStreakCalendar } from "./calendar.js?v=42";
 import { IMPROV_GATES } from "../data/improv.js?v=4";
-import { sessionPlan, isBlockPracticed } from "../logic/daily.js?v=41";
-import { improvKeyOfDay, improvDayContext, boxFrets } from "./improv.js?v=32";
-import { todayKey, keyLabel, homeCircle, chordRow, RING } from "./daily-side.js?v=20";
+import { sessionPlan, isBlockPracticed } from "../logic/daily.js?v=42";
+import { improvKeyOfDay, improvDayContext, boxFrets } from "./improv.js?v=33";
+import { todayKey, keyLabel, homeCircle, chordRow, RING, spellKey, pretty, NUMERALS, QUALITY } from "./daily-side.js?v=21";
+import { loggedDays, longestStreak } from "./account.js?v=26";
 
 function esc(t){ return String(t).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]; }); }
 function svg(path, cls){
@@ -161,6 +166,32 @@ function briefing(){
 // ui.homeKey (page state, back to today's key on reload) and never touches DAILY's own choice (ui.dailyKey).
 const BACK = 'M4 12a8 8 0 1 0 2.5-5.8M4 5v4h4M12 8v4.5l3 2';
 function exerciseLabel(t){ return t.replace(/^\d+\.\s*/, '').replace(/^The\s+/, ''); }
+
+// Slice 4.10o (D169 point 2): "Gate n · up next" = the first exercise of the current Gate not marked Mastered, its
+// CHANGES in degrees and, only when every degree is a plain chord of the key on screen, the chords in that key; a degree
+// with a suffix ("i5", "V7", "I7") or outside the key's mode leaves the chords out. Read only, the same data as IMPROVISATION.
+function changesInKey(changes, sel){
+  if(!changes || !sel) return '';
+  var notes = spellKey(RING[sel.m][sel.i], sel.m), out = [];
+  var ok = changes.split(/\s*[–-]\s*/).every(function(t){
+    var k = NUMERALS[sel.m].indexOf(t);
+    if(k < 0) return false;
+    out.push(pretty(notes[k]) + QUALITY[sel.m][k]);
+    return true;
+  });
+  return ok ? out.join(' – ') : '';
+}
+function upNext(sel){
+  var gi = Math.min(state.improvIndex || 0, IMPROV_GATES.length - 1), g = IMPROV_GATES[gi], checks = state.improvChecks || {};
+  var ei = g.exercises.findIndex(function(e, k){ return !checks['g' + gi + 'e' + k]; });
+  if(ei < 0) return '';
+  var ex = g.exercises[ei], chords = changesInKey(ex.changes, sel);
+  return '<div class="hk-next"><span class="hk-next-label">Gate ' + (gi + 1) + ' · up next</span>' +
+    '<span class="hk-next-title">' + esc(ex.t.replace(/^\d+\.\s*/, '')) + '</span>' +
+    (ex.changes ? '<span class="hk-next-line"><span class="hk-next-deg">' + esc(ex.changes) + '</span>' +
+      (chords ? '<span class="hk-next-chords">' + esc(chords) + '</span>' : '') + '</span>' : '') +
+    (ex.track ? '<span class="hk-next-track">' + esc(ex.track) + '</span>' : '') + '</div>';
+}
 function todayKeyCard(){
   var tk = improvKeyOfDay(), today = todayKey(), c = improvDayContext();
   var sel = ui.homeKey || today;
@@ -181,8 +212,59 @@ function todayKeyCard(){
     '<div class="hk-tiles">' +
       '<div class="hk-tile"><span class="hk-tile-label">' + esc(box) + '</span><span class="hk-tile-val">Box ' + c.box + ' · frets ' + from + '–' + to + '</span></div>' +
       '<div class="hk-tile"><span class="hk-tile-label">' + esc(oneString) + '</span><span class="hk-tile-val">' + c.oneString + ' string</span></div>' +
-    '</div>' +
+    '</div>' + upNext(sel) +
     '<button class="hk-open" data-action="go" data-view="improv"><span>Open <span class="hk-open-page">Improvisation</span></span>' + svg(CHEVRON) + '</button></section>';
+}
+
+// ---------- This week (slice 4.10o, D169 point 3; desktop only) ----------
+// One row per day of the current local week (Monday first): the day's plan from sessionPlan() (what DAILY shows), its
+// minutes and its state from streakDates (Practised / Today / Rest; nothing for a day still to come); then the
+// current and longest streak and the first logged month with the days logged. Real values only (D71); reads only.
+var WEEK = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+var SHORT_MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const IC_TROPHY = 'M8 4h8v5a4 4 0 0 1-8 0zM8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M9 20h6M10 17h4v3h-4z';
+const IC_FLAME = 'M12 3c.5 3.5 5 5.5 5 10.5a5 5 0 0 1-10 0c0-2.5 1.5-4 2.5-5.5.5 1.5 1.5 2.5 2.5 2.5-.5-2.5-.5-5 0-7.5z';
+const IC_FLAG = 'M5 21V4M5 4h11l-2 4 2 4H5';
+function dayPlan(dk){
+  var plan = sessionPlan(dk, state.phaseIndex), mins = 0;
+  plan.forEach(function(b){ mins += b.min || 0; });
+  var main = (plan.length > 2 ? plan[2] : plan[plan.length - 1]).title.replace('Improv & Expression', 'Improv');
+  // The micro-dose and the Phase test are BHGS (D113): shown only with the pack, and only on a full weekday session.
+  if(BHGS_PACK && plan.length > 2 && ESSENTIAL[dk]) main += ' · ' + ESSENTIAL[dk];
+  if(BHGS_PACK && plan.length > 2 && dk === 'Fri') main = 'Phase test · ' + main;
+  return { text: main, mins: mins };
+}
+function thisWeek(){
+  var days = loggedDays(), logged = {};
+  days.forEach(function(d){ logged[d] = true; });
+  var now = new Date(), today = localISO(now), dow = (now.getDay() + 6) % 7, n = 0, rows = '';
+  for(var k = 0; k < 7; k++){
+    var d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - dow + k), iso = localISO(d);
+    var future = iso > today, isToday = iso === today, hit = !future && !!logged[iso];
+    if(hit) n++;
+    var st = hit ? 'Practised' : isToday ? 'Today' : future ? '' : 'Rest', p = dayPlan(WEEK[k]);
+    rows += '<li class="hw-row' + (hit ? ' hit' : '') + (isToday ? ' today' : '') + (future ? ' future' : '') + '" data-day="' + WEEK[k] + '"' + (isToday ? ' aria-current="date"' : '') + '>' +
+      '<span class="hw-dot" aria-hidden="true">' + (hit ? svg(TICK) : '') + '</span>' +
+      '<span class="hw-main"><span class="hw-day">' + WEEK[k] + ' <span class="hw-num">' + d.getDate() + '</span></span>' +
+      '<span class="hw-plan">' + esc(p.text) + '</span></span>' +
+      '<span class="hw-side">' + (st ? '<span class="hw-state">' + st + '</span>' : '') + (p.mins ? '<span class="hw-min">' + p.mins + ' min</span>' : '') + '</span></li>';
+  }
+  var pl = function(v){ return v + (v === 1 ? ' day' : ' days'); }, total = totalStreak();
+  var since = days.length ? (function(p){ return SHORT_MONTHS[+p[1] - 1] + ' ' + p[0]; })(days[0].split('-')) : 'Not yet';
+  // Owner (2026-11-24, during the slice): compact blocks, label on top, the icon beside the value; the days logged on
+  // their own line (to the right of the value where there is room).
+  var stat = function(cls, ic, label, val, sub){
+    return '<div class="hw-stat ' + cls + '"><span class="hw-stat-label">' + label + '</span>' +
+      '<span class="hw-stat-row"><span class="hw-stat-ic" aria-hidden="true">' + svg(ic) + '</span><span class="hw-stat-val">' + val + '</span>' +
+      (sub ? '<span class="hw-stat-sub">' + sub + '</span>' : '') + '</span></div>';
+  };
+  return '<section class="card home-week" aria-labelledby="home-week-label">' +
+    '<div class="hw-head"><h2 class="hw-label" id="home-week-label">This week</h2><span class="hw-meta"><b>' + n + '</b> of 7 days practised</span></div>' +
+    '<div class="hw-bar" aria-hidden="true"><i class="f' + n + '"></i></div>' +
+    '<ul class="hw-rows">' + rows + '</ul>' +
+    '<div class="hw-stats">' + stat('s-current', IC_FLAME, 'Current streak', pl(currentStreak())) +
+      stat('s-best', IC_TROPHY, 'Longest streak', pl(longestStreak(days))) +
+      stat('s-since', IC_FLAG, 'Practising since', since, days.length ? pl(total) + ' logged' : '') + '</div></section>';
 }
 
 /* ---------- view ---------- */
@@ -190,10 +272,11 @@ export function renderHome(){
   var html = homeHeader();
   // D127: on desktop the rails live only in the sidebar; the phone shows them in a card (no "Progress" title, point 13).
   html += '<div class="card home-progress" aria-label="Progress">' + renderRails('home') + '</div>';
-  // Two columns from 1180 px (briefing and calendar | key); one column below, in reading order. Slice 4.10m (D167):
-  // Next up leaves HOME (owner).
+  // Slice 4.10o (D169): three columns from 1400 px (briefing and calendar | key | This week), two from 1180 px (This week
+  // under the calendar | key), one below, in reading order; This week is not shown on the phone (CSS).
   html += '<div class="home-grid"><div class="home-col home-col-main">' + briefing() +
     '<section class="card home-calendar" aria-label="Practice calendar">' + renderStreakCalendar() + '</section></div>' +
-    '<div class="home-col home-col-side">' + todayKeyCard() + '</div></div>';
+    '<div class="home-col home-col-side">' + todayKeyCard() + '</div>' +
+    '<div class="home-col home-col-week">' + thisWeek() + '</div></div>';
   return html;
 }
