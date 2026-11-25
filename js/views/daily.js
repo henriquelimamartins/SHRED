@@ -21,12 +21,12 @@ import { DAY_FULL } from "../data/days.js?v=1";
 import { state } from "../store.js?v=5";
 import { ui } from "../ui.js?v=2";
 import { todayISO, todayName, isWeekendDay, activeDay } from "../logic/dates.js?v=7";
-import { k } from "../logic/technique.js?v=41";
+import { k } from "../logic/technique.js?v=42";
 import { BHGS_PACK } from "../pack.js?v=1";
-import { linked, checkItem, prereqItem, docItem, chopRow, dayPicker, blk, getDailyActiveSequence } from "./components.js?v=41";
-import { renderDailySide } from "./daily-side.js?v=20";
-import { streakLine, streakPill } from "./streak.js?v=5";
-import { improvKeyOfDay, improvReviewPicks, improvExtraPlan, improvDayContext, exerciseLines, EXTRA_DAYS } from "./improv.js?v=32";
+import { linked, checkItem, prereqItem, docItem, chopRow, dayPicker, blk, getDailyActiveSequence } from "./components.js?v=42";
+import { renderDailySide } from "./daily-side.js?v=21";
+import { streakLine, streakPill } from "./streak.js?v=6";
+import { improvKeyOfDay, improvReviewPicks, improvExtraPlan, improvDayContext, exerciseLines, EXTRA_DAYS } from "./improv.js?v=33";
 
 // Slice 4.10h (D162 point 4; AUDIT-4.10 point 33): today's date (the device's local day) as the page eyebrow, long
 // ("Tuesday · November 10th, 2026") or short ("Tue · Nov 10th, 2026"); the title "Daily Practice" or "Daily"; on the

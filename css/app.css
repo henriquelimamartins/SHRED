@@ -831,21 +831,86 @@ button.tech-phase{width:100%;text-align:left;color:var(--text);font:inherit;curs
 .home-key .kc-degrees { padding-top:0; border-top:0; }
 .hk-tiles { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:10px; }
 .hk-tile { display:flex; flex-direction:column; gap:4px; padding:10px 12px; border-radius:10px; background:var(--card2); min-width:0; }
-.hk-tile-label { font-family:var(--font-head); font-size:var(--fs-xs); font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); }
+.hk-tile-label, .hk-next-label { font-family:var(--font-head); font-size:var(--fs-xs); font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); }
 .hk-tile-val { font-size:var(--fs-base); color:var(--text); }
 .hk-open { display:flex; align-items:center; justify-content:space-between; gap:8px; width:100%; min-height:44px; padding:0; border:0; background:transparent; color:var(--purple-tint); font-family:var(--font-body); font-size:var(--fs-base); cursor:pointer; text-align:left; }
 .hk-open-page { text-transform:uppercase; }
 .hk-open .ico { width:16px; height:16px; }
+/* Today's key, "Gate n · up next" (slice 4.10o, D169 point 2). */
+.hk-next { display:flex; flex-direction:column; gap:4px; padding:12px 14px; border-radius:10px; background:var(--purple-bg-soft); border:1px solid var(--purple-edge-2); }
+.hk-next-title { font-family:var(--font-head); font-size:18px; font-weight:600; letter-spacing:.02em; color:var(--text); }
+.hk-next-line { display:flex; flex-wrap:wrap; gap:4px 12px; font-size:var(--fs-base); }
+.hk-next-deg { color:var(--purple-tint); }
+.hk-next-chords { color:var(--text); }
+.hk-next-track { font-size:var(--fs-sm); color:var(--muted); }
+/* This week (slice 4.10o, D169 point 3): desktop only, after the calendar until three columns fit. */
+.home-week { order:4; display:flex; flex-direction:column; gap:16px; }
+.hw-head { display:flex; justify-content:space-between; align-items:baseline; gap:8px; }
+.hw-label { margin:0; font-family:var(--font-head); font-size:var(--fs-sm); font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--green-tint); }
+.hw-meta { font-size:var(--fs-sm); color:var(--text-3); white-space:nowrap; }
+.hw-meta b { color:var(--text); font-weight:600; }
+.hw-bar { height:6px; border-radius:3px; background:var(--card2); overflow:hidden; }
+.hw-bar i { display:block; height:100%; border-radius:3px; background:var(--green-tint); }
+.hw-bar .f0{width:0;} .hw-bar .f1{width:14.3%;} .hw-bar .f2{width:28.6%;} .hw-bar .f3{width:42.9%;} .hw-bar .f4{width:57.1%;} .hw-bar .f5{width:71.4%;} .hw-bar .f6{width:85.7%;} .hw-bar .f7{width:100%;}
+.hw-rows { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:6px; }
+.hw-row { display:flex; align-items:center; gap:12px; min-height:40px; padding:8px 12px; box-sizing:border-box; border-radius:10px; background:var(--card2); border:1px solid transparent; }
+.hw-dot { flex:0 0 24px; height:24px; box-sizing:border-box; border-radius:50%; border:1.5px solid var(--box-line); display:flex; align-items:center; justify-content:center; color:var(--green-tint); }
+.hw-dot .ico { width:14px; height:14px; }
+.hw-main { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+.hw-day { font-family:var(--font-head); font-size:var(--fs-md); letter-spacing:.06em; text-transform:uppercase; color:var(--text-2); }
+.hw-num { color:var(--text); font-weight:600; }
+.hw-plan { font-size:var(--fs-sm); color:var(--text-3); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.hw-side { flex:none; display:flex; flex-direction:column; align-items:flex-end; gap:2px; }
+.hw-state { font-size:var(--fs-sm); color:var(--muted); }
+.hw-min { font-size:var(--fs-sm); color:var(--muted); }
+.hw-row.hit .hw-dot { background:var(--green-bg); border-color:var(--green-line); }
+.hw-row.hit .hw-state { color:var(--green-tint); }
+.hw-row.today { border-color:var(--red-edge); }
+.hw-row.today .hw-dot { border-color:var(--red-tint); }
+.hw-row.today .hw-day, .hw-row.today .hw-state { color:var(--red-tint); }
+.hw-row.future { background:transparent; border:1px dashed var(--border); }
+.hw-row.future .hw-dot { border-style:dashed; border-color:var(--border); }
+.hw-row.future .hw-num, .hw-row.future .hw-plan { color:var(--muted); }
+.hw-stats { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:8px; } /* owner: two blocks side by side, Practising since across */
+.hw-stats .s-since { grid-column:1 / -1; }
+.hw-stat { display:flex; flex-direction:column; gap:8px; min-width:0; padding:12px 14px; border-radius:12px; background:var(--card2); }
+.hw-stat-label { font-family:var(--font-head); font-size:var(--fs-xs); font-weight:500; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); white-space:nowrap; }
+.hw-stat-row { display:flex; align-items:center; gap:10px; min-width:0; }
+.hw-stat-ic { flex:0 0 30px; height:30px; box-sizing:border-box; border-radius:9px; display:flex; align-items:center; justify-content:center; }
+.hw-stat-ic .ico { width:16px; height:16px; }
+.s-current .hw-stat-ic { background:var(--red-bg); color:var(--red-tint); border:1px solid var(--red-edge); }
+.s-best .hw-stat-ic { background:var(--amber-bg); color:var(--amber-tint); border:1px solid var(--amber-line-soft); }
+.s-since .hw-stat-ic { background:var(--green-bg); color:var(--green-tint); border:1px solid var(--green-line); }
+.hw-stat-val { font-family:var(--font-head); font-size:20px; font-weight:600; letter-spacing:.02em; line-height:1.1; color:var(--text); white-space:nowrap; }
+.hw-stat-sub { margin-left:auto; font-size:var(--fs-sm); color:var(--text-3); white-space:nowrap; }
+/* Desktop (D169 point 4): the streak line leaves the HOME header; This week carries the streak. The phone keeps its pill. */
+#panel-home .home-head .home-streak { display:none; }
 @media (min-width: 1180px){
-  .home-grid { display:grid; grid-template-columns:minmax(0,1fr) 380px; gap:20px; align-items:start; }
+  /* Two columns (D164 point 8; D169 point 5): briefing, calendar and This week on the left, Today's key on the right. */
+  .home-grid { display:grid; grid-template-columns:minmax(0,1fr) 380px; grid-template-areas:"main side" "week side"; gap:20px; align-items:start; }
   .home-col { display:flex; flex-direction:column; gap:20px; min-width:0; }
+  .home-col-main { grid-area:main; } .home-col-side { grid-area:side; } .home-col-week { grid-area:week; }
+}
+@media (min-width: 1400px){
+  /* Three columns (D169 point 1): the first column at most 720 px; the key and This week run its full height. */
+  .home-grid { grid-template-columns:minmax(0,720px) 316px 380px; grid-template-areas:"main week side"; /* owner: This week second, the key third */ align-items:stretch; }
+  .home-col-side .home-key, .home-col-week .home-week { flex:1; }
+  /* Owner (2026-11-24): the key card spreads its free height between its parts instead of leaving it above the link. */
+  .home-col-side .home-key { justify-content:space-between; }
+  .home-col-week .hw-plan { white-space:normal; } /* 316 px: Friday's plan on two lines instead of cut */
+  .home-week .hw-rows { flex:1; }
+  .home-week .hw-row { flex:1; }
+  .home-col-main .hb-main { flex-direction:column; align-items:stretch; gap:14px; }
+  .home-col-main .hb-continue { width:100%; }
+  .home-col-main .hb-title-long { display:none; }
+  .home-col-main .hb-title-short { display:inline; }
 }
 @media (max-width: 767px){
   .home-brand-row { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:14px; }
   #panel-home .home-head{align-items:center;}
   #panel-home .home-date{font-size:var(--fs-xs);}
-  #panel-home .home-head .home-streak{display:none;}
   #panel-home .home-head .streak-pill{display:flex;}
+  .home-week { display:none; } /* D169 point 6: no This week on the phone */
   .hk-today { min-height:44px; }
   .hk-head { min-height:44px; }
   .home-brief { gap:14px; }
